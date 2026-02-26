@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KOLEKSI CD-ROM - AKPER HKBP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        
+        :root { 
+            --navy-primary: #021e69; 
+            --navy-cd: #021d66; /* Warna kaset utama */
+            --accent-yellow: #f1c40f; 
+            --bg-body: #f8fbff;
+            --success-green: #27ae60;
+        }
+
+        body { background-color: var(--bg-body); color: #333; }
+
+        /* HEADER */
+        header { 
+            background: var(--navy-primary); 
+            color: white; 
+            padding: 15px 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .header-left i { font-size: 1.8rem; color: #ffffff; }
+        .header-left h3 { 
+            font-size: 1.2rem; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+        }
+
+        .back-btn { 
+            background: var(--accent-yellow); 
+            padding: 10px 22px; 
+            border-radius: 30px; 
+            color: #000; 
+            font-weight: bold; 
+            text-decoration: none; 
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+            box-shadow: 0 4px 0px #c29d0b;
+        }
+        .back-btn:hover { background: white; transform: translateY(-2px); box-shadow: 0 6px 0px #c29d0b; }
+
+        /* HERO & SEARCH SECTION */
+        .search-section {
+            background: linear-gradient(rgba(2, 29, 102, 0.9), rgba(2, 29, 102, 0.9)), url('https://www.toptal.com/designers/subtlepatterns/patterns/carbon_fibre.png');
+            padding: 60px 5%;
+            text-align: center;
+            color: white;
+            border-bottom: 5px solid var(--accent-yellow);
+        }
+        .search-section h2 { font-size: 2.2rem; margin-bottom: 10px; }
+        .search-container {
+            max-width: 600px;
+            margin: 25px auto 0;
+            position: relative;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 15px 25px 15px 55px;
+            border-radius: 50px;
+            border: none;
+            font-size: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            outline: none;
+        }
+        .search-container i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--navy-cd);
+            font-size: 1.2rem;
+        }
+
+        /* CONTENT */
+        .container { padding: 50px 5%; max-width: 1300px; margin: auto; }
+        
+        .cd-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
+            gap: 30px; 
+        }
+
+        /* CD CARD STYLE */
+        .cd-card { 
+            background: white; 
+            border-radius: 20px; 
+            overflow: hidden; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); 
+            transition: 0.4s;
+            border: 1px solid #eef2f7;
+            display: flex;
+            flex-direction: column;
+        }
+        .cd-card:hover { 
+            transform: translateY(-12px); 
+            box-shadow: 0 20px 40px rgba(2, 29, 102, 0.2); 
+        }
+
+        .cd-thumb { 
+            height: 180px; 
+            background-color: var(--navy-cd); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Glass reflection effect on CD */
+        .cd-thumb::after {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            top: -50%;
+            left: -50%;
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+        .cd-card:hover .cd-thumb::after { left: 100%; }
+
+        .cd-thumb i { 
+            color: #ffffff; 
+            font-size: 6rem;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+            transition: 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .cd-card:hover .cd-thumb i { transform: rotate(180deg) scale(1.1); }
+
+        .badge-iso {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--accent-yellow);
+            color: #000;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 5px 12px;
+            border-radius: 6px;
+            z-index: 2;
+        }
+
+        .cd-info { padding: 25px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; }
+        .cd-info h4 { font-size: 1.1rem; color: var(--navy-primary); margin-bottom: 12px; line-height: 1.4; min-height: 3rem; }
+        .cd-info p { font-size: 0.9rem; color: #7f8c8d; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+        .btn-download { 
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--success-green);
+            color: white;
+            text-decoration: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+        .btn-download:hover { background: var(--navy-cd); transform: scale(1.02); }
+
+        /* Empty state search */
+        #noResult {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px;
+            display: none;
+        }
+        #noResult i { font-size: 4rem; color: #ccc; margin-bottom: 15px; }
+
+        footer { text-align: center; padding: 50px; color: #95a5a6; font-size: 0.85rem; border-top: 1px solid #eef2f7; background: white; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <i class="fas fa-compact-disc"></i>
+            <h3>KOLEKSI CD-ROM</h3>
+        </div>
+        
+        <a href="dashboard_user.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Kembali 
+        </a>
+    </header>
+
+    <div class="search-section">
+        <h2>E-Resources: CD Interaktif</h2>
+        <p>Akses koleksi file citra CD (ISO) untuk referensi pembelajaran medis digital.</p>
+        
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" id="cdSearch" placeholder="Cari judul CD atau materi..." onkeyup="filterCD()">
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="cd-grid" id="cdGrid">
+            
+            <!-- CD Items -->
+            <div class="cd-card">
+                <div class="cd-thumb">
+                    <span class="badge-iso">ISO</span>
+                    <i class="fas fa-compact-disc"></i>
+                </div>
+                <div class="cd-info">
+                    <h4>Aplikasi Kamus Medis V.2.0</h4>
+                    <p><i class="fas fa-hdd"></i> 450 MB</p>
+                    <a href="#" class="btn-download"><i class="fas fa-download"></i> Unduh ISO</a>
+                </div>
+            </div>
+
+            <div class="cd-card">
+                <div class="cd-thumb">
+                    <span class="badge-iso">ISO</span>
+                    <i class="fas fa-compact-disc"></i>
+                </div>
+                <div class="cd-info">
+                    <h4>Atlas Anatomi Tubuh Interaktif</h4>
+                    <p><i class="fas fa-hdd"></i> 1.2 GB</p>
+                    <a href="#" class="btn-download"><i class="fas fa-download"></i> Unduh ISO</a>
+                </div>
+            </div>
+
+            <div class="cd-card">
+                <div class="cd-thumb">
+                    <span class="badge-iso">ISO</span>
+                    <i class="fas fa-compact-disc"></i>
+                </div>
+                <div class="cd-info">
+                    <h4>Video Prosedur Klinik Dasar</h4>
+                    <p><i class="fas fa-hdd"></i> 780 MB</p>
+                    <a href="#" class="btn-download"><i class="fas fa-download"></i> Unduh ISO</a>
+                </div>
+            </div>
+
+            <div class="cd-card">
+                <div class="cd-thumb">
+                    <span class="badge-iso">ISO</span>
+                    <i class="fas fa-compact-disc"></i>
+                </div>
+                <div class="cd-info">
+                    <h4>Simulasi UKOM Perawat 2024</h4>
+                    <p><i class="fas fa-hdd"></i> 320 MB</p>
+                    <a href="#" class="btn-download"><i class="fas fa-download"></i> Unduh ISO</a>
+                </div>
+            </div>
+
+            <div class="cd-card">
+                <div class="cd-thumb">
+                    <span class="badge-iso">ISO</span>
+                    <i class="fas fa-compact-disc"></i>
+                </div>
+                <div class="cd-info">
+                    <h4>E-Modul Keperawatan Maternitas</h4>
+                    <p><i class="fas fa-hdd"></i> 210 MB</p>
+                    <a href="#" class="btn-download"><i class="fas fa-download"></i> Unduh ISO</a>
+                </div>
+            </div>
+
+            <div class="cd-card">
+                <div class="cd-thumb">
+                    <span class="badge-iso">ISO</span>
+                    <i class="fas fa-compact-disc"></i>
+                </div>
+                <div class="cd-info">
+                    <h4>Database Farmakologi Obat</h4>
+                    <p><i class="fas fa-hdd"></i> 540 MB</p>
+                    <a href="#" class="btn-download"><i class="fas fa-download"></i> Unduh ISO</a>
+                </div>
+            </div>
+
+            <div class="cd-card">
+                <div class="cd-thumb">
+                    <span class="badge-iso">ISO</span>
+                    <i class="fas fa-compact-disc"></i>
+                </div>
+                <div class="cd-info">
+                    <h4>Komunikasi Terapeutik Pasien</h4>
+                    <p><i class="fas fa-hdd"></i> 890 MB</p>
+                    <a href="#" class="btn-download"><i class="fas fa-download"></i> Unduh ISO</a>
+                </div>
+            </div>
+
+            <div class="cd-card">
+                <div class="cd-thumb">
+                    <span class="badge-iso">ISO</span>
+                    <i class="fas fa-compact-disc"></i>
+                </div>
+                <div class="cd-info">
+                    <h4>Panduan Gawat Darurat & Resusitasi</h4>
+                    <p><i class="fas fa-hdd"></i> 610 MB</p>
+                    <a href="#" class="btn-download"><i class="fas fa-download"></i> Unduh ISO</a>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="noResult">
+                <i class="fas fa-search"></i>
+                <p>CD yang Anda cari tidak ditemukan.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2024 Perpustakaan Sekolah Tinggi Ilmu Kesehatan HKBP Balige.
+    </footer>
+
+    <script>
+        function filterCD() {
+            const input = document.getElementById('cdSearch');
+            const filter = input.value.toLowerCase();
+            const grid = document.getElementById('cdGrid');
+            const cards = grid.getElementsByClassName('cd-card');
+            const noResult = document.getElementById('noResult');
+            let found = false;
+
+            for (let i = 0; i < cards.length; i++) {
+                let title = cards[i].querySelector('h4').innerText;
+                if (title.toLowerCase().indexOf(filter) > -1) {
+                    cards[i].style.display = "";
+                    found = true;
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+
+            noResult.style.display = found ? "none" : "block";
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tugas & Fungsi - Perpustakaan AKPER HKBP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* --- RESET & BASE STYLES --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f0f7ff; color: #333; line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+        :root { --primary-color: #021e69; --accent-yellow: #f1c40f; --logout-red: #e74c3c; }
+
+        /* --- HEADER & NAVIGATION (Identik dengan Dashboard) --- */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.8rem 3%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            position: sticky; top: 0; z-index: 1000;
+        }
+
+        .logo-container { display: flex; align-items: center; gap: 12px; }
+        .logo-img { width: 45px; height: 45px; background-color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary-color); font-weight: bold; }
+        .logo-text h1 { font-size: 0.95rem; font-weight: 700; text-transform: uppercase; line-height: 1.2; }
+        .logo-text span { font-size: 0.75rem; opacity: 0.9; }
+
+        nav ul { list-style: none; display: flex; gap: 5px; }
+        nav ul li { position: relative; }
+        nav ul li a { padding: 10px 12px; display: block; font-size: 0.85rem; font-weight: 600; color: white; transition: 0.3s; }
+        nav ul li a:hover { color: var(--accent-yellow); }
+
+        /* Dropdown Style */
+        .dropdown-menu { 
+            position: absolute; top: 100%; left: 0; 
+            background-color: white; min-width: 220px; 
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2); 
+            border-radius: 4px; display: none; z-index: 100; 
+            border-top: 3px solid var(--accent-yellow); 
+        }
+        .dropdown-menu li a { color: #333 !important; padding: 10px 15px; border-bottom: 1px solid #f0f0f0; font-size: 0.8rem; }
+        .dropdown-menu li a:hover { background-color: #f8f9fa; color: var(--primary-color) !important; padding-left: 20px; }
+        nav ul li:hover > .dropdown-menu { display: block; }
+
+        /* User Area (Gambar 1 - Login) */
+        .user-area { display: none; align-items: center; gap: 15px; }
+        .user-name { font-size: 0.85rem; font-weight: bold; color: var(--accent-yellow); }
+        .logout-btn { 
+            background-color: var(--logout-red); color: white !important; 
+            padding: 8px 20px; border-radius: 25px; 
+            font-weight: bold; font-size: 0.85rem; 
+            display: flex; align-items: center; gap: 8px; transition: 0.3s; 
+        }
+        .logout-btn:hover { background-color: white; color: var(--logout-red) !important; }
+
+        /* --- CONTENT PAGE --- */
+        .page-header { background: var(--primary-color); color: white; padding: 60px 5% 100px; text-align: center; }
+        .page-header h1 { font-size: 2.2rem; margin-bottom: 10px; }
+        
+        .container { max-width: 900px; margin: -60px auto 50px; padding: 0 20px; }
+        
+        .section-box { 
+            background: white; padding: 35px; 
+            border-radius: 12px; margin-bottom: 25px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            transition: 0.3s;
+        }
+        .section-box:hover { transform: translateY(-5px); }
+        
+        .section-box h2 { 
+            color: var(--primary-color); display: flex; align-items: center; 
+            gap: 12px; border-bottom: 3px solid var(--accent-yellow); 
+            padding-bottom: 12px; margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+        
+        .item { display: flex; gap: 15px; margin-bottom: 18px; align-items: flex-start; }
+        .item i { color: var(--accent-yellow); font-size: 1.2rem; margin-top: 4px; }
+        .item p { font-size: 1rem; color: #444; }
+
+        .btn-back { 
+            display: inline-flex; align-items: center; gap: 10px; 
+            font-weight: bold; color: var(--primary-color); 
+            padding: 10px 0; transition: 0.3s; 
+        }
+        .btn-back:hover { color: var(--accent-yellow); }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER LENGKAP -->
+    <header>
+        <div class="logo-container">
+            <div class="logo-img"><i class="fas fa-plus-square"></i></div>
+            <div class="logo-text">
+                <h1>Perpustakaan AKPER HKBP</h1>
+                <span>Sekolah Keperawatan HKBP</span>
+            </div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" class="home-link">Home</a></li>
+                <li><a href="#">Profile <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="visi-misi.html">Visi Misi</a></li>
+                        <li><a href="kerjasama.html">Kerjasama</a></li>
+                        <li><a href="struktur.html">Struktur Pengurus</a></li>
+                        <li><a href="tugas-fungsi.html">Tugas, Fungsi, Tujuan</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Layanan <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Pinbal</a></li>
+                        <li><a href="#">Upload TA</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Koleksi <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Koleksi Tercetak</a></li>
+                        <li><a href="#">Jurnal Medis</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Koleksi Elektronik <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">E-book</a></li>
+                        <li><a href="#">KTI</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Berita</a></li>
+                <li><a href="#">Informasi <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu"><li><a href="#">Panduan</a></li></ul>
+                </li>
+                <li><a href="#">Data Diri <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu"><li><a href="#">History</a></li></ul>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- AREA USER (Muncul hanya jika login=true) -->
+        <div class="user-area" id="userArea">
+            <span class="user-name"><i class="fas fa-user-circle"></i> Mahasiswa AKPER</span>
+            <a href="guest.html" class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
+        </div>
+    </header>
+
+    <div class="page-header">
+        <h1>Tugas, Fungsi & Tujuan</h1>
+        <p>Peran Strategis Perpustakaan dalam Pendidikan Keperawatan HKBP</p>
+    </div>
+
+    <div class="container">
+        <!-- TUGAS POKOK -->
+        <div class="section-box">
+            <h2><i class="fas fa-tasks"></i> Tugas Pokok</h2>
+            <div class="item">
+                <i class="fas fa-check-circle"></i> 
+                <p>Mengumpulkan, mengolah, dan menyajikan informasi medis keperawatan secara sistematis untuk mendukung kurikulum pendidikan.</p>
+            </div>
+            <div class="item">
+                <i class="fas fa-check-circle"></i> 
+                <p>Merawat dan melestarikan koleksi pustaka baik cetak maupun digital guna menjamin ketersediaan referensi jangka panjang.</p>
+            </div>
+            <div class="item">
+                <i class="fas fa-check-circle"></i> 
+                <p>Memberikan layanan prima kepada sivitas akademika dalam pencarian sumber informasi ilmiah.</p>
+            </div>
+        </div>
+
+        <!-- FUNGSI -->
+        <div class="section-box">
+            <h2><i class="fas fa-cogs"></i> Fungsi</h2>
+            <div class="item">
+                <i class="fas fa-check-circle"></i> 
+                <p><b>Fungsi Edukasi:</b> Menjadi laboratorium intelektual mahasiswa untuk memperdalam ilmu keperawatan di luar kelas.</p>
+            </div>
+            <div class="item">
+                <i class="fas fa-check-circle"></i> 
+                <p><b>Fungsi Informasi:</b> Menyediakan referensi data yang akurat, mutakhir, dan valid untuk penelitian kesehatan.</p>
+            </div>
+            <div class="item">
+                <i class="fas fa-check-circle"></i> 
+                <p><b>Fungsi Riset:</b> Memfasilitasi dosen dan mahasiswa dalam menemukan jurnal-jurnal terakreditasi nasional maupun internasional.</p>
+            </div>
+        </div>
+
+        <!-- TUJUAN -->
+        <div class="section-box">
+            <h2><i class="fas fa-bullseye"></i> Tujuan</h2>
+            <div class="item">
+                <i class="fas fa-check-circle"></i> 
+                <p>Mendukung tercapainya Tri Dharma Perguruan Tinggi (Pendidikan, Penelitian, dan Pengabdian Masyarakat) di lingkungan AKPER HKBP.</p>
+            </div>
+            <div class="item">
+                <i class="fas fa-check-circle"></i> 
+                <p>Melahirkan lulusan perawat yang literat, kritis, dan berwawasan luas berdasarkan bukti ilmiah (Evidence-Based Nursing).</p>
+            </div>
+        </div>
+
+        <a href="#" class="btn-back home-link"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
+    </div>
+
+    <script>
+        // SCRIPT LOGIKA HEADER DINAMIS
+        const params = new URLSearchParams(window.location.search);
+        const isLoggedIn = params.get('login');
+        const homeLinks = document.querySelectorAll('.home-link');
+        const userArea = document.getElementById('userArea');
+
+        if (isLoggedIn === 'true') {
+            // Tampilan Gambar 1: User Login
+            userArea.style.display = 'flex';
+            homeLinks.forEach(link => link.href = 'dashboard_user.html');
+        } else {
+            // Tampilan Gambar 2: Tanpa Tombol Login/Logout (Header Kosong di Kanan)
+            userArea.style.display = 'none';
+            homeLinks.forEach(link => link.href = 'guest.html');
+        }
+
+        // Memastikan status login tetap terbawa saat navigasi antar halaman profil
+        document.querySelectorAll('nav a, .dropdown-menu a').forEach(link => {
+            const currentHref = link.getAttribute('href');
+            if (currentHref && currentHref.includes('.html') && !currentHref.includes('guest.html')) {
+                link.href = currentHref + (isLoggedIn === 'true' ? '?login=true' : '');
+            }
+        });
+    </script>
+</body>
+</html>

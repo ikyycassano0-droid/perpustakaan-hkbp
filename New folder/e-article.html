@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTAL JURNAL DIGITAL - AKPER HKBP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        :root { 
+            --navy-dark: #021d66; 
+            --navy-light: #03309e; 
+            --accent-gold: #ffc947;
+            --bg-light: #f4f7f6;
+            --pdf-color: #ff4d4d;
+            --national-color: #2ecc71;
+            --global-color: #3498db;
+            --white: #ffffff;
+        }
+
+        body { background-color: var(--bg-light); color: #2c3e50; line-height: 1.6; scroll-behavior: smooth; }
+
+        /* HEADER */
+        header { 
+            background: var(--navy-dark);
+            color: white; 
+            padding: 15px 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-area i { font-size: 1.8rem; color: var(--white); } 
+        .logo-area h1 { font-size: 1.1rem; letter-spacing: 1px; text-transform: uppercase; font-weight: 800; }
+
+        .back-btn { 
+            background: var(--accent-gold); color: #000; padding: 10px 20px; 
+            border-radius: 30px; font-weight: bold; text-decoration: none;
+            transition: 0.3s; display: flex; align-items: center; gap: 8px;
+            font-size: 0.85rem; box-shadow: 0 4px 0px #d4a017;
+        }
+        .back-btn:hover { background: white; transform: translateY(-2px); }
+
+        /* HERO SECTION DENGAN GAMBAR PERPUS */
+        .hero {
+            background: linear-gradient(rgba(2, 29, 102, 0.88), rgba(2, 29, 102, 0.88)), 
+                        url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            padding: 80px 5% 90px; 
+            text-align: center; 
+            color: white;
+            border-bottom: 6px solid var(--accent-gold);
+        }
+        .hero h2 { font-size: 2.8rem; margin-bottom: 10px; font-weight: 800; }
+        .hero p { opacity: 0.9; max-width: 800px; margin: auto; font-size: 1.1rem; }
+
+        /* SEARCH BAR */
+        .search-container {
+            max-width: 700px; margin: -35px auto 0; padding: 0 20px;
+            position: relative; z-index: 10;
+        }
+        .search-box {
+            background: white; padding: 8px; border-radius: 50px; 
+            display: flex; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .search-box input { 
+            border: none; flex: 1; padding: 12px 25px; outline: none; 
+            font-size: 1rem; border-radius: 50px; 
+        }
+        .search-box button { 
+            background: var(--navy-dark); color: white; border: none; 
+            padding: 10px 30px; border-radius: 50px; cursor: pointer; 
+            font-weight: bold; transition: 0.3s;
+        }
+
+        /* CATEGORY BAR (SESUAI GAMBAR) */
+        .category-bar {
+            display: flex; justify-content: center; gap: 15px; margin: 40px 0 20px; flex-wrap: wrap;
+        }
+        .cat-tag {
+            padding: 12px 35px; background: white; border: 1px solid #ddd;
+            border-radius: 50px; font-size: 1rem; cursor: pointer; transition: 0.3s;
+            font-weight: 600; color: var(--navy-dark);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .cat-tag.active { background: var(--navy-dark); color: white; border-color: var(--navy-dark); }
+        .cat-tag:hover:not(.active) { background: #f0f0f0; }
+
+        .container { padding: 20px 5% 100px; max-width: 1400px; margin: auto; }
+
+        /* SECTION HEAD */
+        .section-head {
+            margin: 60px 0 30px; display: flex; align-items: center; gap: 20px;
+        }
+        .section-head h3 { font-size: 1.6rem; color: var(--navy-dark); font-weight: 800; white-space: nowrap; }
+        .section-head .line { flex-grow: 1; height: 3px; background: #e0e0e0; border-radius: 10px; }
+
+        /* GRID SYSTEM */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        /* CARD STYLING */
+        .card {
+            background: white; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: 0.4s;
+            border: 1px solid #eee; display: flex; flex-direction: column;
+        }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(2, 29, 102, 0.15); }
+
+        .card-top {
+            height: 140px; display: flex; align-items: center; justify-content: center;
+            position: relative; font-size: 4rem;
+        }
+        .card-top.pdf { background: #fff5f5; color: var(--pdf-color); }
+        .card-top.national { background: #f0fff4; color: var(--national-color); }
+        .card-top.global { background: #ebf8ff; color: var(--global-color); }
+
+        .badge {
+            position: absolute; top: 15px; right: 15px; font-size: 0.7rem;
+            padding: 6px 15px; border-radius: 50px; color: white; font-weight: 800;
+        }
+
+        .card-body { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        .card-body .topic { font-size: 0.75rem; font-weight: 800; color: var(--navy-light); text-transform: uppercase; margin-bottom: 10px; }
+        .card-body h4 { font-size: 1.1rem; margin-bottom: 15px; color: var(--navy-dark); line-height: 1.4; min-height: 3.1rem; }
+        .card-meta { font-size: 0.85rem; color: #666; margin-bottom: 20px; }
+        .card-meta div { margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+
+        .btn-action {
+            width: 100%; padding: 14px; border-radius: 12px; text-align: center;
+            text-decoration: none; font-weight: 800; font-size: 0.9rem;
+            transition: 0.3s; display: block;
+        }
+        .btn-pdf { background: var(--navy-dark); color: white; }
+        .btn-pdf:hover { background: var(--pdf-color); }
+        .btn-link { background: #f1f2f6; color: var(--navy-dark); }
+        .btn-link:hover { background: var(--accent-gold); color: black; }
+
+        footer { background: var(--navy-dark); color: white; padding: 60px 5% 40px; text-align: center; }
+        #noResults { grid-column: 1/-1; text-align: center; padding: 40px; display: none; }
+
+        @media (max-width: 768px) {
+            .hero h2 { font-size: 2rem; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <i class="fas fa-file-invoice"></i> <!-- Logo Putih -->
+            <h1>E-Artikel & Jurnal</h1>
+        </div>
+        <a href="dashboard_user.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Kembali
+        </a>
+    </header>
+
+    <div class="hero">
+        <h2>Pusat Riset Ilmiah</h2>
+        <p>Akses koleksi artikel internal, jurnal nasional terakreditasi, dan database jurnal internasional bereputasi dalam satu pintu.</p>
+    </div>
+
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Cari judul artikel, jurnal, atau penulis..." onkeyup="filterContent()">
+            <button><i class="fas fa-search"></i> Cari</button>
+        </div>
+    </div>
+
+    <!-- CATEGORY BAR SESUAI GAMBAR -->
+    <div class="category-bar">
+        <div class="cat-tag active" onclick="filterCategory('Semua', this)">Semua</div>
+        <div class="cat-tag" onclick="filterCategory('KMB', this)">KMB</div>
+        <div class="cat-tag" onclick="filterCategory('Jiwa', this)">Jiwa</div>
+        <div class="cat-tag" onclick="filterCategory('Maternitas', this)">Maternitas</div>
+        <div class="cat-tag" onclick="filterCategory('Manajemen', this)">Manajemen</div>
+    </div>
+
+    <div class="container">
+        
+        <!-- SECTION 1: E-ARTICLE (3 ITEMS) -->
+        <div class="section-head" id="e-article">
+            <h3><i class="fas fa-file-pdf" style="color: var(--pdf-color);"></i> Koleksi E-Article</h3>
+            <div class="line"></div>
+        </div>
+        <div class="grid">
+            <div class="card item" data-category="KMB">
+                <div class="card-top pdf"><span class="badge" style="background: var(--pdf-color);">INTERNAL</span><i class="fas fa-file-medical"></i></div>
+                <div class="card-body">
+                    <span class="topic">KMB</span>
+                    <h4>Manajemen Penanganan Henti Jantung di Area Pre-Hospital</h4>
+                    <div class="card-meta"><div><i class="far fa-user"></i> Ns. Sartika Sari, M.Kep</div></div>
+                    <a href="#" class="btn-action btn-pdf">Unduh PDF</a>
+                </div>
+            </div>
+            <div class="card item" data-category="Jiwa">
+                <div class="card-top pdf"><span class="badge" style="background: var(--pdf-color);">RESEARCH</span><i class="fas fa-brain"></i></div>
+                <div class="card-body">
+                    <span class="topic">Jiwa</span>
+                    <h4>Dukungan Keluarga Terhadap Pasien Skizofrenia</h4>
+                    <div class="card-meta"><div><i class="far fa-user"></i> Tim Riset AKPER</div></div>
+                    <a href="#" class="btn-action btn-pdf">Unduh PDF</a>
+                </div>
+            </div>
+            <div class="card item" data-category="Maternitas">
+                <div class="card-top pdf"><span class="badge" style="background: var(--pdf-color);">GUIDELINE</span><i class="fas fa-baby"></i></div>
+                <div class="card-body">
+                    <span class="topic">Maternitas</span>
+                    <h4>Panduan Edukasi Teknik Breastfeeding Primipara</h4>
+                    <div class="card-meta"><div><i class="far fa-user"></i> Ns. Linda Waty, S.Kep</div></div>
+                    <a href="#" class="btn-action btn-pdf">Unduh PDF</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: JURNAL NASIONAL (3 ITEMS) -->
+        <div class="section-head" id="nasional">
+            <h3><i class="fas fa-flag" style="color: var(--national-color);"></i> Jurnal Nasional (SINTA)</h3>
+            <div class="line"></div>
+        </div>
+        <div class="grid">
+            <div class="card item" data-category="Manajemen">
+                <div class="card-top national"><span class="badge" style="background: var(--national-color);">SINTA 1</span><i class="fas fa-graduation-cap"></i></div>
+                <div class="card-body">
+                    <span class="topic">Manajemen</span>
+                    <h4>JKI (Jurnal Keperawatan Indonesia) - FIK UI</h4>
+                    <div class="card-meta"><div><i class="fas fa-check-circle"></i> Akreditasi Kemendikbud</div></div>
+                    <a href="https://jki.ui.ac.id/" target="_blank" class="btn-action btn-link">Buka Portal</a>
+                </div>
+            </div>
+            <div class="card item" data-category="KMB">
+                <div class="card-top national"><span class="badge" style="background: var(--national-color);">SINTA 2</span><i class="fas fa-university"></i></div>
+                <div class="card-body">
+                    <span class="topic">KMB</span>
+                    <h4>JKP (Jurnal Keperawatan Padjadjaran)</h4>
+                    <div class="card-meta"><div><i class="fas fa-check-circle"></i> SINTA Terakreditasi</div></div>
+                    <a href="https://jkp.fkep.unpad.ac.id/" target="_blank" class="btn-action btn-link">Buka Portal</a>
+                </div>
+            </div>
+            <div class="card item" data-category="Semua">
+                <div class="card-top national"><span class="badge" style="background: var(--national-color);">DATABASE</span><i class="fas fa-search-plus"></i></div>
+                <div class="card-body">
+                    <span class="topic">Semua</span>
+                    <h4>Portal Garuda - Garba Rujukan Digital Nasional</h4>
+                    <div class="card-meta"><div><i class="fas fa-globe-asia"></i> Repository Indonesia</div></div>
+                    <a href="https://garuda.kemdikbud.go.id/" target="_blank" class="btn-action btn-link">Buka Portal</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: JURNAL INTERNASIONAL (3 ITEMS) -->
+        <div class="section-head" id="internasional">
+            <h3><i class="fas fa-globe-americas" style="color: var(--global-color);"></i> Jurnal Internasional</h3>
+            <div class="line"></div>
+        </div>
+        <div class="grid">
+            <div class="card item" data-category="Semua">
+                <div class="card-top global"><span class="badge" style="background: var(--global-color);">PUBMED</span><i class="fas fa-microscope"></i></div>
+                <div class="card-body">
+                    <span class="topic">Semua</span>
+                    <h4>PubMed Central (PMC) - US National Library</h4>
+                    <div class="card-meta"><div><i class="fas fa-award"></i> Database Global</div></div>
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank" class="btn-action btn-link">Buka PubMed</a>
+                </div>
+            </div>
+            <div class="card item" data-category="KMB">
+                <div class="card-top global"><span class="badge" style="background: var(--global-color);">ELSEVIER</span><i class="fas fa-flask"></i></div>
+                <div class="card-body">
+                    <span class="topic">KMB</span>
+                    <h4>Int. Journal of Nursing Studies (Scopus Q1)</h4>
+                    <div class="card-meta"><div><i class="fas fa-star"></i> Peringkat #1 Dunia</div></div>
+                    <a href="https://www.sciencedirect.com/journal/international-journal-of-nursing-studies" target="_blank" class="btn-action btn-link">Buka Elsevier</a>
+                </div>
+            </div>
+            <div class="card item" data-category="Manajemen">
+                <div class="card-top global"><span class="badge" style="background: var(--global-color);">WILEY</span><i class="fas fa-book-medical"></i></div>
+                <div class="card-body">
+                    <span class="topic">Manajemen</span>
+                    <h4>Journal of Advanced Nursing (Wiley Online)</h4>
+                    <div class="card-meta"><div><i class="fas fa-globe"></i> Riset Klinik Global</div></div>
+                    <a href="https://onlinelibrary.wiley.com/journal/13652648" target="_blank" class="btn-action btn-link">Buka Wiley</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="noResults">
+            <i class="fas fa-search fa-3x" style="color: #ccc; margin-bottom: 15px;"></i>
+            <p>Pencarian tidak ditemukan.</p>
+        </div>
+
+    </div>
+
+    <footer>
+        <i class="fas fa-file-invoice fa-3x" style="color: var(--accent-gold); margin-bottom: 20px;"></i>
+        <p>&copy; 2024 Perpustakaan Sekolah Tinggi Ilmu Kesehatan HKBP Balige.</p>
+    </footer>
+
+    <script>
+        function filterContent() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let items = document.getElementsByClassName('item');
+            let found = false;
+
+            for (let i = 0; i < items.length; i++) {
+                let title = items[i].querySelector('h4').innerText.toLowerCase();
+                if (title.includes(input)) {
+                    items[i].style.display = "";
+                    found = true;
+                } else {
+                    items[i].style.display = "none";
+                }
+            }
+            document.getElementById('noResults').style.display = found ? "none" : "block";
+        }
+
+        function filterCategory(cat, element) {
+            // Update Active State
+            let tags = document.getElementsByClassName('cat-tag');
+            for(let tag of tags) tag.classList.remove('active');
+            element.classList.add('active');
+
+            // Filter Items
+            let items = document.getElementsByClassName('item');
+            let found = false;
+            for (let item of items) {
+                let itemCat = item.getAttribute('data-category');
+                if (cat === 'Semua' || itemCat === cat) {
+                    item.style.display = "";
+                    found = true;
+                } else {
+                    item.style.display = "none";
+                }
+            }
+            document.getElementById('noResults').style.display = found ? "none" : "block";
+        }
+    </script>
+
+</body>
+</html>
