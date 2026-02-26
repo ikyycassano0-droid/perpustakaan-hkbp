@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visi & Misi - Perpustakaan AKPER HKBP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* --- STYLE HEADER & DROPDOWN (SAMA DENGAN INDEX/DASHBOARD) --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f0f7ff; color: #333; line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+        :root { --primary-color: #021e69; --accent-yellow: #f1c40f; --logout-red: #e74c3c; }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.8rem 3%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .logo-container { display: flex; align-items: center; gap: 12px; }
+        .logo-img { width: 45px; height: 45px; background-color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary-color); font-weight: bold; }
+        .logo-text h1 { font-size: 0.95rem; font-weight: 700; text-transform: uppercase; line-height: 1.2; }
+        .logo-text span { font-size: 0.75rem; opacity: 0.9; }
+
+        nav ul { list-style: none; display: flex; gap: 5px; }
+        nav ul li { position: relative; }
+        nav ul li a { padding: 10px 12px; display: block; font-size: 0.85rem; font-weight: 600; color: white; transition: 0.3s; }
+        nav ul li a:hover { color: var(--accent-yellow); }
+
+        /* Dropdown Style */
+        .dropdown-menu { position: absolute; top: 100%; left: 0; background-color: white; min-width: 220px; box-shadow: 0 8px 15px rgba(0,0,0,0.2); border-radius: 4px; display: none; z-index: 100; border-top: 3px solid var(--accent-yellow); }
+        .dropdown-menu li a { color: #333 !important; padding: 10px 15px; border-bottom: 1px solid #f0f0f0; font-size: 0.8rem; }
+        .dropdown-menu li a:hover { background-color: #f8f9fa; color: var(--primary-color) !important; padding-left: 20px; }
+        nav ul li:hover > .dropdown-menu { display: block; }
+        .submenu { left: 100%; top: 0; border-left: 3px solid var(--accent-yellow); }
+
+        /* User & Logout Area (Gambar 1) */
+        .user-area { display: none; align-items: center; gap: 15px; }
+        .user-name { font-size: 0.85rem; font-weight: bold; color: var(--accent-yellow); }
+        .logout-btn { background-color: var(--logout-red); color: white !important; padding: 8px 20px; border-radius: 25px; font-weight: bold; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .logout-btn:hover { background-color: white; color: var(--logout-red) !important; }
+
+        /* Content Area */
+        .page-banner { background: var(--primary-color); color: white; padding: 60px 5% 100px; text-align: center; }
+        .container { max-width: 900px; margin: -60px auto 50px; padding: 0 20px; }
+        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        h2 { color: var(--primary-color); border-bottom: 3px solid var(--accent-yellow); display: inline-block; padding-bottom: 5px; margin-bottom: 20px; }
+        .misi-list { list-style: none; padding: 0; }
+        .misi-list li { padding: 15px; border-left: 5px solid var(--primary-color); background: #f8f9fa; margin-bottom: 10px; font-weight: 500; }
+        .btn-back { display: inline-flex; align-items: center; gap: 10px; font-weight: bold; color: var(--primary-color); margin-top: 20px; transition: 0.3s; }
+        .btn-back:hover { color: var(--accent-yellow); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <div class="logo-img"><i class="fas fa-plus-square"></i></div>
+            <div class="logo-text"><h1>Perpustakaan AKPER HKBP</h1><span>Sekolah Keperawatan HKBP</span></div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" class="home-link">Home</a></li>
+                <li><a href="#">Profile <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="visi-misi.html">Visi Misi</a></li>
+                        <li><a href="kerjasama.html">Kerjasama</a></li>
+                        <li><a href="struktur.html">Struktur Pengurus</a></li>
+                        <li><a href="tugas-fungsi.html">Tugas, Fungsi, Tujuan</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Layanan <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Pinbal</a></li>
+                        <li><a href="#">Upload TA</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Koleksi <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Koleksi Tercetak <i class="fas fa-caret-right" style="float:right;"></i></a>
+                            <ul class="dropdown-menu submenu">
+                                <li><a href="#">Jurnal</a></li>
+                                <li><a href="#">Buku Pengayaan</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#">Koleksi Elektronik <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">E-book</a></li>
+                        <li><a href="#">KTI</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Berita</a></li>
+                <li><a href="#">Informasi <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu"><li><a href="#">Panduan</a></li></ul>
+                </li>
+                <li><a href="#">Data Diri <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu"><li><a href="#">History</a></li></ul>
+                </li>
+            </ul>
+        </nav>
+        <div class="user-area" id="userArea">
+            <span class="user-name"><i class="fas fa-user-circle"></i> Mahasiswa AKPER</span>
+            <a href="guest.html" class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
+        </div>
+    </header>
+
+    <div class="page-banner">
+        <h1>Visi & Misi</h1>
+        <p>Arah dan Tujuan Strategis Perpustakaan AKPER HKBP</p>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Visi</h2>
+            <p style="font-size: 1.2rem; font-style: italic; line-height: 1.8;">"Menjadi pusat sumber belajar keperawatan yang unggul, berbasis teknologi informasi, dan menjadi rujukan utama dalam pengembangan literasi kesehatan di tingkat nasional pada tahun 2030."</p>
+        </div>
+        <div class="card">
+            <h2>Misi</h2>
+            <ul class="misi-list">
+                <li>1. Menyediakan koleksi literatur keperawatan dan medis yang mutakhir dan relevan.</li>
+                <li>2. Menyelenggarakan layanan perpustakaan berbasis digital yang mudah diakses.</li>
+                <li>3. Memfasilitasi kebutuhan riset bagi dosen dan mahasiswa AKPER HKBP.</li>
+                <li>4. Mengembangkan literasi informasi guna menghasilkan perawat yang kompeten.</li>
+            </ul>
+            <a href="#" class="btn-back home-link"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
+        </div>
+    </div>
+
+    <script>
+        // Logika Header Dinamis
+        const params = new URLSearchParams(window.location.search);
+        const status = params.get('login');
+        const homeLinks = document.querySelectorAll('.home-link');
+        const userArea = document.getElementById('userArea');
+
+        if (status === 'true') {
+            userArea.style.display = 'flex'; // Tampilkan Logout (Gambar 1)
+            homeLinks.forEach(link => link.href = 'dashboard_user.html');
+        } else {
+            userArea.style.display = 'none'; // Sembunyikan (Gambar 2 tanpa login button)
+            homeLinks.forEach(link => link.href = 'guest.html');
+        }
+
+        // Tambahkan parameter login ke semua link internal agar status tetap terjaga
+        document.querySelectorAll('nav a, .dropdown-menu a').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && href !== '#' && href.includes('.html') && !href.includes('guest.html')) {
+                link.href = href + (status === 'true' ? '?login=true' : '');
+            }
+        });
+    </script>
+</body>
+</html>
