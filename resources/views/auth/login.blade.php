@@ -63,15 +63,22 @@
         <form action="{{ route('login') }}" method="POST">
             @csrf
             <div class="form-group mb-3">
-                <label>NIM / Username</label>
-                <input type="text" name="nim" class="form-control" value="{{ old('nim') }}" placeholder="Enter your NIM" required autofocus>
-                @error('nim') <span class="text-danger">{{ $message }}</span> @enderror
+                <!-- Label diubah agar lebih umum (NPM untuk Mhs/Admin, NIDN untuk Dosen) -->
+                <label>NPM / NIDN / Username</label>
+                <!-- Nama input diubah menjadi 'login_id' agar cocok dengan AuthController -->
+                <input type="text" name="login_id" class="form-control" value="{{ old('login_id') }}" placeholder="Enter your ID" required autofocus>
+                
+                @error('login_id') 
+                    <span class="text-danger">{{ $message }}</span> 
+                @enderror
             </div>
 
             <div class="form-group mb-3">
                 <label>Password</label>
                 <input type="password" name="password" class="form-control" placeholder="••••••••" required>
-                @error('password') <span class="text-danger">{{ $message }}</span> @enderror
+                @error('password') 
+                    <span class="text-danger">{{ $message }}</span> 
+                @enderror
             </div>
 
             <button type="submit" class="btn btn-primary">Sign In</button>
