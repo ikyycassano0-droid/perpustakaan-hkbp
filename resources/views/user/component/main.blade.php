@@ -369,14 +369,11 @@
     </style>
 </head>
 <body>
-    <main class="class">
-        @yield('user_content')
-    </main>
 
-    <!-- FOOTER -->
-    <div class="footer">
-        <div class="copyright">&copy; 2024 Portal Anggota - Perpustakaan Sekolah Keperawatan HKBP. Semua Hak Dilindungi.</div>
+    <div class="content">
+        @yield('user_content')
     </div>
+
 <script src="{{URL:: asset('assets/js/main.js') }}"></script>
 
 <script src="{{URL:: asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>

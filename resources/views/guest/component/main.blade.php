@@ -19,7 +19,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     <link href="{{ asset('assets/css/main.css') }}" rel="stylesheet">
+    
     <style>
+        
         /* --- SEMUA STYLE SAMA PERSIS DENGAN SEBELUM LOGIN --- */
         * {
             margin: 0;
@@ -366,17 +368,53 @@
             .grid-layanan-modern { grid-template-columns: repeat(2, 1fr); }
             .card-layanan:nth-child(5), .card-layanan:nth-child(6) { grid-column: span 1; }
         }
+
+        body {
+            background-color: #f0f7ff;
+            color: #333;
+            line-height: 1.6;
+
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .content {
+            flex: 1;
+        }
+
+        .page-banner { background: var(--primary-color); color: white; padding: 60px 5% 100px; text-align: center; }
+        .container { max-width: 900px; margin: -60px auto 50px; padding: 0 20px; }
+        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        h2 { color: var(--primary-color); border-bottom: 3px solid var(--accent-yellow); display: inline-block; padding-bottom: 5px; margin-bottom: 20px; }
+        .misi-list { list-style: none; padding: 0; }
+        .misi-list li { padding: 15px; border-left: 5px solid var(--primary-color); background: #f8f9fa; margin-bottom: 10px; font-weight: 500; }
+        .btn-back { display: inline-flex; align-items: center; gap: 10px; font-weight: bold; color: var(--primary-color); margin-top: 20px; transition: 0.3s; }
+        .btn-back:hover { color: var(--accent-yellow); }
+
+        .page-header { background: #021e69; color: white; padding: 40px 5%; }
+                .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .member-card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin: 15px auto; width: 300px; border-top: 5px solid #f1c40f; }
+        .member-card img { width: 80px; height: 80px; background: #eee; border-radius: 50%; margin-bottom: 10px; }
+        .role { color: #021e69; font-weight: bold; font-size: 0.9rem; text-transform: uppercase; }
+        .name { font-size: 1.1rem; margin: 5px 0; }
+        .tree-line { width: 2px; height: 30px; background: #021e69; margin: 0 auto; }
     </style>
+
+    
 </head>
 <body>
-    <main class="class">
-        @yield('user_content')
-    </main>
 
-    <!-- FOOTER -->
-    <div class="footer">
-        <div class="copyright">&copy; 2024 Portal Anggota - Perpustakaan Sekolah Keperawatan HKBP. Semua Hak Dilindungi.</div>
+    <div class="content">
+        @yield('guest_content')
     </div>
+
+    <footer>
+    @include('guest.component.footer')
+    </footer>
+
+</body>
+
 <script src="{{URL:: asset('assets/js/main.js') }}"></script>
 
 <script src="{{URL:: asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
@@ -388,5 +426,5 @@
 <script src="{{URL:: asset('assets/vendor/swiper/swiper-bundle.min.js') }}"></script>
 <script src="{{URL:: asset('assets/vendor/purecounter/purecounter_vanilla.js') }}"></script>
 <script src="{{URL:: asset('assets/js/main.js') }}"></script>
-</body>
+
 </html>

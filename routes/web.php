@@ -2,34 +2,37 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
 
-// AKSES PUBLIK
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+// Login
+Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('login', [AuthController::class, 'login'])->name('login.submit');
 
-// GUEST ONLY (Login & Register)
-Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
-    
-    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-    Route::post('/register', [AuthController::class, 'register']);
-});
+// Logout
+Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
-// LOGOUT
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+// Dashboard admin
+Route::get('admin/dashboard', function(){
+    return view('admin.dashboard');
+})->name('admin.dashboard')->middleware('auth');
 
-// PROTEKSI ADMIN
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
-});
+// Dashboard user biasa
+Route::get('user/dashboard', function(){
+    return view('user.dashboard');
+})->name('user.dashboard')->middleware('auth');
 
-// PROTEKSI USER
-Route::middleware(['auth', 'role:user'])->group(function () {
-    Route::get('/user', function () {
-        return view('user.dashboard');
-    })->name('user.dashboard');
+Route::middleware(['web'])->group(function () {
+    Route::get('/', function () {
+        return view('guest.page.home'); // path Blade tetap: guest.page.home
+    })->name('home');
+
+    Route::get('/visi-misi', [ProfileController::class, 'showVisiMisi'])
+        ->name('guest.page.profile.visi-misi'); // path tetap
+
+    Route::get('/tugas-fungsi', [ProfileController::class, 'showTugasFungsi'])
+        ->name('guest.page.profile.tugas-fungsi'); // path tetap
+
+    Route::get('/struktur', [ProfileController::class, 'showStruktur'])
+        ->name('guest.page.profile.struktur pengurus'); // path tetap
 });

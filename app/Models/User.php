@@ -1,29 +1,36 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable {
-    use HasFactory, Notifiable;
-
+class User extends Authenticatable
+{
+    protected $table = 'users';
+    protected $primaryKey = 'id';
+    
     protected $fillable = [
+        'role_id',
         'name',
-        'nim',
+        'npm',
+        'nidn',
+        'birth_date',
+        'gender',
+        'membership_type',
+        'phone',
+        'photo',
         'password',
-        'role',
+        'active',
+        'created_by',
+        'updated_by',
+        'created_at',
+        'updated_at'
     ];
 
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $hidden = ['password']; // jangan tampilkan password di query
 
-    protected function casts(): array {
-        return [
-            'password' => 'hashed',
-        ];
+    // Relasi ke role
+    public function role() {
+        return $this->belongsTo(Role::class, 'role_id');
     }
 }

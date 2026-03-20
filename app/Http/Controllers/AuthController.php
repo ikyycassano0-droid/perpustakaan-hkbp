@@ -1,53 +1,55 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
-    // Menampilkan halaman login
-    public function showLogin() {
-        return view('auth.login');
+    // Tampilkan form login
+    public function showLoginForm() {
+        return view('auth.login'); // resources/views/auth/login.blade.php
     }
 
-    // Menampilkan halaman register
-    public function showRegister() {
-        return view('auth.register');
-    }
-
-    // Proses Login
+    // Proses login
     public function login(Request $request) {
-        $credentials = $request->validate([
-            'nim' => ['required'],
-            'password' => ['required'],
+        $request->validate([
+            'npm' => 'required|string',
+            'password' => 'required|string'
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+        $user = User::where('npm', $request->npm)->first();
 
-            // REDIRECT LOGIC
-            if (Auth::user()->role === 'admin') {
-                return redirect()->intended('/admin/dashboard');
-            }
-            // User biasa kembali ke landing page (welcome)
-            return redirect()->intended('/');
+        if(!$user) {
+            return back()->with('error', 'NPM tidak ditemukan.');
         }
 
-        return back()->withErrors([
-            'nim' => 'NIM atau Password tidak cocok dengan data kami.',
-        ])->onlyInput('nim');
+        if(!Hash::check($request->password, $user->password)) {
+            return back()->with('error', 'Password salah.');
+        }
+
+        if(!$user->active){
+            return back()->with('error', 'Akun tidak aktif.');
+        }
+
+        // Login berhasil → simpan session
+        Session::put('user_id', $user->id);
+        Session::put('user_name', $user->name);
+        Session::put('user_role', $user->role_id);
+
+        // Redirect berdasarkan role
+        if($user->role_id == 1){ // Admin
+            return redirect()->route('admin.dashboard');
+        } else { // User biasa
+            return redirect()->route('user.dashboard');
+        }
     }
 
-
-    // Logout
-    public function logout(Request $request) {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect('/');
+    // Logout semua user
+    public function logout() {
+        Session::forget(['user_id','user_name','user_role']);
+        return redirect()->route('login');
     }
 }

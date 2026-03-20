@@ -19,7 +19,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     <link href="{{ asset('assets/css/main.css') }}" rel="stylesheet">
+    
     <style>
+        
         /* --- SEMUA STYLE SAMA PERSIS DENGAN SEBELUM LOGIN --- */
         * {
             margin: 0;
@@ -367,16 +369,20 @@
             .card-layanan:nth-child(5), .card-layanan:nth-child(6) { grid-column: span 1; }
         }
     </style>
+
+    
 </head>
 <body>
-    <main class="class">
-        @yield('user_content')
-    </main>
 
-    <!-- FOOTER -->
-    <div class="footer">
-        <div class="copyright">&copy; 2024 Portal Anggota - Perpustakaan Sekolah Keperawatan HKBP. Semua Hak Dilindungi.</div>
+
+    <div class="content">
+        @yield('admin_content')
     </div>
+
+        <footer>
+        @include('admin.component.footer')
+        </footer>
+
 <script src="{{URL:: asset('assets/js/main.js') }}"></script>
 
 <script src="{{URL:: asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>

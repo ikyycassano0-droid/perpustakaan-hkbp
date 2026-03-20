@@ -1,82 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <title>Login | ModernAdmin</title>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
-    
+    <title>Login - Perpustakaan AKPER HKBP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        :root { --primary-color: #021e69; --accent-yellow: #f1c40f; }
+        
         body {
-            background: linear-gradient(135deg, #0b111e 0%, #111827 100%);
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Inter', sans-serif;
+            background: linear-gradient(rgba(2, 30, 105, 0.85), rgba(2, 30, 105, 0.85)), 
+                        url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1350&q=80');
+            background-size: cover; background-position: center; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
         }
-        .auth-card {
-            background: #151c2c;
-            border: 1px solid #1f2937;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 400px;
-            padding: 40px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+
+        .login-card {
+            background: white; width: 100%; max-width: 400px; padding: 40px;
+            border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); text-align: center;
         }
-        .auth-header h3 { color: #fff; font-weight: 700; margin-bottom: 5px; }
-        .auth-header p { color: #94a3b8; font-size: 14px; margin-bottom: 30px; }
-        .form-group label { color: #94a3b8; font-size: 13px; font-weight: 500; }
-        .form-control {
-            background: #111827 !important;
-            border: 1px solid #1f2937 !important;
-            color: #fff !important;
-            border-radius: 10px;
-            padding: 12px 15px;
-            margin-top: 5px;
+
+        .login-logo {
+            width: 70px; height: 70px; background: var(--primary-color); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; margin: 0 auto 20px; border: 4px solid #f0f7ff;
         }
-        .btn-primary {
-            background: #3b82f6;
-            border: none;
-            border-radius: 10px;
-            padding: 12px;
-            font-weight: 600;
-            width: 100%;
-            margin-top: 20px;
-            transition: all 0.3s;
+
+        h2 { color: var(--primary-color); margin-bottom: 5px; }
+        p { color: #666; font-size: 0.85rem; margin-bottom: 30px; }
+
+        .form-group { text-align: left; margin-bottom: 20px; position: relative; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--primary-color); margin-bottom: 8px; }
+        .form-group i { position: absolute; left: 15px; top: 38px; color: #999; }
+        .form-group input { width: 100%; padding: 12px 15px 12px 40px; border: 2px solid #eee; border-radius: 8px; outline: none; }
+
+        .btn-login {
+            width: 100%; background: var(--primary-color); color: white; border: none;
+            padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s;
         }
-        .btn-primary:hover { background: #2563eb; transform: translateY(-2px); }
-        .text-danger { font-size: 12px; margin-top: 5px; display: block; }
-        .auth-footer { text-align: center; margin-top: 25px; font-size: 14px; color: #94a3b8; }
-        .auth-footer a { color: #3b82f6; text-decoration: none; font-weight: 600; }
+        .btn-login:hover { background: var(--accent-yellow); color: #000; }
+
+        .alert { background: #f8d7da; color: #842029; padding: 10px 15px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
+    <div class="login-card">
+        <div class="login-logo"><i class="fas fa-user-md"></i></div>
+        <h2>Sistem Login</h2>
+        <p>Akses Member Perpustakaan AKPER HKBP</p>
 
-    <div class="auth-card">
-        <div class="auth-header">
-            <h3>Welcome Back</h3>
-            <p>Please enter your credentials to login.</p>
-        </div>
+        {{-- Tampilkan error jika login gagal --}}
+        @if(session('error'))
+            <div class="alert">{{ session('error') }}</div>
+        @endif
 
-        <form action="{{ route('login') }}" method="POST">
+        <form method="POST" action="{{ route('login.submit') }}">
             @csrf
-            <div class="form-group mb-3">
-                <label>NIM / Username</label>
-                <input type="text" name="nim" class="form-control" value="{{ old('nim') }}" placeholder="Enter your NIM" required autofocus>
-                @error('nim') <span class="text-danger">{{ $message }}</span> @enderror
+            <div class="form-group">
+                <label>Nomor Induk / NPM</label>
+                <i class="fas fa-id-card"></i>
+                <input type="text" name="npm" placeholder="Masukkan NPM Anda" required>
             </div>
-
-            <div class="form-group mb-3">
-                <label>Password</label>
-                <input type="password" name="password" class="form-control" placeholder="••••••••" required>
-                @error('password') <span class="text-danger">{{ $message }}</span> @enderror
+            <div class="form-group">
+                <label>Kata Sandi</label>
+                <i class="fas fa-lock"></i>
+                <input type="password" name="password" placeholder="Masukkan Password" required>
             </div>
-
-            <button type="submit" class="btn btn-primary">Sign In</button>
+            <button type="submit" class="btn-login">MASUK KE SISTEM</button>
         </form>
     </div>
-
 </body>
 </html>
