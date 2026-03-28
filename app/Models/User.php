@@ -2,7 +2,6 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Model;
 
 class User extends Authenticatable
 {
@@ -28,6 +27,11 @@ class User extends Authenticatable
     ];
 
     protected $hidden = ['password']; // jangan tampilkan password di query
+
+    protected $casts = [
+        'birth_date' => 'date',
+        'active' => 'boolean',
+    ];
 
     // Relasi ke role
     public function role() {

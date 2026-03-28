@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\MemberController;
 
 // Login
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -16,6 +17,25 @@ Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('admin/dashboard', function(){
     return view('admin.page.home');
 })->name('admin.home');
+    Route::prefix('members')->name('members.')->group(function () {
+
+        // List anggota
+        Route::get('/', [MemberController::class, 'index'])
+            ->name('index')
+            ->middleware('auth');
+
+        // Form tambah anggota
+        Route::get('/create', [MemberController::class, 'create'])
+            ->name('create')
+            ->middleware('auth');
+
+    // Simpan anggota baru
+    Route::post('/', [MemberController::class, 'store'])
+        ->name('store')
+        ->middleware('auth');
+});
+
+
 
 // Dashboard user biasa
 Route::get('user/dashboard', function(){

@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HKBP Dashboard - Sistem Informasi Perpustakaan</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'HKBP Dashboard - Sistem Informasi Perpustakaan')</title>
+    
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome 6 -->
@@ -12,6 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -108,6 +111,7 @@
             transition: all 0.3s;
             font-weight: 500;
             font-size: 0.9rem;
+            display: block;
         }
 
         .sidebar .nav-link:hover {
@@ -356,6 +360,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .table-header h5 {
@@ -371,11 +377,13 @@
             border-radius: 10px;
             font-weight: 500;
             transition: all 0.3s;
+            color: white;
         }
 
         .btn-primary-custom:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(46, 139, 86, 0.3);
+            color: white;
         }
 
         .table {
@@ -414,16 +422,34 @@
             color: #856404;
         }
 
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: #2E8B57;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
             .sidebar {
                 transform: translateX(-100%);
             }
-            .main-content {
-                margin-left: 0;
-            }
             .sidebar.show {
                 transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
             }
             .content-area {
                 padding: 20px;
@@ -431,18 +457,127 @@
             .top-nav {
                 padding: 12px 20px;
             }
+            .page-title h2 {
+                font-size: 1.2rem;
+            }
         }
     </style>
+    
+    @stack('styles')
 </head>
 <body>
 
+<!-- Mobile Menu Button -->
+<button class="mobile-menu-btn" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
 <!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="logo-icon">
+            <i class="fas fa-church"></i>
+        </div>
+        <h3>HKBP Admin</h3>
+        <p>Perpustakaan AKPER HKBP</p>
+    </div>
+    
+    <div class="nav-section">MAIN MENU</div>
+    <div class="nav-item">
+        <a class="nav-link {{ request()->routeIs('admin.home') ? 'active' : '' }}" href="{{ route('admin.home') }}">
+            <i class="fas fa-th-large"></i> Dashboard
+        </a>
+    </div>
+    <div class="nav-item">
+        <a class="nav-link {{ request()->routeIs('members.*') ? 'active' : '' }}" 
+        href="{{ route('members.index') }}">
+            <i class="fas fa-users"></i> Manajemen Anggota
+        </a>
+    </div>
+    <div class="nav-item">
+        <a class="nav-link" href="#">
+            <i class="fas fa-book"></i> Manajemen Buku
+        </a>
+    </div>
+    <div class="nav-item">
+        <a class="nav-link" href="#">
+            <i class="fas fa-tags"></i> Kategori Buku
+        </a>
+    </div>
+    <div class="nav-item">
+        <a class="nav-link" href="#">
+            <i class="fas fa-hand-holding-heart"></i> Peminjaman
+        </a>
+    </div>
+    <div class="nav-item">
+        <a class="nav-link" href="#">
+            <i class="fas fa-chart-line"></i> Laporan
+        </a>
+    </div>
+    
+    <div class="nav-section mt-4">SETTINGS</div>
+    <div class="nav-item">
+        <a class="nav-link" href="#">
+            <i class="fas fa-user-cog"></i> Pengaturan Akun
+        </a>
+    </div>
+    <div class="nav-item">
+        <a class="nav-link" href="#">
+            <i class="fas fa-sign-out-alt"></i> Keluar Sistem
+        </a>
+    </div>
+</div>
 
 <!-- Main Content -->
 <div class="main-content">
-    @yield('admin_content')
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <div class="page-title">
+            <h2>@yield('page-title', 'Dashboard Overview')</h2>
+            <p><i class="far fa-calendar-alt me-1"></i> {{ \Carbon\Carbon::now()->isoFormat('dddd, DD MMMM YYYY') }}</p>
+        </div>
+        <div class="user-menu">
+            <div class="notification-icon">
+                <i class="far fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name">{{ Auth::user()->name ?? 'AP' }}</div>
+                    <div class="user-role">{{ Auth::user()->role ?? 'Administrator' }}</div>
+                </div>
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content-area">
+        @yield('admin_content')
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('show');
+    }
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', function(event) {
+        const sidebar = document.getElementById('sidebar');
+        const mobileBtn = document.querySelector('.mobile-menu-btn');
+        
+        if (window.innerWidth <= 768) {
+            if (!sidebar.contains(event.target) && !mobileBtn.contains(event.target)) {
+                sidebar.classList.remove('show');
+            }
+        }
+    });
+</script>
+
+@stack('scripts')
 </body>
 </html>
