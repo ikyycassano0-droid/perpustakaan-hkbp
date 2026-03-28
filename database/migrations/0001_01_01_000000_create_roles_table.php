@@ -10,15 +10,14 @@ class CreateRolesTable extends Migration
     {
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 150);
+            $table->string('name');
             $table->boolean('active')->default(true);
+
+            // audit boleh ADA tapi TANPA FK
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
-            $table->timestamps();
 
-            // FK audit ke users.id
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->foreign('updated_by')->references('id')->on('users');
+            $table->timestamps();
         });
 
         // Insert role default admin

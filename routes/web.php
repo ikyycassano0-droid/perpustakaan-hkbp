@@ -14,8 +14,8 @@ Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
 // Dashboard admin
 Route::get('admin/dashboard', function(){
-    return view('admin.dashboard');
-})->name('admin.dashboard')->middleware('auth');
+    return view('admin.page.home');
+})->name('admin.home');
 
 // Dashboard user biasa
 Route::get('user/dashboard', function(){

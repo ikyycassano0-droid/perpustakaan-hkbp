@@ -28,7 +28,7 @@ class CreateUsersTable extends Migration
             $table->timestamps();
 
             // FK role
-            $table->foreign('role_id')->references('id')->on('roles');
+             $table->foreign('role_id')->references('id')->on('roles');
 
             // FK audit
             $table->foreign('created_by')->references('id')->on('users');
