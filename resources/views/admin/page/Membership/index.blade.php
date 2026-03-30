@@ -8,7 +8,7 @@
 <div class="table-card">
     <div class="table-header">
         <h5>Daftar Anggota</h5>
-        <a href="{{ route('members.create') }}" class="btn btn-primary-custom">
+        <a href="{{ route('admin.members.create') }}" class="btn btn-primary-custom">
             <i class="fas fa-plus"></i> Tambah Anggota
         </a>
     </div>

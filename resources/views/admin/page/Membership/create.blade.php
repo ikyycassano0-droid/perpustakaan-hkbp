@@ -12,7 +12,7 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <form action="{{ route('members.store') }}" method="POST">
+    <form action="{{ route('admin.members.store') }}" method="POST">
         @csrf
 
         <div class="row">

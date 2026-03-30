@@ -13,12 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         // Daftarkan alias middleware di sini
         $middleware->alias([
-            'role' => \App\Http\Middleware::class, // Masukkan path class middleware tadi
-        ]);
-        
-        // Atau cara singkat jika namespace sudah benar:
-        $middleware->alias([
-            'role' => \App\Http\Middleware\CheckRole::class,
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'role' => \App\Http\Middleware\CheckRole::class, // Masukkan path class middleware tadi
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

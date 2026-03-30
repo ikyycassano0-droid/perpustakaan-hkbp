@@ -11,12 +11,12 @@ class MemberController extends Controller
     public function index()
     {
         $members = User::where('role_id', 2)->get();
-        return view('admin.page.Membership.index', compact('members'));
+        return view('admin.page.membership.index', compact('members'));
     }
 
     public function create()
     {
-        return view('admin.page.Membership.create');
+        return view('admin.page.membership.create');
     }
 
     public function store(Request $request)

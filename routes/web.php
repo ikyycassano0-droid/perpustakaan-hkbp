@@ -17,24 +17,18 @@ Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('admin/dashboard', function(){
     return view('admin.page.home');
 })->name('admin.home');
+    
+Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(function () {
+
     Route::prefix('members')->name('members.')->group(function () {
 
-        // List anggota
-        Route::get('/', [MemberController::class, 'index'])
-            ->name('index')
-            ->middleware('auth');
+        Route::get('/', [MemberController::class, 'index'])->name('index');
+        Route::get('/create', [MemberController::class, 'create'])->name('create');
+        Route::post('/', [MemberController::class, 'store'])->name('store');
 
-        // Form tambah anggota
-        Route::get('/create', [MemberController::class, 'create'])
-            ->name('create')
-            ->middleware('auth');
+    });
 
-    // Simpan anggota baru
-    Route::post('/', [MemberController::class, 'store'])
-        ->name('store')
-        ->middleware('auth');
 });
-
 
 
 // Dashboard user biasa

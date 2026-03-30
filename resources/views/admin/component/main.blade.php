@@ -489,8 +489,8 @@
         </a>
     </div>
     <div class="nav-item">
-        <a class="nav-link {{ request()->routeIs('members.*') ? 'active' : '' }}" 
-        href="{{ route('members.index') }}">
+        <a class="nav-link {{ request()->routeIs('admin.members.*') ? 'active' : '' }}" 
+        href="{{ route('admin.members.index') }}">
             <i class="fas fa-users"></i> Manajemen Anggota
         </a>
     </div>
@@ -543,8 +543,8 @@
             </div>
             <div class="user-info">
                 <div class="user-details">
-                    <div class="user-name">{{ Auth::user()->name ?? 'AP' }}</div>
-                    <div class="user-role">{{ Auth::user()->role ?? 'Administrator' }}</div>
+                    <div class="user-name">{{ session('user_name') ?? 'AP' }}</div>
+                    <div class="user-role">{{ session('user_role') == 1 ? 'Administrator' : 'Member' }}</div>
                 </div>
                 <div class="user-avatar">
                     <i class="fas fa-user"></i>

@@ -22,11 +22,20 @@ class CreateRolesTable extends Migration
 
         // Insert role default admin
         DB::table('roles')->insert([
-            'id' => 1,
-            'name' => 'Admin',
-            'active' => true,
-            'created_at' => now(),
-            'updated_at' => now()
+            [
+                'id' => 1,
+                'name' => 'Admin',
+                'active' => true,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'id' => 2,
+                'name' => 'Member',
+                'active' => true,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]
         ]);
     }
 
