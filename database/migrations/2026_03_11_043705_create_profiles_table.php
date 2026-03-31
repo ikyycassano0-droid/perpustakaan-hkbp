@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('key');
             $table->string('title')->nullable();
             $table->text('description')->nullable();
+            $table->string('image')->nullable();
             $table->integer('sequence')->default(0);
             $table->boolean('active')->default(true);
             $table->unsignedBigInteger('created_by')->nullable();

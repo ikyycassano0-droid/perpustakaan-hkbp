@@ -15,6 +15,7 @@ class Profile extends Model
         'key',
         'title',
         'description',
+        'image',
         'sequence',
         'active',
         'created_by',

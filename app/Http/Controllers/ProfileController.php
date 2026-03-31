@@ -106,12 +106,19 @@ class ProfileController extends Controller
             'key' => 'required',
             'title' => 'required',
             'description' => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('profiles', 'public');
+        }
 
         Profile::create([
             'key'         => $request->key,
             'title'       => $request->title,
             'description' => $request->description,
+            'image'       => $imagePath,
             'sequence'    => $request->sequence ?? 0,
             'active'      => true,
             'created_by'  => session('user_id'), 
@@ -123,6 +130,11 @@ class ProfileController extends Controller
     public function update(Request $request, $id)
     {
         $item = Profile::findOrFail($id);
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('profiles', 'public');
+            $item->image = $imagePath;
+        }    
 
         $item->update([
             'title'       => $request->title,

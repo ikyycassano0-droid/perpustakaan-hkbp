@@ -1,6 +1,7 @@
 @extends('admin.component.main')
 @section('title', 'Manajemen Profile')
 @section('page-title', 'Data Profile')
+
 @section('admin_content')
 
 <div class="container">
@@ -19,12 +20,11 @@
         <div class="card-header">Tambah Data</div>
 
         <div class="card-body">
-            <form action="{{ route('admin.profile.store') }}" method="POST">
+            <form action="{{ route('admin.profile.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <div class="row">
 
-                    {{-- KATEGORI --}}
                     <div class="col-md-3">
                         <label>Kategori</label>
                         <select name="key" id="kategori" class="form-control" required onchange="ubahLabel()">
@@ -38,25 +38,26 @@
                         </select>
                     </div>
 
-                    {{-- TITLE --}}
                     <div class="col-md-3">
                         <label id="labelTitle">Judul</label>
                         <input type="text" name="title" class="form-control" required>
                     </div>
 
-                    {{-- DESCRIPTION --}}
                     <div class="col-md-3">
                         <label id="labelDesc">Deskripsi</label>
                         <input type="text" name="description" class="form-control" required>
                     </div>
 
-                    {{-- SEQUENCE --}}
+                    <div class="col-md-3">
+                        <label>Gambar</label>
+                        <input type="file" name="image" class="form-control">
+                    </div>
+
                     <div class="col-md-2">
                         <label>Urutan</label>
                         <input type="number" name="sequence" class="form-control">
                     </div>
 
-                    {{-- BUTTON --}}
                     <div class="col-md-1 d-flex align-items-end">
                         <button class="btn btn-success w-100">+</button>
                     </div>
@@ -77,16 +78,15 @@
                 <th>Deskripsi</th>
                 <th>Urutan</th>
                 <th>Aktif</th>
-                <th width="220">Aksi</th>
+                <th width="250">Aksi</th>
             </tr>
         </thead>
 
         <tbody>
-
             @foreach($profiles as $item)
             <tr>
 
-                {{-- UPDATE --}}
+                {{-- FORM UPDATE --}}
                 <form action="{{ route('admin.profile.update', $item->id) }}" method="POST">
                     @csrf
                     @method('PUT')
@@ -111,11 +111,12 @@
 
                     <td class="d-flex gap-1">
 
+                        {{-- UPDATE --}}
                         <button class="btn btn-primary btn-sm">Update</button>
                 </form>
 
                 {{-- DELETE --}}
-                <form action="{{ route('admin.profile.destroy', $item->id) }}" method="POST">
+                <form action="{{ route('admin.profile.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Yakin hapus?')">
                     @csrf
                     @method('DELETE')
                     <button class="btn btn-danger btn-sm">Hapus</button>
@@ -125,13 +126,12 @@
 
             </tr>
             @endforeach
-
         </tbody>
     </table>
 
 </div>
 
-{{-- SCRIPT DINAMIS --}}
+{{-- SCRIPT --}}
 <script>
 function ubahLabel() {
     let val = document.getElementById('kategori').value;
