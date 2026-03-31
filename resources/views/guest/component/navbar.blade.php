@@ -45,7 +45,7 @@
                     <li><a href="{{ route('guest.page.profile.visi-misi') }}">Visi Misi</a></li>
                     <li><a href="#">Kerjasama</a></li>
                     <li><a href="{{ route('guest.page.profile.struktur pengurus') }}">Struktur Pengurus</a></li>
-                    <li><a href="{{ route('guest.page.profile.tugas-fungsi') }}">Tugas, Fungsi, Tujuan</a></li>
+                    <li><a href="{{ route('guest.berita.index') }}">Berita</a></li>
                 </ul>
             </li>
 
@@ -83,9 +83,10 @@
                     <li><a href="{{ url('kti.html') }}">KTI</a></li>
                 </ul>
             </li>
-
-            <li><a href="{{ url('berita.html') }}">Berita</a></li>
-
+            <li class="nav-item">
+                <a href="{{ route('guest.berita.index') }}"
+                ">Berita</a>
+            </li>
             <li>
                 <a href="#">Informasi <i class="fas fa-caret-down"></i></a>
                 <ul class="dropdown-menu">

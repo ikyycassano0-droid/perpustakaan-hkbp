@@ -13,6 +13,23 @@ return new class extends Migration
     {
         Schema::create('news', function (Blueprint $table) {
             $table->id();
+
+            // Data utama berita
+            $table->string('title');               
+            $table->text('content');               
+            $table->string('image')->nullable();   
+
+            // Status publikasi
+            $table->enum('status', ['draft', 'publish'])->default('draft');
+
+            // Status aktif (optional tambahan)
+            $table->boolean('active')->default(true);
+
+            // Tracking user
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+
+            // Timestamp otomatis
             $table->timestamps();
         });
     }

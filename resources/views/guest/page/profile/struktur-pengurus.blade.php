@@ -14,7 +14,10 @@
     @if($struktur->count() > 0)
 
         {{-- Kepala Perpustakaan --}}
-        <div class="member-card">
+            <div class="member-card">
+            @if($item->image)
+            <img src="{{ asset('storage/' . $item->image) }}" width="100" class="mb-2">
+            @endif
             <div class="role">{{ $struktur[0]->title }}</div>
             <div class="name">{{ $struktur[0]->description }}</div>
         </div>
@@ -25,7 +28,10 @@
         <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
 
             @foreach($struktur->skip(1) as $item)
-            <div class="member-card">
+                <div class="member-card">
+                    @if($item->image)
+                    <img src="{{ asset('storage/' . $item->image) }}" width="100" class="mb-2">
+                    @endif
                 <div class="role">{{ $item->title }}</div>
                 <div class="name">{{ $item->description }}</div>
             </div>

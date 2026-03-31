@@ -501,6 +501,13 @@
         </a>
     </div>
     <div class="nav-item">
+        <a class="nav-link {{ request()->routeIs('admin.berita.*') ? 'active' : '' }}" 
+        href="{{ route('admin.berita.index') }}">
+            <i class="fas fa-newspaper"></i> Berita
+        </a>
+    </div>
+    </div>
+    <div class="nav-item">
         <a class="nav-link" href="#">
             <i class="fas fa-book"></i> Manajemen Buku
         </a>
@@ -583,7 +590,14 @@
         }
     });
 </script>
-
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+<script>
+ClassicEditor
+    .create(document.querySelector('#editor'))
+    .catch(error => {
+        console.error(error);
+    });
+</script>
 @stack('scripts')
 </body>
 </html>

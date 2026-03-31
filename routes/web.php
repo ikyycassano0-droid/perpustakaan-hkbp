@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\NewsController;
 
 // Login
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -38,6 +39,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
         Route::delete('/{id}', [ProfileController::class, 'destroy'])->name('destroy');
     });
 
+    Route::prefix('berita')->name('berita.')->group(function () {
+        Route::get('/', [NewsController::class,'index_admin'])->name('index');
+        Route::post('/', [NewsController::class,'store'])->name('store');
+        Route::put('/{news}', [NewsController::class,'update'])->name('update');
+        Route::delete('/{news}', [NewsController::class,'destroy'])->name('destroy');
+
+    });
+
 });
 
 
@@ -59,4 +68,6 @@ Route::middleware(['web'])->group(function () {
 
     Route::get('/struktur', [ProfileController::class, 'showStruktur'])
         ->name('guest.page.profile.struktur pengurus'); // path tetap
+    Route::get('/berita', [NewsController::class,'index'])
+    ->name('guest.berita.index');
 });

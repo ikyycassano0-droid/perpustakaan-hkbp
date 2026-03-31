@@ -7,60 +7,83 @@ use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // ================= ADMIN =================
     public function index()
     {
-        $news = News::all();
-        return view('user.page.news', compact('news'));
-    }
+        $berita = News::published()
+            ->latest()
+            ->get();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+        return view('guest.page.berita', compact('berita'));
+    }
+    public function index_admin()
     {
-        //
+        $berita = News::orderBy('created_at','desc')->get();
+        return view('admin.page.berita', compact('berita'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // ================= STORE =================
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'content' => 'required',
+            'status' => 'required|in:draft,publish',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $imagePath = $request->hasFile('image')
+            ? $request->file('image')->store('berita', 'public')
+            : null;
+
+        News::create([
+            'title' => $request->title,
+            'content' => $request->content,
+            'image' => $imagePath,
+            'status' => $request->status, // penting
+            'created_by' => session('user_id'),
+        ]);
+
+        return back()->with('success', 'Berita berhasil ditambahkan');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(News $news)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(News $news)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
+    // ================= UPDATE =================
     public function update(Request $request, News $news)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'content' => 'required',
+            'status' => 'required|in:draft,publish',
+        ]);
+
+        $data = [
+            'title' => $request->title,
+            'content' => $request->content,
+            'status' => $request->status,
+            'updated_by' => session('user_id'),
+        ];
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('berita', 'public');
+        }
+
+        $news->update($data);
+
+        return back()->with('success', 'Berita berhasil diupdate');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // ================= DELETE =================
     public function destroy(News $news)
     {
-        //
+        if ($news->image) {
+            \Storage::disk('public')->delete($news->image);
+        }
+
+        $news->delete();
+
+        return back()->with('success', 'Berita berhasil dihapus');
     }
+
+    // ================= FRONTEND =================
+
 }
