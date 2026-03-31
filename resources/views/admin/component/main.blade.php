@@ -489,6 +489,12 @@
         </a>
     </div>
     <div class="nav-item">
+        <a class="nav-link {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}" 
+        href="{{ route('admin.profile.index') }}">
+        <i class="fas fa-book"></i>Profile
+        </a>
+    </div>
+    <div class="nav-item">
         <a class="nav-link {{ request()->routeIs('admin.members.*') ? 'active' : '' }}" 
         href="{{ route('admin.members.index') }}">
             <i class="fas fa-users"></i> Manajemen Anggota

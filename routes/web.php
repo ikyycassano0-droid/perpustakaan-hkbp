@@ -28,6 +28,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
 
     });
 
+    Route::prefix('profile')->name('profile.')->group(function () {
+
+        Route::get('/', [ProfileController::class, 'index'])->name('index');
+        Route::get('/create', [ProfileController::class, 'create'])->name('create');
+        Route::post('/', [ProfileController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [ProfileController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [ProfileController::class, 'update'])->name('update');
+        Route::delete('/{id}', [ProfileController::class, 'destroy'])->name('destroy');
+    });
+
 });
 
 
