@@ -10,40 +10,45 @@ class Collection extends Model
     use HasFactory;
 
     protected $table = 'collections';
-
     protected $fillable = [
         'title',
         'series_title',
         'author',
-        'call_number',
         'publisher',
         'publication_year',
         'language',
         'isbn',
-        'classification_id',
         'edition',
         'subject',
         'description',
-        'category_collection_id',
-        'location_id',
-        'file_url',
-        'format',
-        'cover_image',
         'responsibility_statement',
         'content_type',
         'media_type',
         'carrier_type',
         'specific_detail_info',
+        'classification_id',
+        'category_collection_id',
+        'location_id',
+        'file_url',
+        'format',
+        'cover_image',
         'created_by',
         'updated_by',
         'active',
     ];
 
     protected $casts = [
-        'publication_year' => 'integer',
+        'author' => 'array',
+        'responsibility_statement' => 'array',
+        'content_type' => 'array',
+        'media_type' => 'array',
         'active' => 'boolean',
     ];
 
+    public function classifications()
+    {
+        return $this->belongsToMany(Classification::class);
+    }
 
     public function category()
     {
@@ -52,36 +57,49 @@ class Collection extends Model
 
     public function location()
     {
-        return $this->belongsTo(Location::class, 'location_id');
+        return $this->belongsTo(Location::class);
     }
 
-    // Classification
-    public function classification()
+    public function getAuthorStringAttribute()
     {
-        return $this->belongsTo(Classification::class, 'classification_id');
+        return $this->author ? implode(', ', $this->author) : '-';
+    }
+
+    public function getContentTypeStringAttribute()
+    {
+        return $this->content_type ? implode(', ', $this->content_type) : '-';
+    }
+
+    public function getMediaTypeStringAttribute()
+    {
+        return $this->media_type ? implode(', ', $this->media_type) : '-';
+    }
+
+    public function getResponsibilityStringAttribute()
+    {
+        return $this->responsibility_statement 
+            ? implode(', ', $this->responsibility_statement) 
+            : '-';
+    }
+
+    public function isAudio()
+    {
+        if (!$this->file_url) return false;
+
+        $ext = pathinfo($this->file_url, PATHINFO_EXTENSION);
+        return in_array(strtolower($ext), ['mp3', 'wav', 'ogg']);
+    }
+
+    public function isPdf()
+    {
+        if (!$this->file_url) return false;
+
+        $ext = pathinfo($this->file_url, PATHINFO_EXTENSION);
+        return strtolower($ext) === 'pdf';
     }
 
     public function scopeActive($query)
     {
         return $query->where('active', true);
-    }
-
-    public function scopeSearch($query, $keyword)
-    {
-        return $query->where('title', 'like', "%$keyword%")
-            ->orWhere('author', 'like', "%$keyword%")
-            ->orWhere('isbn', 'like', "%$keyword%");
-    }
-
-    public function getCoverUrlAttribute()
-    {
-        return $this->cover_image
-            ? asset('storage/' . $this->cover_image)
-            : 'https://via.placeholder.com/200x300';
-    }
-
-    public function getFileUrlAttribute($value)
-    {
-        return $value ? asset('storage/' . $value) : null;
     }
 }

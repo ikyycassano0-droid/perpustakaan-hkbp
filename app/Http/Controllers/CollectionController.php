@@ -3,35 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Models\Collection;
+use App\Models\CategoryCollection;
+use App\Models\Classification;
+use App\Models\Location;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CollectionController extends Controller
 {
-    // ================= GUEST =================
-    public function index()
-    {
-        $collections = Collection::where('active', true)
-            ->latest()
-            ->paginate(6);
-
-        return view('guest.page.collection', compact('collections'));
-    }
-
-    public function show($id)
-    {
-        $collection = Collection::where('id', $id)
-            ->where('active', true)
-            ->firstOrFail();
-
-        return view('guest.page.collection_detail', compact('collection'));
-    }
-
     // ================= ADMIN =================
     public function index_admin()
     {
-        $collections = Collection::latest()->get();
+        $collections = Collection::with(['classifications','categories','location'])->latest()->get();
 
-        return view('admin.page.collection', compact('collections'));
+        $categories = CategoryCollection::all();
+        $classifications = Classification::all();
+        $locations = Location::all();
+
+        return view('admin.page.collection', compact(
+            'collections',
+            'categories',
+            'classifications',
+            'locations'
+        ));
     }
 
     // ================= STORE =================
@@ -39,61 +33,53 @@ class CollectionController extends Controller
     {
         $request->validate([
             'title' => 'required',
-            'author' => 'required',
-            'description' => 'required',
+            'author' => 'required|array',
+            'author.*' => 'required|string',
 
-            'publication_year' => 'nullable|integer',
+            'publication_year' => 'nullable|numeric',
+
+            'file_url' => 'nullable|file|mimes:pdf,mp3,wav,ogg|max:20000',
             'cover_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'file_url' => 'nullable|file|max:5120',
         ]);
 
-        // Upload Cover
-        $coverPath = $request->hasFile('cover_image')
-            ? $request->file('cover_image')->store('collections', 'public')
+        // upload
+        $cover = $request->hasFile('cover_image')
+            ? $request->file('cover_image')->store('collections/cover', 'public')
             : null;
 
-        // Upload File (PDF, dll)
-        $filePath = $request->hasFile('file_url')
-            ? $request->file('file_url')->store('files', 'public')
+        $file = $request->hasFile('file_url')
+            ? $request->file('file_url')->store('collections/file', 'public')
             : null;
 
-        Collection::create([
-            // DATA UTAMA
+        // 🔥 CREATE COLLECTION TANPA FK
+        $collection = Collection::create([
             'title' => $request->title,
-            'series_title' => $request->series_title,
+
             'author' => $request->author,
-            'call_number' => $request->call_number,
+            'responsibility_statement' => $request->responsibility_statement ?? [],
+            'content_type' => $request->content_type ?? [],
+            'media_type' => $request->media_type ?? [],
+
             'publisher' => $request->publisher,
             'publication_year' => $request->publication_year,
-            'language' => $request->language,
-            'isbn' => $request->isbn,
-            'classification_id' => $request->classification_id,
-            'edition' => $request->edition,
-            'subject' => $request->subject,
             'description' => $request->description,
 
-            // RELASI
-            'category_collection_id' => $request->category_collection_id,
-            'location_id' => $request->location_id,
-
-            // FILE
-            'file_url' => $filePath,
-            'format' => $request->format,
-            'cover_image' => $coverPath,
-
-            // 🔥 ATRIBUT TAMBAHAN
-            'responsibility_statement' => $request->responsibility_statement,
-            'content_type' => $request->content_type,
-            'media_type' => $request->media_type,
             'carrier_type' => $request->carrier_type,
             'specific_detail_info' => $request->specific_detail_info,
 
-            // TRACKING
+            'location_id' => $request->location_id,
+
+            'cover_image' => $cover,
+            'file_url' => $file,
+
             'created_by' => session('user_id'),
-            'active' => true,
         ]);
 
-        return back()->with('success', 'Collection created successfully');
+        // 🔥 MANY TO MANY (INI YANG PENTING)
+        $collection->classifications()->sync($request->classification_id ?? []);
+        $collection->categories()->sync($request->category_collection_id ?? []);
+
+        return back()->with('success', 'Koleksi berhasil ditambahkan');
     }
 
     // ================= UPDATE =================
@@ -101,63 +87,92 @@ class CollectionController extends Controller
     {
         $request->validate([
             'title' => 'required',
-            'author' => 'required',
-            'description' => 'required',
+            'author' => 'required|array',
+            'author.*' => 'required|string',
+
+            'file_url' => 'nullable|file|mimes:pdf,mp3,wav,ogg|max:20000',
+            'cover_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $data = $request->only([
-            'title',
-            'series_title',
-            'author',
-            'call_number',
-            'publisher',
-            'publication_year',
-            'language',
-            'isbn',
-            'classification_id',
-            'edition',
-            'subject',
-            'description',
-            'category_collection_id',
-            'location_id',
-            'format',
-            'responsibility_statement',
-            'content_type',
-            'media_type',
-            'carrier_type',
-            'specific_detail_info',
-        ]);
+        $data = [
+            'title' => $request->title,
 
-        // Update cover
+            'author' => $request->author,
+            'responsibility_statement' => $request->responsibility_statement ?? [],
+            'content_type' => $request->content_type ?? [],
+            'media_type' => $request->media_type ?? [],
+
+            'publisher' => $request->publisher,
+            'publication_year' => $request->publication_year,
+            'description' => $request->description,
+
+            'carrier_type' => $request->carrier_type,
+            'specific_detail_info' => $request->specific_detail_info,
+
+            'location_id' => $request->location_id,
+
+            'updated_by' => session('user_id'),
+        ];
+
+        // cover
         if ($request->hasFile('cover_image')) {
-            $data['cover_image'] = $request->file('cover_image')->store('collections', 'public');
+            if ($collection->cover_image) {
+                Storage::disk('public')->delete($collection->cover_image);
+            }
+
+            $data['cover_image'] = $request->file('cover_image')->store('collections/cover', 'public');
         }
 
-        // Update file
+        // file
         if ($request->hasFile('file_url')) {
-            $data['file_url'] = $request->file('file_url')->store('files', 'public');
-        }
+            if ($collection->file_url) {
+                Storage::disk('public')->delete($collection->file_url);
+            }
 
-        $data['updated_by'] = session('user_id');
+            $data['file_url'] = $request->file('file_url')->store('collections/file', 'public');
+        }
 
         $collection->update($data);
 
-        return back()->with('success', 'Collection updated successfully');
+        // 🔥 SYNC RELASI
+        $collection->classifications()->sync($request->classification_id ?? []);
+        $collection->categories()->sync($request->category_collection_id ?? []);
+
+        return back()->with('success', 'Koleksi berhasil diupdate');
     }
 
     // ================= DELETE =================
     public function destroy(Collection $collection)
     {
+        // 🔥 HAPUS RELASI DULU
+        $collection->classifications()->detach();
+        $collection->categories()->detach();
+
         if ($collection->cover_image) {
-            \Storage::disk('public')->delete($collection->cover_image);
+            Storage::disk('public')->delete($collection->cover_image);
         }
 
         if ($collection->file_url) {
-            \Storage::disk('public')->delete($collection->file_url);
+            Storage::disk('public')->delete($collection->file_url);
         }
 
         $collection->delete();
 
-        return back()->with('success', 'Collection deleted successfully');
+        return back()->with('success', 'Koleksi berhasil dihapus');
+    }
+
+    // ================= GUEST =================
+    public function index()
+    {
+        $collections = Collection::with(['classifications','categories'])->latest()->paginate(9);
+
+        return view('guest.page.collection', compact('collections'));
+    }
+
+    public function show($id)
+    {
+        $collection = Collection::with(['classifications','categories','location'])->findOrFail($id);
+
+        return view('guest.page.collection_detail', compact('collection'));
     }
 }

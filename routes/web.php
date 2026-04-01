@@ -7,6 +7,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\ClassificationController;
+use App\Http\Controllers\CategoryCollectionController;
+use App\Http\Controllers\LocationController;
 
 // Login
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -53,6 +56,56 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
         Route::post('/', [CollectionController::class, 'store'])->name('store');
         Route::put('/{collection}', [CollectionController::class, 'update'])->name('update');
         Route::delete('/{collection}', [CollectionController::class, 'destroy'])->name('destroy');
+    });
+
+    // ================= COLLECTION =================
+    Route::prefix('collections')->name('collections.')->group(function () {
+        Route::get('/', [CollectionController::class, 'index_admin'])->name('index');
+        Route::post('/', [CollectionController::class, 'store'])->name('store');
+        Route::put('/{collection}', [CollectionController::class, 'update'])->name('update');
+        Route::delete('/{collection}', [CollectionController::class, 'destroy'])->name('delete');
+    });
+
+    // ================= CLASSIFICATION =================
+    Route::prefix('classification')->name('classification.')->group(function () {
+        Route::get('/', [ClassificationController::class, 'index'])->name('index');
+        Route::post('/', [ClassificationController::class, 'store'])->name('store');
+        Route::put('/{classification}', [ClassificationController::class, 'update'])->name('update');
+        Route::delete('/{classification}', [ClassificationController::class, 'destroy'])->name('delete');
+
+        // AJAX tambah
+        Route::post('/ajax', [ClassificationController::class, 'storeAjax'])->name('storeAjax');
+
+        // HAPUS TERAKHIR
+        Route::delete('/delete-last', [ClassificationController::class, 'deleteLast'])->name('deleteLast');
+    });
+
+    // ================= CATEGORY =================
+    Route::prefix('category')->name('category.')->group(function () {
+        Route::get('/', [CategoryCollectionController::class, 'index'])->name('index');
+        Route::post('/', [CategoryCollectionController::class, 'store'])->name('store');
+        Route::put('/{category}', [CategoryCollectionController::class, 'update'])->name('update');
+        Route::delete('/{category}', [CategoryCollectionController::class, 'destroy'])->name('delete');
+
+        // AJAX tambah
+        Route::post('/ajax', [CategoryCollectionController::class, 'storeAjax'])->name('storeAjax');
+
+        // HAPUS TERAKHIR
+        Route::delete('/delete-last', [CategoryCollectionController::class, 'deleteLast'])->name('deleteLast');
+    });
+
+    // ================= LOCATION =================
+    Route::prefix('location')->name('location.')->group(function () {
+        Route::get('/', [LocationController::class, 'index'])->name('index');
+        Route::post('/', [LocationController::class, 'store'])->name('store');
+        Route::put('/{location}', [LocationController::class, 'update'])->name('update');
+        Route::delete('/{location}', [LocationController::class, 'destroy'])->name('delete');
+
+        // AJAX tambah
+        Route::post('/ajax', [LocationController::class, 'storeAjax'])->name('storeAjax');
+
+        // HAPUS TERAKHIR
+        Route::delete('/delete-last', [LocationController::class, 'deleteLast'])->name('deleteLast');
     });
 
 });
