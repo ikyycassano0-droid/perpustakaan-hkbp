@@ -70,4 +70,6 @@ Route::middleware(['web'])->group(function () {
         ->name('guest.page.profile.struktur pengurus'); // path tetap
     Route::get('/berita', [NewsController::class,'index'])
     ->name('guest.berita.index');
+    Route::get('/berita/{id}', [NewsController::class, 'show'])
+    ->name('guest.berita.show');
 });

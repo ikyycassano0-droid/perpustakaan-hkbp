@@ -1,9 +1,12 @@
 @extends('guest.component.main')
+
 @section('title', 'Berita')
-    <header>
-      @include('guest.component.navbar')
-    </header>
-@section('content')
+
+@section('guest_content')
+
+<header>
+    @include('guest.component.navbar')
+</header>
 
 <div class="container py-4">
 
@@ -18,9 +21,9 @@
 
                 {{-- GAMBAR --}}
                 @if($item->image)
-                    <img src="{{ asset('storage/'.$item->image) }}" class="card-img-top" style="height:200px; object-fit:cover;">
-                @else
-                    <img src="https://via.placeholder.com/400x200" class="card-img-top">
+                    <img src="{{ asset('storage/'.$item->image) }}"
+                         class="card-img-top"
+                         style="height:200px; object-fit:cover;">
                 @endif
 
                 <div class="card-body d-flex flex-column">
@@ -32,14 +35,13 @@
                     <small class="text-muted mb-2">
                         {{ $item->created_at->format('d M Y') }}
                     </small>
-
-                    {{-- ISI (dipotong) --}}
                     <p class="card-text">
                         {{ \Illuminate\Support\Str::limit(strip_tags($item->content), 100) }}
                     </p>
 
                     {{-- BUTTON --}}
-                    <a href="#" class="btn btn-primary mt-auto">
+                    <a href="{{ route('guest.berita.show', $item->id) }}"
+                       class="btn btn-primary mt-auto">
                         Baca Selengkapnya
                     </a>
 
@@ -49,13 +51,15 @@
 
         </div>
         @empty
-
         <div class="col-12 text-center">
             <p>Belum ada berita tersedia</p>
         </div>
-
         @endforelse
 
+    </div>
+
+    <div class="d-flex justify-content-center mt-4">
+        {{ $berita->links() }}
     </div>
 
 </div>

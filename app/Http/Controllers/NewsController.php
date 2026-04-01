@@ -10,10 +10,7 @@ class NewsController extends Controller
     // ================= ADMIN =================
     public function index()
     {
-        $berita = News::published()
-            ->latest()
-            ->get();
-
+        $berita = News::published()->latest()->paginate(6);
         return view('guest.page.berita', compact('berita'));
     }
     public function index_admin()
@@ -70,6 +67,14 @@ class NewsController extends Controller
         $news->update($data);
 
         return back()->with('success', 'Berita berhasil diupdate');
+    }
+    public function show($id)
+    {
+        $berita = News::where('id', $id)
+            ->where('status', 'publish')
+            ->firstOrFail();
+
+        return view('guest.page.berita_detail', compact('berita'));
     }
 
     // ================= DELETE =================
