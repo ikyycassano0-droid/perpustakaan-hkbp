@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\CollectionController;
 
 // Login
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -45,6 +46,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
         Route::put('/{news}', [NewsController::class,'update'])->name('update');
         Route::delete('/{news}', [NewsController::class,'destroy'])->name('destroy');
 
+    });
+
+    Route::prefix('collections')->name('collections.')->group(function () {
+        Route::get('/', [CollectionController::class, 'index_admin'])->name('index');
+        Route::post('/', [CollectionController::class, 'store'])->name('store');
+        Route::put('/{collection}', [CollectionController::class, 'update'])->name('update');
+        Route::delete('/{collection}', [CollectionController::class, 'destroy'])->name('destroy');
     });
 
 });

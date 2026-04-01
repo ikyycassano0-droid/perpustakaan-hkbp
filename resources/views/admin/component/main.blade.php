@@ -506,9 +506,8 @@
             <i class="fas fa-newspaper"></i> Berita
         </a>
     </div>
-    </div>
     <div class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="{{ route('admin.collections.index') }}">
             <i class="fas fa-book"></i> Manajemen Buku
         </a>
     </div>

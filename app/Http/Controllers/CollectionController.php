@@ -40,23 +40,25 @@ class CollectionController extends Controller
         $request->validate([
             'title' => 'required',
             'author' => 'required',
-            'publisher' => 'nullable',
-            'publication_year' => 'nullable|integer',
-            'isbn' => 'nullable',
             'description' => 'required',
+
+            'publication_year' => 'nullable|integer',
             'cover_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'file_url' => 'nullable|file',
+            'file_url' => 'nullable|file|max:5120',
         ]);
 
+        // Upload Cover
         $coverPath = $request->hasFile('cover_image')
             ? $request->file('cover_image')->store('collections', 'public')
             : null;
 
+        // Upload File (PDF, dll)
         $filePath = $request->hasFile('file_url')
             ? $request->file('file_url')->store('files', 'public')
             : null;
 
         Collection::create([
+            // DATA UTAMA
             'title' => $request->title,
             'series_title' => $request->series_title,
             'author' => $request->author,
@@ -69,16 +71,29 @@ class CollectionController extends Controller
             'edition' => $request->edition,
             'subject' => $request->subject,
             'description' => $request->description,
+
+            // RELASI
             'category_collection_id' => $request->category_collection_id,
             'location_id' => $request->location_id,
+
+            // FILE
             'file_url' => $filePath,
             'format' => $request->format,
             'cover_image' => $coverPath,
+
+            // 🔥 ATRIBUT TAMBAHAN
+            'responsibility_statement' => $request->responsibility_statement,
+            'content_type' => $request->content_type,
+            'media_type' => $request->media_type,
+            'carrier_type' => $request->carrier_type,
+            'specific_detail_info' => $request->specific_detail_info,
+
+            // TRACKING
             'created_by' => session('user_id'),
             'active' => true,
         ]);
 
-        return back()->with('success', 'Koleksi berhasil ditambahkan');
+        return back()->with('success', 'Collection created successfully');
     }
 
     // ================= UPDATE =================
@@ -106,12 +121,19 @@ class CollectionController extends Controller
             'category_collection_id',
             'location_id',
             'format',
+            'responsibility_statement',
+            'content_type',
+            'media_type',
+            'carrier_type',
+            'specific_detail_info',
         ]);
 
+        // Update cover
         if ($request->hasFile('cover_image')) {
             $data['cover_image'] = $request->file('cover_image')->store('collections', 'public');
         }
 
+        // Update file
         if ($request->hasFile('file_url')) {
             $data['file_url'] = $request->file('file_url')->store('files', 'public');
         }
@@ -120,7 +142,7 @@ class CollectionController extends Controller
 
         $collection->update($data);
 
-        return back()->with('success', 'Koleksi berhasil diupdate');
+        return back()->with('success', 'Collection updated successfully');
     }
 
     // ================= DELETE =================
@@ -136,6 +158,6 @@ class CollectionController extends Controller
 
         $collection->delete();
 
-        return back()->with('success', 'Koleksi berhasil dihapus');
+        return back()->with('success', 'Collection deleted successfully');
     }
 }
