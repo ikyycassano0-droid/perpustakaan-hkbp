@@ -7,12 +7,14 @@ use Illuminate\Http\Request;
 
 class CategoryCollectionController extends Controller
 {
+    // ================= INDEX =================
     public function index()
     {
         $data = CategoryCollection::latest()->get();
         return view('admin.page.category', compact('data'));
     }
 
+    // ================= STORE =================
     public function store(Request $request)
     {
         $request->validate([
@@ -26,7 +28,7 @@ class CategoryCollectionController extends Controller
         return back()->with('success', 'Category berhasil ditambahkan');
     }
 
-    // AJAX
+    // ================= AJAX STORE =================
     public function storeAjax(Request $request)
     {
         $request->validate([
@@ -40,6 +42,7 @@ class CategoryCollectionController extends Controller
         return response()->json($data);
     }
 
+    // ================= UPDATE =================
     public function update(Request $request, CategoryCollection $category)
     {
         $request->validate([
@@ -53,19 +56,23 @@ class CategoryCollectionController extends Controller
         return back()->with('success', 'Category berhasil diupdate');
     }
 
+    // ================= DESTROY =================
     public function destroy(CategoryCollection $category)
     {
+        $category->collections()->detach();
+
         $category->delete();
 
         return back()->with('success', 'Category berhasil dihapus');
     }
 
-    // DELETE LAST
+    // ================= DELETE LAST =================
     public function deleteLast()
     {
         $data = CategoryCollection::latest()->first();
 
         if ($data) {
+            $data->collections()->detach();
             $data->delete();
         }
 

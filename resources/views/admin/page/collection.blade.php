@@ -16,7 +16,7 @@
         + Tambah Koleksi
     </button>
 
-    {{-- TABLE --}}
+    {{-- ================= TABLE ================= --}}
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -32,13 +32,11 @@
             @forelse($collections as $i => $item)
             <tr>
                 <td>{{ $i+1 }}</td>
-
                 <td>
                     @if($item->cover_image)
                         <img src="{{ asset('storage/'.$item->cover_image) }}" width="60">
                     @endif
                 </td>
-
                 <td>{{ $item->title }}</td>
                 <td>{{ $item->author_string }}</td>
                 <td>{{ $item->publication_year }}</td>
@@ -53,7 +51,7 @@
 
 </div>
 
-{{-- ================= MODAL TAMBAH ================= --}}
+{{-- ================= MODAL TAMBAH KOLEKSI ================= --}}
 <div class="modal fade" id="modalTambah">
 <div class="modal-dialog modal-lg">
 <div class="modal-content">
@@ -67,11 +65,11 @@
 
 <div class="modal-body">
 
-    <input type="text" name="title" class="form-control mb-2" placeholder="Title">
+    <input type="text" name="title" class="form-control mb-2" placeholder="Title" required>
 
-    {{-- AUTHOR MULTI --}}
+    {{-- AUTHOR MULTIPLE --}}
     <div id="authorWrapper">
-        <input type="text" name="author[]" class="form-control mb-2" placeholder="Author">
+        <input type="text" name="author[]" class="form-control mb-2" placeholder="Author" required>
     </div>
     <button type="button" onclick="addField()" class="btn btn-sm btn-secondary mb-2">
         + Author
@@ -79,41 +77,32 @@
 
     <input type="text" name="publisher" class="form-control mb-2" placeholder="Publisher">
     <input type="number" name="publication_year" class="form-control mb-2" placeholder="Year">
-
     <textarea name="description" class="form-control mb-2" placeholder="Description"></textarea>
 
-    {{-- ================= CLASSIFICATION ================= --}}
+    {{-- ================= CLASSIFICATION MULTI ================= --}}
     <label>Classification</label>
     <div class="d-flex gap-2 mb-2">
-        <select id="classificationDropdown" name="classification_id" class="form-control">
-            <option value="">Pilih Classification</option>
+        <select name="classification_id[]" id="classificationDropdown" class="form-control" multiple>
             @foreach($classifications as $c)
                 <option value="{{ $c->id }}">{{ $c->name }}</option>
             @endforeach
         </select>
 
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalClassification">+</button>
-
-        <button type="button" class="btn btn-danger" onclick="deleteLast('classification')">
-            Hapus Terakhir
-        </button>
+        <button type="button" class="btn btn-danger" onclick="deleteLast('classification')">Hapus Terakhir</button>
     </div>
 
-    {{-- ================= CATEGORY ================= --}}
+    {{-- ================= CATEGORY MULTI ================= --}}
     <label>Category</label>
     <div class="d-flex gap-2 mb-2">
-        <select id="categoryDropdown" name="category_collection_id" class="form-control">
-            <option value="">Pilih Category</option>
+        <select name="category_collection_id[]" id="categoryDropdown" class="form-control" multiple>
             @foreach($categories as $c)
                 <option value="{{ $c->id }}">{{ $c->name }}</option>
             @endforeach
         </select>
 
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCategory">+</button>
-
-        <button type="button" class="btn btn-danger" onclick="deleteLast('category')">
-            Hapus Terakhir
-        </button>
+        <button type="button" class="btn btn-danger" onclick="deleteLast('category')">Hapus Terakhir</button>
     </div>
 
     {{-- ================= LOCATION ================= --}}
@@ -127,10 +116,7 @@
         </select>
 
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalLocation">+</button>
-
-        <button type="button" class="btn btn-danger" onclick="deleteLast('location')">
-            Hapus Terakhir
-        </button>
+        <button type="button" class="btn btn-danger" onclick="deleteLast('location')">Hapus Terakhir</button>
     </div>
 
     <input type="file" name="cover_image" class="form-control mb-2">
@@ -143,14 +129,12 @@
 </div>
 
 </form>
-
 </div>
 </div>
 </div>
 
-{{-- ================= MODAL TAMBAH RELASI ================= --}}
-
-{{-- CLASSIFICATION --}}
+{{-- ================= MODAL TAMBAH RELASI AJAX ================= --}}
+{{-- Classification --}}
 <div class="modal fade" id="modalClassification">
 <div class="modal-dialog">
 <div class="modal-content p-3">
@@ -160,7 +144,7 @@
 </div>
 </div>
 
-{{-- CATEGORY --}}
+{{-- Category --}}
 <div class="modal fade" id="modalCategory">
 <div class="modal-dialog">
 <div class="modal-content p-3">
@@ -170,7 +154,7 @@
 </div>
 </div>
 
-{{-- LOCATION --}}
+{{-- Location --}}
 <div class="modal fade" id="modalLocation">
 <div class="modal-dialog">
 <div class="modal-content p-3">
@@ -182,41 +166,20 @@
 
 {{-- ================= JS ================= --}}
 <script>
-
-// tambah author
 function addField() {
     let wrapper = document.getElementById('authorWrapper');
-
     let input = document.createElement('input');
     input.type = 'text';
     input.name = 'author[]';
     input.classList.add('form-control','mb-2');
-
     wrapper.appendChild(input);
 }
 
-// AJAX tambah data
 function saveData(type) {
-
     let config = {
-        classification: {
-            url: "{{ route('admin.classification.storeAjax') }}",
-            input: "inputClassification",
-            dropdown: "classificationDropdown",
-            modal: "modalClassification"
-        },
-        category: {
-            url: "{{ route('admin.category.storeAjax') }}",
-            input: "inputCategory",
-            dropdown: "categoryDropdown",
-            modal: "modalCategory"
-        },
-        location: {
-            url: "{{ route('admin.location.storeAjax') }}",
-            input: "inputLocation",
-            dropdown: "locationDropdown",
-            modal: "modalLocation"
-        }
+        classification: {url: "{{ route('admin.classification.storeAjax') }}", input: "inputClassification", dropdown: "classificationDropdown", modal: "modalClassification"},
+        category: {url: "{{ route('admin.category.storeAjax') }}", input: "inputCategory", dropdown: "categoryDropdown", modal: "modalCategory"},
+        location: {url: "{{ route('admin.location.storeAjax') }}", input: "inputLocation", dropdown: "locationDropdown", modal: "modalLocation"},
     };
 
     let c = config[type];
@@ -224,34 +187,24 @@ function saveData(type) {
 
     fetch(c.url, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": "{{ csrf_token() }}"
-        },
+        headers: {"Content-Type":"application/json","X-CSRF-TOKEN":"{{ csrf_token() }}"},
         body: JSON.stringify({ name: name })
     })
     .then(res => res.json())
     .then(data => {
-
         let dropdown = document.getElementById(c.dropdown);
-
         let option = document.createElement('option');
         option.value = data.id;
         option.text = data.name;
         option.selected = true;
-
         dropdown.appendChild(option);
-
         document.getElementById(c.input).value = '';
-
         let modal = bootstrap.Modal.getInstance(document.getElementById(c.modal));
         modal.hide();
     });
 }
 
-// DELETE LAST
 function deleteLast(type) {
-
     if(!confirm('Yakin hapus data terakhir?')) return;
 
     let urls = {
@@ -260,18 +213,9 @@ function deleteLast(type) {
         location: "{{ route('admin.location.deleteLast') }}"
     };
 
-    fetch(urls[type], {
-        method: "DELETE",
-        headers: {
-            "X-CSRF-TOKEN": "{{ csrf_token() }}"
-        }
-    })
-    .then(() => {
-        alert('Data terakhir dihapus');
-        location.reload();
-    });
+    fetch(urls[type], {method:"DELETE", headers:{"X-CSRF-TOKEN":"{{ csrf_token() }}"}})
+    .then(() => { alert('Data terakhir dihapus'); location.reload(); });
 }
-
 </script>
 
 @endsection

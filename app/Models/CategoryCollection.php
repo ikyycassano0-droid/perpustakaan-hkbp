@@ -14,4 +14,10 @@ class CategoryCollection extends Model
     protected $fillable = [
         'name'
     ];
+
+    // ================= RELASI MANY TO MANY =================
+    public function collections()
+    {
+        return $this->belongsToMany(Collection::class, 'category_collection_collection');
+    }
 }

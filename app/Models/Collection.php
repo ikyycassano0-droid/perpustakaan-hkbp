@@ -26,8 +26,6 @@ class Collection extends Model
         'media_type',
         'carrier_type',
         'specific_detail_info',
-        'classification_id',
-        'category_collection_id',
         'location_id',
         'file_url',
         'format',
@@ -45,21 +43,24 @@ class Collection extends Model
         'active' => 'boolean',
     ];
 
+    // ================= RELASI MANY TO MANY =================
     public function classifications()
     {
-        return $this->belongsToMany(Classification::class);
+        return $this->belongsToMany(Classification::class, 'classification_collection');
     }
 
-    public function category()
+    public function categories()
     {
-        return $this->belongsTo(CategoryCollection::class, 'category_collection_id');
+        return $this->belongsToMany(CategoryCollection::class, 'category_collection_collection');
     }
 
+    // ================= RELASI LAIN =================
     public function location()
     {
         return $this->belongsTo(Location::class);
     }
 
+    // ================= ACCESSORS =================
     public function getAuthorStringAttribute()
     {
         return $this->author ? implode(', ', $this->author) : '-';
@@ -82,6 +83,7 @@ class Collection extends Model
             : '-';
     }
 
+    // ================= HELPER =================
     public function isAudio()
     {
         if (!$this->file_url) return false;
@@ -98,6 +100,7 @@ class Collection extends Model
         return strtolower($ext) === 'pdf';
     }
 
+    // ================= SCOPES =================
     public function scopeActive($query)
     {
         return $query->where('active', true);

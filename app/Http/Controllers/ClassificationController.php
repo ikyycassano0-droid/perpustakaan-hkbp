@@ -7,12 +7,14 @@ use Illuminate\Http\Request;
 
 class ClassificationController extends Controller
 {
+    // ================= INDEX =================
     public function index()
     {
         $data = Classification::latest()->get();
         return view('admin.page.classification', compact('data'));
     }
 
+    // ================= STORE BIASA =================
     public function store(Request $request)
     {
         $request->validate([
@@ -26,7 +28,7 @@ class ClassificationController extends Controller
         return back()->with('success', 'Classification berhasil ditambahkan');
     }
 
-    // ================= AJAX STORE =================
+    // ================= STORE AJAX =================
     public function storeAjax(Request $request)
     {
         $request->validate([
@@ -40,6 +42,7 @@ class ClassificationController extends Controller
         return response()->json($data);
     }
 
+    // ================= UPDATE =================
     public function update(Request $request, Classification $classification)
     {
         $request->validate([
@@ -52,8 +55,13 @@ class ClassificationController extends Controller
 
         return back()->with('success', 'Classification berhasil diupdate');
     }
+
+    // ================= DESTROY =================
     public function destroy(Classification $classification)
     {
+        // 🔥 detach pivot dulu supaya tidak error di many-to-many
+        $classification->collections()->detach();
+
         $classification->delete();
 
         return back()->with('success', 'Classification berhasil dihapus');
@@ -65,6 +73,7 @@ class ClassificationController extends Controller
         $data = Classification::latest()->first();
 
         if ($data) {
+            $data->collections()->detach();
             $data->delete();
         }
 
