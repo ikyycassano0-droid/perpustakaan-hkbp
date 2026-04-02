@@ -3,7 +3,6 @@
 @section('title', 'Manajemen Koleksi')
 
 @section('admin_content')
-
 <div class="container py-4">
 
     <h2 class="mb-4">Manajemen Koleksi</h2>
@@ -12,9 +11,7 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalTambah">
-        + Tambah Koleksi
-    </button>
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalTambah">+ Tambah Koleksi</button>
 
     {{-- ================= TABLE ================= --}}
     <table class="table table-bordered">
@@ -27,11 +24,10 @@
                 <th>Year</th>
             </tr>
         </thead>
-
         <tbody>
             @forelse($collections as $i => $item)
             <tr>
-                <td>{{ $i+1 }}</td>
+                <td>{{ $i + 1 }}</td>
                 <td>
                     @if($item->cover_image)
                         <img src="{{ asset('storage/'.$item->cover_image) }}" width="60">
@@ -48,142 +44,138 @@
             @endforelse
         </tbody>
     </table>
-
 </div>
 
 {{-- ================= MODAL TAMBAH KOLEKSI ================= --}}
-<div class="modal fade" id="modalTambah">
-<div class="modal-dialog modal-lg">
-<div class="modal-content">
+<div class="modal fade" id="modalTambah" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form action="{{ route('admin.collections.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Koleksi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    {{-- Title --}}
+                    <input type="text" name="title" class="form-control mb-2" placeholder="Title" required>
 
-<form action="{{ route('admin.collections.store') }}" method="POST" enctype="multipart/form-data">
-@csrf
+                    {{-- Author MULTIPLE --}}
+                    <div id="authorWrapper">
+                        <input type="text" name="author[]" class="form-control mb-2" placeholder="Author" required>
+                    </div>
+                    <button type="button" onclick="addAuthorField()" class="btn btn-sm btn-secondary mb-2">+ Author</button>
 
-<div class="modal-header">
-    <h5>Tambah Koleksi</h5>
-</div>
+                    {{-- Publisher --}}
+                    <input type="text" name="publisher" class="form-control mb-2" placeholder="Publisher">
+                    {{-- Year --}}
+                    <input type="number" name="publication_year" class="form-control mb-2" placeholder="Publication Year">
+                    {{-- Description --}}
+                    <textarea name="description" class="form-control mb-2" placeholder="Description"></textarea>
 
-<div class="modal-body">
+                    {{-- Classification MULTI --}}
+                    <label>Classification</label>
+                    <div class="d-flex gap-2 mb-2 align-items-center">
+                        <select name="classification_id[]" id="classificationDropdown" class="form-control" multiple required>
+                            @foreach($classifications as $c)
+                                <option value="{{ $c->id }}">{{ $c->name }}</option>
+                            @endforeach
+                        </select>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalClassification">+</button>
+                        <button type="button" class="btn btn-danger" onclick="deleteLast('classification')">Hapus Terakhir</button>
+                    </div>
 
-    <input type="text" name="title" class="form-control mb-2" placeholder="Title" required>
+                    {{-- Category MULTI --}}
+                    <label>Category</label>
+                    <div class="d-flex gap-2 mb-2 align-items-center">
+                        <select name="category_collection_id[]" id="categoryDropdown" class="form-control" multiple required>
+                            @foreach($categories as $c)
+                                <option value="{{ $c->id }}">{{ $c->name }}</option>
+                            @endforeach
+                        </select>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCategory">+</button>
+                        <button type="button" class="btn btn-danger" onclick="deleteLast('category')">Hapus Terakhir</button>
+                    </div>
 
-    {{-- AUTHOR MULTIPLE --}}
-    <div id="authorWrapper">
-        <input type="text" name="author[]" class="form-control mb-2" placeholder="Author" required>
+                    {{-- Location --}}
+                    <label>Location</label>
+                    <div class="d-flex gap-2 mb-2 align-items-center">
+                        <select name="location_id" id="locationDropdown" class="form-control" required>
+                            <option value="">Pilih Location</option>
+                            @foreach($locations as $l)
+                                <option value="{{ $l->id }}">{{ $l->name }}</option>
+                            @endforeach
+                        </select>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalLocation">+</button>
+                        <button type="button" class="btn btn-danger" onclick="deleteLast('location')">Hapus Terakhir</button>
+                    </div>
+
+                    {{-- Cover & File --}}
+                    <input type="file" name="cover_image" class="form-control mb-2">
+                    <input type="file" name="file_url" class="form-control mb-2">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <button type="button" onclick="addField()" class="btn btn-sm btn-secondary mb-2">
-        + Author
-    </button>
-
-    <input type="text" name="publisher" class="form-control mb-2" placeholder="Publisher">
-    <input type="number" name="publication_year" class="form-control mb-2" placeholder="Year">
-    <textarea name="description" class="form-control mb-2" placeholder="Description"></textarea>
-
-    {{-- ================= CLASSIFICATION MULTI ================= --}}
-    <label>Classification</label>
-    <div class="d-flex gap-2 mb-2">
-        <select name="classification_id[]" id="classificationDropdown" class="form-control" multiple>
-            @foreach($classifications as $c)
-                <option value="{{ $c->id }}">{{ $c->name }}</option>
-            @endforeach
-        </select>
-
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalClassification">+</button>
-        <button type="button" class="btn btn-danger" onclick="deleteLast('classification')">Hapus Terakhir</button>
-    </div>
-
-    {{-- ================= CATEGORY MULTI ================= --}}
-    <label>Category</label>
-    <div class="d-flex gap-2 mb-2">
-        <select name="category_collection_id[]" id="categoryDropdown" class="form-control" multiple>
-            @foreach($categories as $c)
-                <option value="{{ $c->id }}">{{ $c->name }}</option>
-            @endforeach
-        </select>
-
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCategory">+</button>
-        <button type="button" class="btn btn-danger" onclick="deleteLast('category')">Hapus Terakhir</button>
-    </div>
-
-    {{-- ================= LOCATION ================= --}}
-    <label>Location</label>
-    <div class="d-flex gap-2 mb-2">
-        <select id="locationDropdown" name="location_id" class="form-control">
-            <option value="">Pilih Location</option>
-            @foreach($locations as $l)
-                <option value="{{ $l->id }}">{{ $l->name }}</option>
-            @endforeach
-        </select>
-
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalLocation">+</button>
-        <button type="button" class="btn btn-danger" onclick="deleteLast('location')">Hapus Terakhir</button>
-    </div>
-
-    <input type="file" name="cover_image" class="form-control mb-2">
-    <input type="file" name="file_url" class="form-control mb-2">
-
 </div>
 
-<div class="modal-footer">
-    <button class="btn btn-primary">Simpan</button>
-</div>
-
-</form>
-</div>
-</div>
-</div>
-
-{{-- ================= MODAL TAMBAH RELASI AJAX ================= --}}
+{{-- ================= MODAL AJAX TAMBAH RELASI ================= --}}
 {{-- Classification --}}
 <div class="modal fade" id="modalClassification">
-<div class="modal-dialog">
-<div class="modal-content p-3">
-    <input type="text" id="inputClassification" class="form-control mb-2" placeholder="Nama classification">
-    <button class="btn btn-primary" onclick="saveData('classification')">Simpan</button>
-</div>
-</div>
+    <div class="modal-dialog">
+        <div class="modal-content p-3">
+            <input type="text" id="inputClassification" class="form-control mb-2" placeholder="Nama classification">
+            <button type="button" class="btn btn-primary" onclick="saveData('classification')">Simpan</button>
+        </div>
+    </div>
 </div>
 
 {{-- Category --}}
 <div class="modal fade" id="modalCategory">
-<div class="modal-dialog">
-<div class="modal-content p-3">
-    <input type="text" id="inputCategory" class="form-control mb-2" placeholder="Nama category">
-    <button class="btn btn-primary" onclick="saveData('category')">Simpan</button>
-</div>
-</div>
+    <div class="modal-dialog">
+        <div class="modal-content p-3">
+            <input type="text" id="inputCategory" class="form-control mb-2" placeholder="Nama category">
+            <button type="button" class="btn btn-primary" onclick="saveData('category')">Simpan</button>
+        </div>
+    </div>
 </div>
 
 {{-- Location --}}
 <div class="modal fade" id="modalLocation">
-<div class="modal-dialog">
-<div class="modal-content p-3">
-    <input type="text" id="inputLocation" class="form-control mb-2" placeholder="Nama location">
-    <button class="btn btn-primary" onclick="saveData('location')">Simpan</button>
-</div>
-</div>
+    <div class="modal-dialog">
+        <div class="modal-content p-3">
+            <input type="text" id="inputLocation" class="form-control mb-2" placeholder="Nama location">
+            <button type="button" class="btn btn-primary" onclick="saveData('location')">Simpan</button>
+        </div>
+    </div>
 </div>
 
 {{-- ================= JS ================= --}}
 <script>
-function addField() {
-    let wrapper = document.getElementById('authorWrapper');
-    let input = document.createElement('input');
+function addAuthorField() {
+    const wrapper = document.getElementById('authorWrapper');
+    const input = document.createElement('input');
     input.type = 'text';
     input.name = 'author[]';
-    input.classList.add('form-control','mb-2');
+    input.className = 'form-control mb-2';
+    input.placeholder = 'Author';
     wrapper.appendChild(input);
 }
 
 function saveData(type) {
-    let config = {
+    const config = {
         classification: {url: "{{ route('admin.classification.storeAjax') }}", input: "inputClassification", dropdown: "classificationDropdown", modal: "modalClassification"},
         category: {url: "{{ route('admin.category.storeAjax') }}", input: "inputCategory", dropdown: "categoryDropdown", modal: "modalCategory"},
-        location: {url: "{{ route('admin.location.storeAjax') }}", input: "inputLocation", dropdown: "locationDropdown", modal: "modalLocation"},
+        location: {url: "{{ route('admin.location.storeAjax') }}", input: "inputLocation", dropdown: "locationDropdown", modal: "modalLocation"}
     };
-
-    let c = config[type];
-    let name = document.getElementById(c.input).value;
+    const c = config[type];
+    const name = document.getElementById(c.input).value.trim();
+    if(!name) { alert('Nama tidak boleh kosong'); return; }
 
     fetch(c.url, {
         method: "POST",
@@ -192,30 +184,28 @@ function saveData(type) {
     })
     .then(res => res.json())
     .then(data => {
-        let dropdown = document.getElementById(c.dropdown);
-        let option = document.createElement('option');
+        const dropdown = document.getElementById(c.dropdown);
+        const option = document.createElement('option');
         option.value = data.id;
         option.text = data.name;
         option.selected = true;
         dropdown.appendChild(option);
         document.getElementById(c.input).value = '';
-        let modal = bootstrap.Modal.getInstance(document.getElementById(c.modal));
-        modal.hide();
-    });
+        bootstrap.Modal.getInstance(document.getElementById(c.modal)).hide();
+    })
+    .catch(err => console.error(err));
 }
 
 function deleteLast(type) {
     if(!confirm('Yakin hapus data terakhir?')) return;
-
-    let urls = {
+    const urls = {
         classification: "{{ route('admin.classification.deleteLast') }}",
         category: "{{ route('admin.category.deleteLast') }}",
         location: "{{ route('admin.location.deleteLast') }}"
     };
-
     fetch(urls[type], {method:"DELETE", headers:{"X-CSRF-TOKEN":"{{ csrf_token() }}"}})
-    .then(() => { alert('Data terakhir dihapus'); location.reload(); });
+    .then(() => location.reload())
+    .catch(err => console.error(err));
 }
 </script>
-
 @endsection

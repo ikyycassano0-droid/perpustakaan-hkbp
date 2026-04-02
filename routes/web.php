@@ -51,19 +51,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
 
     });
 
-    Route::prefix('collections')->name('collections.')->group(function () {
-        Route::get('/', [CollectionController::class, 'index_admin'])->name('index');
-        Route::post('/', [CollectionController::class, 'store'])->name('store');
-        Route::put('/{collection}', [CollectionController::class, 'update'])->name('update');
-        Route::delete('/{collection}', [CollectionController::class, 'destroy'])->name('destroy');
-    });
-
     // ================= COLLECTION =================
     Route::prefix('collections')->name('collections.')->group(function () {
         Route::get('/', [CollectionController::class, 'index_admin'])->name('index');
         Route::post('/', [CollectionController::class, 'store'])->name('store');
         Route::put('/{collection}', [CollectionController::class, 'update'])->name('update');
-        Route::delete('/{collection}', [CollectionController::class, 'destroy'])->name('delete');
+        Route::delete('/{collection}', [CollectionController::class, 'destroy'])->name('destroy');
     });
 
     // ================= CLASSIFICATION =================

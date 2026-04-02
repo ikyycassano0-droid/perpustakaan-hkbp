@@ -134,7 +134,6 @@ class CollectionController extends Controller
 
         $collection->update($data);
 
-        // 🔥 SYNC RELASI
         $collection->classifications()->sync($request->classification_id ?? []);
         $collection->categories()->sync($request->category_collection_id ?? []);
 
@@ -144,7 +143,6 @@ class CollectionController extends Controller
     // ================= DELETE =================
     public function destroy(Collection $collection)
     {
-        // 🔥 HAPUS RELASI DULU
         $collection->classifications()->detach();
         $collection->categories()->detach();
 
