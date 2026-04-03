@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Classification extends Model
 {
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'code'];
 
     public function collections()
     {

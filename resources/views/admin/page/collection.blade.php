@@ -11,7 +11,9 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalTambah">+ Tambah Koleksi</button>
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalTambah">
+        + Tambah Koleksi
+    </button>
 
     {{-- ================= TABLE ================= --}}
     <table class="table table-bordered">
@@ -22,84 +24,102 @@
                 <th>Title</th>
                 <th>Author</th>
                 <th>Year</th>
+                <th width="170">Aksi</th>
             </tr>
         </thead>
         <tbody>
             @forelse($collections as $i => $item)
             <tr>
                 <td>{{ $i + 1 }}</td>
+
                 <td>
                     @if($item->cover_image)
                         <img src="{{ asset('storage/'.$item->cover_image) }}" width="60">
                     @endif
                 </td>
+
                 <td>{{ $item->title }}</td>
                 <td>{{ $item->author_string }}</td>
                 <td>{{ $item->publication_year }}</td>
+
+                <td>
+                    <button class="btn btn-warning btn-sm"
+                        onclick='editData(@json($item))'>
+                        Edit
+                    </button>
+
+                    <form action="{{ route('admin.collections.destroy',$item->id) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">
+                            Hapus
+                        </button>
+                    </form>
+                </td>
             </tr>
             @empty
             <tr>
-                <td colspan="5" class="text-center">Belum ada data</td>
+                <td colspan="6" class="text-center">Belum ada data</td>
             </tr>
             @endforelse
         </tbody>
     </table>
 </div>
 
-{{-- ================= MODAL TAMBAH KOLEKSI ================= --}}
-<div class="modal fade" id="modalTambah" tabindex="-1" aria-hidden="true">
+{{-- ================= MODAL TAMBAH ================= --}}
+<div class="modal fade" id="modalTambah">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form action="{{ route('admin.collections.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
+
                 <div class="modal-header">
                     <h5 class="modal-title">Tambah Koleksi</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
+
                 <div class="modal-body">
-                    {{-- Title --}}
+
                     <input type="text" name="title" class="form-control mb-2" placeholder="Title" required>
 
-                    {{-- Author MULTIPLE --}}
+                    {{-- AUTHOR --}}
                     <div id="authorWrapper">
                         <input type="text" name="author[]" class="form-control mb-2" placeholder="Author" required>
                     </div>
-                    <button type="button" onclick="addAuthorField()" class="btn btn-sm btn-secondary mb-2">+ Author</button>
+                    <button type="button" onclick="addAuthorField()" class="btn btn-sm btn-secondary mb-2">
+                        + Author
+                    </button>
 
-                    {{-- Publisher --}}
                     <input type="text" name="publisher" class="form-control mb-2" placeholder="Publisher">
-                    {{-- Year --}}
-                    <input type="number" name="publication_year" class="form-control mb-2" placeholder="Publication Year">
-                    {{-- Description --}}
-                    <textarea id="description" name="description" class="form-control mb-2" placeholder="Description"></textarea>
+                    <input type="number" name="publication_year" class="form-control mb-2" placeholder="Year">
 
-                    {{-- Classification MULTI --}}
+                    <textarea name="description" class="form-control mb-2" placeholder="Description"></textarea>
+
+                    {{-- CLASSIFICATION --}}
                     <label>Classification</label>
-                    <div class="d-flex gap-2 mb-2 align-items-center">
+                    <div class="d-flex gap-2 mb-2">
                         <select name="classification_id[]" id="classificationDropdown" class="form-control" multiple required>
                             @foreach($classifications as $c)
                                 <option value="{{ $c->id }}">{{ $c->name }}</option>
                             @endforeach
                         </select>
                         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalClassification">+</button>
-                        <button type="button" class="btn btn-danger" onclick="deleteLast('classification')">Hapus Terakhir</button>
                     </div>
 
-                    {{-- Category MULTI --}}
+                    {{-- CATEGORY --}}
                     <label>Category</label>
-                    <div class="d-flex gap-2 mb-2 align-items-center">
+                    <div class="d-flex gap-2 mb-2">
                         <select name="category_collection_id[]" id="categoryDropdown" class="form-control" multiple required>
                             @foreach($categories as $c)
                                 <option value="{{ $c->id }}">{{ $c->name }}</option>
                             @endforeach
                         </select>
                         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCategory">+</button>
-                        <button type="button" class="btn btn-danger" onclick="deleteLast('category')">Hapus Terakhir</button>
                     </div>
 
-                    {{-- Location --}}
+                    {{-- LOCATION --}}
                     <label>Location</label>
-                    <div class="d-flex gap-2 mb-2 align-items-center">
+                    <div class="d-flex gap-2 mb-2">
                         <select name="location_id" id="locationDropdown" class="form-control" required>
                             <option value="">Pilih Location</option>
                             @foreach($locations as $l)
@@ -107,185 +127,163 @@
                             @endforeach
                         </select>
                         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalLocation">+</button>
-                        <button type="button" class="btn btn-danger" onclick="deleteLast('location')">Hapus Terakhir</button>
                     </div>
 
-                    {{-- Cover & File --}}
                     <input type="file" name="cover_image" class="form-control mb-2">
                     <input type="file" name="file_url" class="form-control mb-2">
 
                 </div>
+
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button class="btn btn-primary">Simpan</button>
                 </div>
+
             </form>
         </div>
     </div>
 </div>
 
-{{-- ================= MODAL AJAX TAMBAH RELASI ================= --}}
-{{-- Classification --}}
+{{-- ================= MODAL EDIT ================= --}}
+<div class="modal fade" id="modalEdit">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="formEdit" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+
+                <div class="modal-header">
+                    <h5>Edit Koleksi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <input type="text" id="editTitle" name="title" class="form-control mb-2">
+
+                    <div id="editAuthorWrapper"></div>
+
+                    <input type="text" id="editPublisher" name="publisher" class="form-control mb-2">
+                    <input type="number" id="editYear" name="publication_year" class="form-control mb-2">
+
+                    <textarea id="editDescription" name="description" class="form-control mb-2"></textarea>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-primary">Update</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- ================= MODAL AJAX ================= --}}
 <div class="modal fade" id="modalClassification">
     <div class="modal-dialog">
         <div class="modal-content p-3">
-            <input type="text" id="inputClassification" class="form-control mb-2" placeholder="Nama classification">
-            <button type="button" class="btn btn-primary" onclick="saveData('classification')">Simpan</button>
+            <input type="text" id="inputClassification" class="form-control mb-2">
+            <button class="btn btn-primary" onclick="saveData('classification')">Simpan</button>
         </div>
     </div>
 </div>
 
-{{-- Category --}}
 <div class="modal fade" id="modalCategory">
     <div class="modal-dialog">
         <div class="modal-content p-3">
-            <input type="text" id="inputCategory" class="form-control mb-2" placeholder="Nama category">
-            <button type="button" class="btn btn-primary" onclick="saveData('category')">Simpan</button>
+            <input type="text" id="inputCategory" class="form-control mb-2">
+            <button class="btn btn-primary" onclick="saveData('category')">Simpan</button>
         </div>
     </div>
 </div>
 
-{{-- Location --}}
 <div class="modal fade" id="modalLocation">
     <div class="modal-dialog">
         <div class="modal-content p-3">
-            <input type="text" id="inputLocation" class="form-control mb-2" placeholder="Nama location">
-            <button type="button" class="btn btn-primary" onclick="saveData('location')">Simpan</button>
+            <input type="text" id="inputLocation" class="form-control mb-2">
+            <button class="btn btn-primary" onclick="saveData('location')">Simpan</button>
         </div>
     </div>
 </div>
 
 {{-- ================= JS ================= --}}
 <script>
-// ================= AUTHOR =================
 function addAuthorField() {
-    const wrapper = document.getElementById('authorWrapper');
-    const input = document.createElement('input');
+    let input = document.createElement('input');
     input.type = 'text';
     input.name = 'author[]';
     input.className = 'form-control mb-2';
-    input.placeholder = 'Author';
-    wrapper.appendChild(input);
+    document.getElementById('authorWrapper').appendChild(input);
 }
 
-// ================= CKEDITOR SAFE INIT =================
-document.addEventListener("DOMContentLoaded", function () {
+function editData(item) {
+    document.getElementById('formEdit').action = "/admin/collections/" + item.id;
 
-    // cek semua kemungkinan id editor
-    const editors = ['editor', 'description'];
+    document.getElementById('editTitle').value = item.title;
+    document.getElementById('editPublisher').value = item.publisher ?? '';
+    document.getElementById('editYear').value = item.publication_year ?? '';
+    document.getElementById('editDescription').value = item.description ?? '';
 
-    editors.forEach(id => {
-        const el = document.getElementById(id);
+    let wrapper = document.getElementById('editAuthorWrapper');
+    wrapper.innerHTML = '';
 
-        if (el) {
-            ClassicEditor
-                .create(el)
-                .then(editor => {
-                    console.log("CKEditor aktif di:", id);
-                })
-                .catch(error => {
-                    console.error("CKEditor error:", error);
-                });
-        }
-    });
-
-});
-
-// ================= SIMPAN AJAX =================
-function saveData(type) {
-    console.log("KEPANGGIL:", type);
-
-    const config = {
-        classification: {
-            url: "{{ route('admin.classification.storeAjax') }}",
-            input: "inputClassification",
-            dropdown: "classificationDropdown",
-            modal: "modalClassification"
-        },
-        category: {
-            url: "{{ route('admin.category.storeAjax') }}",
-            input: "inputCategory",
-            dropdown: "categoryDropdown",
-            modal: "modalCategory"
-        },
-        location: {
-            url: "{{ route('admin.location.storeAjax') }}",
-            input: "inputLocation",
-            dropdown: "locationDropdown",
-            modal: "modalLocation"
-        }
-    };
-
-    const c = config[type];
-    const name = document.getElementById(c.input).value.trim();
-
-    if (!name) {
-        alert('Nama tidak boleh kosong!');
-        return;
+    if(item.author){
+        item.author.forEach(a=>{
+            let input = document.createElement('input');
+            input.type = 'text';
+            input.name = 'author[]';
+            input.value = a;
+            input.className = 'form-control mb-2';
+            wrapper.appendChild(input);
+        });
     }
 
-    fetch(c.url, {
+    new bootstrap.Modal(document.getElementById('modalEdit')).show();
+}
+
+function saveData(type){
+    let urlMap = {
+        classification: "{{ route('admin.classification.storeAjax') }}",
+        category: "{{ route('admin.category.storeAjax') }}",
+        location: "{{ route('admin.location.storeAjax') }}"
+    };
+
+    let inputMap = {
+        classification: "inputClassification",
+        category: "inputCategory",
+        location: "inputLocation"
+    };
+
+    let dropdownMap = {
+        classification: "classificationDropdown",
+        category: "categoryDropdown",
+        location: "locationDropdown"
+    };
+
+    let name = document.getElementById(inputMap[type]).value;
+
+    fetch(urlMap[type], {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
         },
-        body: JSON.stringify({ name: name })
-    })
-    .then(res => {
-        if (!res.ok) {
-            return res.json().then(err => { throw err; });
-        }
-        return res.json();
-    })
-    .then(data => {
-        console.log("SUCCESS:", data);
-
-        const dropdown = document.getElementById(c.dropdown);
-
-        const option = document.createElement('option');
-        option.value = data.id;
-        option.text = data.name;
-        option.selected = true;
-
-        dropdown.appendChild(option);
-
-        document.getElementById(c.input).value = '';
-
-        const modalEl = document.getElementById(c.modal);
-        const modal = bootstrap.Modal.getInstance(modalEl);
-        modal.hide();
-    })
-    .catch(err => {
-        console.error("ERROR:", err);
-        alert('Gagal menyimpan! Cek console.');
-    });
-}
-
-// ================= DELETE LAST =================
-function deleteLast(type) {
-    if (!confirm('Yakin hapus data terakhir?')) return;
-
-    const urls = {
-        classification: "{{ route('admin.classification.deleteLast') }}",
-        category: "{{ route('admin.category.deleteLast') }}",
-        location: "{{ route('admin.location.deleteLast') }}"
-    };
-
-    fetch(urls[type], {
-        method: "DELETE",
-        headers: {
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        }
+        body: JSON.stringify({ name })
     })
     .then(res => res.json())
-    .then(() => {
-        location.reload();
+    .then(data => {
+        let opt = document.createElement('option');
+        opt.value = data.id;
+        opt.text = data.name;
+        opt.selected = true;
+
+        document.getElementById(dropdownMap[type]).appendChild(opt);
     })
     .catch(err => {
         console.error(err);
-        alert('Gagal hapus!');
+        alert('Gagal menyimpan!');
     });
 }
 </script>
+
 @endsection

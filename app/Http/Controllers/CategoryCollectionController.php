@@ -31,15 +31,27 @@ class CategoryCollectionController extends Controller
     // ================= AJAX STORE =================
     public function storeAjax(Request $request)
     {
-        $request->validate([
-            'name' => 'required'
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required'
+            ]);
 
-        $data = CategoryCollection::create([
-            'name' => $request->name
-        ]);
+            $data = CategoryCollection::create([
+                'name' => $request->name
+            ]);
 
-        return response()->json($data);
+            return response()->json([
+                'success' => true,
+                'id' => $data->id,
+                'name' => $data->name
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     // ================= UPDATE =================

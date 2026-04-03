@@ -16,31 +16,34 @@ class ClassificationController extends Controller
 
     // ================= STORE BIASA =================
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required'
-        ]);
+{
+    $request->validate([
+        'name' => 'required'
+    ]);
 
-        Classification::create([
-            'name' => $request->name
-        ]);
+    Classification::create([
+        'name' => $request->name,
+        'code' => strtoupper(substr($request->name, 0, 3)) . rand(100,999)
+    ]);
 
-        return back()->with('success', 'Classification berhasil ditambahkan');
-    }
+    return back()->with('success', 'Classification berhasil ditambahkan');
+}
 
     // ================= STORE AJAX =================
-    public function storeAjax(Request $request)
-    {
-        $request->validate([
-            'name' => 'required'
-        ]);
+   public function storeAjax(Request $request)
+{
+    
+    $request->validate([
+        'name' => 'required'
+    ]);
 
-        $data = Classification::create([
-            'name' => $request->name
-        ]);
+    $data = Classification::create([
+        'name' => $request->name,
+        'code' => strtoupper(substr($request->name, 0, 3)) . rand(100,999)
+    ]);
 
-        return response()->json($data);
-    }
+    return response()->json($data);
+}
 
     // ================= UPDATE =================
     public function update(Request $request, Classification $classification)

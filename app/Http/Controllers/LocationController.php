@@ -28,17 +28,23 @@ class LocationController extends Controller
 
     // AJAX
     public function storeAjax(Request $request)
-    {
-        $request->validate([
-            'name' => 'required'
-        ]);
+{
+    $request->validate([
+        'name' => 'required',
+        'code' => 'nullable' 
+    ]);
 
-        $data = Location::create([
-            'name' => $request->name
-        ]);
+    $data = Location::create([
+        'name' => $request->name,
+        'code' => null // 🔥 WAJIB biar tidak error SQL
+    ]);
 
-        return response()->json($data);
-    }
+    return response()->json([
+        'success' => true,
+        'id' => $data->id,
+        'name' => $data->name
+    ]);
+}
 
     public function update(Request $request, Location $location)
     {
