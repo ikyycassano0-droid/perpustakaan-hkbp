@@ -71,7 +71,7 @@
                     {{-- Year --}}
                     <input type="number" name="publication_year" class="form-control mb-2" placeholder="Publication Year">
                     {{-- Description --}}
-                    <textarea name="description" class="form-control mb-2" placeholder="Description"></textarea>
+                    <textarea id="description" name="description" class="form-control mb-2" placeholder="Description"></textarea>
 
                     {{-- Classification MULTI --}}
                     <label>Classification</label>
@@ -157,6 +157,7 @@
 
 {{-- ================= JS ================= --}}
 <script>
+// ================= AUTHOR =================
 function addAuthorField() {
     const wrapper = document.getElementById('authorWrapper');
     const input = document.createElement('input');
@@ -167,45 +168,124 @@ function addAuthorField() {
     wrapper.appendChild(input);
 }
 
+// ================= CKEDITOR SAFE INIT =================
+document.addEventListener("DOMContentLoaded", function () {
+
+    // cek semua kemungkinan id editor
+    const editors = ['editor', 'description'];
+
+    editors.forEach(id => {
+        const el = document.getElementById(id);
+
+        if (el) {
+            ClassicEditor
+                .create(el)
+                .then(editor => {
+                    console.log("CKEditor aktif di:", id);
+                })
+                .catch(error => {
+                    console.error("CKEditor error:", error);
+                });
+        }
+    });
+
+});
+
+// ================= SIMPAN AJAX =================
 function saveData(type) {
+    console.log("KEPANGGIL:", type);
+
     const config = {
-        classification: {url: "{{ route('admin.classification.storeAjax') }}", input: "inputClassification", dropdown: "classificationDropdown", modal: "modalClassification"},
-        category: {url: "{{ route('admin.category.storeAjax') }}", input: "inputCategory", dropdown: "categoryDropdown", modal: "modalCategory"},
-        location: {url: "{{ route('admin.location.storeAjax') }}", input: "inputLocation", dropdown: "locationDropdown", modal: "modalLocation"}
+        classification: {
+            url: "{{ route('admin.classification.storeAjax') }}",
+            input: "inputClassification",
+            dropdown: "classificationDropdown",
+            modal: "modalClassification"
+        },
+        category: {
+            url: "{{ route('admin.category.storeAjax') }}",
+            input: "inputCategory",
+            dropdown: "categoryDropdown",
+            modal: "modalCategory"
+        },
+        location: {
+            url: "{{ route('admin.location.storeAjax') }}",
+            input: "inputLocation",
+            dropdown: "locationDropdown",
+            modal: "modalLocation"
+        }
     };
+
     const c = config[type];
     const name = document.getElementById(c.input).value.trim();
-    if(!name) { alert('Nama tidak boleh kosong'); return; }
+
+    if (!name) {
+        alert('Nama tidak boleh kosong!');
+        return;
+    }
 
     fetch(c.url, {
         method: "POST",
-        headers: {"Content-Type":"application/json","X-CSRF-TOKEN":"{{ csrf_token() }}"},
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
         body: JSON.stringify({ name: name })
     })
-    .then(res => res.json())
+    .then(res => {
+        if (!res.ok) {
+            return res.json().then(err => { throw err; });
+        }
+        return res.json();
+    })
     .then(data => {
+        console.log("SUCCESS:", data);
+
         const dropdown = document.getElementById(c.dropdown);
+
         const option = document.createElement('option');
         option.value = data.id;
         option.text = data.name;
         option.selected = true;
+
         dropdown.appendChild(option);
+
         document.getElementById(c.input).value = '';
-        bootstrap.Modal.getInstance(document.getElementById(c.modal)).hide();
+
+        const modalEl = document.getElementById(c.modal);
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        modal.hide();
     })
-    .catch(err => console.error(err));
+    .catch(err => {
+        console.error("ERROR:", err);
+        alert('Gagal menyimpan! Cek console.');
+    });
 }
 
+// ================= DELETE LAST =================
 function deleteLast(type) {
-    if(!confirm('Yakin hapus data terakhir?')) return;
+    if (!confirm('Yakin hapus data terakhir?')) return;
+
     const urls = {
         classification: "{{ route('admin.classification.deleteLast') }}",
         category: "{{ route('admin.category.deleteLast') }}",
         location: "{{ route('admin.location.deleteLast') }}"
     };
-    fetch(urls[type], {method:"DELETE", headers:{"X-CSRF-TOKEN":"{{ csrf_token() }}"}})
-    .then(() => location.reload())
-    .catch(err => console.error(err));
+
+    fetch(urls[type], {
+        method: "DELETE",
+        headers: {
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(res => res.json())
+    .then(() => {
+        location.reload();
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Gagal hapus!');
+    });
 }
 </script>
 @endsection

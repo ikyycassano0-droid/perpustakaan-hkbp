@@ -12,10 +12,12 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('series_title')->nullable();
+
             $table->json('author')->nullable();
             $table->json('responsibility_statement')->nullable();
             $table->json('content_type')->nullable();
             $table->json('media_type')->nullable();
+
             $table->string('publisher')->nullable();
             $table->year('publication_year')->nullable();
             $table->string('language')->nullable();
@@ -23,16 +25,23 @@ return new class extends Migration
             $table->string('edition')->nullable();
             $table->string('subject')->nullable();
             $table->text('description')->nullable();
+
             $table->string('carrier_type')->nullable();
             $table->text('specific_detail_info')->nullable();
-            $table->unsignedBigInteger('classification_id')->nullable();
-            $table->unsignedBigInteger('category_collection_id')->nullable();
+
+            // ❌ HAPUS INI
+            // classification_id
+            // category_collection_id
+
             $table->unsignedBigInteger('location_id')->nullable();
-            $table->string('file_url')->nullable(); // pdf / audio
+
+            $table->string('file_url')->nullable();
             $table->string('format')->nullable();
             $table->string('cover_image')->nullable();
+
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
+
             $table->boolean('active')->default(true);
             $table->timestamps();
 

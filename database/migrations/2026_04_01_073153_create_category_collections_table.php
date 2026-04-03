@@ -8,19 +8,15 @@ return new class extends Migration {
 
     public function up(): void
     {
-        Schema::create('category_collection_collection', function (Blueprint $table) {
+        Schema::create('category_collections', function (Blueprint $table) {
             $table->id();
-
-            // foreign key ke collections
-            $table->foreignId('collection_id')->constrained()->cascadeOnDelete();
-
-            // foreign key ke category_collections
-            $table->foreignId('category_collection_id')->constrained()->cascadeOnDelete();
+            $table->string('name');
+            $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('category_collection_collection');
+        Schema::dropIfExists('category_collections');
     }
 };

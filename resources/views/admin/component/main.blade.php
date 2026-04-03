@@ -591,11 +591,18 @@
 </script>
 <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 <script>
-ClassicEditor
-    .create(document.querySelector('#editor'))
-    .catch(error => {
-        console.error(error);
-    });
+const editorEl = document.querySelector('#editor');
+
+if (editorEl) {
+    ClassicEditor
+        .create(editorEl)
+        .then(editor => {
+            console.log('CKEditor siap');
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}
 </script>
 @stack('scripts')
 </body>
