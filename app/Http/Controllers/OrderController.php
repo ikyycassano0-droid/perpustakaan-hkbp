@@ -10,6 +10,13 @@ use Carbon\Carbon;
 
 class OrderController extends Controller
 {
+        // ================= ADMIN =================
+        public function index()
+    {
+        $orders = Order::with(['user','details.collection'])->latest()->get();
+
+        return view('admin.page.pengelolaan_buku', compact('orders'));
+    }
     // ================= USER PINJAM =================
     public function store(Request $request)
     {

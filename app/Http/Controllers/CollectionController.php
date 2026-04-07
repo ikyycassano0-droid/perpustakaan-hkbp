@@ -8,6 +8,7 @@ use App\Models\Classification;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Order;
 
 class CollectionController extends Controller
 {
@@ -20,15 +21,11 @@ class CollectionController extends Controller
         $classifications = Classification::all();
         $locations = Location::all();
 
-        
-        $orders = Order::with(['user','details.collection'])->latest()->get();
-
-        return view('admin.page.pengelolaan_buku', compact(
+        return view('admin.page.collection', compact(
             'collections',
             'categories',
             'classifications',
-            'locations',
-            'orders'
+            'locations'
         ));
     }
 

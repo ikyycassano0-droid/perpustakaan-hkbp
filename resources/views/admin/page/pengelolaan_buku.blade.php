@@ -21,7 +21,7 @@
         <div class="card-header">Tambah Buku</div>
         <div class="card-body">
 
-            <form action="{{ route('collections.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.collections.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <div class="row">
@@ -106,7 +106,7 @@
                 <td>{{ $item->publisher }}</td>
                 <td>{{ $item->publication_year }}</td>
                 <td>
-                    <form action="{{ route('collections.destroy', $item->id) }}" method="POST">
+                    <form action="{{ route('admin.collections.destroy', $item->id) }}" method="POST" onsubmit="return confirmAction('Hapus buku ini?')">
                         @csrf
                         @method('DELETE')
                         <button class="btn btn-danger btn-sm">Hapus</button>
@@ -161,14 +161,32 @@
                 <td>Rp {{ number_format($order->fine) }}</td>
 
                 <td>
+                    {{-- APPROVE --}}
                     @if($order->status == 'PENDING')
-                        <a href="{{ route('orders.approve', $order->id) }}" class="btn btn-success btn-sm">Approve</a>
-                        <a href="{{ route('orders.reject', $order->id) }}" class="btn btn-danger btn-sm">Reject</a>
+                    <form action="{{ route('admin.orders.approve', $order->id) }}" method="POST" style="display:inline;" onsubmit="return confirmAction('Approve peminjaman ini?')">
+                        @csrf
+                        <button class="btn btn-success btn-sm">Approve</button>
+                    </form>
+
+                    {{-- REJECT --}}
+                    <form action="{{ route('admin.orders.reject', $order->id) }}" method="POST" style="display:inline;" onsubmit="return confirmAction('Tolak peminjaman ini?')">
+                        @csrf
+                        <button class="btn btn-danger btn-sm">Reject</button>
+                    </form>
                     @endif
 
+                    {{-- RETURN --}}
                     @if($order->status == 'APPROVED')
-                        <a href="{{ route('orders.return', $order->id) }}" class="btn btn-primary btn-sm">Return</a>
-                        <a href="{{ route('orders.extend', $order->id) }}" class="btn btn-warning btn-sm">Extend</a>
+                    <form action="{{ route('admin.orders.return', $order->id) }}" method="POST" style="display:inline;" onsubmit="return confirmAction('Konfirmasi pengembalian buku?')">
+                        @csrf
+                        <button class="btn btn-primary btn-sm">Return</button>
+                    </form>
+
+                    {{-- EXTEND --}}
+                    <form action="{{ route('admin.orders.extend', $order->id) }}" method="POST" style="display:inline;" onsubmit="return confirmAction('Perpanjang peminjaman?')">
+                        @csrf
+                        <button class="btn btn-warning btn-sm">Extend</button>
+                    </form>
                     @endif
                 </td>
             </tr>
@@ -177,4 +195,12 @@
     </table>
 
 </div>
+
+{{-- ================= JS CONFIRM ================= --}}
+<script>
+function confirmAction(message) {
+    return confirm(message);
+}
+</script>
+
 @endsection

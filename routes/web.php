@@ -102,22 +102,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
         Route::delete('/delete-last', [LocationController::class, 'deleteLast'])->name('deleteLast');
     });
 
-        Route::prefix('orders')->name('orders.')->group(function () {
+    Route::prefix('orders')->name('orders.')->group(function () {
 
-        // lihat data peminjaman (opsional kalau mau halaman khusus)
-        Route::get('/', [OrderController::class, 'index'])->name('index');
-
-        // approve
-        Route::get('/{id}/approve', [OrderController::class, 'approve'])->name('approve');
-
-        // reject
-        Route::get('/{id}/reject', [OrderController::class, 'reject'])->name('reject');
-
-        // return buku
-        Route::get('/{id}/return', [OrderController::class, 'returnBook'])->name('return');
-
-        // perpanjang
-        Route::get('/{id}/extend', [OrderController::class, 'extend'])->name('extend');
+        Route::post('/{id}/approve', [OrderController::class, 'approve'])->name('approve');
+        Route::post('/{id}/reject', [OrderController::class, 'reject'])->name('reject');
+        Route::post('/{id}/return', [OrderController::class, 'returnBook'])->name('return');
+        Route::post('/{id}/extend', [OrderController::class, 'extend'])->name('extend');
 
     });
 
@@ -128,6 +118,19 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
 Route::get('user/dashboard', function(){
     return view('user.dashboard');
 })->name('user.dashboard')->middleware('auth');
+Route::middleware(['auth'])->group(function () {
+
+    // halaman pinjam buku
+    Route::get('/pinjam', [CollectionController::class, 'pinjam'])
+        ->name('user.pinjam');
+
+    // proses pinjam
+    Route::post('/orders', [OrderController::class, 'store'])
+        ->name('orders.store');
+
+});
+
+//Guest
 
 Route::middleware(['web'])->group(function () {
     Route::get('/', function () {
