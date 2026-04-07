@@ -105,4 +105,9 @@ class Collection extends Model
     {
         return $query->where('active', true);
     }
+
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
 }

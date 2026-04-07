@@ -3,6 +3,10 @@
 @section('title', 'Manajemen Koleksi')
 
 @section('admin_content')
+
+{{-- ================= SELECT2 ================= --}}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 <div class="container py-4">
 
     <h2 class="mb-4">Manajemen Koleksi</h2>
@@ -97,37 +101,31 @@
 
                     {{-- CLASSIFICATION --}}
                     <label>Classification</label>
-                    <div class="d-flex gap-2 mb-2">
-                        <select name="classification_id[]" id="classificationDropdown" class="form-control" multiple required>
-                            @foreach($classifications as $c)
-                                <option value="{{ $c->id }}">{{ $c->name }}</option>
-                            @endforeach
-                        </select>
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalClassification">+</button>
-                    </div>
+                    <select name="classification_id[]" id="classificationDropdown" class="form-control select2" multiple required>
+                        @foreach($classifications as $c)
+                            <option value="{{ $c->id }}">{{ $c->name }}</option>
+                        @endforeach
+                    </select>
+                    <button type="button" class="btn btn-success mt-2 mb-2" data-bs-toggle="modal" data-bs-target="#modalClassification">+ Tambah</button>
 
                     {{-- CATEGORY --}}
                     <label>Category</label>
-                    <div class="d-flex gap-2 mb-2">
-                        <select name="category_collection_id[]" id="categoryDropdown" class="form-control" multiple required>
-                            @foreach($categories as $c)
-                                <option value="{{ $c->id }}">{{ $c->name }}</option>
-                            @endforeach
-                        </select>
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCategory">+</button>
-                    </div>
+                    <select name="category_collection_id[]" id="categoryDropdown" class="form-control select2" multiple required>
+                        @foreach($categories as $c)
+                            <option value="{{ $c->id }}">{{ $c->name }}</option>
+                        @endforeach
+                    </select>
+                    <button type="button" class="btn btn-success mt-2 mb-2" data-bs-toggle="modal" data-bs-target="#modalCategory">+ Tambah</button>
 
                     {{-- LOCATION --}}
                     <label>Location</label>
-                    <div class="d-flex gap-2 mb-2">
-                        <select name="location_id" id="locationDropdown" class="form-control" required>
-                            <option value="">Pilih Location</option>
-                            @foreach($locations as $l)
-                                <option value="{{ $l->id }}">{{ $l->name }}</option>
-                            @endforeach
-                        </select>
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalLocation">+</button>
-                    </div>
+                    <select name="location_id" id="locationDropdown" class="form-control" required>
+                        <option value="">Pilih Location</option>
+                        @foreach($locations as $l)
+                            <option value="{{ $l->id }}">{{ $l->name }}</option>
+                        @endforeach
+                    </select>
+                    <button type="button" class="btn btn-success mt-2 mb-2" data-bs-toggle="modal" data-bs-target="#modalLocation">+ Tambah</button>
 
                     <input type="file" name="cover_image" class="form-control mb-2">
                     <input type="file" name="file_url" class="form-control mb-2">
@@ -136,41 +134,6 @@
 
                 <div class="modal-footer">
                     <button class="btn btn-primary">Simpan</button>
-                </div>
-
-            </form>
-        </div>
-    </div>
-</div>
-
-{{-- ================= MODAL EDIT ================= --}}
-<div class="modal fade" id="modalEdit">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form id="formEdit" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-
-                <div class="modal-header">
-                    <h5>Edit Koleksi</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-
-                    <input type="text" id="editTitle" name="title" class="form-control mb-2">
-
-                    <div id="editAuthorWrapper"></div>
-
-                    <input type="text" id="editPublisher" name="publisher" class="form-control mb-2">
-                    <input type="number" id="editYear" name="publication_year" class="form-control mb-2">
-
-                    <textarea id="editDescription" name="description" class="form-control mb-2"></textarea>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button class="btn btn-primary">Update</button>
                 </div>
 
             </form>
@@ -207,7 +170,17 @@
 </div>
 
 {{-- ================= JS ================= --}}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    $('.select2').select2({
+        placeholder: "Pilih data",
+        width: '100%'
+    });
+});
+
 function addAuthorField() {
     let input = document.createElement('input');
     input.type = 'text';
@@ -216,32 +189,8 @@ function addAuthorField() {
     document.getElementById('authorWrapper').appendChild(input);
 }
 
-function editData(item) {
-    document.getElementById('formEdit').action = "/admin/collections/" + item.id;
-
-    document.getElementById('editTitle').value = item.title;
-    document.getElementById('editPublisher').value = item.publisher ?? '';
-    document.getElementById('editYear').value = item.publication_year ?? '';
-    document.getElementById('editDescription').value = item.description ?? '';
-
-    let wrapper = document.getElementById('editAuthorWrapper');
-    wrapper.innerHTML = '';
-
-    if(item.author){
-        item.author.forEach(a=>{
-            let input = document.createElement('input');
-            input.type = 'text';
-            input.name = 'author[]';
-            input.value = a;
-            input.className = 'form-control mb-2';
-            wrapper.appendChild(input);
-        });
-    }
-
-    new bootstrap.Modal(document.getElementById('modalEdit')).show();
-}
-
 function saveData(type){
+
     let urlMap = {
         classification: "{{ route('admin.classification.storeAjax') }}",
         category: "{{ route('admin.category.storeAjax') }}",
@@ -255,9 +204,9 @@ function saveData(type){
     };
 
     let dropdownMap = {
-        classification: "classificationDropdown",
-        category: "categoryDropdown",
-        location: "locationDropdown"
+        classification: "#classificationDropdown",
+        category: "#categoryDropdown",
+        location: "#locationDropdown"
     };
 
     let name = document.getElementById(inputMap[type]).value;
@@ -272,18 +221,20 @@ function saveData(type){
     })
     .then(res => res.json())
     .then(data => {
-        let opt = document.createElement('option');
-        opt.value = data.id;
-        opt.text = data.name;
-        opt.selected = true;
 
-        document.getElementById(dropdownMap[type]).appendChild(opt);
+        let newOption = new Option(data.name, data.id, true, true);
+
+        $(dropdownMap[type]).append(newOption).trigger('change'); // 🔥 FIX MULTIPLE
+
+        document.getElementById(inputMap[type]).value = '';
+
     })
     .catch(err => {
         console.error(err);
         alert('Gagal menyimpan!');
     });
 }
+
 </script>
 
 @endsection

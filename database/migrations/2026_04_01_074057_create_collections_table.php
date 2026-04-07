@@ -29,10 +29,6 @@ return new class extends Migration
             $table->string('carrier_type')->nullable();
             $table->text('specific_detail_info')->nullable();
 
-            // ❌ HAPUS INI
-            // classification_id
-            // category_collection_id
-
             $table->unsignedBigInteger('location_id')->nullable();
 
             $table->string('file_url')->nullable();
@@ -51,6 +47,7 @@ return new class extends Migration
 
             $table->index('title');
             $table->index('isbn');
+            
         });
     }
 

@@ -20,11 +20,15 @@ class CollectionController extends Controller
         $classifications = Classification::all();
         $locations = Location::all();
 
-        return view('admin.page.collection', compact(
+        
+        $orders = Order::with(['user','details.collection'])->latest()->get();
+
+        return view('admin.page.pengelolaan_buku', compact(
             'collections',
             'categories',
             'classifications',
-            'locations'
+            'locations',
+            'orders'
         ));
     }
 
@@ -51,7 +55,7 @@ class CollectionController extends Controller
             ? $request->file('file_url')->store('collections/file', 'public')
             : null;
 
-        // 🔥 CREATE COLLECTION TANPA FK
+        // CREATE COLLECTION TANPA FK
         $collection = Collection::create([
             'title' => $request->title,
 
@@ -75,7 +79,7 @@ class CollectionController extends Controller
             'created_by' => session('user_id'),
         ]);
 
-        // 🔥 MANY TO MANY (INI YANG PENTING)
+        // MANY TO MANY (INI YANG PENTING)
         $collection->classifications()->sync($request->classification_id ?? []);
         $collection->categories()->sync($request->category_collection_id ?? []);
 
@@ -157,6 +161,13 @@ class CollectionController extends Controller
         $collection->delete();
 
         return back()->with('success', 'Koleksi berhasil dihapus');
+    }
+
+    public function pinjam()
+    {
+        $collections = Collection::latest()->get();
+
+        return view('user.page.pinbal', compact('collections'));
     }
 
     // ================= GUEST =================

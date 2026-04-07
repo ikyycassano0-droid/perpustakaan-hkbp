@@ -10,6 +10,7 @@ use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\ClassificationController;
 use App\Http\Controllers\CategoryCollectionController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\OrderController;
 
 // Login
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -99,6 +100,25 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
 
         // HAPUS TERAKHIR
         Route::delete('/delete-last', [LocationController::class, 'deleteLast'])->name('deleteLast');
+    });
+
+        Route::prefix('orders')->name('orders.')->group(function () {
+
+        // lihat data peminjaman (opsional kalau mau halaman khusus)
+        Route::get('/', [OrderController::class, 'index'])->name('index');
+
+        // approve
+        Route::get('/{id}/approve', [OrderController::class, 'approve'])->name('approve');
+
+        // reject
+        Route::get('/{id}/reject', [OrderController::class, 'reject'])->name('reject');
+
+        // return buku
+        Route::get('/{id}/return', [OrderController::class, 'returnBook'])->name('return');
+
+        // perpanjang
+        Route::get('/{id}/extend', [OrderController::class, 'extend'])->name('extend');
+
     });
 
 });
