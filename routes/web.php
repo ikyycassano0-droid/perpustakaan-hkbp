@@ -58,6 +58,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
         Route::post('/', [CollectionController::class, 'store'])->name('store');
         Route::put('/{collection}', [CollectionController::class, 'update'])->name('update');
         Route::delete('/{collection}', [CollectionController::class, 'destroy'])->name('destroy');
+        Route::get('/pengelolaan-buku', [CollectionController::class, 'pengelolaanBuku'])->name('pengelolaan_buku');
     });
 
     // ================= CLASSIFICATION =================
@@ -104,6 +105,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
 
     Route::prefix('orders')->name('orders.')->group(function () {
 
+        Route::get('/', [OrderController::class, 'index'])->name('index');
         Route::post('/{id}/approve', [OrderController::class, 'approve'])->name('approve');
         Route::post('/{id}/reject', [OrderController::class, 'reject'])->name('reject');
         Route::post('/{id}/return', [OrderController::class, 'returnBook'])->name('return');
@@ -113,21 +115,41 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
 
 });
 
+// User
+Route::middleware(['auth'])->prefix('user')->group(function () {
 
-// Dashboard user biasa
-Route::get('user/dashboard', function(){
-    return view('user.dashboard');
-})->name('user.dashboard')->middleware('auth');
-Route::middleware(['auth'])->group(function () {
+    // Dashboard
+    Route::get('/dashboard', function() {
+        return view('user.page.home');
+    })->name('user.dashboard');
 
-    // halaman pinjam buku
+    // Halaman pinjam
     Route::get('/pinjam', [CollectionController::class, 'pinjam'])
         ->name('user.pinjam');
 
-    // proses pinjam
-    Route::post('/orders', [OrderController::class, 'store'])
+    // Orders
+    Route::post('/orders', [CollectionController::class, 'storeOrder'])
         ->name('orders.store');
 
+    // ================= KOLEKSI TERCETAK =================
+    Route::prefix('koleksi')->group(function () {
+
+        Route::get('/jurnal', [CollectionController::class, 'showUserMenu'])
+            ->name('user.koleksi.jurnal')
+            ->defaults('menu_type', 'jurnal');
+
+        Route::get('/buku-pengayaan', [CollectionController::class, 'showUserMenu'])
+            ->name('user.koleksi.buku_pengayaan')
+            ->defaults('menu_type', 'buku_pengayaan');
+
+        Route::get('/buku-referensi', [CollectionController::class, 'showUserMenu'])
+            ->name('user.koleksi.buku_referensi')
+            ->defaults('menu_type', 'buku_referensi');
+
+        Route::get('/majalah', [CollectionController::class, 'showUserMenu'])
+            ->name('user.koleksi.majalah')
+            ->defaults('menu_type', 'majalah');
+    });
 });
 
 //Guest

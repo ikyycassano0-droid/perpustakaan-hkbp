@@ -80,7 +80,7 @@ class CollectionController extends Controller
         $collection->classifications()->sync($request->classification_id ?? []);
         $collection->categories()->sync($request->category_collection_id ?? []);
 
-        return back()->with('success', 'Koleksi berhasil ditambahkan');
+        return redirect()->route('admin.collections.index')->with('success', 'Koleksi berhasil ditambahkan'); 
     }
 
     // ================= UPDATE =================
@@ -90,7 +90,7 @@ class CollectionController extends Controller
             'title' => 'required',
             'author' => 'required|array',
             'author.*' => 'required|string',
-
+            'stock' => 'required|integer|min:0',
             'file_url' => 'nullable|file|mimes:pdf,mp3,wav,ogg|max:20000',
             'cover_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
@@ -111,6 +111,7 @@ class CollectionController extends Controller
             'specific_detail_info' => $request->specific_detail_info,
 
             'location_id' => $request->location_id,
+            'stock' => max(0, (int) $request->stock),
 
             'updated_by' => session('user_id'),
         ];
@@ -138,7 +139,7 @@ class CollectionController extends Controller
         $collection->classifications()->sync($request->classification_id ?? []);
         $collection->categories()->sync($request->category_collection_id ?? []);
 
-        return back()->with('success', 'Koleksi berhasil diupdate');
+        return redirect()->route('admin.collections.index')->with('success', 'Koleksi berhasil diupdate');
     }
 
     // ================= DELETE =================
@@ -157,14 +158,18 @@ class CollectionController extends Controller
 
         $collection->delete();
 
-        return back()->with('success', 'Koleksi berhasil dihapus');
+        return redirect()->route('admin.collections.index')->with('success', 'Koleksi berhasil dihapus');
     }
 
-    public function pinjam()
+    public function pinjam(Request $request)
     {
-        $collections = Collection::latest()->get();
+        // Ambil semua koleksi beserta relasi location, classifications, categories
+        $collections = Collection::with(['location', 'classifications', 'categories'])
+            ->latest()
+            ->get();
 
-        return view('user.page.pinbal', compact('collections'));
+        // Kirim ke blade
+        return view('user.page.Koleksi.Koleksi Tercetak.pinbal', compact('collections'));
     }
 
     // ================= GUEST =================
@@ -180,5 +185,37 @@ class CollectionController extends Controller
         $collection = Collection::with(['classifications','categories','location'])->findOrFail($id);
 
         return view('guest.page.collection_detail', compact('collection'));
+    }
+
+    public function pengelolaanBuku()
+    {
+        $collections = Collection::all();
+        $orders = Order::with(['user','details.collection'])->latest()->get();
+        $locations = Location::all(); // ini supaya blade bisa pakai $locations
+
+        return view('admin.page.pengelolaan_buku', compact(
+            'collections',
+            'orders',
+            'locations'
+        ));
+    }
+
+    public function showUserMenu($menu_type)
+    {
+        // Ambil koleksi sesuai menu_type
+        $collections = Collection::with(['classifications', 'categories', 'location'])
+            ->where('menu_type', $menu_type) // pastikan field menu_type ada di table collections
+            ->get();
+
+        // Tentukan blade mana yang dipakai berdasarkan menu_type
+        $blade = match($menu_type) {
+            'jurnal' => 'user.page.Koleksi.Koleksi Tercetak.jurnal',
+            'buku_pengayaan' => 'user.page.Koleksi.Koleksi Tercetak.buku_pengayaan',
+            'buku_referensi' => 'user.page.Koleksi.Koleksi Tercetak.buku_referensi',
+            'majalah' => 'user.page.Koleksi.Koleksi Tercetak.majalah',
+            default => abort(404),
+        };
+
+        return view($blade, compact('collections'));
     }
 }

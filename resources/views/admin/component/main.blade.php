@@ -512,12 +512,7 @@
         </a>
     </div>
     <div class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="fas fa-tags"></i> Kategori Buku
-        </a>
-    </div>
-    <div class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="{{ route('admin.orders.index') }}">
             <i class="fas fa-hand-holding-heart"></i> Peminjaman
         </a>
     </div>
@@ -534,7 +529,7 @@
         </a>
     </div>
     <div class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="{{ route('home') }}">
             <i class="fas fa-sign-out-alt"></i> Keluar Sistem
         </a>
     </div>

@@ -1,8 +1,8 @@
 @extends('user.component.main')
-@section('user_content')
     <header>
       @include('user.component.navbar')
     </header>
+@section('user_content')
 <section class="hero">
         <h2>Selamat Datang di Portal Anggota</h2>
         <p>Halo, Mahasiswa! Gunakan layanan mandiri perpustakaan untuk mendukung studi keperawatan Anda.</p>
@@ -134,6 +134,3 @@
         </div>
     </section>
   
-    <footer>
-      @include('user.component.footer')
-    </footer>

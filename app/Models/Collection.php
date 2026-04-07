@@ -33,6 +33,7 @@ class Collection extends Model
         'created_by',
         'updated_by',
         'active',
+        'menu_type',
     ];
 
     protected $casts = [
@@ -66,6 +67,11 @@ class Collection extends Model
         return $this->author ? implode(', ', $this->author) : '-';
     }
 
+    public function getAuthorsArrayAttribute()
+    {
+        return $this->author ?? [];
+    }
+
     public function getContentTypeStringAttribute()
     {
         return $this->content_type ? implode(', ', $this->content_type) : '-';
@@ -81,6 +87,16 @@ class Collection extends Model
         return $this->responsibility_statement 
             ? implode(', ', $this->responsibility_statement) 
             : '-';
+    }
+
+    public function getClassificationIdsAttribute()
+    {
+        return $this->classifications ? $this->classifications->pluck('id')->toArray() : [];
+    }
+
+    public function getCategoryIdsAttribute()
+    {
+        return $this->categories ? $this->categories->pluck('id')->toArray() : [];
     }
 
     // ================= HELPER =================

@@ -33,15 +33,14 @@
                         <li>
                             <a href="#">Koleksi Tercetak <i class="fas fa-caret-right" style="float:right;"></i></a>
                             <ul class="dropdown-menu submenu">
-                                <li><a href="#">Jurnal</a></li>
-                                <li><a href="#">Buku Pengayaan</a></li>
-                                <li><a href="#">Buku Referensi</a></li>
-                                <li><a href="#">Majalah</a></li>
+                                <li><a href="{{ route('user.koleksi.jurnal') }}">Jurnal</a></li>
+                                <li><a href="{{ route('user.koleksi.buku_pengayaan') }}">Buku Pengayaan</a></li>
+                                <li><a href="{{ route('user.koleksi.buku_referensi') }}">Buku Referensi</a></li>
+                                <li><a href="{{ route('user.koleksi.majalah') }}">Majalah</a></li>
                             </ul>
                         </li>
                     </ul>
                 </li>
-            <li>
                 <a href="#">Koleksi Elektronik <i class="fas fa-caret-down"></i></a>
                 <ul class="dropdown-menu">
                     <li><a href="ebook.html">E-book</a></li>
@@ -67,9 +66,11 @@
                 </li>
             </ul>
         </nav>
-
+        
         <div class="user-area">
             <span class="user-name"><i class="fas fa-user-circle"></i> Mahasiswa AKPER</span>
-            <a href="guest.html" class="logout-btn"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
+            <a href="{{ route('home') }}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> LOGOUT
+            </a>
         </div>
 </div>

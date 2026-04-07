@@ -1,8 +1,10 @@
 @extends('user.component.main')
-
+    <header>
+      @include('user.component.navbar')
+    </header>
 @section('title', 'Pinjam Buku')
 
-@section('content')
+@section('user_content')
 <div class="container py-4">
 
     <h2 class="mb-4 fw-bold">📚 Pinjam Buku</h2>
