@@ -4,11 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Member Area - Perpustakaan Sekolah Keperawatan HKBP</title>
-    <!-- Link Font Awesome untuk Ikon -->
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Desa Taon Marisi</title>
-    <link rel="icon" href="{{ asset('assets/img/8.png') }}" type="image/png">
 
     <link href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
@@ -375,7 +370,6 @@
     </div>
 
 <script src="{{URL:: asset('assets/js/main.js') }}"></script>
-
 <script src="{{URL:: asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{URL:: asset('assets/vendor/php-email-form/validate.js') }}"></script>
 <script src="{{URL:: asset('assets/vendor/aos/aos.js') }}"></script>
@@ -384,6 +378,46 @@
 <script src="{{URL:: asset('assets/vendor/isotope-layout/isotope.pkgd.min.js') }}"></script>
 <script src="{{URL:: asset('assets/vendor/swiper/swiper-bundle.min.js') }}"></script>
 <script src="{{URL:: asset('assets/vendor/purecounter/purecounter_vanilla.js') }}"></script>
-<script src="{{URL:: asset('assets/js/main.js') }}"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+    @auth
+    window.Echo.channel('user.{{ auth()->id() }}')
+        .listen('NotificationEvent', (e) => {
+
+            let badge = document.getElementById('notif-badge');
+
+            if (badge) {
+                let count = parseInt(badge.innerText) || 0;
+                badge.innerText = count + 1;
+            } else {
+                // kalau belum ada badge, buat baru
+                let inbox = document.querySelector('a[href="{{ route('user.inbox') }}"]');
+
+                let span = document.createElement('span');
+                span.id = "notif-badge";
+                span.className = "badge bg-danger rounded-pill";
+                span.style.animation = "pulse 1s infinite";
+                span.innerText = 1;
+
+                inbox.appendChild(span);
+            }
+
+            // popup notif
+            let notif = document.createElement('div');
+            notif.className = 'alert alert-success position-fixed';
+            notif.style.top = '20px';
+            notif.style.right = '20px';
+            notif.style.zIndex = '9999';
+            notif.innerHTML = e.notification.message;
+
+            document.body.appendChild(notif);
+
+            setTimeout(() => notif.remove(), 4000);
+        });
+    @endauth
+
+});
+</script>
 </body>
 </html>

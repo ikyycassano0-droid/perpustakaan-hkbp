@@ -34,6 +34,7 @@ class Collection extends Model
         'updated_by',
         'active',
         'menu_type',
+        'stock',
     ];
 
     protected $casts = [
@@ -42,6 +43,7 @@ class Collection extends Model
         'content_type' => 'array',
         'media_type' => 'array',
         'active' => 'boolean',
+        'stock' => 'integer',
     ];
 
     // ================= RELASI MANY TO MANY =================

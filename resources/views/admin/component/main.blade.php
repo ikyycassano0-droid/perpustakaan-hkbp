@@ -512,6 +512,11 @@
         </a>
     </div>
     <div class="nav-item">
+        <a class="nav-link" href="{{ route('admin.koleksi_elektronik.index') }}">
+            <i class="fas fa-laptop"></i> Koleksi Elektronik
+        </a>
+    </div>
+    <div class="nav-item">
         <a class="nav-link" href="{{ route('admin.orders.index') }}">
             <i class="fas fa-hand-holding-heart"></i> Peminjaman
         </a>

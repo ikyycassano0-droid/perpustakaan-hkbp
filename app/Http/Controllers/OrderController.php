@@ -8,6 +8,7 @@ use App\Models\OrderDetail;
 use App\Models\Collection;
 use App\Models\Location;
 use Carbon\Carbon;
+use App\Models\Notification;
 
 class OrderController extends Controller
 {
@@ -70,6 +71,13 @@ class OrderController extends Controller
 
         foreach ($order->details as $detail) {
             $detail->collection->decrement('stock', $detail->qty);
+
+            // 🔥 NOTIF PINJAM
+            $this->sendNotif(
+                $order->user_id,
+                'Peminjaman Berhasil',
+                'Anda berhasil meminjam buku "' . $detail->collection->title . '"'
+            );
         }
 
         $order->update([
@@ -108,6 +116,26 @@ class OrderController extends Controller
 
         foreach ($order->details as $detail) {
             $detail->collection->increment('stock', $detail->qty);
+
+            // 🔥 NOTIF RETURN
+            $this->sendNotif(
+                $order->user_id,
+                'Pengembalian Buku',
+                'Anda telah mengembalikan buku "' . $detail->collection->title . '"'
+            );
+
+            // 🔥 NOTIF DENDA
+            if ($fine > 0) {
+                $lateDays = Carbon::parse($order->return_date)->diffInDays($today);
+
+                $this->sendNotif(
+                    $order->user_id,
+                    'Denda Keterlambatan',
+                    'Anda dikenakan denda Rp ' . number_format($fine) .
+                    ' karena terlambat ' . $lateDays .
+                    ' hari mengembalikan buku "' . $detail->collection->title . '"'
+                );
+            }
         }
 
         $order->update([
@@ -118,7 +146,6 @@ class OrderController extends Controller
 
         return back()->with('success', 'Buku dikembalikan');
     }
-
     // ================= PERPANJANG =================
     public function extend($id)
     {
@@ -127,23 +154,21 @@ class OrderController extends Controller
         $due = Carbon::parse($order->return_date);
 
         if ($today > $due) {
-            return back()->with('error', 'Sudah terlambat, tidak bisa perpanjang');
-        }
-
-        if ($today->lt($due->copy()->subDay())) {
-            return back()->with('error', 'Perpanjangan hanya bisa H-1');
+            return back()->with('error', 'Sudah terlambat');
         }
 
         if ($order->extension_count >= 2) {
-            return back()->with('error', 'Maksimal perpanjangan 2x');
+            return back()->with('error', 'Maksimal 2x');
         }
 
         foreach ($order->details as $detail) {
-            $dipakai = OrderDetail::where('collection_id', $detail->collection_id)
-                ->whereHas('order', fn($q) => $q->where('status', 'APPROVED'))
-                ->exists();
 
-            if ($dipakai) return back()->with('error', 'Buku sedang dipinjam orang lain');
+            $this->sendNotif(
+                $order->user_id,
+                'Perpanjangan Berhasil',
+                'Anda memperpanjang peminjaman buku "' .
+                $detail->collection->title . '" selama 7 hari'
+            );
         }
 
         $order->update([
@@ -151,6 +176,24 @@ class OrderController extends Controller
             'extension_count' => $order->extension_count + 1
         ]);
 
-        return back()->with('success', 'Perpanjangan berhasil 7 hari');
+        return back()->with('success', 'Perpanjangan berhasil');
+    }
+
+    public function history()
+    {
+        $orders = Order::with('details.collection')
+            ->where('user_id', auth()->id())
+            ->whereIn('status', ['APPROVED', 'RETURNED', 'PENDING'])
+            ->latest()
+            ->get();
+        return view('user.page.history', compact('orders'));
+    }
+    private function sendNotif($userId, $title, $message)
+    {
+        Notification::create([
+            'user_id' => $userId,
+            'title' => $title,
+            'message' => $message,
+        ]);
     }
 }

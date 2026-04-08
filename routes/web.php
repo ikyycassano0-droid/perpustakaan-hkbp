@@ -11,6 +11,8 @@ use App\Http\Controllers\ClassificationController;
 use App\Http\Controllers\CategoryCollectionController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\FinalProjectController;
 
 // Login
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -113,6 +115,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
 
     });
 
+    // ================= KOLEKSI ELEKTRONIK (FINAL PROJECT) =================
+    Route::prefix('koleksi-elektronik')->name('koleksi_elektronik.')->group(function () {
+        Route::get('/', [FinalProjectController::class, 'index_admin'])->name('index');
+        Route::post('/', [FinalProjectController::class, 'store'])->name('store');
+        Route::put('/{id}', [FinalProjectController::class, 'update'])->name('update');
+        Route::delete('/{id}', [FinalProjectController::class, 'destroy'])->name('delete');
+    });
+
 });
 
 // User
@@ -128,8 +138,11 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
         ->name('user.pinjam');
 
     // Orders
-    Route::post('/orders', [CollectionController::class, 'storeOrder'])
-        ->name('orders.store');
+    Route::post('/orders', [OrderController::class, 'store'])
+    ->name('orders.store');
+
+    Route::get('/history', [OrderController::class, 'history'])
+    ->name('user.history');
 
     // ================= KOLEKSI TERCETAK =================
     Route::prefix('koleksi')->group(function () {
@@ -171,4 +184,12 @@ Route::middleware(['web'])->group(function () {
     ->name('guest.berita.index');
     Route::get('/berita/{id}', [NewsController::class, 'show'])
     ->name('guest.berita.show');
+    Route::get('/koleksi/{category}', [FinalProjectController::class, 'index']);
+});
+
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/inbox', [NotificationController::class, 'index'])
+        ->name('user.inbox');
+
 });
