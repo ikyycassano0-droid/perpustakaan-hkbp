@@ -1,14 +1,148 @@
 <style>
-    @keyframes pulse {
+@keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.2); }
     100% { transform: scale(1); }
 }
-</style>
-<div class="navbar" style="position: sticky; top: 0; width: 100%; background: rgba(2, 30, 105); color: white; padding: 5px 10px; font-size: 0.75rem; z-index:1000; display:flex; justify-content:space-between; align-items:center;">
 
+/* Basic navbar styling */
+.navbar {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background: rgba(2, 30, 105);
+    color: white;
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.navbar .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.navbar nav ul {
+    display: flex;
+    gap: 10px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+}
+
+.navbar nav ul li {
+    position: relative;
+}
+
+.navbar nav ul li a {
+    color: white;
+    text-decoration: none;
+    padding: 5px 8px;
+    display: block;
+}
+
+.navbar nav ul li a:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.navbar nav ul li ul.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: rgba(2,30,105);
+    list-style: none;
+    padding: 5px 0;
+    min-width: 150px;
+    z-index: 1000;
+}
+
+.navbar nav ul li:hover > ul.dropdown-menu {
+    display: block;
+}
+
+.navbar nav ul li ul.submenu {
+    left: 100%;
+    top: 0;
+}
+
+/* Search form */
+.navbar form {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.navbar form input, .navbar form select {
+    padding: 3px 5px;
+    font-size: 0.7rem;
+}
+
+.navbar form button {
+    padding: 3px 6px;
+    font-size: 0.7rem;
+    cursor: pointer;
+}
+
+/* USER AREA */
+.user-area button {
+    background: none;
+    border: none;
+    color: #ffc107;
+    cursor: pointer;
+}
+
+/* Pulse animation for notification */
+#notif-badge {
+    animation: pulse 1s infinite;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .navbar nav ul {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .navbar form {
+        width: 100%;
+        margin-top: 5px;
+        flex-wrap: wrap;
+    }
+
+    .navbar form input, .navbar form select, .navbar form button {
+        width: 48%;
+    }
+
+    .navbar form button {
+        width: 100%;
+        margin-top: 3px;
+    }
+
+    .navbar nav ul li ul.dropdown-menu {
+        position: relative;
+    }
+
+    .navbar nav ul li ul.submenu {
+        left: 0;
+    }
+}
+</style>
+
+<div class="navbar">
     <!-- LOGO -->
-    <div class="logo-container d-flex align-items-center gap-2">
+    <div class="logo-container">
         <div class="logo-img"><i class="fas fa-plus-square"></i></div>
         <div class="logo-text">
             <h1 style="font-size:0.9rem; margin:0;">Perpustakaan AKPER HKBP</h1>
@@ -16,72 +150,77 @@
         </div>
     </div>
 
-    <!-- MENU -->
-    <nav>
-        <ul style="display:flex; gap:5px; list-style:none; margin:0;">
-            
-            <li><a href="#">Home</a></li>
+    <!-- MENU & SEARCH -->
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <!-- MENU -->
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li>
+                    <a href="#">Profile <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Visi Misi</a></li>
+                        <li><a href="#">Kerjasama</a></li>
+                        <li><a href="#">Struktur Pengurus</a></li>
+                        <li><a href="#">Tugas & Fungsi</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">Layanan <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ route('user.pinjam') }}">Pinbal</a></li>
+                        <li><a href="#">Upload TA</a></li>
+                        <li><a href="#">Waktu Layanan</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">Koleksi <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#">Koleksi Tercetak <i class="fas fa-caret-right" style="float:right;"></i></a>
+                            <ul class="dropdown-menu submenu">
+                                <li><a href="{{ route('user.koleksi.jurnal') }}">Jurnal</a></li>
+                                <li><a href="{{ route('user.koleksi.buku_pengayaan') }}">Buku Pengayaan</a></li>
+                                <li><a href="{{ route('user.koleksi.buku_referensi') }}">Buku Referensi</a></li>
+                                <li><a href="{{ route('user.koleksi.majalah') }}">Majalah</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">Koleksi Elektronik <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url('/koleksi/ebook') }}">E-book</a></li>
+                        <li><a href="{{ url('/koleksi/e-article') }}">E-article</a></li>
+                        <li><a href="{{ url('/koleksi/cd') }}">CD</a></li>
+                        <li><a href="{{ url('/koleksi/video') }}">Video</a></li>
+                        <li><a href="{{ url('/koleksi/kti') }}">KTI</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Berita</a></li>
+                <li>
+                    <a href="#">Informasi <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Panduan</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
 
-            <!-- PROFILE -->
-            <li>
-                <a href="#">Profile <i class="fas fa-caret-down"></i></a>
-                <ul class="dropdown-menu">
-                    <li><a href="#">Visi Misi</a></li>
-                    <li><a href="#">Kerjasama</a></li>
-                    <li><a href="#">Struktur Pengurus</a></li>
-                    <li><a href="#">Tugas & Fungsi</a></li>
-                </ul>
-            </li>
-
-            <!-- LAYANAN -->
-            <li>
-                <a href="#">Layanan <i class="fas fa-caret-down"></i></a>
-                <ul class="dropdown-menu">
-                    <li><a href="{{ route('user.pinjam') }}">Pinbal</a></li>
-                    <li><a href="#">Upload TA</a></li>
-                    <li><a href="#">Waktu Layanan</a></li>
-                </ul>
-            </li>
-
-            <!-- KOLEKSI -->
-            <li>
-                <a href="#">Koleksi <i class="fas fa-caret-down"></i></a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="#">Koleksi Tercetak <i class="fas fa-caret-right" style="float:right;"></i></a>
-                        <ul class="dropdown-menu submenu">
-                            <li><a href="{{ route('user.koleksi.jurnal') }}">Jurnal</a></li>
-                            <li><a href="{{ route('user.koleksi.buku_pengayaan') }}">Buku Pengayaan</a></li>
-                            <li><a href="{{ route('user.koleksi.buku_referensi') }}">Buku Referensi</a></li>
-                            <li><a href="{{ route('user.koleksi.majalah') }}">Majalah</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a href="#">Koleksi Elektronik <i class="fas fa-caret-down"></i></a>
-                <ul class="dropdown-menu">
-                    <li><a href="{{ url('/koleksi/ebook') }}">E-book</a></li>
-                    <li><a href="{{ url('/koleksi/e-article') }}">E-article</a></li>
-                    <li><a href="{{ url('/koleksi/cd') }}">CD</a></li>
-                    <li><a href="{{ url('/koleksi/video') }}">Video</a></li>
-                    <li><a href="{{ url('/koleksi/kti') }}">KTI</a></li>
-                </ul>
-            </li>
-
-            <!-- BERITA -->
-            <li><a href="#">Berita</a></li>
-
-            <!-- INFORMASI -->
-            <li>
-                <a href="#">Informasi <i class="fas fa-caret-down"></i></a>
-                <ul class="dropdown-menu">
-                    <li><a href="#">Panduan</a></li>
-                </ul>
-            </li>
-
-        </ul>
-    </nav>
+        <!-- SEARCH FORM -->
+        <form action="{{ route('user.global_search') }}" method="GET">
+            <input type="text" name="keyword" placeholder="Cari koleksi..." required>
+            <select name="category">
+                <option value="">Semua</option>
+                <option value="collection">Koleksi Tercetak</option>
+                <option value="cd">CD</option>
+                <option value="e_book">E-Book</option>
+                <option value="e_article">E-Article</option>
+                <option value="video">Video</option>
+            </select>
+            <button type="submit">🔍</button>
+        </form>
+    </div>
 
     <!-- USER AREA -->
     <div class="user-area">
@@ -93,7 +232,6 @@
         </button>
         @endauth
     </div>
-
 </div>
 
 <!-- SIDEBAR -->

@@ -118,8 +118,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
     // ================= KOLEKSI ELEKTRONIK (FINAL PROJECT) =================
     Route::prefix('koleksi-elektronik')->name('koleksi_elektronik.')->group(function () {
         Route::get('/', [FinalProjectController::class, 'index_admin'])->name('index');
-        Route::post('/', [FinalProjectController::class, 'store'])->name('store');
-        Route::put('/{id}', [FinalProjectController::class, 'update'])->name('update');
+
+        // STORE / UPDATE ADMIN
+        Route::post('/', [FinalProjectController::class, 'store_admin'])->name('store');
+        Route::put('/{id}', [FinalProjectController::class, 'update_admin'])->name('update');
+
+        // DELETE tetap sama
         Route::delete('/{id}', [FinalProjectController::class, 'destroy'])->name('delete');
     });
 
@@ -139,10 +143,10 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
 
     // Orders
     Route::post('/orders', [OrderController::class, 'store'])
-    ->name('orders.store');
+        ->name('orders.store');
 
     Route::get('/history', [OrderController::class, 'history'])
-    ->name('user.history');
+        ->name('user.history');
 
     // ================= KOLEKSI TERCETAK =================
     Route::prefix('koleksi')->group(function () {
@@ -163,6 +167,24 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
             ->name('user.koleksi.majalah')
             ->defaults('menu_type', 'majalah');
     });
+
+    // ================= KOLEKSI ELEKTRONIK (FINAL PROJECT) =================
+    Route::prefix('final-project')->name('final_project.')->group(function() {
+
+        Route::get('/{category}', [FinalProjectController::class, 'index'])
+            ->name('index');
+
+        Route::post('/store', [FinalProjectController::class, 'store'])
+            ->name('store');
+
+        Route::post('/update/{id}', [FinalProjectController::class, 'update'])
+            ->name('update');
+
+        Route::delete('/delete/{id}', [FinalProjectController::class, 'destroy'])
+            ->name('delete');
+
+    });
+
 });
 
 //Guest
@@ -192,4 +214,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/inbox', [NotificationController::class, 'index'])
         ->name('user.inbox');
 
+});
+
+// routes/web.php
+Route::prefix('user')->group(function () {
+    Route::get('/search', [FinalProjectController::class, 'globalSearch'])
+        ->name('user.global_search');
 });

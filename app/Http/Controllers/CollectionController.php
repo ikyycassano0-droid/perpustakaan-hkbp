@@ -9,6 +9,7 @@ use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Order;
+use App\Models\FinalProject; 
 
 class CollectionController extends Controller
 {
@@ -217,5 +218,39 @@ class CollectionController extends Controller
         };
 
         return view($blade, compact('collections'));
+    }
+
+        public function globalSearch(Request $request)
+    {
+        $request->validate([
+            'keyword' => 'required|string|max:255',
+            'category' => 'nullable|string',
+        ]);
+
+        $keyword = strtolower($request->keyword); // agar search case-insensitive
+        $category = $request->category;
+
+        $results = collect();
+
+        // ================= KOLEKSI ELEKTRONIK =================
+        if (!$category || in_array($category, ['cd','e_book','e_article','video'])) {
+            $elektronik = FinalProject::whereRaw('LOWER(keywords) LIKE ?', ['%' . $keyword . '%'])
+                ->latest()
+                ->get();
+            $results = $results->merge($elektronik);
+        }
+
+        // ================= KOLEKSI TERCETAK =================
+        if (!$category || $category === 'collection') {
+            $collection = Collection::whereRaw('LOWER(title) LIKE ?', ['%' . $keyword . '%'])
+                ->orWhereRaw('LOWER(keywords) LIKE ?', ['%' . $keyword . '%'])
+                ->latest()
+                ->get();
+            $results = $results->merge($collection);
+        }
+
+        $isGuest = !auth()->check();
+
+        return view('user.page.search_results', compact('results', 'keyword', 'category', 'isGuest'));
     }
 }
