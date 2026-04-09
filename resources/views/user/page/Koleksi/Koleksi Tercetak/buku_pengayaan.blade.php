@@ -1,5 +1,7 @@
 @extends('user.component.main')
-
+    <header>
+      @include('user.component.navbar')
+    </header>
 @section('title', 'Buku Pengayaan')
 
 @section('user_content')

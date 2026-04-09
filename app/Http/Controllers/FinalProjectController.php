@@ -19,7 +19,21 @@ class FinalProjectController extends Controller
             ->latest()
             ->get();
 
-        return view('user.page.Koleksi_Elektronik.' . $category, compact('data', 'category'));
+        // 🔥 mapping category ke nama file blade
+        $viewMap = [
+            'ebook' => 'e_book',
+            'e-article' => 'e_article',
+            'cd' => 'cd',
+            'video' => 'video',
+            'kti' => 'kti',
+        ];
+
+        // kalau tidak ada mapping → error
+        if (!isset($viewMap[$category])) {
+            abort(404);
+        }
+
+        return view('user.page.Koleksi_Elektronik.' . $viewMap[$category], compact('data', 'category'));
     }
 
     // Store user (upload KTI)

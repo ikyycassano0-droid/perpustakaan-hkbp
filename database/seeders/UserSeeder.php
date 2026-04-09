@@ -14,21 +14,33 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Membuat Akun Admin
-        User::create([
-            'name'     => 'Administrator Perpustakaan',
-            'nim'      => 'admin123', // NIM ini akan jadi username login
-            'password' => Hash::make('admin123'), // Password di-hash otomatis
-            'role'     => 'admin',
-        ]);
+
+    User::create([
+        'role_id' => 1,
+        'name' => 'Administrator Perpustakaan',
+        'npm' => 'admin123', 
+        'password' => Hash::make('password'),
+        'active' => true,
+    ]);
+
 
         // Membuat Akun User Contoh (Optional)
-        User::create([
-            'name'     => 'Rizky Pratama',
-            'nim'      => '220101001',
-            'password' => Hash::make('user123'),
-            'role'     => 'user',
-        ]);
-        
-        $this->command->info('User Seeder berhasil dijalankan!');
-    }
+    // Mahasiswa
+    User::create([
+        'role_id' => 2, // Member
+        'name' => 'Rizky Pratama',
+        'npm' => '220101001',
+        'password' => Hash::make('user123'),
+        'active' => true,
+    ]);
+
+    // Dosen
+    User::create([
+        'role_id' => 2, // Member juga
+        'name' => 'Dr. Budi Santoso',
+        'nidn' => '12345678',
+        'password' => Hash::make('dosen123'),
+        'active' => true,
+    ]);
+}
 }

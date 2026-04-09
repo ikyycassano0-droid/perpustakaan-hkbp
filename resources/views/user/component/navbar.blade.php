@@ -190,11 +190,11 @@
                 <li>
                     <a href="#">Koleksi Elektronik <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ url('/koleksi/ebook') }}">E-book</a></li>
-                        <li><a href="{{ url('/koleksi/e-article') }}">E-article</a></li>
-                        <li><a href="{{ url('/koleksi/cd') }}">CD</a></li>
-                        <li><a href="{{ url('/koleksi/video') }}">Video</a></li>
-                        <li><a href="{{ url('/koleksi/kti') }}">KTI</a></li>
+                        <li><a href="{{ route('final_project.index', 'ebook') }}">E-book</a></li>
+                        <li><a href="{{ route('final_project.index', 'e-article') }}">E-article</a></li>
+                        <li><a href="{{ route('final_project.index', 'cd') }}">CD</a></li>
+                        <li><a href="{{ route('final_project.index', 'video') }}">Video</a></li>
+                        <li><a href="{{ route('final_project.index', 'kti') }}">KTI</a></li>
                     </ul>
                 </li>
                 <li><a href="#">Berita</a></li>

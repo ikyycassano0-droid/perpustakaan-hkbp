@@ -1,8 +1,8 @@
 @extends('user.component.main')
-    <header>
-      @include('user.component.navbar')
-    </header>
-@section('title', 'Koleksi Elektronik - KTI')
+
+<header>
+    @include('user.component.navbar')
+</header>
 
 @section('user_content')
 <div class="container py-4">
