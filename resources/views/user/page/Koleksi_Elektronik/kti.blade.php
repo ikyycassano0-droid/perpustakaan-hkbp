@@ -35,7 +35,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('final_project.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('final_project.kti.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-3">
                     <label for="student_name" class="form-label">Nama Mahasiswa</label>

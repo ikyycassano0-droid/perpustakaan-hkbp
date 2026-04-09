@@ -11,31 +11,34 @@ class FinalProjectController extends Controller
 {
     // ================= USER =================
     // Halaman list final project user berdasarkan kategori
-    public function index($category)
-    {
-        $categoryData = CategoryFinalProject::where('name', $category)->firstOrFail();
+    public function index(Request $request, $category)
+{
+    $viewMap = [
+        'ebook' => 'e_book',
+        'e-article' => 'e_article',
+        'cd' => 'cd',
+        'video' => 'video',
+        'kti' => 'kti',
+    ];
 
+    if (!isset($viewMap[$category])) abort(404);
+
+    if ($category === 'kti') {
+        // User hanya melihat KTI miliknya sendiri
         $data = FinalProject::with('category')
-            ->where('category_final_project_id', $categoryData->id)
+            ->where('student_name', auth()->user()->name)
             ->latest()
             ->get();
 
         $supervisors = User::whereNotNull('nidn')->get();
-
-        $viewMap = [
-            'ebook' => 'e_book',
-            'e-article' => 'e_article',
-            'cd' => 'cd',
-            'video' => 'video',
-            'kti' => 'kti',
-        ];
-
-        if (!isset($viewMap[$category])) {
-            abort(404);
-        }
         $categories = CategoryFinalProject::all();
-        return view('user.page.Koleksi_Elektronik.' . $viewMap[$category], compact('data', 'category', 'supervisors', 'categories'));
+
+        return view('user.page.Koleksi_Elektronik.' . $viewMap[$category], compact('data','category','supervisors','categories'));
     }
+
+    // Kategori lain → Koleksi elektronik admin upload
+    return $this->showAdminUpload($category);
+}
 
     // Store user (upload KTI)
     public function store(Request $request)
@@ -212,5 +215,19 @@ class FinalProjectController extends Controller
         $kti->save();
 
         return redirect()->back()->with('success', 'KTI berhasil di-reject.');
+    }
+
+    // ================= Koleksi Elektronik (Admin Upload) =================
+    public function showAdminUpload($category)
+    {
+        $categoryData = CategoryFinalProject::where('name', $category)->firstOrFail();
+
+        $data = FinalProject::with('category')
+            ->where('category_final_project_id', $categoryData->id)
+            ->where('status', 'Approved') // hanya yang sudah diapprove
+            ->latest()
+            ->get();
+
+        return view('user.page.Koleksi_Elektronik.' . $category, compact('data', 'category'));
     }
 }

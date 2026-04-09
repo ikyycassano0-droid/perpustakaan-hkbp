@@ -187,17 +187,23 @@
                         </li>
                     </ul>
                 </li>
-                    <li>
-                        <a href="#">Koleksi Elektronik <i class="fas fa-caret-down"></i></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="{{ route('final_project.index', 'ebook') }}">E-book</a></li>
-                            <li><a href="{{ route('final_project.index', 'e-article') }}">E-article</a></li>
-                            <li><a href="{{ route('final_project.index', 'cd') }}">CD</a></li>
-                            <li><a href="{{ route('final_project.index', 'video') }}">Video</a></li>
-                            <li><a href="{{ route('final_project.index', 'kti') }}">KTI</a></li>
-                        </ul>
-                    </li>
-                <li><a href="#">Berita</a></li>
+ <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {{ request()->is('user/final-project/*') ? 'active' : '' }}" 
+                       href="#" role="button" data-bs-toggle="dropdown">Koleksi Elektronik</a>
+                    <ul class="dropdown-menu">
+                        <!-- KTI (user upload) -->
+                        <li><a class="dropdown-item" href="{{ route('final_project.kti') }}">KTI</a></li>
+
+                        <!-- Admin Upload -->
+                        <li><a class="dropdown-item" href="{{ route('final_project.index', 'ebook') }}">E-Book</a></li>
+                        <li><a class="dropdown-item" href="{{ route('final_project.index', 'e-article') }}">E-Article</a></li>
+                        <li><a class="dropdown-item" href="{{ route('final_project.index', 'cd') }}">CD</a></li>
+                        <li><a class="dropdown-item" href="{{ route('final_project.index', 'video') }}">Video</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="#">Berita</a></li>
                 <li>
                     <a href="#">Informasi <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">

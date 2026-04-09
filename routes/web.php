@@ -185,38 +185,18 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
             ->defaults('menu_type', 'majalah');
     });
 
-    // ================= KOLEKSI ELEKTRONIK (FINAL PROJECT) =================
     Route::prefix('final-project')->name('final_project.')->group(function() {
 
-        Route::get('/{category}', [FinalProjectController::class, 'index'])
-            ->name('index');
+        // KTI → user upload
+        Route::get('/kti', [FinalProjectController::class,'index'])->name('kti')->defaults('category','kti');
+        Route::post('/kti/store', [FinalProjectController::class,'store'])->name('kti.store');
+        Route::post('/kti/update/{id}', [FinalProjectController::class,'update'])->name('kti.update');
+        Route::delete('/kti/delete/{id}', [FinalProjectController::class,'destroy'])->name('kti.delete');
 
-        Route::post('/store', [FinalProjectController::class, 'store'])
-            ->name('store');
-
-        Route::post('/update/{id}', [FinalProjectController::class, 'update'])
-            ->name('update');
-
-        Route::delete('/delete/{id}', [FinalProjectController::class, 'destroy'])
-            ->name('delete');
-
-    });
-
-    // ================= KOLEKSI ELEKTRONIK USER (KTI) =================
-    Route::prefix('final-project')->name('final_project.')->middleware('auth')->group(function() {
-
-        Route::get('/{category}', [FinalProjectController::class, 'index'])
-            ->name('index');
-
-        Route::post('/store', [FinalProjectController::class, 'store'])
-            ->name('store');
-
-        Route::post('/update/{id}', [FinalProjectController::class, 'update'])
-            ->name('update');
-
-        Route::delete('/delete/{id}', [FinalProjectController::class, 'destroy'])
-            ->name('delete');
-
+        // Koleksi lain → admin upload
+        Route::get('/{category}', [FinalProjectController::class,'index'])
+            ->name('index')
+            ->where('category','ebook|e-article|cd|video');
     });
 
 });
