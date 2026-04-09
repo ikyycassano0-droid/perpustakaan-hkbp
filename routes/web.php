@@ -124,6 +124,23 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
         Route::put('/{id}', [FinalProjectController::class, 'update_admin'])->name('update');
 
         // DELETE tetap sama
+        Route::delete('/{id}', [FinalProjectController::class, 'destroy'])->name('delete');  
+    });
+
+    // ================= KTI ADMIN =================
+    Route::prefix('kti')->name('kti.')->middleware(['auth','admin'])->group(function () {
+
+        // List semua KTI
+        Route::get('/', [FinalProjectController::class, 'index_kti_admin'])->name('index');
+
+        // Menampilkan KTI yang pending approval
+        Route::get('/pending', [FinalProjectController::class, 'pending_admin'])->name('pending');
+
+        // Approve / Reject
+        Route::post('/{id}/approve', [FinalProjectController::class, 'approve'])->name('approve');
+        Route::post('/{id}/reject', [FinalProjectController::class, 'reject'])->name('reject');
+
+        // Delete KTI
         Route::delete('/{id}', [FinalProjectController::class, 'destroy'])->name('delete');
     });
 
@@ -170,6 +187,23 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
 
     // ================= KOLEKSI ELEKTRONIK (FINAL PROJECT) =================
     Route::prefix('final-project')->name('final_project.')->group(function() {
+
+        Route::get('/{category}', [FinalProjectController::class, 'index'])
+            ->name('index');
+
+        Route::post('/store', [FinalProjectController::class, 'store'])
+            ->name('store');
+
+        Route::post('/update/{id}', [FinalProjectController::class, 'update'])
+            ->name('update');
+
+        Route::delete('/delete/{id}', [FinalProjectController::class, 'destroy'])
+            ->name('delete');
+
+    });
+
+    // ================= KOLEKSI ELEKTRONIK USER (KTI) =================
+    Route::prefix('final-project')->name('final_project.')->middleware('auth')->group(function() {
 
         Route::get('/{category}', [FinalProjectController::class, 'index'])
             ->name('index');

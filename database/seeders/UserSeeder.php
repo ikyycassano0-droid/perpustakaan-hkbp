@@ -24,10 +24,10 @@ class UserSeeder extends Seeder
     ]);
 
 
-        // Membuat Akun User Contoh (Optional)
+        // Membuat Akun User Contoh 
     // Mahasiswa
     User::create([
-        'role_id' => 2, // Member
+        'role_id' => 2, 
         'name' => 'Rizky Pratama',
         'npm' => '220101001',
         'password' => Hash::make('user123'),
@@ -36,7 +36,7 @@ class UserSeeder extends Seeder
 
     // Dosen
     User::create([
-        'role_id' => 2, // Member juga
+        'role_id' => 2,
         'name' => 'Dr. Budi Santoso',
         'nidn' => '12345678',
         'password' => Hash::make('dosen123'),

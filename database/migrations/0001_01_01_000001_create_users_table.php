@@ -12,7 +12,7 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('role_id');
             $table->string('name', 150);
-            $table->string('npm', 30)->unique();
+            $table->string('npm', 30)->nullable()->unique();
             $table->string('nidn', 30)->nullable();
             $table->date('birth_date')->nullable();
             $table->enum('gender', ['MALE', 'FEMALE'])->nullable();

@@ -522,6 +522,11 @@
         </a>
     </div>
     <div class="nav-item">
+        <a class="nav-link" href="{{ route('admin.kti.index') }}">
+            <i class="fas fa-book"></i> KTI
+        </a>
+    </div>
+    <div class="nav-item">
         <a class="nav-link" href="#">
             <i class="fas fa-chart-line"></i> Laporan
         </a>

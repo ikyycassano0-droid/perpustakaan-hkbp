@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\FinalProject;
 use App\Models\CategoryFinalProject;
+use App\Models\User;
 
 class FinalProjectController extends Controller
 {
@@ -19,7 +20,8 @@ class FinalProjectController extends Controller
             ->latest()
             ->get();
 
-        // 🔥 mapping category ke nama file blade
+        $supervisors = User::whereNotNull('nidn')->get();
+
         $viewMap = [
             'ebook' => 'e_book',
             'e-article' => 'e_article',
@@ -28,12 +30,11 @@ class FinalProjectController extends Controller
             'kti' => 'kti',
         ];
 
-        // kalau tidak ada mapping → error
         if (!isset($viewMap[$category])) {
             abort(404);
         }
-
-        return view('user.page.Koleksi_Elektronik.' . $viewMap[$category], compact('data', 'category'));
+        $categories = CategoryFinalProject::all();
+        return view('user.page.Koleksi_Elektronik.' . $viewMap[$category], compact('data', 'category', 'supervisors', 'categories'));
     }
 
     // Store user (upload KTI)
@@ -47,7 +48,7 @@ class FinalProjectController extends Controller
             'first_supervisor_id' => 'required|exists:users,id',
             'second_supervisor_id' => 'nullable|exists:users,id',
             'abstract' => 'nullable|string',
-            'file_url' => 'required|file|mimes:pdf,docx|max:10240',
+            'file_url' => 'required|file|mimes:pdf,docx|max:10240', // 10MB
             'category_final_project_id' => 'required|exists:category_final_projects,id',
         ]);
 
@@ -66,9 +67,12 @@ class FinalProjectController extends Controller
             $data['file_url'] = $request->file('file_url')->store('final_project_files', 'public');
         }
 
+        // Default status pending
+        $data['status'] = 'pending';
+
         FinalProject::create($data);
 
-        return back()->with('success', 'Final Project berhasil diupload');
+        return back()->with('success', 'KTI berhasil diupload, menunggu approval admin.');
     }
 
     // Update user (edit KTI)
@@ -82,7 +86,7 @@ class FinalProjectController extends Controller
             'first_supervisor_id' => 'required|exists:users,id',
             'second_supervisor_id' => 'nullable|exists:users,id',
             'abstract' => 'nullable|string',
-            'file_url' => 'nullable|file|mimes:pdf,docx|max:10240',
+            'file_url' => 'nullable|file|mimes:pdf,docx|max:10240', // 10MB
             'category_final_project_id' => 'required|exists:category_final_projects,id',
         ]);
 
@@ -103,13 +107,16 @@ class FinalProjectController extends Controller
             $data['file_url'] = $request->file('file_url')->store('final_project_files', 'public');
         }
 
+        // Status tetap pending saat update
+        $data['status'] = 'pending';
+
         $item->update($data);
 
-        return back()->with('success', 'Final Project berhasil diupdate');
+        return back()->with('success', 'Final Project berhasil diupdate, menunggu approval admin.');
     }
 
     // ================= ADMIN =================
-    // Index admin (lihat semua koleksi elektronik)
+    // List semua Koleksi Elektronik
     public function index_admin()
     {
         $data = FinalProject::with('category')->latest()->get();
@@ -118,25 +125,30 @@ class FinalProjectController extends Controller
         return view('admin.page.koleksi_elektronik', compact('data', 'categories'));
     }
 
-    // Store admin (CRUD CD, e-book, e-article, video)
+    // List semua KTI untuk admin
+    public function index_kti_admin()
+    {
+        $data = FinalProject::with('category', 'firstSupervisor', 'secondSupervisor')
+                    ->latest()
+                    ->get();
+
+        return view('admin.page.kti', compact('data'));
+    }
+
+    // Store & update Koleksi Elektronik admin
     public function store_admin(Request $request)
     {
         $request->validate([
             'title' => 'required|string|max:255',
             'abstract' => 'nullable|string',
-            'keywords' => 'nullable|string|max:255', // Hanya untuk admin
+            'keywords' => 'nullable|string|max:255',
             'category_final_project_id' => 'nullable|exists:category_final_projects,id',
             'file_url' => 'nullable|file|mimes:pdf,docx,mp3,mp4|max:10240',
             'active' => 'boolean',
         ]);
 
         $data = $request->only([
-            'title',
-            'abstract',
-            'keywords',
-            'category_final_project_id',
-            'file_url',
-            'active',
+            'title', 'abstract', 'keywords', 'category_final_project_id', 'file_url', 'active',
         ]);
 
         if ($request->hasFile('file_url')) {
@@ -148,13 +160,12 @@ class FinalProjectController extends Controller
         return back()->with('success', 'Data berhasil ditambahkan (Admin)');
     }
 
-    // Update admin (CRUD CD, e-book, e-article, video)
     public function update_admin(Request $request, $id)
     {
         $request->validate([
             'title' => 'required|string|max:255',
             'abstract' => 'nullable|string',
-            'keywords' => 'nullable|string|max:255', // Hanya untuk admin
+            'keywords' => 'nullable|string|max:255',
             'category_final_project_id' => 'nullable|exists:category_final_projects,id',
             'file_url' => 'nullable|file|mimes:pdf,docx,mp3,mp4|max:10240',
             'active' => 'boolean',
@@ -163,12 +174,7 @@ class FinalProjectController extends Controller
         $item = FinalProject::findOrFail($id);
 
         $data = $request->only([
-            'title',
-            'abstract',
-            'keywords',
-            'category_final_project_id',
-            'file_url',
-            'active',
+            'title', 'abstract', 'keywords', 'category_final_project_id', 'file_url', 'active',
         ]);
 
         if ($request->hasFile('file_url')) {
@@ -180,7 +186,7 @@ class FinalProjectController extends Controller
         return back()->with('success', 'Data berhasil diupdate (Admin)');
     }
 
-    // ================= DELETE =================
+    // Delete
     public function destroy($id)
     {
         $item = FinalProject::findOrFail($id);
@@ -189,4 +195,22 @@ class FinalProjectController extends Controller
         return back()->with('success', 'Data berhasil dihapus');
     }
 
+    // ================= Pending / Approval KTI =================
+    public function approve($id)
+    {
+        $kti = FinalProject::findOrFail($id);
+        $kti->status = 'Approved'; // ganti ke Approved
+        $kti->save();
+
+        return redirect()->back()->with('success', 'KTI berhasil di-approve.');
+    }
+
+    public function reject($id)
+    {
+        $kti = FinalProject::findOrFail($id);
+        $kti->status = 'Rejected'; // ganti ke Rejected
+        $kti->save();
+
+        return redirect()->back()->with('success', 'KTI berhasil di-reject.');
+    }
 }
