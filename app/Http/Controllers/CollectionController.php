@@ -220,37 +220,113 @@ class CollectionController extends Controller
         return view($blade, compact('collections'));
     }
 
-        public function globalSearch(Request $request)
+    public function globalSearch(Request $request)
     {
         $request->validate([
             'keyword' => 'required|string|max:255',
-            'category' => 'nullable|string',
         ]);
 
-        $keyword = strtolower($request->keyword); // agar search case-insensitive
-        $category = $request->category;
+        $keyword = strtolower($request->keyword);
 
-        $results = collect();
+        // ================= COLLECTION =================
+        $collections = Collection::with(['categories'])
+            ->where(function ($query) use ($keyword) {
+                $query->whereRaw('LOWER(title) LIKE ?', ["%$keyword%"])
+                    ->orWhereRaw('LOWER(description) LIKE ?', ["%$keyword%"])
+                    ->orWhereRaw('LOWER(publisher) LIKE ?', ["%$keyword%"])
+                    ->orWhereRaw("LOWER(JSON_EXTRACT(author, '$')) LIKE ?", ["%$keyword%"]);
+            })
+            ->get()
+            ->map(function ($item) use ($keyword) {
 
-        // ================= KOLEKSI ELEKTRONIK =================
-        if (!$category || in_array($category, ['cd','e_book','e_article','video'])) {
-            $elektronik = FinalProject::whereRaw('LOWER(keywords) LIKE ?', ['%' . $keyword . '%'])
-                ->latest()
-                ->get();
-            $results = $results->merge($elektronik);
-        }
+                $score = 0;
 
-        // ================= KOLEKSI TERCETAK =================
-        if (!$category || $category === 'collection') {
-            $collection = Collection::whereRaw('LOWER(title) LIKE ?', ['%' . $keyword . '%'])
-                ->orWhereRaw('LOWER(keywords) LIKE ?', ['%' . $keyword . '%'])
-                ->latest()
-                ->get();
-            $results = $results->merge($collection);
-        }
+                if (str_contains(strtolower($item->title), $keyword)) $score += 5;
+                if ($item->description && str_contains(strtolower($item->description), $keyword)) $score += 2;
+
+                $item->score = $score;
+                $item->type = 'collection';
+
+                return $item;
+            });
+
+        // ================= FINAL PROJECT =================
+        $finalProjects = FinalProject::with(['category'])
+            ->where(function ($query) use ($keyword) {
+                $query->whereRaw('LOWER(title) LIKE ?', ["%$keyword%"])
+                    ->orWhereRaw('LOWER(abstract) LIKE ?', ["%$keyword%"])
+                    ->orWhereRaw('LOWER(keywords) LIKE ?', ["%$keyword%"])
+                    ->orWhereRaw('LOWER(student_name) LIKE ?', ["%$keyword%"]);
+            })
+            ->get()
+            ->map(function ($item) use ($keyword) {
+
+                $score = 0;
+
+                if (str_contains(strtolower($item->title), $keyword)) $score += 5;
+                if ($item->keywords && str_contains(strtolower($item->keywords), $keyword)) $score += 4;
+
+                $item->score = $score;
+                $item->type = 'final_project';
+
+                return $item;
+            });
+
+        // ================= MERGE =================
+        $results = $collections
+            ->merge($finalProjects)
+            ->sortByDesc('score')
+            ->values();
 
         $isGuest = !auth()->check();
 
-        return view('user.page.search_results', compact('results', 'keyword', 'category', 'isGuest'));
+        return view('user.page.search_results', compact('results', 'keyword', 'isGuest'));
+    }   
+
+    public function liveSearch(Request $request)
+    {
+        $keyword = strtolower($request->keyword);
+
+        if (!$keyword) {
+            return response()->json([]);
+        }
+
+        // ================= COLLECTION =================
+        $collections = Collection::where(function ($query) use ($keyword) {
+            $query->whereRaw('LOWER(title) LIKE ?', ["%$keyword%"])
+                ->orWhereRaw('LOWER(description) LIKE ?', ["%$keyword%"])
+                ->orWhereRaw("LOWER(JSON_EXTRACT(author, '$')) LIKE ?", ["%$keyword%"]);
+        })
+        ->limit(5)
+        ->get()
+        ->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'title' => $item->title,
+                'type' => 'collection',
+                'file_url' => null // collection tidak pakai file
+            ];
+        });
+
+        // ================= FINAL PROJECT =================
+        $finalProjects = FinalProject::where(function ($query) use ($keyword) {
+            $query->whereRaw('LOWER(title) LIKE ?', ["%$keyword%"])
+                ->orWhereRaw('LOWER(abstract) LIKE ?', ["%$keyword%"])
+                ->orWhereRaw('LOWER(keywords) LIKE ?', ["%$keyword%"]);
+        })
+        ->limit(5)
+        ->get()
+        ->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'title' => $item->title,
+                'type' => 'final_project',
+                'file_url' => $item->file_url // 🔥 penting untuk buka file
+            ];
+        });
+
+        return response()->json(
+            $collections->merge($finalProjects)
+        );
     }
 }

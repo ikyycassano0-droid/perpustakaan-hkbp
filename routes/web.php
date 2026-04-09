@@ -188,36 +188,48 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
 });
 
 //Guest
+Route::get('/', fn() => view('guest.page.home'))->name('home');
 
-Route::middleware(['web'])->group(function () {
-    Route::get('/', function () {
-        return view('guest.page.home'); // path Blade tetap: guest.page.home
-    })->name('home');
+// PROFILE
+Route::get('/visi-misi', [ProfileController::class, 'showVisiMisi']);
+Route::get('/tugas-fungsi', [ProfileController::class, 'showTugasFungsi']);
+Route::get('/struktur', [ProfileController::class, 'showStruktur']);
 
-    Route::get('/visi-misi', [ProfileController::class, 'showVisiMisi'])
-        ->name('guest.page.profile.visi-misi'); // path tetap
+// BERITA
+Route::get('/berita', [NewsController::class,'index'])->name('guest.berita.index');
+Route::get('/berita/{id}', [NewsController::class, 'show'])->name('guest.berita.show');
 
-    Route::get('/tugas-fungsi', [ProfileController::class, 'showTugasFungsi'])
-        ->name('guest.page.profile.tugas-fungsi'); // path tetap
+// FINAL PROJECT (PUBLIC VIEW)
+Route::get('/koleksi/{category}', [FinalProjectController::class, 'index']);
 
-    Route::get('/struktur', [ProfileController::class, 'showStruktur'])
-        ->name('guest.page.profile.struktur pengurus'); // path tetap
-    Route::get('/berita', [NewsController::class,'index'])
-    ->name('guest.berita.index');
-    Route::get('/berita/{id}', [NewsController::class, 'show'])
-    ->name('guest.berita.show');
-    Route::get('/koleksi/{category}', [FinalProjectController::class, 'index']);
+
+// ================= 🔥 SEARCH SYSTEM =================
+Route::prefix('user')->group(function () {
+
+    // halaman hasil search
+    Route::get('/search', [CollectionController::class, 'globalSearch'])
+        ->name('user.global_search');
+
+    // LIVE SEARCH AJAX
+    Route::get('/live-search', [CollectionController::class, 'liveSearch'])
+        ->name('user.live_search');
 });
 
-Route::middleware(['auth'])->group(function () {
 
+// ================= 🔥 DETAIL COLLECTION =================
+Route::get('/collections/{id}', [CollectionController::class, 'show'])
+    ->name('collections.show');
+
+
+// ================= 🔥 FINAL PROJECT FILE VIEW =================
+Route::get('/final-project/view/{id}', function($id){
+    $item = \App\Models\FinalProject::findOrFail($id);
+    return response()->file(storage_path('app/public/'.$item->file_url));
+});
+
+
+// ================= NOTIFICATION =================
+Route::middleware(['auth'])->group(function () {
     Route::get('/inbox', [NotificationController::class, 'index'])
         ->name('user.inbox');
-
-});
-
-// routes/web.php
-Route::prefix('user')->group(function () {
-    Route::get('/search', [FinalProjectController::class, 'globalSearch'])
-        ->name('user.global_search');
 });
