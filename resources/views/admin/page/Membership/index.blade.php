@@ -17,6 +17,7 @@
         <thead>
             <tr>
                 <th>Nama</th>
+                <th>Role</th> {{-- 🔥 TAMBAHAN --}}
                 <th>NPM</th>
                 <th>No HP</th>
                 <th>Status</th>
@@ -26,8 +27,22 @@
             @foreach($members as $member)
             <tr>
                 <td>{{ $member->name }}</td>
-                <td>{{ $member->npm }}</td>
-                <td>{{ $member->phone }}</td>
+
+                {{-- 🔥 ROLE --}}
+                <td>
+                    <span class="badge 
+                        @if($member->role->name == 'Admin') bg-danger
+                        @elseif($member->role->name == 'Dosen') bg-info
+                        @else bg-secondary
+                        @endif
+                    ">
+                        {{ $member->role->name ?? '-' }}
+                    </span>
+                </td>
+
+                <td>{{ $member->npm ?? '-' }}</td>
+                <td>{{ $member->phone ?? '-' }}</td>
+
                 <td>
                     <span class="badge-status {{ $member->active ? 'badge-active' : 'badge-pending' }}">
                         {{ $member->active ? 'Aktif' : 'Nonaktif' }}

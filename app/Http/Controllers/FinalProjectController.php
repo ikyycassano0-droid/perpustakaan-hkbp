@@ -30,10 +30,13 @@ class FinalProjectController extends Controller
             ->latest()
             ->get();
 
-        $supervisors = User::whereNotNull('nidn')->get();
-        $categories = CategoryFinalProject::all();
+        $supervisors = User::whereHas('role', function ($q) {
+            $q->where('name', 'Dosen');
+        })->get();
 
-        return view('user.page.Koleksi_Elektronik.' . $viewMap[$category], compact('data','category','supervisors','categories'));
+        return view('user.page.Koleksi_Elektronik.' . $viewMap[$category], 
+            compact('data','category','supervisors')
+        );
     }
 
     // Kategori lain → Koleksi elektronik admin upload
@@ -48,11 +51,16 @@ class FinalProjectController extends Controller
             'npm' => 'required|string|max:50',
             'study_program' => 'required|string|max:255',
             'title' => 'required|string|max:255',
-            'first_supervisor_id' => 'required|exists:users,id',
-            'second_supervisor_id' => 'nullable|exists:users,id',
+            'first_supervisor_id' => [
+                'required',
+                'exists:users,id'
+            ],         
+            'second_supervisor_id' => [
+                'nullable',
+                'exists:users,id'
+            ],
             'abstract' => 'nullable|string',
             'file_url' => 'required|file|mimes:pdf,docx|max:10240', // 10MB
-            'category_final_project_id' => 'required|exists:category_final_projects,id',
         ]);
 
         $data = $request->only([
@@ -63,15 +71,16 @@ class FinalProjectController extends Controller
             'first_supervisor_id',
             'second_supervisor_id',
             'abstract',
-            'category_final_project_id',
         ]);
+        $category = CategoryFinalProject::where('name', 'kti')->firstOrFail();
+        $data['category_final_project_id'] = $category->id;
 
         if ($request->hasFile('file_url')) {
             $data['file_url'] = $request->file('file_url')->store('final_project_files', 'public');
         }
 
         // Default status pending
-        $data['status'] = 'pending';
+        $data['status'] = 'Pending';
 
         FinalProject::create($data);
 
@@ -86,11 +95,16 @@ class FinalProjectController extends Controller
             'npm' => 'required|string|max:50',
             'study_program' => 'required|string|max:255',
             'title' => 'required|string|max:255',
-            'first_supervisor_id' => 'required|exists:users,id',
-            'second_supervisor_id' => 'nullable|exists:users,id',
+            'first_supervisor_id' => [
+                'required',
+                'exists:users,id'
+            ],           
+            'second_supervisor_id' => [
+                'nullable',
+                'exists:users,id'
+            ],
             'abstract' => 'nullable|string',
             'file_url' => 'nullable|file|mimes:pdf,docx|max:10240', // 10MB
-            'category_final_project_id' => 'required|exists:category_final_projects,id',
         ]);
 
         $item = FinalProject::findOrFail($id);
@@ -103,15 +117,16 @@ class FinalProjectController extends Controller
             'first_supervisor_id',
             'second_supervisor_id',
             'abstract',
-            'category_final_project_id',
         ]);
+        $category = CategoryFinalProject::where('name', 'kti')->firstOrFail();
+        $data['category_final_project_id'] = $category->id;
 
         if ($request->hasFile('file_url')) {
             $data['file_url'] = $request->file('file_url')->store('final_project_files', 'public');
         }
 
         // Status tetap pending saat update
-        $data['status'] = 'pending';
+        $data['status'] = 'Pending';
 
         $item->update($data);
 

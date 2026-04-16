@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -21,26 +22,39 @@ class User extends Authenticatable
         'photo',
         'password',
         'active',
-        'created_by',
-        'updated_by',
-        'created_at',
-        'updated_at'
     ];
 
-    protected $hidden = ['password']; // jangan tampilkan password di query
+    protected $hidden = ['password'];
 
     protected $casts = [
         'birth_date' => 'date',
         'active' => 'boolean',
     ];
 
-    // Relasi ke role
-    public function role() {
+    // ================= RELASI =================
+    public function role()
+    {
         return $this->belongsTo(Role::class, 'role_id');
     }
 
     public function notifications()
     {
         return $this->hasMany(Notification::class);
+    }
+
+    // ================= HELPER (🔥 PENTING) =================
+    public function isAdmin()
+    {
+        return $this->role?->name === 'Admin';
+    }
+
+    public function isMahasiswa()
+    {
+        return $this->role?->name === 'Mahasiswa' || $this->role?->name === 'Member';
+    }
+
+    public function isDosen()
+    {
+        return $this->role?->name === 'Dosen';
     }
 }

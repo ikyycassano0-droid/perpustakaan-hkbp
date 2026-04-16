@@ -11,7 +11,15 @@
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
-
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <form action="{{ route('admin.members.store') }}" method="POST">
         @csrf
 
@@ -32,8 +40,17 @@
             </div>
 
             <div class="col-md-6 mb-3">
-                <label>Tipe Anggota</label>
-                <input type="text" name="membership_type" class="form-control">
+                <label class="form-label">Tipe Anggota</label>
+                <select name="role_id" class="form-control" required>
+                    <option value="">-- Pilih Tipe --</option>
+
+                    @foreach($roles as $role)
+                        <option value="{{ $role->id }}">
+                            {{ $role->name }}
+                        </option>
+                    @endforeach
+
+                </select>
             </div>
 
             <div class="col-md-6 mb-3">

@@ -35,6 +35,13 @@ class CreateRolesTable extends Migration
                 'active' => true,
                 'created_at' => now(),
                 'updated_at' => now()
+            ],
+            [
+                'id' => 3,
+                'name' => 'Dosen',
+                'active' => true,
+                'created_at' => now(),
+                'updated_at' => now()
             ]
         ]);
     }
