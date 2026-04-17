@@ -11,7 +11,7 @@ class FinalProjectController extends Controller
 {
     // ================= USER =================
     // Halaman list final project user berdasarkan kategori
-    public function index(Request $request, $category)
+    public function index(Request $request, $category = 'kti')
 {
     $viewMap = [
         'ebook' => 'e_book',
@@ -78,13 +78,15 @@ class FinalProjectController extends Controller
         if ($request->hasFile('file_url')) {
             $data['file_url'] = $request->file('file_url')->store('final_project_files', 'public');
         }
+        
 
         // Default status pending
         $data['status'] = 'Pending';
 
         FinalProject::create($data);
 
-        return back()->with('success', 'KTI berhasil diupload, menunggu approval admin.');
+        return redirect()->route('final_project.kti')
+            ->with('success', 'KTI berhasil diupload');
     }
 
     // Update user (edit KTI)
@@ -235,14 +237,27 @@ class FinalProjectController extends Controller
     // ================= Koleksi Elektronik (Admin Upload) =================
     public function showAdminUpload($category)
     {
-        $categoryData = CategoryFinalProject::where('name', $category)->firstOrFail();
+        // 🔥 TARUH viewMap DI SINI
+        $viewMap = [
+            'ebook' => 'e_book',
+            'e-article' => 'e_article',
+            'cd' => 'cd',
+            'video' => 'video',
+            'kti' => 'kti',
+        ];
+
+        // ambil kategori dari database
+        $categoryData = CategoryFinalProject::where('slug', $category)->firstOrFail();
 
         $data = FinalProject::with('category')
             ->where('category_final_project_id', $categoryData->id)
-            ->where('status', 'Approved') // hanya yang sudah diapprove
+            ->where('status', 'Approved')
             ->latest()
             ->get();
 
-        return view('user.page.Koleksi_Elektronik.' . $category, compact('data', 'category'));
+        // 🔥 PAKAI viewMap DI SINI
+        return view('user.page.Koleksi_Elektronik.' . $viewMap[$category], 
+            compact('data','category')
+        );
     }
 }

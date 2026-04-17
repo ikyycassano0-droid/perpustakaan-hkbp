@@ -187,13 +187,13 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
 
     Route::prefix('final-project')->name('final_project.')->group(function() {
 
-        // KTI → user upload
-        Route::get('/kti', [FinalProjectController::class,'index'])->name('kti')->defaults('category','kti');
+        // ✅ KTI → user upload
+        Route::get('/kti', [FinalProjectController::class,'index'])       ->name('kti')->defaults('category','kti');
         Route::post('/kti/store', [FinalProjectController::class,'store'])->name('kti.store');
         Route::post('/kti/update/{id}', [FinalProjectController::class,'update'])->name('kti.update');
         Route::delete('/kti/delete/{id}', [FinalProjectController::class,'destroy'])->name('kti.delete');
 
-        // Koleksi lain → admin upload
+        
         Route::get('/{category}', [FinalProjectController::class,'index'])
             ->name('index')
             ->where('category','ebook|e-article|cd|video');

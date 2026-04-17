@@ -14,34 +14,38 @@
     @if($struktur->count() > 0)
 
         {{-- Kepala Perpustakaan --}}
-            <div class="member-card">
-            @if($item->image)
-            <img src="{{ asset('storage/' . $item->image) }}" width="100" class="mb-2">
+        @php
+            $kepala = $struktur->first();
+        @endphp
+
+        <div class="member-card" style="text-align:center;">
+            @if($kepala->image)
+                <img src="{{ asset('storage/' . $kepala->image) }}" width="100" class="mb-2">
             @endif
-            <div class="role">{{ $struktur[0]->title }}</div>
-            <div class="name">{{ $struktur[0]->description }}</div>
+            <div class="role">{{ $kepala->title }}</div>
+            <div class="name">{{ $kepala->description }}</div>
         </div>
 
-        <div class="tree-line"></div>
+        <div class="tree-line" style="width:2px; height:40px; background:#ccc; margin:10px auto;"></div>
 
         {{-- Anggota lain --}}
         <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
 
             @foreach($struktur->skip(1) as $item)
-                <div class="member-card">
+                <div class="member-card" style="text-align:center;">
                     @if($item->image)
-                    <img src="{{ asset('storage/' . $item->image) }}" width="100" class="mb-2">
+                        <img src="{{ asset('storage/' . $item->image) }}" width="100" class="mb-2">
                     @endif
-                <div class="role">{{ $item->title }}</div>
-                <div class="name">{{ $item->description }}</div>
-            </div>
+                    <div class="role">{{ $item->title }}</div>
+                    <div class="name">{{ $item->description }}</div>
+                </div>
             @endforeach
 
         </div>
 
     @else
 
-        <p>Data struktur organisasi belum tersedia.</p>
+        <p style="text-align:center;">Data struktur organisasi belum tersedia.</p>
 
     @endif
 

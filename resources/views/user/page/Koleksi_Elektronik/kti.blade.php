@@ -22,6 +22,7 @@
 
         {{-- ================= UPLOAD ================= --}}
         <div class="tab-pane fade show active" id="upload">
+            
 
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
@@ -37,7 +38,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('final_project.kti.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('final_project.kti.store') }}" method="POST" enctype="multipart/form-data" onsubmit="alert('FORM KEKIRIM')">
                 @csrf
 
                 <div class="mb-3">
@@ -95,7 +96,7 @@
                     <input type="file" name="file_url" class="form-control" required>
                 </div>
 
-                <button class="btn btn-primary">Upload</button>
+                <button type="submit" class="btn btn-primary">Upload</button>
             </form>
         </div>
 
