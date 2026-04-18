@@ -46,6 +46,7 @@
                     <li><a href="#">Kerjasama</a></li>
                     <li><a href="{{ route('guest.page.profile.struktur pengurus') }}">Struktur Pengurus</a></li>
                     <li><a href="{{ route('guest.berita.index') }}">Berita</a></li>
+                    <li><a href="{{ route('guest.page.profile.tugas-fungsi') }}">Tugas- Fungsi - Tujuan</a></li>
                 </ul>
             </li>
 
