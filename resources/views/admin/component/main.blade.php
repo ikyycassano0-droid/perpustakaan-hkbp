@@ -495,6 +495,12 @@
         </a>
     </div>
     <div class="nav-item">
+        <a class="nav-link {{ request()->routeIs('admin.layanan.*') ? 'active' : '' }}" 
+        href="{{ route('admin.layanan.index') }}">
+            <i class="fas fa-concierge-bell"></i> Layanan
+        </a>
+    </div>
+    <div class="nav-item">
         <a class="nav-link {{ request()->routeIs('admin.members.*') ? 'active' : '' }}" 
         href="{{ route('admin.members.index') }}">
             <i class="fas fa-users"></i> Manajemen Anggota

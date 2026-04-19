@@ -1,7 +1,6 @@
-{{-- resources/views/pinbal.blade.php --}}
-@extends('user.components.master')
+@extends('guest.component.master')
 
-@section('title', 'Sistem Pinbal Akademik - AKPER HKBP Balige')
+@section('title', 'Layanan PINBAL')
 
 @push('styles')
 <style>
@@ -10,7 +9,7 @@
        Hanya CSS yang BELUM ADA di master blade
     ============================================ */
     
-    /* Glass card */
+    /* Glass card untuk pinbal */
     .glass-card {
         background: rgba(15, 23, 42, 0.55);
         backdrop-filter: blur(16px);
@@ -237,7 +236,7 @@
         display: inline-block;
     }
     
-    /* Notification */
+    /* Notification custom */
     .notification {
         position: fixed;
         bottom: 30px;
@@ -261,6 +260,11 @@
     .section {
         margin-top: 40px;
     }
+    
+    /* Delay utilities */
+    .delay-1 { transition-delay: 0.1s; }
+    .delay-2 { transition-delay: 0.2s; }
+    .delay-3 { transition-delay: 0.3s; }
 </style>
 @endpush
 
@@ -383,7 +387,7 @@
 // Hanya JS yang BELUM ADA di master blade
 // ============================================
 
-// DATA PEMINJAMAN
+// DATA PEMINJAMAN DENGAN GAMBAR BUKU
 let loanData = [
     {
         id: 1,
@@ -491,7 +495,7 @@ function renderTable() {
         );
     }
     
-    // Filter berdasarkan status
+    // Filter berdasarkan status (jika bukan 'all')
     if (currentFilter !== 'all') {
         filteredData = filteredData.filter(item => item.status === currentFilter);
     }
@@ -511,88 +515,88 @@ function renderTable() {
     const tbody = document.getElementById('tableBody');
     tbody.innerHTML = '';
     
-    if (currentData.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-gray-400">📚 Tidak ada data yang ditemukan</td></tr>';
-    } else {
-        currentData.forEach(item => {
-            const row = tbody.insertRow();
-            
-            // Kolom Buku & Katalog
-            const cellBuku = row.insertCell(0);
-            cellBuku.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <img src="${item.gambar}" alt="${item.judul}" class="book-image" 
-                         onerror="this.src='https://placehold.co/100x130/1e293b/6366f1?text=📖'">
-                    <div>
-                        <div class="font-semibold">${item.judul}</div>
-                        <div class="text-xs text-gray-500">KODE: ${item.kode}</div>
-                    </div>
+    currentData.forEach(item => {
+        const row = tbody.insertRow();
+        
+        // Kolom Buku & Katalog (dengan gambar)
+        const cellBuku = row.insertCell(0);
+        cellBuku.innerHTML = `
+            <div class="flex items-center gap-3">
+                <img src="${item.gambar}" alt="${item.judul}" class="book-image" 
+                     onerror="this.src='https://placehold.co/100x130/1e293b/6366f1?text=📖'">
+                <div>
+                    <div class="font-semibold">${item.judul}</div>
+                    <div class="text-xs text-gray-500">KODE: ${item.kode}</div>
                 </div>
-            `;
-            
-            // Kolom Tanggal Pinjam
-            const cellTglPinjam = row.insertCell(1);
-            cellTglPinjam.innerHTML = formatTanggal(item.tanggalPinjam);
-            
-            // Kolom Batas Kembali
-            const cellBatas = row.insertCell(2);
-            if (item.status === 'dipinjam' && item.sisaHari !== null) {
-                let deadlineText = '';
-                let deadlineClass = '';
-                if (item.sisaHari === 0) {
-                    deadlineText = 'Hari Terakhir!';
-                    deadlineClass = 'text-red-400';
-                } else if (item.sisaHari < 0) {
-                    deadlineText = 'Terlambat';
-                    deadlineClass = 'text-red-400';
-                } else if (item.sisaHari <= 3) {
-                    deadlineText = `⚠️ Tersisa ${item.sisaHari} Hari`;
-                    deadlineClass = 'text-yellow-400';
-                } else {
-                    deadlineText = `Tersisa ${item.sisaHari} Hari`;
-                    deadlineClass = 'text-gray-400';
-                }
-                cellBatas.innerHTML = `${formatTanggal(item.batasKembali)}<br><span class="text-xs ${deadlineClass}">${deadlineText}</span>`;
+            </div>
+        `;
+        
+        // Kolom Tanggal Pinjam
+        const cellTglPinjam = row.insertCell(1);
+        cellTglPinjam.innerHTML = formatTanggal(item.tanggalPinjam);
+        
+        // Kolom Batas Kembali
+        const cellBatas = row.insertCell(2);
+        if (item.status === 'dipinjam' && item.sisaHari !== null) {
+            let deadlineText = '';
+            let deadlineClass = '';
+            if (item.sisaHari === 0) {
+                deadlineText = 'Hari Terakhir!';
+                deadlineClass = 'text-red-400';
+            } else if (item.sisaHari < 0) {
+                deadlineText = 'Terlambat';
+                deadlineClass = 'text-red-400';
+            } else if (item.sisaHari <= 3) {
+                deadlineText = `⚠️ Tersisa ${item.sisaHari} Hari`;
+                deadlineClass = 'text-yellow-400';
             } else {
-                cellBatas.innerHTML = formatTanggal(item.batasKembali);
+                deadlineText = `Tersisa ${item.sisaHari} Hari`;
+                deadlineClass = 'text-gray-400';
             }
-            
-            // Kolom Status
-            const cellStatus = row.insertCell(3);
-            let statusClass = '';
-            let statusText = '';
-            let statusIcon = '';
-            
-            switch(item.status) {
-                case 'dipinjam':
-                    statusClass = 'status-dipinjam';
-                    statusText = 'DIPINJAM';
-                    statusIcon = '📘';
-                    break;
-                case 'dikembalikan':
-                    statusClass = 'status-dikembalikan';
-                    statusText = 'DIKEMBALIKAN';
-                    statusIcon = '✅';
-                    break;
-                case 'terlambat':
-                    statusClass = 'status-terlambat';
-                    statusText = 'TERLAMBAT';
-                    statusIcon = '⚠️';
-                    break;
-            }
-            
-            cellStatus.innerHTML = `<span class="status-badge ${statusClass}">${statusIcon} ${statusText}</span>`;
-        });
-    }
+            cellBatas.innerHTML = `${formatTanggal(item.batasKembali)}<br><span class="text-xs ${deadlineClass}">${deadlineText}</span>`;
+        } else {
+            cellBatas.innerHTML = formatTanggal(item.batasKembali);
+        }
+        
+        // Kolom Status
+        const cellStatus = row.insertCell(3);
+        let statusClass = '';
+        let statusText = '';
+        let statusIcon = '';
+        
+        switch(item.status) {
+            case 'dipinjam':
+                statusClass = 'status-dipinjam';
+                statusText = 'DIPINJAM';
+                statusIcon = '📘';
+                break;
+            case 'dikembalikan':
+                statusClass = 'status-dikembalikan';
+                statusText = 'DIKEMBALIKAN';
+                statusIcon = '✅';
+                break;
+            case 'terlambat':
+                statusClass = 'status-terlambat';
+                statusText = 'TERLAMBAT';
+                statusIcon = '⚠️';
+                break;
+        }
+        
+        cellStatus.innerHTML = `<span class="status-badge ${statusClass}">${statusIcon} ${statusText}</span>`;
+    });
     
-    // Update pagination buttons
+    // Update pagination buttons state
     const prevBtn = document.getElementById('prevPage');
     const nextBtn = document.getElementById('nextPage');
     if (prevBtn) prevBtn.disabled = currentPage === 1;
     if (nextBtn) nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+    
+    if (totalPages === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-gray-400">📚 Tidak ada data yang ditemukan</td></tr>';
+    }
 }
 
-// Filter event listeners
+// Event listeners untuk filter
 document.querySelectorAll('[data-filter]').forEach(btn => {
     btn.addEventListener('click', (e) => {
         const filter = e.target.getAttribute('data-filter');
@@ -634,8 +638,8 @@ document.getElementById('nextPage').addEventListener('click', () => {
     renderTable();
 });
 
-// Action buttons notification
-function showNotification(message, type = 'success') {
+// Action buttons dengan notifikasi
+function showCustomNotification(message, type = 'success') {
     const notification = document.createElement('div');
     notification.className = 'notification';
     notification.innerHTML = `
@@ -653,21 +657,27 @@ function showNotification(message, type = 'success') {
 }
 
 document.getElementById('pinjamBtn').addEventListener('click', () => {
-    showNotification('📖 Form peminjaman buku akan segera terbuka. Silakan lengkapi data peminjaman.', 'info');
+    showCustomNotification('📖 Form peminjaman buku akan segera terbuka. Silakan lengkapi data peminjaman.', 'info');
 });
 
 document.getElementById('kembalikanBtn').addEventListener('click', () => {
-    showNotification('↺ Silakan pilih buku yang akan dikembalikan.', 'info');
+    showCustomNotification('↺ Silakan pilih buku yang akan dikembalikan.', 'info');
 });
 
 document.getElementById('perpanjangBtn').addEventListener('click', () => {
-    showNotification('🔄 Perpanjangan pinjaman dapat dilakukan H-3 sebelum batas waktu.', 'info');
+    showCustomNotification('🔄 Perpanjangan pinjaman dapat dilakukan H-3 sebelum batas waktu.', 'info');
 });
 
-// Initialize
+// Inisialisasi
 updateStats();
 renderTable();
 
-console.log('Halaman Sistem Pinbal Akademik siap dengan 7 data peminjaman!');
+// Efek tambahan untuk stagger animation pada stat cards
+const statCards = document.querySelectorAll('.stat-card');
+statCards.forEach((card, idx) => {
+    card.style.transitionDelay = `${idx * 0.1}s`;
+});
+
+console.log('Halaman Sistem Pinbal Akademik siap dengan data peminjaman lengkap!');
 </script>
 @endpush

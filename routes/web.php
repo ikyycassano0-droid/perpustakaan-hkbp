@@ -13,6 +13,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\FinalProjectController;
+use App\Http\Controllers\ArchiveController;
 
 // Login
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -144,6 +145,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
         Route::delete('/{id}', [FinalProjectController::class, 'destroy'])->name('delete');
     });
 
+    // ================= LAYANAN (ARCHIVE) =================
+    Route::prefix('layanan')->name('layanan.')->group(function () {
+
+        Route::get('/', [ArchiveController::class, 'index'])->name('index');
+
+        Route::get('/{category}', [ArchiveController::class, 'byCategory'])->name('category');
+
+        Route::post('/', [ArchiveController::class, 'store'])->name('store');
+        Route::put('/{id}', [ArchiveController::class, 'update'])->name('update');
+        Route::delete('/{id}', [ArchiveController::class, 'destroy'])->name('delete');
+    });
+
 });
 
 // User
@@ -221,6 +234,9 @@ Route::middleware(['web'])->group(function () {
     Route::get('/berita/{id}', [NewsController::class, 'show'])
     ->name('guest.berita.show');
     Route::get('/koleksi/{category}', [FinalProjectController::class, 'index']);
+
+    Route::get('/layanan/{category}', [ArchiveController::class, 'indexLayananGuest'])
+        ->name('guest.layanan.show');
 });
 
 Route::middleware(['auth'])->group(function () {

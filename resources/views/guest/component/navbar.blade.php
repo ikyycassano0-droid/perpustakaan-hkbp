@@ -53,9 +53,9 @@
             <li>
                 <a href="#">Layanan <i class="fas fa-caret-down"></i></a>
                 <ul class="dropdown-menu">
-                    <li><a href="{{ url('pinbal.html') }}">Pinbal (Peminjaman & Pengembalian)</a></li>
-                    <li><a href="{{ url('upload-ta.html') }}">Upload TA</a></li>
-                    <li><a href="{{ url('waktu_layanan.html') }}">Waktu Layanan</a></li>
+                    <li><a href="{{ route('guest.layanan.show', 'pinjam_buku') }}">Pinjam Buku</a></li>
+                    <li><a href="{{ route('guest.layanan.show', 'upload_ta') }}">Upload TA</a></li>
+                    <li><a href="{{ route('guest.layanan.show', 'waktu_layanan') }}">Waktu Layanan</a></li>
                 </ul>
             </li>
 
