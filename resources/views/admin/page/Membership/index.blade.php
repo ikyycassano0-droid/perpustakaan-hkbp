@@ -26,7 +26,8 @@
                     <th>Role</th>
                     <th>NPM / NIDN</th>
                     <th>No HP</th>
-                    <th>Status</th>
+                    <th>Status Akun</th>
+                    <th>Status Email</th>
                     <th width="150">Aksi</th>
                 </tr>
             </thead>
@@ -43,12 +44,12 @@
                     <!-- ROLE -->
                     <td>
                         <span class="badge 
-                            @if($member->role->name == 'Admin') bg-danger
-                            @elseif($member->role->name == 'Dosen') bg-info
+                            @if(optional($member->role)->name == 'Admin') bg-danger
+                            @elseif(optional($member->role)->name == 'Dosen') bg-info
                             @else bg-secondary
                             @endif
                         ">
-                            {{ $member->role->name ?? '-' }}
+                            {{ optional($member->role)->name ?? '-' }}
                         </span>
                     </td>
 
@@ -62,11 +63,20 @@
                         {{ $member->phone ?? '-' }}
                     </td>
 
-                    <!-- STATUS -->
+                    <!-- STATUS AKUN -->
                     <td>
                         <span class="badge-status {{ $member->active ? 'badge-active' : 'badge-pending' }}">
                             {{ $member->active ? 'Aktif' : 'Nonaktif' }}
                         </span>
+                    </td>
+
+                    <!-- 🔥 STATUS EMAIL -->
+                    <td>
+                        @if($member->email_verified_at)
+                            <span class="badge bg-success">Verified</span>
+                        @else
+                            <span class="badge bg-warning text-dark">Belum Verifikasi</span>
+                        @endif
                     </td>
 
                     <!-- ACTION -->
@@ -79,7 +89,7 @@
                         </a>
 
                         <!-- DELETE -->
-                        <form action="{{ route('admin.members.destroy', $member->id) }}"
+                        <form action="{{ route('admin.members.destroy.post', $member->id) }}"
                               method="POST"
                               class="d-inline"
                               onsubmit="return confirm('Yakin ingin menghapus anggota ini?')">
@@ -99,7 +109,7 @@
                 @empty
 
                 <tr>
-                    <td colspan="6" class="text-center text-muted py-4">
+                    <td colspan="7" class="text-center text-muted py-4">
                         Tidak ada data anggota
                     </td>
                 </tr>

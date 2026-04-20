@@ -1,18 +1,21 @@
 <?php
 
 namespace App\Models;
-
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Models\Role;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
+    use Notifiable;
+
     protected $table = 'users';
-    protected $primaryKey = 'id';
-    
+
     protected $fillable = [
         'role_id',
         'name',
+        'email',
         'npm',
         'nidn',
         'birth_date',
@@ -24,14 +27,17 @@ class User extends Authenticatable
         'active',
     ];
 
-    protected $hidden = ['password'];
+    protected $hidden = [
+        'password',
+        'remember_token'
+    ];
 
     protected $casts = [
         'birth_date' => 'date',
         'active' => 'boolean',
+        'email_verified_at' => 'datetime',
     ];
 
-    // ================= RELASI =================
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id');
@@ -42,7 +48,6 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class);
     }
 
-    // ================= HELPER (TIDAK DIUBAH) =================
     public function isAdmin()
     {
         return $this->role?->name === 'Admin';
@@ -58,11 +63,7 @@ class User extends Authenticatable
         return $this->role?->name === 'Dosen';
     }
 
-    // ================= TAMBAHAN AMAN (TIDAK MERUSAK LOGIC) =================
-
-    /**
-     * Auto hash password saat diset (opsional safety layer)
-     */
+    // 🔐 auto hash password (cukup di sini saja)
     public function setPasswordAttribute($value)
     {
         if (!empty($value)) {
@@ -70,17 +71,11 @@ class User extends Authenticatable
         }
     }
 
-    /**
-     * Relasi creator (kalau kamu pakai audit created_by)
-     */
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    /**
-     * Relasi updater (kalau pakai audit updated_by)
-     */
     public function updater()
     {
         return $this->belongsTo(User::class, 'updated_by');

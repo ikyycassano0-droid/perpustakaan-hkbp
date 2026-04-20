@@ -1,11 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Role;
+use Illuminate\Auth\Events\Registered;
 
 class MemberController extends Controller
 {
@@ -25,29 +25,33 @@ class MemberController extends Controller
     {
         $request->validate([
             'name' => 'required',
+            'email' => 'required|email|unique:users,email', 
             'npm' => 'required|unique:users,npm',
             'password' => 'required|min:6|confirmed',
             'role_id' => 'required|exists:roles,id',
 
-            // tambahan aman (tanpa ubah logic utama)
             'phone' => 'nullable|regex:/^[0-9]+$/|min:10|max:15',
         ]);
 
-        User::create([
+        
+        $user = User::create([
             'role_id' => $request->role_id,
             'name' => $request->name,
+            'email' => $request->email, 
             'npm' => $request->npm,
             'nidn' => $request->nidn,
             'birth_date' => $request->birth_date,
             'gender' => $request->gender,
             'membership_type' => $request->membership_type,
             'phone' => $request->phone,
-            'password' => Hash::make($request->password),
+            'password' => $request->password,
         ]);
 
-        return redirect()
-            ->route('admin.membership.index')
-            ->with('success', 'Anggota berhasil ditambahkan');
+        
+        event(new Registered($user));
+
+        return redirect()->route('admin.members.index')
+            ->with('success', 'Data anggota berhasil ditambahkan & email verifikasi dikirim');
     }
 
     public function edit($id)
@@ -87,13 +91,11 @@ class MemberController extends Controller
                 'password' => 'min:6|confirmed',
             ]);
 
-            $member->password = Hash::make($request->password);
+            $member->password = $request->password;
             $member->save();
         }
 
-        return redirect()
-            ->route('admin.membership.index')
-            ->with('success', 'Data anggota berhasil diupdate');
+        return redirect()->route('admin.members.index')->with('success', 'Data anggota berhasil diupdate');
     }
 
     public function destroy($id)
@@ -101,8 +103,6 @@ class MemberController extends Controller
         $member = User::findOrFail($id);
         $member->delete();
 
-        return redirect()
-            ->route('admin.membership.index')
-            ->with('success', 'Anggota berhasil dihapus');
+        return redirect()->route('admin.members.index')->with('success', 'Data anggota berhasil dihapus');
     }
 }

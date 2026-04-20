@@ -17,7 +17,6 @@ class AuthController extends Controller
             'password' => 'required|string'
         ]);
 
-        // Login pakai Auth Laravel
         if (Auth::attempt([
             'npm' => $request->npm,
             'password' => $request->password,
@@ -26,7 +25,15 @@ class AuthController extends Controller
 
             $user = Auth::user();
 
-            if($user->role_id == 1){
+            // 🔥 INI BAGIAN YANG KAMU TANYA (TARUH DI SINI)
+            if (!$user->isAdmin() && !$user->hasVerifiedEmail()) {
+                Auth::logout();
+
+                return back()->with('error', 'Email belum diverifikasi. Silakan cek Gmail Anda.');
+            }
+
+            // 🔀 REDIRECT SESUAI ROLE
+            if ($user->role_id == 1) {
                 return redirect()->route('admin.home');
             } else {
                 return redirect()->route('user.dashboard');

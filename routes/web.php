@@ -14,6 +14,24 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\FinalProjectController;
 use App\Http\Controllers\ArchiveController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Models\User;
+
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request, $id) {
+
+    $user = User::findOrFail($id);
+
+    
+    if ($user->hasVerifiedEmail()) {
+        return redirect('/login')->with('info', 'Email sudah diverifikasi sebelumnya');
+    }
+
+    
+    $request->fulfill();
+
+    return redirect('/login')->with('success', 'Email berhasil diverifikasi!');
+
+})->middleware(['signed'])->name('verification.verify');
 
 // Login
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -35,8 +53,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
         Route::get('/create', [MemberController::class, 'create'])->name('create');
         Route::post('/', [MemberController::class, 'store'])->name('store');
         Route::get('/{id}/edit', [MemberController::class, 'edit'])->name('edit');
-        Route::delete('/{id}', [MemberController::class, 'destroy'])->name('destroy');
-
+        Route::put('/{id}', [MemberController::class, 'update'])->name('update');
+        Route::post('/{id}/delete', [MemberController::class, 'destroy'])->name('destroy.post');
     });
 
     Route::prefix('profile')->name('profile.')->group(function () {
