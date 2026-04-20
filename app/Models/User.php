@@ -42,7 +42,7 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class);
     }
 
-    // ================= HELPER (🔥 PENTING) =================
+    // ================= HELPER (TIDAK DIUBAH) =================
     public function isAdmin()
     {
         return $this->role?->name === 'Admin';
@@ -56,5 +56,33 @@ class User extends Authenticatable
     public function isDosen()
     {
         return $this->role?->name === 'Dosen';
+    }
+
+    // ================= TAMBAHAN AMAN (TIDAK MERUSAK LOGIC) =================
+
+    /**
+     * Auto hash password saat diset (opsional safety layer)
+     */
+    public function setPasswordAttribute($value)
+    {
+        if (!empty($value)) {
+            $this->attributes['password'] = bcrypt($value);
+        }
+    }
+
+    /**
+     * Relasi creator (kalau kamu pakai audit created_by)
+     */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Relasi updater (kalau pakai audit updated_by)
+     */
+    public function updater()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }

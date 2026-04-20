@@ -34,6 +34,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
         Route::get('/', [MemberController::class, 'index'])->name('index');
         Route::get('/create', [MemberController::class, 'create'])->name('create');
         Route::post('/', [MemberController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [MemberController::class, 'edit'])->name('edit');
+        Route::delete('/{id}', [MemberController::class, 'destroy'])->name('destroy');
 
     });
 
@@ -192,7 +194,7 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
             ->name('struktur');
 
     });
-    
+
     // ================= KOLEKSI TERCETAK =================
     Route::prefix('koleksi')->group(function () {
 

@@ -2,73 +2,171 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Perpustakaan AKPER HKBP</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Akper Balige | Login</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        :root { --primary-color: #021e69; --accent-yellow: #f1c40f; }
-        
-        body {
-            background: linear-gradient(rgba(2, 30, 105, 0.85), rgba(2, 30, 105, 0.85)), 
-                        url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1350&q=80');
-            background-size: cover; background-position: center; height: 100vh;
-            display: flex; justify-content: center; align-items: center;
+        * { font-family: 'Inter', sans-serif; }
+
+        .overlay {
+            background: linear-gradient(125deg, rgba(6, 27, 52, 0.92), rgba(2, 17, 36, 0.88));
         }
 
-        .login-card {
-            background: white; width: 100%; max-width: 400px; padding: 40px;
-            border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); text-align: center;
+        .btn-transition {
+            transition: all 0.2s ease;
         }
 
-        .login-logo {
-            width: 70px; height: 70px; background: var(--primary-color); color: white;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; margin: 0 auto 20px; border: 4px solid #f0f7ff;
+        input:focus {
+            outline: none;
         }
 
-        h2 { color: var(--primary-color); margin-bottom: 5px; }
-        p { color: #666; font-size: 0.85rem; margin-bottom: 30px; }
-
-        .form-group { text-align: left; margin-bottom: 20px; position: relative; }
-        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--primary-color); margin-bottom: 8px; }
-        .form-group i { position: absolute; left: 15px; top: 38px; color: #999; }
-        .form-group input { width: 100%; padding: 12px 15px 12px 40px; border: 2px solid #eee; border-radius: 8px; outline: none; }
-
-        .btn-login {
-            width: 100%; background: var(--primary-color); color: white; border: none;
-            padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s;
+        .border-accent {
+            border-left: 3px solid #60a5fa;
         }
-        .btn-login:hover { background: var(--accent-yellow); color: #000; }
-
-        .alert { background: #f8d7da; color: #842029; padding: 10px 15px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; }
     </style>
 </head>
-<body>
-    <div class="login-card">
-        <div class="login-logo"><i class="fas fa-user-md"></i></div>
-        <h2>Sistem Login</h2>
-        <p>Akses Member Perpustakaan AKPER HKBP</p>
 
-        {{-- Tampilkan error jika login gagal --}}
-        @if(session('error'))
-            <div class="alert">{{ session('error') }}</div>
-        @endif
+<body class="h-screen flex antialiased">
 
-        <form method="POST" action="{{ route('login.submit') }}">
-            @csrf
-            <div class="form-group">
-                <label>Nomor Induk / NPM</label>
-                <i class="fas fa-id-card"></i>
-                <input type="text" name="npm" placeholder="Masukkan NPM Anda" required>
+<!-- LEFT HERO (FULL SAMA SEPERTI REFERENSI) -->
+<div class="hidden lg:flex w-1/2 relative text-white overflow-hidden">
+
+    <img src="{{ asset('assets/img/login2.jpg') }}"
+         class="absolute inset-0 w-full h-full object-cover object-center">
+
+    <div class="absolute inset-0 overlay"></div>
+
+    <div class="relative z-10 p-12 xl:p-16 flex flex-col justify-between w-full">
+
+        <div class="mt-4">
+
+            <p class="uppercase tracking-[0.2em] text-[11px] font-semibold text-blue-100 mb-8 border-accent pl-3">
+                DIGITAL CURATOR EXCELLENCE
+            </p>
+
+            <h1 class="text-5xl xl:text-6xl font-extrabold leading-tight mb-6">
+                Gerbang Pengetahuan <br>
+                Akademi Keperawatan Balige
+            </h1>
+
+            <p class="text-gray-100 max-w-md mb-12">
+                Mengakses ribuan jurnal medis, literatur keperawatan, dan arsip penelitian digital.
+            </p>
+
+            <div class="flex gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold">15k+</h2>
+                    <p class="text-xs text-gray-200">KOLEKSI DIGITAL</p>
+                </div>
+
+                <div class="w-px h-8 bg-white/30"></div>
+
+                <div>
+                    <h2 class="text-3xl font-bold">24/7</h2>
+                    <p class="text-xs text-gray-200">AKSES RISET</p>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Kata Sandi</label>
-                <i class="fas fa-lock"></i>
-                <input type="password" name="password" placeholder="Masukkan Password" required>
-            </div>
-            <button type="submit" class="btn-login">MASUK KE SISTEM</button>
-        </form>
+
+        </div>
+
+        <div class="text-sm text-gray-200 border-t border-white/20 pt-5">
+            Akper Balige • Scientific Library
+        </div>
+
     </div>
+</div>
+
+<!-- RIGHT LOGIN (UI FULL DIUBAH SESUAI REFERENSI 2) -->
+<div class="w-full lg:w-1/2 flex items-center justify-center bg-gray-50 px-6 py-10">
+
+    <div class="w-full max-w-md">
+
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 px-8 py-8">
+
+            <!-- HEADER -->
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Selamat Datang</h2>
+                <p class="text-gray-500 mt-2 text-sm">
+                    Silakan masuk ke sistem perpustakaan
+                </p>
+            </div>
+
+            <!-- ROLE UI (TANPA LOGIC) -->
+            <div class="mb-6">
+                <label class="text-xs font-bold text-gray-500 uppercase">Pilih Role</label>
+
+                <div class="flex gap-3 mt-2">
+                    <button type="button"
+                        class="flex-1 py-2 rounded-xl bg-[#0c2d5c] text-white font-semibold btn-transition">
+                        Mahasiswa
+                    </button>
+
+                    <button type="button"
+                        class="flex-1 py-2 rounded-xl bg-gray-100 text-gray-700 font-semibold">
+                        Dosen
+                    </button>
+                </div>
+            </div>
+
+            <!-- FORM (LOGIC TETAP AMAN) -->
+            <form method="POST" action="{{ route('login.submit') }}">
+                @csrf
+
+                <!-- NPM -->
+                <div class="mb-5">
+                    <label class="text-xs font-bold text-gray-600 uppercase">
+                        NPM / NIDN
+                    </label>
+
+                    <input type="text"
+                        name="npm"
+                        placeholder="Masukkan NPM / NIDN"
+                        class="w-full mt-1 px-4 py-3 rounded-xl border bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#0c2d5c]">
+                </div>
+
+                <!-- PASSWORD -->
+                <div class="mb-5">
+                    <label class="text-xs font-bold text-gray-600 uppercase">
+                        Kata Sandi
+                    </label>
+
+                    <input type="password"
+                        name="password"
+                        placeholder="Masukkan password"
+                        class="w-full mt-1 px-4 py-3 rounded-xl border bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#0c2d5c]">
+                </div>
+
+                <!-- REMEMBER -->
+                <div class="flex items-center justify-between mb-6">
+                    <label class="flex items-center gap-2 text-sm text-gray-600">
+                        <input type="checkbox">
+                        Ingat saya
+                    </label>
+
+                    <a href="#" class="text-sm text-blue-600 hover:underline">
+                        Lupa password?
+                    </a>
+                </div>
+
+                <!-- BUTTON -->
+                <button type="submit"
+                    class="w-full py-3 rounded-xl bg-[#0c2d5c] text-white font-semibold hover:bg-[#082246] btn-transition">
+                    MASUK
+                </button>
+
+            </form>
+
+            <!-- FOOTER -->
+            <div class="mt-8 text-center text-xs text-gray-400">
+                © 2026 Akper Balige • Perpustakaan Digital
+            </div>
+
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
