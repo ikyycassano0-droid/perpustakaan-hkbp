@@ -1,8 +1,161 @@
+{{-- resources/views/home.blade.php --}}
 @extends('guest.component.master')
 
-@section('title', 'Ultra 3D Website')
+@section('title', 'Beranda - AKPER HKBP Balige')
+
+@push('styles')
+<style>
+    /* ============================================
+       CSS KHUSUS UNTUK HALAMAN HOME
+       Hanya CSS yang BELUM ADA di master blade
+    ============================================ */
+    
+    /* Carousel Buku */
+    .book-carousel-section {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        padding: 40px 0;
+        margin-top: 40px;
+    }
+    
+    .book-carousel-container {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+    }
+    
+    .book-carousel-track {
+        display: flex;
+        gap: 30px;
+        width: max-content;
+        animation: scrollBooksRight 35s linear infinite;
+    }
+    
+    .book-carousel-track:hover {
+        animation-play-state: paused;
+    }
+    
+    @keyframes scrollBooksRight {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+    
+    /* Card Buku */
+    .book-card-medium {
+        width: 220px;
+        background: rgba(15, 23, 42, 0.7);
+        backdrop-filter: blur(12px);
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(99, 102, 241, 0.35);
+        transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        flex-shrink: 0;
+        position: relative;
+    }
+    
+    .book-card-medium:hover {
+        transform: translateY(-10px) scale(1.03);
+        border-color: rgba(99, 102, 241, 0.8);
+        box-shadow: 0 20px 35px -12px rgba(99, 102, 241, 0.4);
+    }
+    
+    .book-cover-medium {
+        width: 100%;
+        height: 280px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .book-card-medium:hover .book-cover-medium {
+        transform: scale(1.05);
+    }
+    
+    .book-info-overlay-medium {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 14px 12px;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.7), transparent);
+        transform: translateY(100%);
+        transition: transform 0.35s ease;
+    }
+    
+    .book-card-medium:hover .book-info-overlay-medium {
+        transform: translateY(0);
+    }
+    
+    .book-title-medium {
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: white;
+        margin-bottom: 4px;
+        line-height: 1.3;
+    }
+    
+    .book-author-medium {
+        font-size: 0.65rem;
+        color: #cbd5e1;
+    }
+    
+    /* Section background carousel */
+    .carousel-bg-section {
+        position: relative;
+        margin-top: 60px;
+        margin-bottom: 60px;
+        padding: 50px 0;
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.03));
+        border-top: 1px solid rgba(99, 102, 241, 0.2);
+        border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+    }
+    
+    .carousel-title-section {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .carousel-title-section h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #ffffff, #c7d2fe);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+    
+    .carousel-title-section p {
+        color: #94a3b8;
+        margin-top: 8px;
+        font-size: 0.9rem;
+    }
+    
+    /* Cart & Modal styles */
+    #cart {
+        transition: transform 0.3s ease;
+    }
+    
+    /* Responsif untuk mobile */
+    @media (max-width: 768px) {
+        .book-card-medium {
+            width: 180px;
+        }
+        .book-cover-medium {
+            height: 230px;
+        }
+        .book-carousel-track {
+            gap: 20px;
+        }
+    }
+</style>
+@endpush
 
 @section('content')
+<!-- HERO -->
 <!-- HERO -->
 <section class="text-center mt-40 px-6">
       <h2 class="text-5xl md:text-7xl font-bold fade-up depth-2">
@@ -74,118 +227,108 @@
 
 <!-- PARALLAX SECTION -->
 <!-- ===== PARALLAX SECTION YANG DIUBAH MENJADI CAROUSEL BUKU ===== -->
-<section class="relative mt-40 h-[550px] overflow-hidden">
-    <!-- Background layer -->
-    <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/40 to-black/60"></div>
-    
-    <!-- Carousel Buku -->
-    <div class="absolute inset-0 flex items-center justify-center">
-        <div class="book-carousel-full">
-            <div class="book-carousel-track" id="bookTrack">
-                <!-- Buku 1 -->
-                <div class="book-card-large">
-                    <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?w=300&h=380&fit=crop" alt="Buku Keperawatan" class="book-cover-large">
-                    <div class="book-info-overlay">
-                        <div class="book-title-large">Fundamental Keperawatan Klinis</div>
-                        <div class="book-author-large">Ns. Siti Aminah, M.Kep</div>
-                    </div>
+<!-- CAROUSEL BUKU SECTION -->
+<div class="carousel-bg-section">
+    <div class="carousel-title-section">
+        <h2>📚 Koleksi Buku Unggulan</h2>
+        <p>Rekomendasi buku terpopuler di perpustakaan digital kami</p>
+    </div>
+
+    <div class="book-carousel-container">
+        <div class="book-carousel-track">
+            <!-- Buku 1 -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/EGC Malpraktik dalam keperawatan.jpg') }}" alt="Buku Keperawatan" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Malpraktik+Keperawatan'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Malpraktik dalam Keperawatan</div>
+                    <div class="book-author-medium">Ns. Siti Aminah, M.Kep</div>
                 </div>
-                <!-- Buku 2 -->
-                <div class="book-card-large">
-                    <img src="https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=300&h=380&fit=crop" alt="Buku Anatomi" class="book-cover-large">
-                    <div class="book-info-overlay">
-                        <div class="book-title-large">Anatomi Manusia Edisi X</div>
-                        <div class="book-author-large">Prof. Dr. Budi Santoso</div>
-                    </div>
+            </div>
+            <!-- Buku 2 -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/Noltes The Human Brain_ An Introduction to its Functional Anatomy.jpg') }}" alt="Buku Anatomi" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Anatomi+Otak'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Nolte's The Human Brain</div>
+                    <div class="book-author-medium">Prof. Dr. Budi Santoso</div>
                 </div>
-                <!-- Buku 3 -->
-                <div class="book-card-large">
-                    <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=300&h=380&fit=crop" alt="Buku Farmakologi" class="book-cover-large">
-                    <div class="book-info-overlay">
-                        <div class="book-title-large">Farmakologi Dasar untuk Perawat</div>
-                        <div class="book-author-large">apt. Dewi Lestari, M.Sc</div>
-                    </div>
+            </div>
+            <!-- Buku 3 -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/[TERBARU] Original Farmakologi dan Terapi Ed 6 UI FKUI 2017.jpg') }}" alt="Buku Farmakologi" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Farmakologi+dan+Terapi'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Farmakologi dan Terapi</div>
+                    <div class="book-author-medium">apt. Dewi Lestari, M.Sc</div>
                 </div>
-                <!-- Buku 4 -->
-                <div class="book-card-large">
-                    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=300&h=380&fit=crop" alt="Buku Keperawatan Anak" class="book-cover-large">
-                    <div class="book-info-overlay">
-                        <div class="book-title-large">Keperawatan Anak Holistik</div>
-                        <div class="book-author-large">Ns. Maya Sari, M.Kep</div>
-                    </div>
+            </div>
+            <!-- Buku 4 -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/Ilmu Dasar Keperawatan Anak.jpg') }}" alt="Buku Keperawatan Anak" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Keperawatan+Anak'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Ilmu Dasar Keperawatan Anak</div>
+                    <div class="book-author-medium">Ns. Maya Sari, M.Kep</div>
                 </div>
-                <!-- Buku 5 -->
-                <div class="book-card-large">
-                    <img src="https://images.unsplash.com/photo-1518779578993-ec3579fee39f?w=300&h=380&fit=crop" alt="Buku Medikal Bedah" class="book-cover-large">
-                    <div class="book-info-overlay">
-                        <div class="book-title-large">Keperawatan Medikal Bedah</div>
-                        <div class="book-author-large">Ns. Rudi Hartono, M.Kep</div>
-                    </div>
+            </div>
+            <!-- Buku 5 -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/Deepublish - Buku Buku Ajar Keperawatan Medikal Bedah Sistem Persyarafan - Buku Keperawatan.jpg') }}" alt="Buku Medikal Bedah" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Keperawatan+Medikal+Bedah'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Keperawatan Medikal Bedah</div>
+                    <div class="book-author-medium">Ns. Rudi Hartono, M.Kep</div>
                 </div>
-                <!-- Buku 6 -->
-                <div class="book-card-large">
-                    <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=300&h=380&fit=crop" alt="Buku Kesehatan Masyarakat" class="book-cover-large">
-                    <div class="book-info-overlay">
-                        <div class="book-title-large">Kesehatan Masyarakat</div>
-                        <div class="book-author-large">Dr. Andi Pratama</div>
-                    </div>
+            </div>
+            <!-- Buku 6 -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/Buku Pendidikan dan Promosi Kesehatan - Original.jpg') }}" alt="Buku Kesehatan Masyarakat" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Pendidikan+Kesehatan'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Pendidikan & Promosi Kesehatan</div>
+                    <div class="book-author-medium">Dr. Andi Pratama</div>
                 </div>
-                <!-- Buku 7 -->
-                <div class="book-card-large">
-                    <img src="https://images.unsplash.com/photo-1532619187608-e5375cab36aa?w=300&h=380&fit=crop" alt="Buku Penelitian" class="book-cover-large">
-                    <div class="book-info-overlay">
-                        <div class="book-title-large">Metodologi Penelitian Kesehatan</div>
-                        <div class="book-author-large">Dr. Rina Wijaya</div>
-                    </div>
+            </div>
+            <!-- Buku 7 -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/EGC Metodologi Penelitian Kedokteran dan Kesehatan.jpg') }}" alt="Buku Penelitian" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Metodologi+Penelitian'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Metodologi Penelitian Kesehatan</div>
+                    <div class="book-author-medium">Dr. Rina Wijaya</div>
                 </div>
-                <!-- Buku 8 -->
-                <div class="book-card-large">
-                    <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300&h=380&fit=crop" alt="Buku Etika" class="book-cover-large">
-                    <div class="book-info-overlay">
-                        <div class="book-title-large">Etika Keperawatan Profesional</div>
-                        <div class="book-author-large">Prof. Dr. Maria Ulfah</div>
-                    </div>
+            </div>
+            <!-- Buku 8 -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/EGC Malpraktik dalam keperawatan.jpg') }}" alt="Buku Etika" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Etika+Keperawatan'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Etika Keperawatan Profesional</div>
+                    <div class="book-author-medium">Prof. Dr. Maria Ulfah</div>
                 </div>
-                <!-- Duplikasi untuk efek infinite scroll -->
-                <div class="book-card-large">
-                    <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?w=300&h=380&fit=crop" alt="Buku Keperawatan" class="book-cover-large">
-                    <div class="book-info-overlay">
-                        <div class="book-title-large">Fundamental Keperawatan Klinis</div>
-                        <div class="book-author-large">Ns. Siti Aminah, M.Kep</div>
-                    </div>
+            </div>
+            
+            <!-- DUPLIKASI UNTUK EFEK INFINITE SCROLL -->
+            <!-- Buku 2 duplicate -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/Noltes The Human Brain_ An Introduction to its Functional Anatomy.jpg') }}" alt="Buku Anatomi" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Anatomi+Otak'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Nolte's The Human Brain</div>
+                    <div class="book-author-medium">Prof. Dr. Budi Santoso</div>
                 </div>
-                <div class="book-card-large">
-                    <img src="https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=300&h=380&fit=crop" alt="Buku Anatomi" class="book-cover-large">
-                    <div class="book-info-overlay">
-                        <div class="book-title-large">Anatomi Manusia Edisi X</div>
-                        <div class="book-author-large">Prof. Dr. Budi Santoso</div>
-                    </div>
+            </div>
+            <!-- Buku 3 duplicate -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/[TERBARU] Original Farmakologi dan Terapi Ed 6 UI FKUI 2017.jpg') }}" alt="Buku Farmakologi" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Farmakologi+dan+Terapi'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Farmakologi dan Terapi</div>
+                    <div class="book-author-medium">apt. Dewi Lestari, M.Sc</div>
                 </div>
-                <div class="book-card-large">
-                    <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=300&h=380&fit=crop" alt="Buku Farmakologi" class="book-cover-large">
-                    <div class="book-info-overlay">
-                        <div class="book-title-large">Farmakologi Dasar untuk Perawat</div>
-                        <div class="book-author-large">apt. Dewi Lestari, M.Sc</div>
-                    </div>
-                </div>
-                <div class="book-card-large">
-                    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=300&h=380&fit=crop" alt="Buku Keperawatan Anak" class="book-cover-large">
-                    <div class="book-info-overlay">
-                        <div class="book-title-large">Keperawatan Anak Holistik</div>
-                        <div class="book-author-large">Ns. Maya Sari, M.Kep</div>
-                    </div>
-                </div>
-                <div class="book-card-large">
-                    <img src="https://images.unsplash.com/photo-1518779578993-ec3579fee39f?w=300&h=380&fit=crop" alt="Buku Medikal Bedah" class="book-cover-large">
-                    <div class="book-info-overlay">
-                        <div class="book-title-large">Keperawatan Medikal Bedah</div>
-                        <div class="book-author-large">Ns. Rudi Hartono, M.Kep</div>
-                    </div>
+            </div>
+            <!-- Buku 4 duplicate -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/Ilmu Dasar Keperawatan Anak.jpg') }}" alt="Buku Keperawatan Anak" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Keperawatan+Anak'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Ilmu Dasar Keperawatan Anak</div>
+                    <div class="book-author-medium">Ns. Maya Sari, M.Kep</div>
                 </div>
             </div>
         </div>
     </div>
-</section>
+</div>
 
 <!-- INTERACTIVE CARDS -->
 <section class="mt-40 grid md:grid-cols-3 gap-10 px-10">
@@ -462,3 +605,49 @@
 
 </section>
 @endsection
+
+@push('scripts')
+<script>
+// ==========================
+// JAVASCRIPT KHUSUS UNTUK HALAMAN HOME
+// ==========================
+
+// Cart functions
+function toggleCart() {
+    const cart = document.getElementById('cart');
+    if (cart.classList.contains('hidden')) {
+        cart.classList.remove('hidden');
+    } else {
+        cart.classList.add('hidden');
+    }
+}
+
+function openStartForm() {
+    showNotif('Fitur segera hadir!', 'success');
+}
+
+function toggleWishlist(btn) {
+    if (btn.innerHTML === '🤍') {
+        btn.innerHTML = '❤️';
+        showNotif('Ditambahkan ke wishlist', 'success');
+    } else {
+        btn.innerHTML = '🤍';
+        showNotif('Dihapus dari wishlist', 'warning');
+    }
+}
+
+function openModal(imgElement) {
+    alert('Detail produk akan segera hadir');
+}
+
+function closeModal() {
+    // Fungsi untuk menutup modal
+}
+
+function filterProducts(category) {
+    showNotif(`Menampilkan produk kategori: ${category}`, 'success');
+}
+
+console.log('Halaman Home siap dengan carousel buku dan efek 3D!');
+</script>
+@endpush

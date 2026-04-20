@@ -1,4 +1,3 @@
-{{-- resources/views/visi-misi.blade.php --}}
 @extends('guest.component.master')
 
 @section('title', 'Visi & Misi - AKPER HKBP Balige')

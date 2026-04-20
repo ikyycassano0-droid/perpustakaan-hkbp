@@ -368,6 +368,7 @@
     <div class="content">
         @yield('user_content')
     </div>
+    
 
 <script src="{{URL:: asset('assets/js/main.js') }}"></script>
 <script src="{{URL:: asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>

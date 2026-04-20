@@ -155,14 +155,14 @@
         <!-- MENU -->
         <nav>
             <ul>
-                <li><a href="#">Home</a></li>
+                <li><a href="{{ route('user.home') }}">Home</a></li>
                 <li>
                     <a href="#">Profile <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Visi Misi</a></li>
+                        <li><a href="{{ route('user.profile.visi_misi') }}">Visi Misi</a></li>
                         <li><a href="#">Kerjasama</a></li>
-                        <li><a href="#">Struktur Pengurus</a></li>
-                        <li><a href="#">Tugas & Fungsi</a></li>
+                        <li><a href="{{ route('user.profile.struktur') }}">Struktur Pengurus</a></li>
+                        <li><a href="{{ route('user.profile.tugas_fungsi') }}">Tugas & Fungsi</a></li>
                     </ul>
                 </li>
                 <li>

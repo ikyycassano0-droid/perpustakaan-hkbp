@@ -5,7 +5,7 @@
         <!-- LOGO SECTION -->
         <div class="flex items-center gap-3">
             <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-400/30">
-                <img src="assets/logo akper.png" 
+                <img src="{{ asset('assets/img/logo akper.png') }}" 
                     alt="Logo AKPER"
                     class="w-7 h-7 object-contain">
             </div>

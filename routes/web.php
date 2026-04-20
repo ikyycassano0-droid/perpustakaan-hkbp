@@ -178,6 +178,21 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
     Route::get('/history', [OrderController::class, 'history'])
         ->name('user.history');
 
+    // ================= PROFILE =================
+    Route::prefix('profile')->name('user.profile.')->group(function () {
+
+        // Mahasiswa
+        Route::get('/visi-misi', [ProfileController::class, 'showVisiMisiMahasiswa'])
+            ->name('visi_misi');
+
+        Route::get('/tugas-fungsi', [ProfileController::class, 'showTugasFungsiMahasiswa'])
+            ->name('tugas_fungsi');
+
+        Route::get('/struktur', [ProfileController::class, 'showStrukturMahasiswa'])
+            ->name('struktur');
+
+    });
+    
     // ================= KOLEKSI TERCETAK =================
     Route::prefix('koleksi')->group(function () {
 
