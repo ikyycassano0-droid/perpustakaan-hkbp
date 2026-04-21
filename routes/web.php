@@ -14,22 +14,27 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\FinalProjectController;
 use App\Http\Controllers\ArchiveController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 use App\Models\User;
 
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request, $id) {
+Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
 
     $user = User::findOrFail($id);
 
-    
+    // kalau sudah verified
     if ($user->hasVerifiedEmail()) {
         return redirect('/login')->with('info', 'Email sudah diverifikasi sebelumnya');
     }
 
-    
-    $request->fulfill();
+    // validasi hash email
+    if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+        abort(403, 'Link tidak valid');
+    }
 
-    return redirect('/login')->with('success', 'Email berhasil diverifikasi!');
+    // tandai verified
+    $user->markEmailAsVerified();
+
+    return redirect('/login')->with('success', 'Email berhasil diverifikasi! Silakan login');
 
 })->middleware(['signed'])->name('verification.verify');
 

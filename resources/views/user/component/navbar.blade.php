@@ -155,7 +155,7 @@
         <!-- MENU -->
         <nav>
             <ul>
-                <li><a href="{{ route('user.home') }}">Home</a></li>
+                <li><a href="{{ route('user.dashboard') }}">Home</a></li>
                 <li>
                     <a href="#">Profile <i class="fas fa-caret-down"></i></a>
                     <ul class="dropdown-menu">

@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use App\Models\Role;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -29,7 +30,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     protected $hidden = [
         'password',
-        'remember_token'
+        'remember_token',
     ];
 
     protected $casts = [
@@ -37,6 +38,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'active' => 'boolean',
         'email_verified_at' => 'datetime',
     ];
+
+    /*
+    |-------------------------------------------------------
+    | RELASI
+    |-------------------------------------------------------
+    */
 
     public function role()
     {
@@ -48,29 +55,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Notification::class);
     }
 
-    public function isAdmin()
-    {
-        return $this->role?->name === 'Admin';
-    }
-
-    public function isMahasiswa()
-    {
-        return $this->role?->name === 'Mahasiswa' || $this->role?->name === 'Member';
-    }
-
-    public function isDosen()
-    {
-        return $this->role?->name === 'Dosen';
-    }
-
-    // 🔐 auto hash password (cukup di sini saja)
-    public function setPasswordAttribute($value)
-    {
-        if (!empty($value)) {
-            $this->attributes['password'] = bcrypt($value);
-        }
-    }
-
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -79,5 +63,44 @@ class User extends Authenticatable implements MustVerifyEmail
     public function updater()
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    /*
+    |-------------------------------------------------------
+    | ROLE CHECK
+    |-------------------------------------------------------
+    */
+
+    public function isAdmin()
+    {
+        return $this->role?->name === 'Admin';
+    }
+
+    public function isMahasiswa()
+    {
+        return in_array($this->role?->name, ['Mahasiswa', 'Member']);
+    }
+
+    public function isDosen()
+    {
+        return $this->role?->name === 'Dosen';
+    }
+
+    /*
+    |-------------------------------------------------------
+    | PASSWORD HANDLING (AMAN - TANPA DOUBLE HASH)
+    |-------------------------------------------------------
+    */
+
+    public function setPasswordAttribute($value)
+    {
+        if (!empty($value)) {
+            // aman: hanya hash kalau belum hash
+            if (Hash::needsRehash($value)) {
+                $this->attributes['password'] = Hash::make($value);
+            } else {
+                $this->attributes['password'] = $value;
+            }
+        }
     }
 }
