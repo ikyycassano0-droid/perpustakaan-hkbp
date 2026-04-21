@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'HKBP Dashboard - Sistem Informasi Perpustakaan')</title>
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome 6 -->
@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    
+
     <style>
         * {
             margin: 0;
@@ -462,7 +462,7 @@
             }
         }
     </style>
-    
+
     @stack('styles')
 </head>
 <body>
@@ -481,7 +481,7 @@
         <h3>HKBP Admin</h3>
         <p>Perpustakaan AKPER HKBP</p>
     </div>
-    
+
     <div class="nav-section">MAIN MENU</div>
     <div class="nav-item">
         <a class="nav-link {{ request()->routeIs('admin.home') ? 'active' : '' }}" href="{{ route('admin.home') }}">
@@ -489,25 +489,25 @@
         </a>
     </div>
     <div class="nav-item">
-        <a class="nav-link {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}" 
+        <a class="nav-link {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}"
         href="{{ route('admin.profile.index') }}">
         <i class="fas fa-book"></i>Profile
         </a>
     </div>
     <div class="nav-item">
-        <a class="nav-link {{ request()->routeIs('admin.layanan.*') ? 'active' : '' }}" 
+        <a class="nav-link {{ request()->routeIs('admin.layanan.*') ? 'active' : '' }}"
         href="{{ route('admin.layanan.index') }}">
             <i class="fas fa-concierge-bell"></i> Layanan
         </a>
     </div>
     <div class="nav-item">
-        <a class="nav-link {{ request()->routeIs('admin.members.*') ? 'active' : '' }}" 
+        <a class="nav-link {{ request()->routeIs('admin.members.*') ? 'active' : '' }}"
         href="{{ route('admin.members.index') }}">
             <i class="fas fa-users"></i> Manajemen Anggota
         </a>
     </div>
     <div class="nav-item">
-        <a class="nav-link {{ request()->routeIs('admin.berita.*') ? 'active' : '' }}" 
+        <a class="nav-link {{ request()->routeIs('admin.berita.*') ? 'active' : '' }}"
         href="{{ route('admin.berita.index') }}">
             <i class="fas fa-newspaper"></i> Berita
         </a>
@@ -537,7 +537,7 @@
             <i class="fas fa-chart-line"></i> Laporan
         </a>
     </div>
-    
+
     <div class="nav-section mt-4">SETTINGS</div>
     <div class="nav-item">
         <a class="nav-link" href="#">
@@ -592,7 +592,7 @@
     document.addEventListener('click', function(event) {
         const sidebar = document.getElementById('sidebar');
         const mobileBtn = document.querySelector('.mobile-menu-btn');
-        
+
         if (window.innerWidth <= 768) {
             if (!sidebar.contains(event.target) && !mobileBtn.contains(event.target)) {
                 sidebar.classList.remove('show');

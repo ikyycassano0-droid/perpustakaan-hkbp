@@ -265,7 +265,7 @@
 
         /* Active Nav Item */
         .nav-item-modern.active {
-            color: #818cf8;
+            color: #ffffff;
         }
 
         .nav-item-modern.active::after {
