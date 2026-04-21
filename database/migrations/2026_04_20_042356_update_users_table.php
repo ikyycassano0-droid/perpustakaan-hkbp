@@ -18,15 +18,9 @@ return new class extends Migration
             $table->index('name');
 
             // =========================
-            // OPTIONAL SAFETY IMPROVEMENT
+            // SAFETY IMPROVEMENT
             // =========================
-
-            // memastikan phone lebih fleksibel untuk angka panjang
             $table->string('phone', 20)->nullable()->change();
-
-            // pastikan gender konsisten (tetap sama logic MALE/FEMALE)
-            // tidak diubah karena sudah enum di migration lama
-
         });
     }
 
@@ -34,13 +28,18 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
 
-            // drop index
+            // =========================
+            // DROP INDEX (AMAN)
+            // =========================
+
             $table->dropIndex(['role_id']);
             $table->dropIndex(['active']);
             $table->dropIndex(['name']);
 
-            // rollback change phone (balik ke default lama jika perlu)
-            $table->string('phone', 20)->nullable()->change();
+            // =========================
+            // REVERT PHONE CHANGE
+            // =========================
+            $table->string('phone')->nullable()->change();
         });
     }
 };

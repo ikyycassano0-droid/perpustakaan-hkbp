@@ -105,4 +105,18 @@ class MemberController extends Controller
 
         return redirect()->route('admin.members.index')->with('success', 'Data anggota berhasil dihapus');
     }
+
+    public function resendVerification($id)
+    {
+        $member = User::findOrFail($id);
+        
+
+        if ($member->hasVerifiedEmail()) {
+            return back()->with('info', 'Email sudah diverifikasi.');
+        }
+
+        $member->sendEmailVerificationNotification();
+
+        return back()->with('success', 'Link verifikasi berhasil dikirim ulang.');
+    }
 }

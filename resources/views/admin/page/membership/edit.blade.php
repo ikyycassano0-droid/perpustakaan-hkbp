@@ -13,6 +13,10 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
+    @if(session('info'))
+        <div class="alert alert-info">{{ session('info') }}</div>
+    @endif
+
     @if($errors->any())
         <div class="alert alert-danger">
             <ul class="mb-0">
@@ -21,6 +25,16 @@
                 @endforeach
             </ul>
         </div>
+    @endif
+
+    <!-- 🔥 RESEND DIPISAH -->
+    @if(!$member->email_verified_at)
+    <form action="{{ route('admin.members.resend', $member->id) }}" method="POST" class="mb-3">
+        @csrf
+        <button class="btn btn-info btn-sm">
+            Kirim Ulang Verifikasi Email
+        </button>
+    </form>
     @endif
 
     {{-- FORM EDIT --}}
@@ -44,18 +58,11 @@
                        value="{{ old('email', $member->email) }}" required>
             </div>
 
-            <!-- NPM -->
+            <!-- NPM/NIDN -->
             <div class="col-md-6 mb-3">
-                <label>NPM</label>
+                <label>NPM/NIDN</label>
                 <input type="text" name="npm" class="form-control"
                        value="{{ old('npm', $member->npm) }}">
-            </div>
-
-            <!-- NIDN -->
-            <div class="col-md-6 mb-3">
-                <label>NIDN</label>
-                <input type="text" name="nidn" class="form-control"
-                       value="{{ old('nidn', $member->nidn) }}">
             </div>
 
             <!-- PHONE -->
@@ -77,11 +84,10 @@
                             {{ $role->name }}
                         </option>
                     @endforeach
-
                 </select>
             </div>
 
-            <!-- 🔥 STATUS EMAIL -->
+            <!-- STATUS EMAIL -->
             <div class="col-md-6 mb-3">
                 <label>Status Email</label><br>
 
@@ -89,19 +95,6 @@
                     <span class="badge bg-success">Sudah Diverifikasi</span>
                 @else
                     <span class="badge bg-warning text-dark">Belum Diverifikasi</span>
-                @endif
-            </div>
-
-            <!-- 🔥 RESEND VERIFICATION -->
-            <div class="col-md-6 mb-3">
-                @if(!$member->email_verified_at)
-                    <label>&nbsp;</label><br>
-                    <form action="{{ route('admin.members.resend', $member->id) }}" method="POST">
-                        @csrf
-                        <button class="btn btn-sm btn-info">
-                            Kirim Ulang Verifikasi
-                        </button>
-                    </form>
                 @endif
             </div>
 
