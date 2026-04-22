@@ -2,23 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Profile extends Model
 {
-    use HasFactory;
-
-    protected $table = 'profiles';
-
     protected $fillable = [
-        'key',
+        'type',
+        'sub_type',
         'title',
         'description',
+        'jabatan',
+        'icon',
         'image',
-        'sequence',
-        'active',
-        'created_by',
-        'updated_by'
+        'order',
     ];
 }

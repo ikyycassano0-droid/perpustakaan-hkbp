@@ -4,152 +4,138 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Profile;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
     public function index()
     {
-        $profiles = Profile::orderBy('key')->orderBy('sequence')->get();
-        return view('admin.page.profile.index', compact('profiles'));
+        $profiles = Profile::latest()->get();
+        return view('admin.profiles.index', compact('profiles'));
     }
 
-    // ================= GUEST =================
-
-    public function showVisiMisi()
+    public function create()
     {
-        $visi = Profile::where('key', 'visi')->where('active', true)->first();
-        $misi = Profile::where('key', 'misi')->where('active', true)->orderBy('sequence')->get();
-
-        return view('guest.page.profile.visi-misi', compact('visi', 'misi'));
+        return view('admin.profiles.create');
     }
-
-    public function showTugasFungsi()
-    {
-        $tugas = Profile::where('key', 'tugas')->where('active', true)->orderBy('sequence')->get();
-        $fungsi = Profile::where('key', 'fungsi')->where('active', true)->orderBy('sequence')->get();
-        $tujuan = Profile::where('key', 'tujuan')->where('active', true)->orderBy('sequence')->get();
-
-        return view('guest.page.profile.tugas-fungsi', compact('tugas', 'fungsi', 'tujuan'));
-    }
-
-    public function showStruktur()
-    {
-        $struktur = Profile::where('key', 'struktur')
-            ->where('active', true)
-            ->orderBy('sequence')
-            ->get();
-
-        return view('guest.page.profile.struktur-pengurus', compact('struktur'));
-    }
-
-    // ================= Mahasiswa =================
-    public function showVisiMisiMahasiswa()
-    {
-        $visi = Profile::where('key', 'visi')->where('active', true)->first();
-        $misi = Profile::where('key', 'misi')->where('active', true)->orderBy('sequence')->get();
-
-        return view('user.page.profile.visi-misi', compact('visi', 'misi'));
-    }
-
-    public function showTugasFungsiMahasiswa()
-    {
-        $tugas = Profile::where('key', 'tugas')->where('active', true)->orderBy('sequence')->get();
-        $fungsi = Profile::where('key', 'fungsi')->where('active', true)->orderBy('sequence')->get();
-        $tujuan = Profile::where('key', 'tujuan')->where('active', true)->orderBy('sequence')->get();
-
-        return view('user.page.profile.tugas-fungsi', compact('tugas', 'fungsi', 'tujuan'));
-    }
-
-    public function showStrukturMahasiswa()
-    {
-        $struktur = Profile::where('key', 'struktur')
-            ->where('active', true)
-            ->orderBy('sequence')
-            ->get();
-
-        return view('user.page.profile.struktur-pengurus', compact('struktur'));
-    }
-
-    // ================= Dosen =================
-    public function showVisiMisiDosen()
-    {
-        $visi = Profile::where('key', 'visi')->where('active', true)->first();
-        $misi = Profile::where('key', 'misi')->where('active', true)->orderBy('sequence')->get();
-
-        return view('dosen.page.profile.visi-misi', compact('visi', 'misi'));
-    }
-
-    public function showTugasFungsiDosen()
-    {
-        $tugas = Profile::where('key', 'tugas')->where('active', true)->orderBy('sequence')->get();
-        $fungsi = Profile::where('key', 'fungsi')->where('active', true)->orderBy('sequence')->get();
-        $tujuan = Profile::where('key', 'tujuan')->where('active', true)->orderBy('sequence')->get();
-
-        return view('dosen.page.profile.tugas-fungsi', compact('tugas', 'fungsi', 'tujuan'));
-    }
-
-    public function showStrukturDosen()
-    {
-        $struktur = Profile::where('key', 'struktur')
-            ->where('active', true)
-            ->orderBy('sequence')
-            ->get();
-
-        return view('dosen.page.profile.struktur-pengurus', compact('struktur'));
-    }
-
-    // ================= ADMIN CRUD =================
 
     public function store(Request $request)
     {
-        $request->validate([
-            'key' => 'required',
-            'title' => 'required',
-            'description' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        $rules = [
+            'type' => 'required|in:struktur,tugas_fungsi,visi_misi,kerjasama',
+            'sub_type' => 'required',
+            'order' => 'nullable|integer'
+        ];
 
+        if ($request->type == 'struktur') {
+            $rules['title'] = 'required';
+            $rules['jabatan'] = 'required';
+            $rules['image'] = 'nullable|image';
+        }
+
+        elseif ($request->type == 'tugas_fungsi') {
+            $rules['title'] = 'required';
+            $rules['description'] = 'required';
+        }
+
+        elseif ($request->type == 'visi_misi') {
+            $rules['description'] = 'required';
+        }
+
+        elseif ($request->type == 'kerjasama') {
+            $rules['title'] = 'required';
+        }
+
+        $request->validate($rules);
+
+        // upload image
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('profiles', 'public');
         }
 
         Profile::create([
-            'key'         => $request->key,
-            'title'       => $request->title,
+            'type' => $request->type,
+            'sub_type' => $request->sub_type,
+            'title' => $request->title,
             'description' => $request->description,
-            'image'       => $imagePath,
-            'sequence'    => $request->sequence ?? 0,
-            'active'      => true,
-            'created_by'  => session('user_id'), 
+            'jabatan' => $request->jabatan,
+            'icon' => $request->icon,
+            'image' => $imagePath,
+            'order' => $request->order ?? 0,
         ]);
 
-        return back()->with('success', 'Data berhasil ditambahkan');
+        return redirect()->route('admin.profiles.index')
+            ->with('success', 'Data berhasil ditambahkan');
+    }
+
+    public function edit($id)
+    {
+        $profile = Profile::findOrFail($id);
+        return view('admin.profiles.edit', compact('profile'));
     }
 
     public function update(Request $request, $id)
     {
-        $item = Profile::findOrFail($id);
+        $profile = Profile::findOrFail($id);
 
+        $rules = [
+            'type' => 'required|in:struktur,tugas_fungsi,visi_misi,kerjasama',
+            'sub_type' => 'required',
+            'order' => 'nullable|integer'
+        ];
+
+        if ($request->type == 'struktur') {
+            $rules['title'] = 'required';
+            $rules['jabatan'] = 'required';
+        }
+
+        elseif ($request->type == 'tugas_fungsi') {
+            $rules['title'] = 'required';
+            $rules['description'] = 'required';
+        }
+
+        elseif ($request->type == 'visi_misi') {
+            $rules['description'] = 'required';
+        }
+
+        elseif ($request->type == 'kerjasama') {
+            $rules['title'] = 'required';
+        }
+
+        $request->validate($rules);
+
+        // update image
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('profiles', 'public');
-            $item->image = $imagePath;
-        }    
+            if ($profile->image) {
+                Storage::disk('public')->delete($profile->image);
+            }
+            $profile->image = $request->file('image')->store('profiles', 'public');
+        }
 
-        $item->update([
-            'title'       => $request->title,
+        $profile->update([
+            'type' => $request->type,
+            'sub_type' => $request->sub_type,
+            'title' => $request->title,
             'description' => $request->description,
-            'sequence'    => $request->sequence,
-            'active'      => $request->has('active'),
-            'updated_by'  => session('user_id'),
+            'jabatan' => $request->jabatan,
+            'icon' => $request->icon,
+            'order' => $request->order ?? 0,
         ]);
 
-        return back()->with('success', 'Data berhasil diupdate');
+        return redirect()->route('admin.profiles.index')
+            ->with('success', 'Data berhasil diupdate');
     }
 
     public function destroy($id)
     {
-        Profile::destroy($id);
+        $profile = Profile::findOrFail($id);
+
+        if ($profile->image) {
+            Storage::disk('public')->delete($profile->image);
+        }
+
+        $profile->delete();
 
         return back()->with('success', 'Data berhasil dihapus');
     }

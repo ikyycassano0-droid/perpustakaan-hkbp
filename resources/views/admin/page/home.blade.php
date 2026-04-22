@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.component.main')
 @section('title', 'Dashboard - Perpustakaan HKBP')
 
 @section('page-title', 'Dashboard Overview')
@@ -353,3 +353,4 @@
     });
 </script>
 @endpush
+halaman putih 

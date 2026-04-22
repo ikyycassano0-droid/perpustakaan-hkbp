@@ -2,22 +2,26 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\CategoryFinalProject;
 
 class CategoryFinalProjectSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run()
+    public function run(): void
     {
-        $data = ['ebook', 'e-article', 'cd', 'video', 'kti'];
+        $data = [
+            ['name' => 'Ebook', 'slug' => 'ebook'],
+            ['name' => 'E-Article', 'slug' => 'e-article'],
+            ['name' => 'CD', 'slug' => 'cd'],
+            ['name' => 'Video', 'slug' => 'video'],
+            ['name' => 'KTI', 'slug' => 'kti'],
+        ];
 
         foreach ($data as $item) {
-            \App\Models\CategoryFinalProject::firstOrCreate([
-                'name' => $item
-            ]);
+            CategoryFinalProject::updateOrCreate(
+                ['name' => $item['name']], // patokan
+                ['slug' => $item['slug']]
+            );
         }
     }
 }
