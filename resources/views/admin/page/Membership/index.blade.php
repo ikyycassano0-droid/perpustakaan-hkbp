@@ -89,10 +89,10 @@
                         </a>
 
                         <!-- DELETE -->
-                        <form action="{{ route('admin.members.destroy.post', $member->id) }}"
-                              method="POST"
-                              class="d-inline"
-                              onsubmit="return confirm('Yakin ingin menghapus anggota ini?')">
+                        <form action="{{ route('admin.members.destroy', $member->id) }}"
+                            method="POST"
+                            class="d-inline"
+                            onsubmit="return confirm('Yakin ingin menghapus anggota ini?')">
 
                             @csrf
                             @method('DELETE')

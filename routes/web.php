@@ -59,7 +59,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
         Route::post('/', [MemberController::class, 'store'])->name('store');
         Route::get('/{id}/edit', [MemberController::class, 'edit'])->name('edit');
         Route::put('/{id}', [MemberController::class, 'update'])->name('update');
-        Route::post('/{id}/delete', [MemberController::class, 'destroy'])->name('destroy.post');
+        Route::delete('/{id}/delete', [MemberController::class, 'destroy'])->name('destroy');
 
         
         Route::post('/{id}/resend', [MemberController::class, 'resendVerification'])
