@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.component.main')
 
 @section('title', 'Manajemen Koleksi')
 
