@@ -49,7 +49,7 @@ Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('admin/dashboard', function(){
     return view('admin.page.home');
 })->name('admin.home');
-    
+
 Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(function () {
 
     Route::prefix('members')->name('members.')->group(function () {
@@ -155,7 +155,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
         Route::put('/{id}', [FinalProjectController::class, 'update_admin'])->name('update');
 
         // DELETE tetap sama
-        Route::delete('/{id}', [FinalProjectController::class, 'destroy'])->name('delete');  
+        Route::delete('/{id}', [FinalProjectController::class, 'destroy'])->name('delete');
     });
 
     // ================= KTI ADMIN =================
@@ -242,6 +242,7 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
             ->name('user.koleksi.majalah')
             ->defaults('menu_type', 'majalah');
     });
+});
 
     Route::prefix('final-project')->name('final_project.')->group(function() {
 
@@ -251,14 +252,14 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
         Route::post('/kti/update/{id}', [FinalProjectController::class,'update'])->name('kti.update');
         Route::delete('/kti/delete/{id}', [FinalProjectController::class,'destroy'])->name('kti.delete');
 
-        
-        Route::get('/{category}', [FinalProjectController::class,'index'])
-            ->name('index')
-            ->where('category','ebook|e-article|cd|video');
-    });
-
+        Route::get('/koleksi/{category}', [FinalProjectController::class,'index'])
+        ->name('index')
+        ->where('category','ebook|e-article|cd|video');
 });
 
+        Route::get('/download/{id}', [FinalProjectController::class, 'download'])
+    ->name('final_project.download')
+    ->middleware('auth');
 //Guest
 
 Route::middleware(['web'])->group(function () {

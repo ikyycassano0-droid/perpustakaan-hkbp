@@ -1,4 +1,4 @@
-@extends('admin.component.main')
+@extends('admin.layouts.app')
 
 @section('title', 'Koleksi Elektronik')
 
@@ -33,7 +33,8 @@
                 <td>{{ $item->created_at->format('d M Y') }}</td>
                 <td>
                     @php
-                        switch($item->category_target){
+                        $slug = $item->category->slug ?? '';
+                        switch($slug){
                             case 'ebook': $badge='bg-primary'; break;
                             case 'e-article': $badge='bg-info text-dark'; break;
                             case 'cd': $badge='bg-warning text-dark'; break;
@@ -41,7 +42,9 @@
                             default: $badge='bg-secondary';
                         }
                     @endphp
-                    <span class="badge {{ $badge }}">{{ ucfirst($item->category_target) }}</span>
+                    <span class="badge {{ $badge }}">
+                        {{ ucfirst($item->category->name ?? '-') }}
+                    </span>
                 </td>
                 <td class="d-flex gap-1">
                     <!-- Edit Button -->
@@ -65,16 +68,40 @@
                         <div class="modal-content p-3">
                             <h5>Edit Koleksi</h5>
 
-                            <input type="text" name="title" class="form-control mb-2" value="{{ $item->title }}" placeholder="Judul" required>
-                            <textarea name="abstract" class="form-control mb-2" placeholder="Ringkasan singkat (abstract)">{{ $item->abstract }}</textarea>
+                            <input type="text" name="title" class="form-control mb-2" value="{{ $item->title }}" required>
 
-                            <select name="category_target" class="form-control mb-2" required>
+                            <textarea name="abstract" class="form-control mb-2">{{ $item->abstract }}</textarea>
+
+                            <!-- ✅ FIX KATEGORI -->
+                            <select name="category_final_project_id" class="form-control mb-2" required>
                                 <option value="">Pilih Jenis Koleksi</option>
-                                <option value="ebook" {{ $item->category_target=='ebook' ? 'selected':'' }}>E-book</option>
-                                <option value="e-article" {{ $item->category_target=='e-article' ? 'selected':'' }}>E-article</option>
-                                <option value="cd" {{ $item->category_target=='cd' ? 'selected':'' }}>CD</option>
-                                <option value="video" {{ $item->category_target=='video' ? 'selected':'' }}>Video</option>
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat->id }}"
+                                        {{ $item->category_final_project_id == $cat->id ? 'selected' : '' }}>
+                                        {{ $cat->name }}
+                                    </option>
+                                @endforeach
                             </select>
+
+                            <!-- ✅ PREVIEW FILE SESUAI TIPE -->
+                            @php
+                                $ext = pathinfo($item->file_url, PATHINFO_EXTENSION);
+                            @endphp
+
+                            @if(in_array($ext, ['mp4']))
+                                <video width="100%" controls class="mb-2">
+                                    <source src="{{ asset('storage/'.$item->file_url) }}">
+                                </video>
+
+                            @elseif(in_array($ext, ['mp3']))
+                                <audio controls class="mb-2">
+                                    <source src="{{ asset('storage/'.$item->file_url) }}">
+                                </audio>
+
+                            @elseif(in_array($ext, ['pdf']))
+                                <iframe src="{{ asset('storage/'.$item->file_url) }}" width="100%" height="300" class="mb-2"></iframe>
+
+                            @endif
 
                             <input type="file" name="file_url" class="form-control mb-2">
                             <small>Format: pdf, mp3, mp4, docx</small>
@@ -90,8 +117,7 @@
     </table>
 </div>
 
-<!-- Modal Tambah -->
-<div class="modal fade" id="modalTambah">
+<div class="modal fade" id="modalTambah" tabindex="-1">
     <div class="modal-dialog">
         <form action="{{ route('admin.koleksi_elektronik.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -99,20 +125,20 @@
                 <h5>Tambah Koleksi</h5>
 
                 <input type="text" name="title" class="form-control mb-2" placeholder="Judul" required>
-                <textarea name="abstract" class="form-control mb-2" placeholder="Ringkasan singkat (abstract)"></textarea>
 
-                <select name="category_target" class="form-control mb-2" required>
+                <textarea name="abstract" class="form-control mb-2" placeholder="Ringkasan singkat"></textarea>
+
+                <select name="category_final_project_id" class="form-control mb-2" required>
                     <option value="">Pilih Jenis Koleksi</option>
-                    <option value="ebook">E-book</option>
-                    <option value="e-article">E-article</option>
-                    <option value="cd">CD</option>
-                    <option value="video">Video</option>
+                    @foreach($categories as $cat)
+                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                    @endforeach
                 </select>
 
                 <input type="file" name="file_url" class="form-control mb-2" required>
                 <small>Format: pdf, mp3, mp4, docx</small>
 
-                <button class="btn btn-success">Simpan</button>
+                <button type="submit" class="btn btn-success">Simpan</button>
             </div>
         </form>
     </div>
