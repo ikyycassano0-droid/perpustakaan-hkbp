@@ -1,4 +1,4 @@
-@extends('admin.component.main')
+@extends('admin.layouts.app')
 
 @section('title', 'Manajemen Anggota')
 @section('page-title', 'Data Anggota')

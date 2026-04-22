@@ -4,12 +4,12 @@
     <title>ModernAdmin | Dashboard Precision UI</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- CSS Assets -->
     <link rel="stylesheet" href="{{ asset('admin/assets/css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -56,9 +56,9 @@
         }
         .pcoded-inner-navbar { padding: 15px 10px !important; }
         .pcoded-navbar .pcoded-mtext, .pcoded-navbar a { color: var(--text-main); }
-        
-        .pcoded-menu-caption { 
-            padding: 20px 20px 5px !important; 
+
+        .pcoded-menu-caption {
+            padding: 20px 20px 5px !important;
             color: var(--text-muted) !important;
             font-size: 11px;
             letter-spacing: 1px;
@@ -83,7 +83,7 @@
             display: flex; align-items: center;
             transition: background 0.3s ease;
         }
-        
+
         #theme-toggle, .logout-trigger { cursor: pointer; transition: transform 0.2s; }
         #theme-toggle:hover, .logout-trigger:hover { transform: scale(1.1); color: var(--primary) !important; }
 
@@ -107,9 +107,9 @@
         .pcoded-main-container { margin-left: 260px; background: var(--bg-body) !important; transition: background 0.3s ease; }
         .pcoded-content { padding: 30px !important; }
 
-        .card { 
-            background: var(--bg-card) !important; 
-            border-radius: 16px !important; 
+        .card {
+            background: var(--bg-card) !important;
+            border-radius: 16px !important;
             border: none !important;
             margin-bottom: 24px;
             color: var(--text-main);
@@ -184,7 +184,7 @@
                         <small class="text-muted">{{ strtoupper(Auth::user()->role) }}</small>
                     </div>
                     <!-- Logout Trigger Icon -->
-                    <i class="feather icon-log-out text-muted logout-trigger" title="Logout" 
+                    <i class="feather icon-log-out text-muted logout-trigger" title="Logout"
                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"></i>
                 </div>
             </div>
@@ -203,9 +203,9 @@
             <!-- Logout Icon in Header -->
             <i class="feather icon-log-out text-muted px-3 logout-trigger" title="Logout"
                onclick="event.preventDefault(); document.getElementById('logout-form').submit();"></i>
-            
+
             <i class="feather icon-sun text-muted px-3" id="theme-toggle" title="Toggle Theme"></i>
-            
+
             <span class="text-muted px-3 font-weight-bold">US</span>
             <div class="position-relative px-3">
                 <i class="feather icon-bell text-muted"></i>
@@ -229,7 +229,7 @@
                         <h6 class="text-white-50">Good day,</h6>
                         <h2 class="font-weight-bold text-white">{{ Auth::user()->name }}!</h2>
                         <div class="mt-5 text-white-50 f-12">
-                            <i class="feather icon-calendar mr-2"></i> {{ date('M d, Y') }} &nbsp; 
+                            <i class="feather icon-calendar mr-2"></i> {{ date('M d, Y') }} &nbsp;
                             <i class="feather icon-clock mr-2"></i> <span id="real-time"></span>
                         </div>
                         <img src="https://via.placeholder.com/150" class="greeting-img" alt="Illustration">
@@ -310,7 +310,7 @@
             const themeToggle = document.getElementById('theme-toggle');
             const body = document.body;
             const currentTheme = localStorage.getItem('theme');
-            
+
             if (currentTheme === 'light') {
                 body.classList.add('light-mode');
                 themeToggle.classList.replace('icon-sun', 'icon-moon');
