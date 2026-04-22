@@ -29,12 +29,13 @@ class FinalProjectController extends Controller
             ->where('student_name', auth()->user()->name)
             ->latest()
             ->get();
+                $data = FinalProject::latest()->get();
 
         $supervisors = User::whereHas('role', function ($q) {
             $q->where('name', 'Dosen');
         })->get();
 
-        return view('user.page.Koleksi_Elektronik.' . $viewMap[$category], 
+        return view('user.page.Koleksi_Elektronik.' . $viewMap[$category],
             compact('data','category','supervisors')
         );
     }
@@ -54,7 +55,7 @@ class FinalProjectController extends Controller
             'first_supervisor_id' => [
                 'required',
                 'exists:users,id'
-            ],         
+            ],
             'second_supervisor_id' => [
                 'nullable',
                 'exists:users,id'
@@ -78,7 +79,7 @@ class FinalProjectController extends Controller
         if ($request->hasFile('file_url')) {
             $data['file_url'] = $request->file('file_url')->store('final_project_files', 'public');
         }
-        
+
 
         // Default status pending
         $data['status'] = 'Pending';
@@ -100,7 +101,7 @@ class FinalProjectController extends Controller
             'first_supervisor_id' => [
                 'required',
                 'exists:users,id'
-            ],           
+            ],
             'second_supervisor_id' => [
                 'nullable',
                 'exists:users,id'
@@ -157,28 +158,29 @@ class FinalProjectController extends Controller
 
     // Store & update Koleksi Elektronik admin
     public function store_admin(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'abstract' => 'nullable|string',
-            'keywords' => 'nullable|string|max:255',
-            'category_final_project_id' => 'nullable|exists:category_final_projects,id',
-            'file_url' => 'nullable|file|mimes:pdf,docx,mp3,mp4|max:10240',
-            'active' => 'boolean',
-        ]);
+{
+    $request->validate([
+        'title' => 'required',
+        'category_final_project_id' => 'required|exists:category_final_projects,id',
+        'file_url' => 'required|file',
+    ]);
 
-        $data = $request->only([
-            'title', 'abstract', 'keywords', 'category_final_project_id', 'file_url', 'active',
-        ]);
+    $data = $request->only([
+        'title', 'abstract', 'category_final_project_id'
 
-        if ($request->hasFile('file_url')) {
-            $data['file_url'] = $request->file('file_url')->store('final_project_files', 'public');
-        }
+    ]);
 
-        FinalProject::create($data);
-
-        return back()->with('success', 'Data berhasil ditambahkan (Admin)');
+    if ($request->hasFile('file_url')) {
+        $data['file_url'] = $request->file('file_url')->store('final_project_files', 'public');
     }
+
+    // 🔥 WAJIB
+    $data['status'] = 'Approved';
+
+    FinalProject::create($data);
+
+    return back()->with('success','Berhasil ditambahkan');
+}
 
     public function update_admin(Request $request, $id)
     {
@@ -186,7 +188,7 @@ class FinalProjectController extends Controller
             'title' => 'required|string|max:255',
             'abstract' => 'nullable|string',
             'keywords' => 'nullable|string|max:255',
-            'category_final_project_id' => 'nullable|exists:category_final_projects,id',
+            'category_final_project_id' => 'required|exists:category_final_projects,id',
             'file_url' => 'nullable|file|mimes:pdf,docx,mp3,mp4|max:10240',
             'active' => 'boolean',
         ]);
@@ -196,6 +198,8 @@ class FinalProjectController extends Controller
         $data = $request->only([
             'title', 'abstract', 'keywords', 'category_final_project_id', 'file_url', 'active',
         ]);
+
+        $data['status'] = 'Approved'; // 🔥 TAMBAHKAN INI
 
         if ($request->hasFile('file_url')) {
             $data['file_url'] = $request->file('file_url')->store('final_project_files', 'public');
@@ -236,28 +240,29 @@ class FinalProjectController extends Controller
 
     // ================= Koleksi Elektronik (Admin Upload) =================
     public function showAdminUpload($category)
-    {
-        // 🔥 TARUH viewMap DI SINI
-        $viewMap = [
-            'ebook' => 'e_book',
-            'e-article' => 'e_article',
-            'cd' => 'cd',
-            'video' => 'video',
-            'kti' => 'kti',
-        ];
+{
+    $viewMap = [
+        'ebook' => 'e_book',
+        'e-article' => 'e_article',
+        'cd' => 'cd',
+        'video' => 'video',
+    ];
 
-        // ambil kategori dari database
-        $categoryData = CategoryFinalProject::where('slug', $category)->firstOrFail();
+    $categoryData = CategoryFinalProject::where('slug', $category)->firstOrFail();
 
-        $data = FinalProject::with('category')
-            ->where('category_final_project_id', $categoryData->id)
-            ->where('status', 'Approved')
-            ->latest()
-            ->get();
+    $data = FinalProject::where('category_final_project_id', $categoryData->id)
+        ->latest()
+        ->get();
 
-        // 🔥 PAKAI viewMap DI SINI
-        return view('user.page.Koleksi_Elektronik.' . $viewMap[$category], 
-            compact('data','category')
-        );
-    }
+    return view('user.page.Koleksi_Elektronik.' . $viewMap[$category], compact('data'));
+}
+
+public function download($id)
+{
+    $file = FinalProject::findOrFail($id);
+
+    return response()->download(
+        storage_path('app/public/'.$file->file_url)
+    );
+}
 }

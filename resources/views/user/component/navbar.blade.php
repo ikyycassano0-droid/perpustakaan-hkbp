@@ -188,20 +188,17 @@
                     </ul>
                 </li>
  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ request()->is('user/final-project/*') ? 'active' : '' }}" 
+                    <a class="nav-link dropdown-toggle {{ request()->is('user/final-project/*') ? 'active' : '' }}"
                        href="#" role="button" data-bs-toggle="dropdown">Koleksi Elektronik</a>
                     <ul class="dropdown-menu">
                         <!-- KTI (user upload) -->
                         <li><a class="dropdown-item" href="{{ route('final_project.kti') }}">KTI</a></li>
 
                         <!-- Admin Upload -->
-                        <li><a class="dropdown-item" href="{{ route('final_project.index', ['category' => 'ebook']) }}">E-Book</a></li>
-
-                        <li><a class="dropdown-item" href="{{ route('final_project.index', ['category' => 'e-article']) }}">E-Article</a></li>
-
-                        <li><a class="dropdown-item" href="{{ route('final_project.index', ['category' => 'cd']) }}">CD</a></li>
-
-                        <li><a class="dropdown-item" href="{{ route('final_project.index', ['category' => 'video']) }}">Video</a></li>
+                        <a href="{{ route('final_project.index', 'ebook') }}">E-Book</a>
+                        <a href="{{ route('final_project.index', 'e-article') }}">E-Article</a>
+                        <a href="{{ route('final_project.index', 'cd') }}">CD</a>
+                        <a href="{{ route('final_project.index', 'video') }}">Video</a>
                     </ul>
                 </li>
 
@@ -236,7 +233,7 @@
         @auth
         <button class="user-name btn btn-link text-warning text-decoration-none"
             data-bs-toggle="offcanvas" data-bs-target="#sidebarUser">
-            <i class="fas fa-user-circle"></i> 
+            <i class="fas fa-user-circle"></i>
             {{ auth()->user()->name }}
         </button>
         @endauth
@@ -255,7 +252,7 @@
 
         <div class="mb-3">
             <strong>
-                <i class="fas fa-user"></i> 
+                <i class="fas fa-user"></i>
                 {{ auth()->user()->name ?? 'Mahasiswa AKPER' }}
             </strong>
         </div>
