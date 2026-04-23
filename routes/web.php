@@ -78,11 +78,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
 
 
     // ================= BERITA =================
+    // ================= BERITA =================
     Route::prefix('berita')->name('berita.')->group(function () {
-        Route::get('/', [NewsController::class,'index_admin'])->name('index');
-        Route::post('/', [NewsController::class,'store'])->name('store');
-        Route::put('/{news}', [NewsController::class,'update'])->name('update');
-        Route::delete('/{news}', [NewsController::class,'destroy'])->name('destroy');
+        Route::get('/', [NewsController::class, 'index_admin'])->name('index');
+        Route::post('/store', [NewsController::class, 'store'])->name('store');
+        Route::put('/{news}', [NewsController::class, 'update'])->name('update');
+        Route::delete('/{news}', [NewsController::class, 'destroy'])->name('destroy');
     });
 
     // ================= COLLECTION =================
@@ -223,6 +224,18 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
 
     });
 
+        // ================= BERITA =================
+    Route::prefix('berita')->group(function () {
+
+        // LIST BERITA USER
+        Route::get('/', [NewsController::class, 'indexUser'])
+            ->name('user.berita');
+
+        // DETAIL BERITA USER
+        Route::get('/{id}', [NewsController::class, 'showUser'])
+            ->name('user.berita.show');
+    });
+
     // ================= KOLEKSI TERCETAK =================
     Route::prefix('koleksi')->group(function () {
 
@@ -282,6 +295,20 @@ Route::middleware(['web'])->group(function () {
             ->name('kerjasama');
 
     });
+
+// ================= BERITA (FIX FINAL) =================
+    Route::prefix('berita')->name('guest.berita.')->group(function () {
+
+        // LIST
+        Route::get('/', [NewsController::class, 'index'])
+            ->name('index');
+
+        // DETAIL (slug OR id aman)
+        Route::get('/{identifier}', [NewsController::class, 'show'])
+            ->where('identifier', '[0-9a-zA-Z\-]+')
+            ->name('show');
+    });
+
     Route::get('/koleksi/{category}', [FinalProjectController::class, 'index']);
 
     Route::get('/layanan/{category}', [ArchiveController::class, 'indexLayananGuest'])

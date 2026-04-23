@@ -112,7 +112,7 @@
 
             <!-- BERITA -->
             <li class="nav-item-modern">
-                <a href="#" class="px-3 py-2 block">Berita</a>
+                <a href="{{ route('guest.berita.index') }}" class="px-3 py-2 block">Berita</a>
             </li>
 
             <!-- INFORMASI DROPDOWN -->

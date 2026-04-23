@@ -238,443 +238,485 @@
     }
 </style>
 @endpush
-
 @section('content')
 <div class="main-content">
 
-    <!-- HERO SECTION -->
+    <!-- HERO -->
     <section class="pt-28 pb-8 text-center px-5">
         <div class="inline-block glass-card px-5 py-2 rounded-full mb-5 fade-up">
-            <span class="text-indigo-300 text-sm font-medium tracking-wide">📰 AKPER HKBP BALIGE</span>
+            <span class="text-indigo-300 text-sm font-medium tracking-wide">
+                📰 AKPER HKBP BALIGE
+            </span>
         </div>
+
         <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight title-main fade-up">
             Arsip Berita & Pengumuman
         </h1>
+
         <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
-            Temukan pembaruan terkini mengenai kegiatan kampus, penelitian medis terbaru, dan pengumuman resmi dari Akademi Keperawatan HKBP Balige.
+            Temukan pembaruan terkini mengenai kegiatan kampus, penelitian, dan pengumuman resmi.
         </p>
     </section>
 
-    <!-- SEARCH & FILTER SECTION -->
+
+    <!-- CONTENT -->
     <section class="section max-w-5xl mx-auto px-5">
+
         <div class="neon-border fade-up">
             <div class="neon-inner">
-                
-                <!-- Search Bar -->
-                <div class="mb-6">
-                    <input type="text" id="searchInput" class="search-input" placeholder="🔍 Cari berita atau pengumuman...">
-                </div>
 
-                <!-- Filter Tabs -->
+                {{-- ================= SEARCH ================= --}}
+                <form method="GET" class="mb-6">
+                    <input type="text"
+                           name="search"
+                           value="{{ request('search') }}"
+                           class="search-input"
+                           placeholder="🔍 Cari berita...">
+                </form>
+
+
+                {{-- ================= CATEGORY FILTER ================= --}}
                 <div class="flex flex-wrap gap-3 mb-8">
-                    <button class="filter-btn active" data-filter="all">Semua</button>
-                    <button class="filter-btn" data-filter="akademik">Akademik</button>
-                    <button class="filter-btn" data-filter="pengumuman">Pengumuman</button>
-                    <button class="filter-btn" data-filter="kegiatan">Kegiatan</button>
-                    <button class="filter-btn" data-filter="riset">Riset</button>
-                    <button class="filter-btn" data-filter="fasilitas">Fasilitas</button>
-                    <button class="filter-btn" data-filter="sosial">Sosial</button>
+
+                    @php
+                        $categories = ['all','akademik','pengumuman','kegiatan','riset','fasilitas','sosial'];
+                    @endphp
+
+                    @foreach($categories as $cat)
+                        <a href="?category={{ $cat }}"
+                           class="filter-btn {{ request('category','all') == $cat ? 'active' : '' }}">
+                            {{ ucfirst($cat) }}
+                        </a>
+                    @endforeach
+
                 </div>
 
-                <!-- Featured News Card -->
-                <div class="mb-8" id="featuredNews">
-                    <!-- Featured news will be inserted by JavaScript -->
+
+                {{-- ================= FEATURED NEWS ================= --}}
+                @if($featured)
+                <div class="mb-10">
+
+                    <div class="glass-card overflow-hidden">
+                        <div class="grid md:grid-cols-2 gap-0">
+
+                            <div class="img-wrapper h-64 md:h-auto">
+                                <img src="{{ asset('storage/'.$featured->image) }}"
+                                     class="w-full h-full object-cover">
+                            </div>
+
+                            <div class="p-6 flex flex-col justify-center">
+
+                                <div class="flex items-center gap-3 mb-3">
+                                    <span class="category-badge category-{{ $featured->category }}">
+                                        {{ strtoupper($featured->category) }}
+                                    </span>
+
+                                    <span class="text-xs text-gray-500">
+                                        📅 {{ $featured->created_at->format('d M Y') }}
+                                    </span>
+                                </div>
+
+                                <h2 class="text-2xl font-bold text-indigo-200 mb-3">
+                                    {{ $featured->title }}
+                                </h2>
+
+                                <p class="text-gray-400 text-sm mb-5">
+                                    {{ $featured->excerpt }}
+                                </p>
+
+                                <a href="{{ route('guest.berita.show', $featured->slug) }}"
+                                    class="btn-primary w-fit">
+                                        Baca Selengkapnya →
+                                </a>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                @endif
+
+
+                {{-- ================= NEWS LIST ================= --}}
+                <div class="grid grid-cols-1 gap-6">
+
+                    @forelse($berita as $item)
+
+                        <div class="news-card fade-up">
+
+                            <div class="grid md:grid-cols-4 gap-0">
+
+                                {{-- IMAGE --}}
+                                <div class="img-wrapper md:col-span-1 h-48">
+                                    <img src="{{ asset('storage/'.$item->image) }}"
+                                         class="news-image">
+                                </div>
+
+                                {{-- CONTENT --}}
+                                <div class="md:col-span-3 p-5">
+
+                                    <div class="flex items-center gap-3 mb-2 flex-wrap">
+
+                                        <span class="category-badge category-{{ $item->category }}">
+                                            {{ strtoupper($item->category) }}
+                                        </span>
+
+                                        <span class="text-xs text-gray-500">
+                                            📅 {{ $item->created_at->format('d M Y') }}
+                                        </span>
+
+                                    </div>
+
+                                    <h3 class="font-bold text-indigo-200 text-lg mb-2">
+                                        {{ $item->title }}
+                                    </h3>
+
+                                    <p class="text-gray-400 text-sm mb-4">
+                                        {{ $item->excerpt }}
+                                    </p>
+
+                                    <a href="{{ route('guest.berita.show', $item->id) }}"
+                                       class="btn-outline text-sm">
+                                        Baca Selengkapnya →
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    @empty
+
+                        <div class="text-center py-12 text-gray-400">
+                            📭 Tidak ada berita ditemukan
+                        </div>
+
+                    @endforelse
+
                 </div>
 
-                <!-- News Grid -->
-                <div class="grid grid-cols-1 gap-6" id="newsGrid">
-                    <!-- News cards will be inserted by JavaScript -->
-                </div>
 
-                <!-- Pagination -->
-                <div class="flex justify-center gap-2 mt-8" id="paginationButtons">
-                    <!-- Pagination will be inserted by JavaScript -->
+                {{-- ================= PAGINATION ================= --}}
+                <div class="mt-10 flex justify-center">
+                    {{ $berita->withQueryString()->links() }}
                 </div>
 
             </div>
         </div>
+
     </section>
 
 </div>
 @endsection
-
 @push('scripts')
 <script>
-// ============================================
-// JAVASCRIPT KHUSUS UNTUK HALAMAN BERITA
-// Hanya JS yang BELUM ADA di master blade
-// ============================================
+// ==============================
+// DATA DARI LARAVEL (REAL DB)
+// ==============================
+let newsData = @json($berita->items());
+let featuredNews = @json($featured);
 
-// DATA BERITA
-let newsData = [
-    {
-        id: 1,
-        title: "Implementasi Kurikulum Berbasis Simulasi Klinis Terpadu",
-        category: "akademik",
-        categoryName: "AKADEMIK",
-        date: "12 Oktober 2024",
-        image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=500&h=250&fit=crop",
-        excerpt: "Akper HKBP Balige menginisiasi modul simulasi baru guna memperkuat kompetensi praktis mahasiswa dalam menangani situasi gawat darurat dan kegawatdaruratan medis.",
-        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
+// ==============================
+// NORMALISASI DATA
+// ==============================
+newsData = newsData.map(item => ({
+    id: item.id,
+    title: item.title,
+    category: item.category ?? 'akademik',
+    categoryName: (item.category ?? 'akademik').toUpperCase(),
+    date: item.created_at
+        ? new Date(item.created_at).toLocaleDateString('id-ID', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        })
+        : '',
+    image: item.image ? `/storage/${item.image}` : 'https://via.placeholder.com/500x250',
+    excerpt: item.excerpt ?? '',
+    content: item.content ?? '',
+    isFeatured: item.is_featured ?? false,
+    buttonText: 'Baca Selengkapnya',
+    buttonAction: 'baca'
+}));
+
+if (featuredNews) {
+    featuredNews = {
+        id: featuredNews.id,
+        title: featuredNews.title,
+        category: featuredNews.category ?? 'akademik',
+        categoryName: (featuredNews.category ?? 'akademik').toUpperCase(),
+        date: featuredNews.created_at
+            ? new Date(featuredNews.created_at).toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric'
+            })
+            : '',
+        image: featuredNews.image ? `/storage/${featuredNews.image}` : 'https://via.placeholder.com/500x250',
+        excerpt: featuredNews.excerpt ?? '',
+        content: featuredNews.content ?? '',
         isFeatured: true,
-        buttonText: "Baca Selengkapnya",
-        buttonAction: "baca"
-    },
-    {
-        id: 2,
-        title: "Jadwal Yudisium Semester Ganjil TA 2024/2025",
-        category: "pengumuman",
-        categoryName: "PENGUMUMAN",
-        date: "08 Oktober 2024",
-        image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500&h=250&fit=crop",
-        excerpt: "Pemberitahuan resmi mengenai jadwal dan persyaratan administrasi yudisium bagi calon wisudawan angkatan XXXII.",
-        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
-        isFeatured: false,
-        buttonText: "Lihat Detail",
-        buttonAction: "detail"
-    },
-    {
-        id: 3,
-        title: "Seminar Internasional Keperawatan Komunitas di Era Digital",
-        category: "kegiatan",
-        categoryName: "KEGIATAN",
-        date: "05 Oktober 2024",
-        image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=500&h=250&fit=crop",
-        excerpt: "Mengundang pakar dari mancanegara untuk membahas peran teknologi dalam meningkatkan efektivitas layanan kesehatan komunitas.",
-        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
-        isFeatured: false,
-        buttonText: "Daftar Sekarang",
-        buttonAction: "daftar"
-    },
-    {
-        id: 4,
-        title: "Prestasi Dosen: Publikasi Jurnal Internasional Terindeks Scopus",
-        category: "riset",
-        categoryName: "RISET",
-        date: "01 Oktober 2024",
-        image: "https://images.unsplash.com/photo-1532619187608-e5375cab36aa?w=500&h=250&fit=crop",
-        excerpt: "Tim peneliti Akper HKBP Balige berhasil mempublikasikan temuan mengenai efektivitas perawatan luka diabetik modern di jurnal internasional terindeks Scopus.",
-        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
-        isFeatured: false,
-        buttonText: "Baca Jurnal",
-        buttonAction: "jurnal"
-    },
-    {
-        id: 5,
-        title: "Peresmian Laboratorium Keperawatan Medikal Bedah",
-        category: "fasilitas",
-        categoryName: "FASILITAS",
-        date: "28 September 2024",
-        image: "https://images.unsplash.com/photo-1516549655169-df83a0774514?w=500&h=250&fit=crop",
-        excerpt: "Fasilitas penunjang praktik klinik dilengkapi dengan alat batu pernapasan terbaru dan sistem monitoring pasien digital untuk meningkatkan kualitas pembelajaran.",
-        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
-        isFeatured: false,
-        buttonText: "Tur Virtual",
-        buttonAction: "tur"
-    },
-    {
-        id: 6,
-        title: "Program Pengabdian Masyarakat: Pemeriksaan Kesehatan Gratis",
-        category: "sosial",
-        categoryName: "SOSIAL",
-        date: "25 September 2024",
-        image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=500&h=250&fit=crop",
-        excerpt: "Mahasiswa dan dosen terjun langsung memberikan edukasi gaya hidup sehat dan skrining kesehatan bagi warga sekitar Balige secara gratis.",
-        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
-        isFeatured: false,
-        buttonText: "Dokumentasi",
-        buttonAction: "dokumentasi"
-    },
-    {
-        id: 7,
-        title: "Workshop Penelitian Kuantitatif untuk Mahasiswa Akhir",
-        category: "akademik",
-        categoryName: "AKADEMIK",
-        date: "20 September 2024",
-        image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&h=250&fit=crop",
-        excerpt: "Pelatihan metodologi penelitian kuantitatif menggunakan software SPSS bagi mahasiswa yang sedang menyusun skripsi.",
-        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
-        isFeatured: false,
-        buttonText: "Daftar Sekarang",
-        buttonAction: "daftar"
-    },
-    {
-        id: 8,
-        title: "Kerjasama Internasional dengan Rumah Sakit di Taiwan",
-        category: "akademik",
-        categoryName: "AKADEMIK",
-        date: "15 September 2024",
-        image: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=500&h=250&fit=crop",
-        excerpt: "Akper HKBP Balige menjalin kerjasama dengan rumah sakit terkemuka di Taiwan untuk program pertukaran mahasiswa.",
-        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
-        isFeatured: false,
-        buttonText: "Baca Selengkapnya",
-        buttonAction: "baca"
-    }
-];
+        buttonText: 'Baca Selengkapnya',
+        buttonAction: 'baca'
+    };
+}
 
-// Render functions
+// ==============================
+// STATE
+// ==============================
 let currentPage = 1;
 const itemsPerPage = 5;
 let currentCategory = 'all';
 let searchQuery = '';
 
+// ==============================
+// CATEGORY STYLE
+// ==============================
 function getCategoryClass(category) {
     const classes = {
-        'akademik': 'category-akademik',
-        'pengumuman': 'category-pengumuman',
-        'kegiatan': 'category-kegiatan',
-        'riset': 'category-riset',
-        'fasilitas': 'category-fasilitas',
-        'sosial': 'category-sosial'
+        akademik: 'category-akademik',
+        pengumuman: 'category-pengumuman',
+        kegiatan: 'category-kegiatan',
+        riset: 'category-riset',
+        fasilitas: 'category-fasilitas',
+        sosial: 'category-sosial'
     };
     return classes[category] || 'category-akademik';
 }
 
+// ==============================
+// FEATURED NEWS
+// ==============================
 function renderFeaturedNews() {
-    const featured = newsData.find(n => n.isFeatured === true);
     const container = document.getElementById('featuredNews');
-    if (featured) {
-        container.innerHTML = `
-            <div class="glass-card overflow-hidden">
-                <div class="grid md:grid-cols-2 gap-0">
-                    <div class="img-wrapper h-64 md:h-auto">
-                        <img src="${featured.image}" alt="${featured.title}" class="w-full h-full object-cover">
+
+    if (!featuredNews) {
+        container.innerHTML = '';
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="glass-card overflow-hidden">
+            <div class="grid md:grid-cols-2 gap-0">
+                <div class="img-wrapper h-64 md:h-auto">
+                    <img src="${featuredNews.image}" class="w-full h-full object-cover">
+                </div>
+
+                <div class="p-6 flex flex-col justify-center">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="category-badge ${getCategoryClass(featuredNews.category)}">
+                            ${featuredNews.categoryName}
+                        </span>
+                        <span class="text-xs text-gray-500">📅 ${featuredNews.date}</span>
                     </div>
-                    <div class="p-6 flex flex-col justify-center">
-                        <div class="flex items-center gap-3 mb-3">
-                            <span class="category-badge ${getCategoryClass(featured.category)}">${featured.categoryName}</span>
-                            <span class="text-xs text-gray-500">📅 ${featured.date}</span>
-                        </div>
-                        <h2 class="text-2xl font-bold text-indigo-200 mb-3">${featured.title}</h2>
-                        <p class="text-gray-400 text-sm mb-4">${featured.excerpt}</p>
-                        <button class="btn-primary w-fit" onclick="handleAction('${featured.buttonAction}', ${featured.id})">
-                            ${featured.buttonText} →
-                        </button>
-                    </div>
+
+                    <h2 class="text-2xl font-bold text-indigo-200 mb-3">
+                        ${featuredNews.title}
+                    </h2>
+
+                    <p class="text-gray-400 text-sm mb-4">
+                        ${featuredNews.excerpt}
+                    </p>
+
+                    <button class="btn-primary w-fit" onclick="handleAction('baca', ${featuredNews.id})">
+                        Baca Selengkapnya →
+                    </button>
                 </div>
             </div>
-        `;
-    }
+        </div>
+    `;
 }
 
+// ==============================
+// RENDER NEWS LIST
+// ==============================
 function renderNews() {
-    let filteredData = [...newsData];
-    
-    // Filter by search
+
+    let filtered = [...newsData];
+
+    // search
     if (searchQuery) {
-        filteredData = filteredData.filter(item => 
+        filtered = filtered.filter(item =>
             item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             item.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }
-    
-    // Filter by category
+
+    // category
     if (currentCategory !== 'all') {
-        filteredData = filteredData.filter(item => item.category === currentCategory);
+        filtered = filtered.filter(item => item.category === currentCategory);
     }
-    
-    // Exclude featured news from grid
-    filteredData = filteredData.filter(item => item.isFeatured !== true);
-    
-    // Pagination
-    const totalItems = filteredData.length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const currentData = filteredData.slice(startIndex, endIndex);
-    
-    // Generate news grid
+
+    // exclude featured
+    if (featuredNews) {
+        filtered = filtered.filter(item => item.id !== featuredNews.id);
+    }
+
+    // pagination
+    const totalPages = Math.ceil(filtered.length / itemsPerPage);
+    const start = (currentPage - 1) * itemsPerPage;
+    const data = filtered.slice(start, start + itemsPerPage);
+
     const grid = document.getElementById('newsGrid');
     grid.innerHTML = '';
-    
-    if (currentData.length === 0) {
+
+    if (data.length === 0) {
         grid.innerHTML = `
-            <div class="text-center py-12">
-                <div class="text-5xl mb-3">📭</div>
-                <p class="text-gray-400">Tidak ada berita yang ditemukan</p>
+            <div class="text-center py-12 text-gray-400">
+                📭 Tidak ada berita ditemukan
             </div>
         `;
-    } else {
-        currentData.forEach(news => {
-            const card = document.createElement('div');
-            card.className = 'news-card fade-up';
-            card.innerHTML = `
-                <div class="grid md:grid-cols-4 gap-0">
-                    <div class="img-wrapper md:col-span-1 h-48 md:h-auto">
-                        <img src="${news.image}" alt="${news.title}" class="news-image">
-                    </div>
-                    <div class="md:col-span-3 p-5">
-                        <div class="flex items-center gap-3 mb-2 flex-wrap">
-                            <span class="category-badge ${getCategoryClass(news.category)}">${news.categoryName}</span>
-                            <span class="text-xs text-gray-500">📅 ${news.date}</span>
-                        </div>
-                        <h3 class="font-bold text-indigo-200 text-lg mb-2">${news.title}</h3>
-                        <p class="text-gray-400 text-sm mb-4">${news.excerpt}</p>
-                        <button class="btn-outline text-sm" onclick="handleAction('${news.buttonAction}', ${news.id})">
-                            ${news.buttonText} →
-                        </button>
-                    </div>
-                </div>
-            `;
-            grid.appendChild(card);
-        });
-    }
-    
-    renderPagination(totalPages);
-    
-    // Add fade-up class
-    setTimeout(() => {
-        document.querySelectorAll('.news-card').forEach(el => {
-            el.classList.add('show');
-        });
-    }, 50);
-}
-
-function renderPagination(totalPages) {
-    const paginationContainer = document.getElementById('paginationButtons');
-    if (totalPages <= 1) {
-        paginationContainer.innerHTML = '';
         return;
     }
-    
-    let paginationHtml = '<div class="flex gap-2">';
-    
-    paginationHtml += `
-        <button class="pagination-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+
+    data.forEach(news => {
+        grid.innerHTML += `
+            <div class="news-card fade-up">
+                <div class="grid md:grid-cols-4 gap-0">
+
+                    <div class="img-wrapper md:col-span-1 h-48">
+                        <img src="${news.image}" class="news-image">
+                    </div>
+
+                    <div class="md:col-span-3 p-5">
+                        
+                        <div class="flex gap-3 mb-2 flex-wrap">
+                            <span class="category-badge ${getCategoryClass(news.category)}">
+                                ${news.categoryName}
+                            </span>
+                            <span class="text-xs text-gray-500">
+                                📅 ${news.date}
+                            </span>
+                        </div>
+
+                        <h3 class="font-bold text-indigo-200 text-lg mb-2">
+                            ${news.title}
+                        </h3>
+
+                        <p class="text-gray-400 text-sm mb-4">
+                            ${news.excerpt}
+                        </p>
+
+                        <button class="btn-outline text-sm"
+                            onclick="handleAction('${news.buttonAction}', ${news.id})">
+                            Baca Selengkapnya →
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    renderPagination(totalPages);
+}
+
+// ==============================
+// PAGINATION
+// ==============================
+function renderPagination(totalPages) {
+    const el = document.getElementById('paginationButtons');
+
+    if (totalPages <= 1) {
+        el.innerHTML = '';
+        return;
+    }
+
+    let html = '<div class="flex gap-2">';
+
+    html += `
+        <button class="pagination-btn"
+            onclick="changePage(${currentPage - 1})"
+            ${currentPage === 1 ? 'disabled' : ''}>
             ◀
         </button>
     `;
-    
-    const startPage = Math.max(1, currentPage - 2);
-    const endPage = Math.min(totalPages, currentPage + 2);
-    
-    if (startPage > 1) {
-        paginationHtml += `<button class="pagination-btn" onclick="changePage(1)">1</button>`;
-        if (startPage > 2) paginationHtml += `<span class="px-2 text-gray-500">...</span>`;
-    }
-    
-    for (let i = startPage; i <= endPage; i++) {
-        paginationHtml += `
-            <button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
+
+    for (let i = 1; i <= totalPages; i++) {
+        html += `
+            <button class="pagination-btn ${i === currentPage ? 'active' : ''}"
+                onclick="changePage(${i})">
                 ${i}
             </button>
         `;
     }
-    
-    if (endPage < totalPages) {
-        if (endPage < totalPages - 1) paginationHtml += `<span class="px-2 text-gray-500">...</span>`;
-        paginationHtml += `<button class="pagination-btn" onclick="changePage(${totalPages})">${totalPages}</button>`;
-    }
-    
-    paginationHtml += `
-        <button class="pagination-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+
+    html += `
+        <button class="pagination-btn"
+            onclick="changePage(${currentPage + 1})"
+            ${currentPage === totalPages ? 'disabled' : ''}>
             ▶
         </button>
     `;
-    
-    paginationHtml += '</div>';
-    paginationContainer.innerHTML = paginationHtml;
+
+    html += '</div>';
+
+    el.innerHTML = html;
 }
 
+// ==============================
+// CHANGE PAGE
+// ==============================
 function changePage(page) {
-    let filteredData = [...newsData];
-    if (searchQuery) {
-        filteredData = filteredData.filter(item => 
-            item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    }
-    if (currentCategory !== 'all') {
-        filteredData = filteredData.filter(item => item.category === currentCategory);
-    }
-    filteredData = filteredData.filter(item => item.isFeatured !== true);
-    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-    
-    if (page >= 1 && page <= totalPages) {
-        currentPage = page;
-        renderNews();
-        window.scrollTo({ top: 500, behavior: 'smooth' });
-    }
+    currentPage = page;
+    renderNews();
+    window.scrollTo({ top: 500, behavior: 'smooth' });
 }
 
+// ==============================
+// ACTION BUTTON
+// ==============================
 function handleAction(action, id) {
-    const news = newsData.find(n => n.id === id);
-    if (news) {
-        let message = '';
-        switch(action) {
-            case 'baca':
-                message = `📖 Membaca: ${news.title}`;
-                break;
-            case 'detail':
-                message = `📋 Lihat detail: ${news.title}`;
-                break;
-            case 'daftar':
-                message = `📝 Pendaftaran untuk "${news.title}" dibuka.`;
-                break;
-            case 'jurnal':
-                message = `📄 Membuka jurnal: ${news.title}`;
-                break;
-            case 'tur':
-                message = `🎬 Tur virtual fasilitas laboratorium akan dimulai.`;
-                break;
-            case 'dokumentasi':
-                message = `📸 Membuka dokumentasi kegiatan.`;
-                break;
-            default:
-                message = `Membuka: ${news.title}`;
-        }
-        showNotification(message, 'info');
+    const news = newsData.find(n => n.id === id) || featuredNews;
+
+    let msg = '';
+
+    switch(action) {
+        case 'baca':
+            msg = `📖 Membaca: ${news.title}`;
+            break;
+        default:
+            msg = `Membuka: ${news.title}`;
     }
+
+    alert(msg);
 }
 
-// Notification system
-function showNotification(message, type = 'success') {
-    const notification = document.createElement('div');
-    notification.className = 'notification';
-    notification.innerHTML = `
-        <div class="flex items-center gap-2">
-            <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
-            <span>${message}</span>
-        </div>
-    `;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.classList.add('show'), 10);
-    setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
-}
-
-// Filter event listeners
+// ==============================
+// FILTER EVENTS
+// ==============================
 document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-        const filter = e.target.getAttribute('data-filter');
-        currentCategory = filter;
-        currentPage = 1;
-        
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+
+        document.querySelectorAll('.filter-btn')
+            .forEach(b => b.classList.remove('active'));
+
         e.target.classList.add('active');
-        
+
+        currentCategory = e.target.dataset.filter;
+        currentPage = 1;
+
         renderNews();
     });
 });
 
-// Search event
-document.getElementById('searchInput').addEventListener('input', (e) => {
+// ==============================
+// SEARCH
+// ==============================
+document.getElementById('searchInput')
+.addEventListener('input', (e) => {
     searchQuery = e.target.value;
     currentPage = 1;
     renderNews();
 });
 
-// Make functions global
-window.handleAction = handleAction;
-window.changePage = changePage;
-
-// Initialize
+// ==============================
+// INIT
+// ==============================
 renderFeaturedNews();
 renderNews();
 
-console.log('Halaman Berita & Pengumuman siap dengan 8 berita dan fitur filter!');
 </script>
 @endpush
