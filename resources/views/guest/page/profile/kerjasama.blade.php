@@ -250,6 +250,7 @@
 </style>
 @endpush
 
+
 @section('content')
 <div class="main-content">
 
@@ -266,7 +267,7 @@
         </p>
     </section>
 
-    <!-- DESKRIPSI KERJASAMA -->
+    <!-- DESKRIPSI -->
     <section class="max-w-6xl mx-auto px-5 mb-16">
         <div class="neon-border fade-up">
             <div class="neon-inner">
@@ -275,18 +276,23 @@
                         <h2 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-300 to-purple-300 bg-clip-text text-transparent mb-3">
                             Jaringan Mitra Strategis
                         </h2>
+
+                        {{-- AMBIL DARI DATABASE --}}
+                        @php
+                            $desc = $kerjasama->first();
+                        @endphp
+
                         <p class="text-gray-300 leading-relaxed">
-                            Melalui kerjasama yang berkelanjutan, Perpustakaan AKPER HKBP Balige berkomitmen untuk meningkatkan 
-                            akses informasi, sumber daya digital, dan program pengembangan koleksi bersama institusi pendidikan 
-                            tinggi, asosiasi profesi, dan lembaga kesehatan nasional maupun internasional.
+                            {{ $desc->description ?? 'Belum ada deskripsi kerjasama' }}
                         </p>
+
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- MITRA STRATEGIS (CARD GRID) -->
+    <!-- MITRA STRATEGIS -->
     <section class="max-w-6xl mx-auto px-5 mt-12 mb-16">
         <div class="text-center mb-12">
             <div class="inline-flex items-center gap-2 glass-card px-4 py-2 rounded-full mb-3 fade-up">
@@ -296,115 +302,88 @@
             <h3 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent fade-up">
                 Mitra Strategis
             </h3>
-            <p class="text-indigo-200/70 mt-2 fade-up">Berkolaborasi dengan institusi terpercaya di Indonesia</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+            {{-- LOOP DATA ADMIN --}}
+            @foreach($kerjasama as $item)
             <div class="partner-card fade-up tilt-card">
-                <div class="partner-icon">🏥</div>
-                <h4>Rumah Sakit Umum</h4>
-                <p>Kerjasama dengan berbagai RS di Sumatera Utara untuk akses jurnal dan penelitian klinis</p>
+                <div class="partner-icon">🏢</div>
+
+                <h4>{{ $item->title }}</h4>
+
+                <p>{{ $item->description }}</p>
             </div>
-            <div class="partner-card fade-up tilt-card">
-                <div class="partner-icon">🎓</div>
-                <h4>Perguruan Tinggi</h4>
-                <p>Kemitraan dengan universitas ternama untuk pertukaran koleksi dan sumber daya digital</p>
-            </div>
-            <div class="partner-card fade-up tilt-card">
-                <div class="partner-icon">📚</div>
-                <h4>Asosiasi Profesi</h4>
-                <p>Kolaborasi dengan PPNI dan organisasi profesi keperawatan lainnya</p>
-            </div>
-            <div class="partner-card fade-up tilt-card">
-                <div class="partner-icon">🌐</div>
-                <h4>Mitra Internasional</h4>
-                <p>Jaringan global dengan perpustakaan kesehatan di Asia dan Eropa</p>
-            </div>
+            @endforeach
+
         </div>
     </section>
 
-    <!-- LOGO SLIDER INFINITE -->
+    <!-- LOGO SLIDER -->
     <section class="mt-12 mb-16 px-5">
         <div class="text-center mb-10">
-            <div class="inline-flex items-center gap-2 glass-card px-4 py-2 rounded-full mb-3 fade-up">
-                <span class="text-indigo-400 text-sm">🏛️</span>
-                <span class="text-indigo-300 text-sm font-medium">Mitra Kami</span>
-            </div>
             <h3 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent fade-up">
                 Rekan Kolaborasi
             </h3>
-            <p class="text-indigo-200/70 mt-2 fade-up">Berkolaborasi dengan institusi terpercaya di Indonesia</p>
         </div>
 
         <div class="slider fade-up">
             <div class="slide-track">
-                <!-- LOGO - Baris 1 -->
-                <div class="logo-card"><img src="assets/ui.png" alt="UI" onerror="this.src='https://placehold.co/220x140/1e293b/6366f1?text=Universitas+Indonesia'"></div>
-                <div class="logo-card"><img src="assets/ugm.png" alt="UGM" onerror="this.src='https://placehold.co/220x140/1e293b/6366f1?text=UGM'"></div>
-                <div class="logo-card"><img src="assets/unair.png" alt="UNAIR" onerror="this.src='https://placehold.co/220x140/1e293b/6366f1?text=Unair'"></div>
-                <div class="logo-card"><img src="assets/itb.png" alt="ITB" onerror="this.src='https://placehold.co/220x140/1e293b/6366f1?text=ITB'"></div>
-                <div class="logo-card"><img src="assets/ipb.png" alt="IPB" onerror="this.src='https://placehold.co/220x140/1e293b/6366f1?text=IPB'"></div>
-                
-                <!-- DUPLIKASI UNTUK SMOOTH INFINITE -->
-                <div class="logo-card"><img src="assets/ui.png" alt="UI" onerror="this.src='https://placehold.co/220x140/1e293b/6366f1?text=Universitas+Indonesia'"></div>
-                <div class="logo-card"><img src="assets/ugm.png" alt="UGM" onerror="this.src='https://placehold.co/220x140/1e293b/6366f1?text=UGM'"></div>
-                <div class="logo-card"><img src="assets/unair.png" alt="UNAIR" onerror="this.src='https://placehold.co/220x140/1e293b/6366f1?text=Unair'"></div>
-                <div class="logo-card"><img src="assets/itb.png" alt="ITB" onerror="this.src='https://placehold.co/220x140/1e293b/6366f1?text=ITB'"></div>
-                <div class="logo-card"><img src="assets/ipb.png" alt="IPB" onerror="this.src='https://placehold.co/220x140/1e293b/6366f1?text=IPB'"></div>
+
+                {{-- LOOP GAMBAR --}}
+                @foreach($kerjasama as $item)
+                    @if($item->image)
+                        <div class="logo-card">
+                            <img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->title }}">
+                        </div>
+                    @endif
+                @endforeach
+
+                {{-- DUPLIKASI UNTUK INFINITE --}}
+                @foreach($kerjasama as $item)
+                    @if($item->image)
+                        <div class="logo-card">
+                            <img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->title }}">
+                        </div>
+                    @endif
+                @endforeach
+
             </div>
         </div>
     </section>
 
-    <!-- BENTUK KERJASAMA (Grid Info) -->
+    <!-- BENTUK KERJASAMA -->
     <section class="max-w-6xl mx-auto px-5 mt-20 mb-16">
-        <div class="text-center mb-12">
-            <div class="inline-flex items-center gap-2 glass-card px-4 py-2 rounded-full mb-3 fade-up">
-                <span class="text-indigo-400 text-sm">📋</span>
-                <span class="text-indigo-300 text-sm font-medium">Ruang Lingkup</span>
-            </div>
-            <h3 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent fade-up">
-                Bentuk Kerjasama
-            </h3>
-            <p class="text-indigo-200/70 mt-2 fade-up">Beragam program kolaborasi untuk kemajuan bersama</p>
-        </div>
-
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="info-card fade-up tilt-card">
-                <div class="info-icon">📚</div>
-                <h4>Pertukaran Koleksi</h4>
-                <p>Kerjasama peminjaman antar perpustakaan (inter-library loan) dan berbagi sumber daya koleksi digital.</p>
-            </div>
-            <div class="info-card fade-up tilt-card">
-                <div class="info-icon">🔬</div>
-                <h4>Penelitian Bersama</h4>
-                <p>Kolaborasi riset keperawatan dan publikasi ilmiah terindeks nasional maupun internasional.</p>
-            </div>
-            <div class="info-card fade-up tilt-card">
-                <div class="info-icon">🎓</div>
-                <h4>Pengembangan SDM</h4>
-                <p>Pelatihan pustakawan, workshop literasi informasi, dan program magang mahasiswa.</p>
-            </div>
+
+            @foreach($kerjasama as $item)
+                @if($item->sequence >= 1 && $item->sequence <= 3)
+                <div class="info-card fade-up tilt-card">
+                    <div class="info-icon">📌</div>
+                    <h4>{{ $item->title }}</h4>
+                    <p>{{ $item->description }}</p>
+                </div>
+                @endif
+            @endforeach
+
         </div>
     </section>
 
-    <!-- CTA SECTION -->
+    <!-- CTA -->
     <section class="mb-32 px-5">
         <div class="glass-card p-8 md:p-12 rounded-3xl max-w-3xl mx-auto text-center cta-card fade-up">
             <div class="text-5xl mb-4">🤝</div>
             <h3 class="text-2xl md:text-3xl font-bold mb-3 bg-gradient-to-r from-indigo-200 to-purple-200 bg-clip-text text-transparent">
                 Ajukan Kerjasama
             </h3>
-            <p class="text-gray-400 mb-6 max-w-md mx-auto">
-                Kami terbuka untuk menjalin kemitraan dengan berbagai institusi dalam rangka pengembangan layanan perpustakaan dan pendidikan keperawatan.
-            </p>
-            <button class="glow-btn px-8 py-3 rounded-full transition font-semibold" onclick="showNotif('Terima kasih! Silakan hubungi kami di email: kerjasama@akperhkpb.ac.id', 'info')">
+
+            <button class="glow-btn px-8 py-3 rounded-full">
                 Hubungi Kami →
             </button>
-            <div class="mt-6 text-xs text-indigo-300/50">
-                📞 (0632) 12345 | ✉️ kerjasama@akperhkpbpalige.ac.id
-            </div>
         </div>
     </section>
+
 </div>
 @endsection
 

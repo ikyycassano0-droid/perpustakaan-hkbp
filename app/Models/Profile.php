@@ -12,13 +12,20 @@ class Profile extends Model
     protected $table = 'profiles';
 
     protected $fillable = [
-        'key',
+        'type',
+        'sub_type',
         'title',
         'description',
         'image',
-        'sequence',
+        'jabatan',
+        'icon',
+        'order',
         'active',
         'created_by',
         'updated_by'
+    ];
+
+    protected $casts = [
+        'active' => 'boolean'
     ];
 }
