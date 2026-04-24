@@ -14,18 +14,16 @@ class CollectionController extends Controller
     // ================= ADMIN =================
     public function index_admin()
     {
-        $collections = Collection::with(['classification','category','location'])->latest()->get();
+        $collections = Collection::with(['classifications', 'categories', 'location'])
+            ->latest()
+            ->get();
 
-        $categories = CategoryCollection::all();
-        $classifications = Classification::all();
-        $locations = Location::all();
-
-        return view('admin.page.collection', compact(
-            'collections',
-            'categories',
-            'classifications',
-            'locations'
-        ));
+        return view('admin.page.collection', [
+            'collections' => $collections,
+            'categories' => CategoryCollection::all(),
+            'classifications' => Classification::all(),
+            'locations' => Location::all(),
+        ]);
     }
 
     // ================= STORE =================
@@ -33,122 +31,106 @@ class CollectionController extends Controller
     {
         $request->validate([
             'title' => 'required',
-            'author' => 'required|string',
-            'publication_year' => 'nullable|numeric',
-
-            // 🔥 FIX: wajib min 1
+            'author' => 'required',
             'stock' => 'required|integer|min:1',
-
-            'file_url' => 'nullable|file|mimes:pdf,mp3,wav,ogg|max:20000',
-            'cover_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // upload cover
-        $cover = $request->hasFile('cover_image')
+        $cover = $request->file('cover_image')
             ? $request->file('cover_image')->store('collections/cover', 'public')
             : null;
 
-        // upload file
-        $file = $request->hasFile('file_url')
+        $file = $request->file('file_url')
             ? $request->file('file_url')->store('collections/file', 'public')
             : null;
 
         $collection = Collection::create([
             'title' => $request->title,
-            'series_title' => $request->series_title,
-            'author' => $request->author,
-            'call_number' => $request->call_number,
+
+            // FIX AUTHOR WAJIB ARRAY
+            'author' => is_array($request->author)
+                ? $request->author
+                : [$request->author],
 
             'publisher' => $request->publisher,
             'publication_year' => $request->publication_year,
-            'edition' => $request->edition,
-            'isbn' => $request->isbn,
             'language' => $request->language,
-
-            'classification_id' => $request->classification_id,
-            'category_collection_id' => $request->category_collection_id,
+            'isbn' => $request->isbn,
+            'edition' => $request->edition,
             'subject' => $request->subject,
-
             'description' => $request->description,
 
-            'format' => $request->format,
+            'location_id' => $request->location_id,
             'file_url' => $file,
             'cover_image' => $cover,
+            'format' => $request->format,
 
-            'location_id' => $request->location_id,
+            'stock' => (int) $request->stock,
+            'available_stock' => (int) $request->stock,
+            'is_available' => 1,
 
-            // 🔥 FIX STOCK
-            'stock' => $request->stock,
-            'available_stock' => $request->stock, // awal semua tersedia
-            'is_available' => true,
-
-            'max_loan_days' => $request->max_loan_days ?? 7,
-            'penalty_per_day' => $request->penalty_per_day ?? 1000,
+            'menu_type' => $request->menu_type,
+            'active' => 1,
 
             'created_by' => session('user_id'),
-            'active' => true,
         ]);
 
-        return redirect()->route('admin.collections.index')
+        // RELASI PIVOT
+        $collection->classifications()->sync($request->classification_id ?? []);
+        $collection->categories()->sync($request->category_collection_id ?? []);
+
+        return redirect()
+            ->route('admin.collections.index')
             ->with('success', 'Koleksi berhasil ditambahkan');
     }
 
     // ================= UPDATE =================
-    public function update(Request $request, Collection $collection)
+   public function update(Request $request, Collection $collection)
     {
         $request->validate([
             'title' => 'required',
-            'author' => 'required|string',
-
-            // 🔥 FIX: wajib min 1
+            'author' => 'required',
             'stock' => 'required|integer|min:1',
         ]);
 
-        // 🔥 HITUNG YANG SEDANG DIPINJAM
+        // ================= HITUNG YANG SEDANG DIPINJAM =================
         $dipinjam = $collection->stock - $collection->available_stock;
 
-        $newStock = $request->stock;
-
-        // ❌ JANGAN SAMPAI lebih kecil dari yg dipinjam
-        if ($newStock < $dipinjam) {
-            return back()->with('error', 'Stock tidak boleh lebih kecil dari buku yang sedang dipinjam!');
+        if ($request->stock < $dipinjam) {
+            return back()->with('error', 'Stock tidak boleh lebih kecil dari yang sedang dipinjam');
         }
 
-        // 🔥 HITUNG ULANG AVAILABLE
-        $newAvailable = $newStock - $dipinjam;
+        $available = $request->stock - $dipinjam;
 
+        // ================= UPDATE DATA =================
         $data = [
             'title' => $request->title,
-            'series_title' => $request->series_title,
-            'author' => $request->author,
-            'call_number' => $request->call_number,
+
+            // 🔥 FIX AUTHOR (AMAN ARRAY / STRING)
+            'author' => is_array($request->author)
+                ? $request->author
+                : [$request->author],
 
             'publisher' => $request->publisher,
             'publication_year' => $request->publication_year,
-            'edition' => $request->edition,
-            'isbn' => $request->isbn,
             'language' => $request->language,
-
-            'classification_id' => $request->classification_id,
-            'category_collection_id' => $request->category_collection_id,
+            'isbn' => $request->isbn,
+            'edition' => $request->edition,
             'subject' => $request->subject,
-
             'description' => $request->description,
-            'format' => $request->format,
 
             'location_id' => $request->location_id,
+            'format' => $request->format,
 
-            // 🔥 FIX STOCK
-            'stock' => $newStock,
-            'available_stock' => $newAvailable,
+            // 🔥 STOCK SYSTEM
+            'stock' => (int) $request->stock,
+            'available_stock' => (int) $available,
 
-            'max_loan_days' => $request->max_loan_days,
-            'penalty_per_day' => $request->penalty_per_day,
+            'menu_type' => $request->menu_type,
 
             'updated_by' => session('user_id'),
         ];
 
-        // cover
+        // ================= COVER IMAGE =================
         if ($request->hasFile('cover_image')) {
             if ($collection->cover_image) {
                 Storage::disk('public')->delete($collection->cover_image);
@@ -158,7 +140,7 @@ class CollectionController extends Controller
                 ->store('collections/cover', 'public');
         }
 
-        // file
+        // ================= FILE =================
         if ($request->hasFile('file_url')) {
             if ($collection->file_url) {
                 Storage::disk('public')->delete($collection->file_url);
@@ -168,73 +150,57 @@ class CollectionController extends Controller
                 ->store('collections/file', 'public');
         }
 
+        // ================= UPDATE =================
         $collection->update($data);
 
-        return redirect()->route('admin.collections.index')
-            ->with('success', 'Koleksi berhasil diupdate');
+        // ================= SYNC RELASI MANY TO MANY =================
+        $collection->classifications()->sync($request->classification_id ?? []);
+        $collection->categories()->sync($request->category_collection_id ?? []);
+
+        return back()->with('success', 'Koleksi berhasil diupdate');
     }
 
     // ================= DELETE =================
     public function destroy(Collection $collection)
     {
-        if ($collection->cover_image) {
-            Storage::disk('public')->delete($collection->cover_image);
-        }
-
-        if ($collection->file_url) {
-            Storage::disk('public')->delete($collection->file_url);
-        }
+        Storage::disk('public')->delete([$collection->cover_image, $collection->file_url]);
 
         $collection->delete();
 
-        return redirect()->route('admin.collections.index')
-            ->with('success', 'Koleksi berhasil dihapus');
+        return back()->with('success', 'Koleksi berhasil dihapus');
     }
 
-    // ================= USER PINJAM =================
-    public function pinjam()
-    {
-        $collections = Collection::with(['location','classification','category'])
-            ->where('active', true)
-            ->latest()
-            ->get();
-
-        return view('user.page.Koleksi.Koleksi Tercetak.pinbal', compact('collections'));
-    }
-
-    // ================= GUEST =================
-    public function index()
-    {
-        $collections = Collection::with(['classification','category'])
-            ->latest()
-            ->paginate(9);
-
-        return view('guest.page.collection', compact('collections'));
-    }
-
+    // ================= SHOW =================
     public function show($id)
     {
-        $collection = Collection::with(['classification','category','location'])
+        $collection = Collection::with(['classifications', 'categories', 'location'])
             ->findOrFail($id);
 
         return view('guest.page.collection_detail', compact('collection'));
     }
 
-    // ================= MENU USER =================
     public function showUserMenu($menu_type)
     {
-        $collections = Collection::with(['classification','category','location'])
+        $collections = Collection::with(['categories', 'location'])
             ->where('menu_type', $menu_type)
             ->get();
 
-        $blade = match($menu_type) {
+        // mapping view berdasarkan menu_type
+        $viewMap = [
             'jurnal' => 'user.page.Koleksi.Koleksi Tercetak.jurnal',
             'buku_pengayaan' => 'user.page.Koleksi.Koleksi Tercetak.buku_pengayaan',
             'buku_referensi' => 'user.page.Koleksi.Koleksi Tercetak.buku_referensi',
             'majalah' => 'user.page.Koleksi.Koleksi Tercetak.majalah',
-            default => abort(404),
-        };
+        ];
 
-        return view($blade, compact('collections'));
+        // fallback kalau tidak ditemukan
+        $view = $viewMap[$menu_type] ?? 'user.page.Koleksi.Koleksi Tercetak.buku_referensi';
+
+        return view($view, [
+            'collections' => $collections,
+            'menuType' => $menu_type
+        ]);
+
+        
     }
 }

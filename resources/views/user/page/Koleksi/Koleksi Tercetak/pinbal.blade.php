@@ -265,6 +265,7 @@
 @endpush
 
 @section('content')
+@section('content')
 <div class="main-content">
 
     <!-- HERO SECTION -->
@@ -272,104 +273,182 @@
         <div class="inline-block glass-card px-5 py-2 rounded-full mb-5 fade-up">
             <span class="text-indigo-300 text-sm font-medium tracking-wide">📚 AKPER HKBP BALIGE</span>
         </div>
+
         <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight title-main fade-up">
             Sistem Pinbal Akademik
         </h1>
+
         <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
-            Kelola riwayat peminjaman buku perpustakaan Anda dengan presisi. Pantau batas waktu pengembalian untuk menjaga kredibilitas akademik Anda.
+            Kelola riwayat peminjaman buku perpustakaan Anda dengan presisi.
         </p>
     </section>
+
 
     <!-- STATISTIK SECTION -->
     <section class="section max-w-6xl mx-auto px-5">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
             <div class="stat-card fade-up">
                 <div class="text-2xl mb-1">📖</div>
-                <div class="stat-number" id="aktifDipinjam">04</div>
+                <div class="stat-number">{{ $aktifDipinjam ?? 0 }}</div>
                 <div class="text-xs text-gray-400 mt-1">Aktif Dipinjam</div>
             </div>
+
             <div class="stat-card fade-up">
                 <div class="text-2xl mb-1">⏰</div>
-                <div class="stat-number" id="mendekatiDeadline">01</div>
+                <div class="stat-number">{{ $mendekatiDeadline ?? 0 }}</div>
                 <div class="text-xs text-gray-400 mt-1">Mendekati Deadline</div>
             </div>
+
             <div class="stat-card fade-up">
                 <div class="text-2xl mb-1">📚</div>
-                <div class="stat-number" id="totalRiwayat">28</div>
+                <div class="stat-number">{{ $totalRiwayat ?? 0 }}</div>
                 <div class="text-xs text-gray-400 mt-1">Total Riwayat</div>
             </div>
+
             <div class="stat-card fade-up">
                 <div class="text-2xl mb-1">🎓</div>
-                <div class="membership-active mx-auto" style="width: fit-content;">AKTIF</div>
+                <div class="membership-active mx-auto">AKTIF</div>
                 <div class="text-xs text-gray-400 mt-2">Status Keanggotaan</div>
             </div>
+
         </div>
     </section>
 
-    <!-- SEARCH & TABLE SECTION -->
+
+    <!-- TABLE SECTION (READY CRUD) -->
     <section class="section max-w-6xl mx-auto px-5">
         <div class="neon-border fade-up">
             <div class="neon-inner">
-                
-                <!-- Search Bar -->
+
+                <!-- SEARCH -->
                 <div class="mb-6">
-                    <div class="relative">
-                        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Cari judul buku atau kode...">
-                    </div>
+                    <input type="text" id="searchInput"
+                        class="search-input"
+                        placeholder="🔍 Cari judul buku atau kode...">
                 </div>
 
-                <!-- Filter Tabs -->
+                <!-- FILTER -->
                 <div class="flex flex-wrap gap-3 mb-6">
-                    <button class="btn-primary" data-filter="all">Semua Buku</button>
+                    <button class="btn-primary" data-filter="all">Semua</button>
                     <button class="btn-outline" data-filter="dipinjam">Dipinjam</button>
                     <button class="btn-outline" data-filter="dikembalikan">Dikembalikan</button>
                     <button class="btn-outline" data-filter="terlambat">Terlambat</button>
                 </div>
 
-                <!-- Table -->
+
+                <!-- TABLE -->
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>📖 BUKU & KATALOG</th>
-                                <th>📅 TANGGAL PINJAM</th>
-                                <th>⏰ BATAS KEMBALI</th>
+                                <th>📖 BUKU</th>
+                                <th>📅 PINJAM</th>
+                                <th>⏰ KEMBALI</th>
                                 <th>📌 STATUS</th>
                             </tr>
                         </thead>
-                        <tbody id="tableBody">
-                            <!-- Data akan diisi oleh JavaScript -->
+
+                        <tbody>
+                            @forelse($loans as $item)
+                                <tr>
+
+                                    <!-- BOOK -->
+                                    <td>
+                                        <div class="flex items-center gap-3">
+                                            <img src="{{ $item->book_image ?? 'https://placehold.co/100x130' }}"
+                                                 class="book-image">
+
+                                            <div>
+                                                <div class="font-semibold">
+                                                    {{ $item->book_title }}
+                                                </div>
+                                                <div class="text-xs text-gray-500">
+                                                    {{ $item->book_code }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- TANGGAL PINJAM -->
+                                    <td>
+                                        {{ \Carbon\Carbon::parse($item->borrow_date)->format('d M Y') }}
+                                    </td>
+
+                                    <!-- BATAS -->
+                                    <td>
+                                        {{ \Carbon\Carbon::parse($item->return_date)->format('d M Y') }}
+
+                                        @if($item->status === 'dipinjam')
+                                            <div class="text-xs text-gray-400">
+                                                {{ $item->days_left }} hari lagi
+                                            </div>
+                                        @endif
+                                    </td>
+
+                                    <!-- STATUS -->
+                                    <td>
+                                        @if($item->status == 'dipinjam')
+                                            <span class="status-badge status-dipinjam">📘 DIPINJAM</span>
+
+                                        @elseif($item->status == 'dikembalikan')
+                                            <span class="status-badge status-dikembalikan">✅ DIKEMBALIKAN</span>
+
+                                        @else
+                                            <span class="status-badge status-terlambat">⚠️ TERLAMBAT</span>
+                                        @endif
+                                    </td>
+
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center py-8 text-gray-400">
+                                        📭 Tidak ada data peminjaman
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Pagination Info -->
+
+                <!-- PAGINATION (READY CRUD) -->
                 <div class="flex justify-between items-center mt-6">
-                    <div class="text-sm text-gray-400" id="paginationInfo">
-                        Menampilkan 1 dari 3 entri
+
+                    <div class="text-sm text-gray-400">
+                        Menampilkan {{ $loans->firstItem() ?? 0 }}
+                        -
+                        {{ $loans->lastItem() ?? 0 }}
+                        dari {{ $loans->total() ?? 0 }} data
                     </div>
-                    <div class="flex gap-2" id="paginationButtons">
-                        <button class="pagination-btn" id="prevPage">◀ Sebelumnya</button>
-                        <button class="pagination-btn" id="nextPage">Berikutnya ▶</button>
+
+                    <div class="flex gap-2">
+                        {{ $loans->links() }}
                     </div>
+
                 </div>
 
             </div>
         </div>
     </section>
 
-    <!-- ACTION BUTTONS -->
+
+    <!-- ACTION BUTTON -->
     <section class="section max-w-6xl mx-auto px-5 mb-16">
         <div class="flex flex-wrap justify-center gap-4">
-            <button id="pinjamBtn" class="btn-primary px-8 py-3 fade-up">
+
+            <button class="btn-primary">
                 📖 Pinjam Buku
             </button>
-            <button id="kembalikanBtn" class="btn-outline px-8 py-3 fade-up">
-                ↺ Kembalikan Buku
+
+            <button class="btn-outline">
+                ↺ Kembalikan
             </button>
-            <button id="perpanjangBtn" class="btn-outline px-8 py-3 fade-up">
-                🔄 Perpanjang Pinjaman
+
+            <button class="btn-outline">
+                🔄 Perpanjang
             </button>
+
         </div>
     </section>
 
@@ -379,295 +458,144 @@
 @push('scripts')
 <script>
 // ============================================
-// JAVASCRIPT KHUSUS UNTUK HALAMAN PINBAL
-// Hanya JS yang BELUM ADA di master blade
+// PINBAL JS (ENHANCEMENT ONLY - CRUD READY)
 // ============================================
 
-// DATA PEMINJAMAN
-let loanData = [
-    {
-        id: 1,
-        judul: "Prinsip Dasar Keperawatan Klinis",
-        kode: "KPR-2024-001",
-        gambar: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=100&h=130&fit=crop",
-        tanggalPinjam: "2024-04-12",
-        batasKembali: "2024-04-26",
-        status: "dipinjam",
-        sisaHari: 4
-    },
-    {
-        id: 2,
-        judul: "Anatomi Manusia Edisi X",
-        kode: "BKO-2023-089",
-        gambar: "https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=100&h=130&fit=crop",
-        tanggalPinjam: "2024-04-05",
-        batasKembali: "2024-04-19",
-        status: "dikembalikan",
-        sisaHari: null
-    },
-    {
-        id: 3,
-        judul: "Farmakologi Dasar untuk Perawat",
-        kode: "FRM-2024-012",
-        gambar: "https://images.unsplash.com/photo-1585435557343-3b092031a7ec?w=100&h=130&fit=crop",
-        tanggalPinjam: "2024-03-20",
-        batasKembali: "2024-04-03",
-        status: "terlambat",
-        sisaHari: -13
-    },
-    {
-        id: 4,
-        judul: "Etika Keperawatan Profesional",
-        kode: "ETK-2024-005",
-        gambar: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=100&h=130&fit=crop",
-        tanggalPinjam: "2024-04-10",
-        batasKembali: "2024-04-24",
-        status: "dipinjam",
-        sisaHari: 2
-    },
-    {
-        id: 5,
-        judul: "Manajemen Asuhan Keperawatan",
-        kode: "MAN-2024-008",
-        gambar: "https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=100&h=130&fit=crop",
-        tanggalPinjam: "2024-04-08",
-        batasKembali: "2024-04-22",
-        status: "dipinjam",
-        sisaHari: 0
-    },
-    {
-        id: 6,
-        judul: "Keperawatan Anak",
-        kode: "ANK-2024-003",
-        gambar: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=100&h=130&fit=crop",
-        tanggalPinjam: "2024-04-01",
-        batasKembali: "2024-04-15",
-        status: "dikembalikan",
-        sisaHari: null
-    },
-    {
-        id: 7,
-        judul: "Keperawatan Maternitas",
-        kode: "MAT-2024-007",
-        gambar: "https://images.unsplash.com/photo-1518779578993-ec3579fee39f?w=100&h=130&fit=crop",
-        tanggalPinjam: "2024-04-15",
-        batasKembali: "2024-04-29",
-        status: "dipinjam",
-        sisaHari: 7
-    }
-];
+document.addEventListener('DOMContentLoaded', function () {
 
-// Hitung statistik
-function updateStats() {
-    const aktif = loanData.filter(item => item.status === 'dipinjam').length;
-    const mendekati = loanData.filter(item => item.status === 'dipinjam' && item.sisaHari !== null && item.sisaHari <= 3 && item.sisaHari >= 0).length;
-    const total = loanData.length;
-    
-    document.getElementById('aktifDipinjam').innerHTML = aktif.toString().padStart(2, '0');
-    document.getElementById('mendekatiDeadline').innerHTML = mendekati.toString().padStart(2, '0');
-    document.getElementById('totalRiwayat').innerHTML = total;
-}
+    const searchInput = document.getElementById('searchInput');
+    const tableRows = document.querySelectorAll('tbody tr');
+    const filterButtons = document.querySelectorAll('[data-filter]');
 
-// Format tanggal
-function formatTanggal(dateStr) {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-}
+    let activeFilter = 'all';
 
-// Render tabel
-let currentPage = 1;
-const itemsPerPage = 5;
-let currentFilter = 'all';
-let searchQuery = '';
 
-function renderTable() {
-    let filteredData = [...loanData];
-    
-    // Filter berdasarkan pencarian
-    if (searchQuery) {
-        filteredData = filteredData.filter(item => 
-            item.judul.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.kode.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    }
-    
-    // Filter berdasarkan status
-    if (currentFilter !== 'all') {
-        filteredData = filteredData.filter(item => item.status === currentFilter);
-    }
-    
-    // Pagination
-    const totalItems = filteredData.length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const currentData = filteredData.slice(startIndex, endIndex);
-    
-    // Update pagination info
-    document.getElementById('paginationInfo').innerHTML = 
-        `Menampilkan ${startIndex + 1} - ${Math.min(endIndex, totalItems)} dari ${totalItems} entri`;
-    
-    // Generate table rows
-    const tbody = document.getElementById('tableBody');
-    tbody.innerHTML = '';
-    
-    if (currentData.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-gray-400">📚 Tidak ada data yang ditemukan</td></tr>';
-    } else {
-        currentData.forEach(item => {
-            const row = tbody.insertRow();
-            
-            // Kolom Buku & Katalog
-            const cellBuku = row.insertCell(0);
-            cellBuku.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <img src="${item.gambar}" alt="${item.judul}" class="book-image" 
-                         onerror="this.src='https://placehold.co/100x130/1e293b/6366f1?text=📖'">
-                    <div>
-                        <div class="font-semibold">${item.judul}</div>
-                        <div class="text-xs text-gray-500">KODE: ${item.kode}</div>
-                    </div>
-                </div>
-            `;
-            
-            // Kolom Tanggal Pinjam
-            const cellTglPinjam = row.insertCell(1);
-            cellTglPinjam.innerHTML = formatTanggal(item.tanggalPinjam);
-            
-            // Kolom Batas Kembali
-            const cellBatas = row.insertCell(2);
-            if (item.status === 'dipinjam' && item.sisaHari !== null) {
-                let deadlineText = '';
-                let deadlineClass = '';
-                if (item.sisaHari === 0) {
-                    deadlineText = 'Hari Terakhir!';
-                    deadlineClass = 'text-red-400';
-                } else if (item.sisaHari < 0) {
-                    deadlineText = 'Terlambat';
-                    deadlineClass = 'text-red-400';
-                } else if (item.sisaHari <= 3) {
-                    deadlineText = `⚠️ Tersisa ${item.sisaHari} Hari`;
-                    deadlineClass = 'text-yellow-400';
+    // =========================
+    // SEARCH FUNCTION
+    // =========================
+    if (searchInput) {
+        searchInput.addEventListener('input', function () {
+            const value = this.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+
+                if (text.includes(value)) {
+                    row.style.display = '';
                 } else {
-                    deadlineText = `Tersisa ${item.sisaHari} Hari`;
-                    deadlineClass = 'text-gray-400';
+                    row.style.display = 'none';
                 }
-                cellBatas.innerHTML = `${formatTanggal(item.batasKembali)}<br><span class="text-xs ${deadlineClass}">${deadlineText}</span>`;
-            } else {
-                cellBatas.innerHTML = formatTanggal(item.batasKembali);
-            }
-            
-            // Kolom Status
-            const cellStatus = row.insertCell(3);
-            let statusClass = '';
-            let statusText = '';
-            let statusIcon = '';
-            
-            switch(item.status) {
-                case 'dipinjam':
-                    statusClass = 'status-dipinjam';
-                    statusText = 'DIPINJAM';
-                    statusIcon = '📘';
-                    break;
-                case 'dikembalikan':
-                    statusClass = 'status-dikembalikan';
-                    statusText = 'DIKEMBALIKAN';
-                    statusIcon = '✅';
-                    break;
-                case 'terlambat':
-                    statusClass = 'status-terlambat';
-                    statusText = 'TERLAMBAT';
-                    statusIcon = '⚠️';
-                    break;
-            }
-            
-            cellStatus.innerHTML = `<span class="status-badge ${statusClass}">${statusIcon} ${statusText}</span>`;
+            });
         });
     }
-    
-    // Update pagination buttons
-    const prevBtn = document.getElementById('prevPage');
-    const nextBtn = document.getElementById('nextPage');
-    if (prevBtn) prevBtn.disabled = currentPage === 1;
-    if (nextBtn) nextBtn.disabled = currentPage === totalPages || totalPages === 0;
-}
 
-// Filter event listeners
-document.querySelectorAll('[data-filter]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        const filter = e.target.getAttribute('data-filter');
-        currentFilter = filter;
-        currentPage = 1;
-        
-        // Update button styles
-        document.querySelectorAll('[data-filter]').forEach(b => {
-            if (b.getAttribute('data-filter') === filter) {
-                b.classList.remove('btn-outline');
-                b.classList.add('btn-primary');
-            } else {
+
+    // =========================
+    // FILTER FUNCTION
+    // =========================
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', function () {
+
+            const filter = this.getAttribute('data-filter');
+            activeFilter = filter;
+
+            // button style toggle
+            filterButtons.forEach(b => {
                 b.classList.remove('btn-primary');
                 b.classList.add('btn-outline');
-            }
+            });
+
+            this.classList.remove('btn-outline');
+            this.classList.add('btn-primary');
+
+
+            // filter table
+            tableRows.forEach(row => {
+
+                const statusCell = row.querySelector('td:last-child');
+
+                if (!statusCell) return;
+
+                const statusText = statusCell.innerText.toLowerCase();
+
+                if (filter === 'all') {
+                    row.style.display = '';
+                }
+                else if (filter === 'dipinjam' && statusText.includes('dipinjam')) {
+                    row.style.display = '';
+                }
+                else if (filter === 'dikembalikan' && statusText.includes('dikembalikan')) {
+                    row.style.display = '';
+                }
+                else if (filter === 'terlambat' && statusText.includes('terlambat')) {
+                    row.style.display = '';
+                }
+                else {
+                    row.style.display = 'none';
+                }
+            });
         });
-        
-        renderTable();
     });
-});
 
-// Search event
-document.getElementById('searchInput').addEventListener('input', (e) => {
-    searchQuery = e.target.value;
-    currentPage = 1;
-    renderTable();
-});
 
-// Pagination
-document.getElementById('prevPage').addEventListener('click', () => {
-    if (currentPage > 1) {
-        currentPage--;
-        renderTable();
+    // =========================
+    // NOTIFICATION SYSTEM
+    // =========================
+    window.showNotification = function (message, type = 'info') {
+
+        const notif = document.createElement('div');
+        notif.className = 'notification';
+
+        let icon = 'ℹ️';
+        if (type === 'success') icon = '✅';
+        if (type === 'error') icon = '❌';
+        if (type === 'warning') icon = '⚠️';
+
+        notif.innerHTML = `
+            <div class="flex items-center gap-2">
+                <span>${icon}</span>
+                <span>${message}</span>
+            </div>
+        `;
+
+        document.body.appendChild(notif);
+
+        setTimeout(() => notif.classList.add('show'), 100);
+
+        setTimeout(() => {
+            notif.classList.remove('show');
+            setTimeout(() => notif.remove(), 300);
+        }, 2500);
+    };
+
+
+    // =========================
+    // ACTION BUTTONS (CRUD READY)
+    // =========================
+    const pinjamBtn = document.querySelector('.btn-primary');
+    const kembalikanBtn = document.querySelectorAll('.btn-outline')[0];
+    const perpanjangBtn = document.querySelectorAll('.btn-outline')[1];
+
+
+    if (pinjamBtn) {
+        pinjamBtn.addEventListener('click', () => {
+            showNotification('📖 Fitur pinjam buku akan diarahkan ke form create', 'info');
+        });
     }
+
+    if (kembalikanBtn) {
+        kembalikanBtn.addEventListener('click', () => {
+            showNotification('↺ Pilih data untuk proses pengembalian', 'info');
+        });
+    }
+
+    if (perpanjangBtn) {
+        perpanjangBtn.addEventListener('click', () => {
+            showNotification('🔄 Perpanjangan akan diproses via sistem admin', 'info');
+        });
+    }
+
 });
 
-document.getElementById('nextPage').addEventListener('click', () => {
-    currentPage++;
-    renderTable();
-});
-
-// Action buttons notification
-function showNotification(message, type = 'success') {
-    const notification = document.createElement('div');
-    notification.className = 'notification';
-    notification.innerHTML = `
-        <div class="flex items-center gap-2">
-            <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
-            <span>${message}</span>
-        </div>
-    `;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.classList.add('show'), 10);
-    setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
-}
-
-document.getElementById('pinjamBtn').addEventListener('click', () => {
-    showNotification('📖 Form peminjaman buku akan segera terbuka. Silakan lengkapi data peminjaman.', 'info');
-});
-
-document.getElementById('kembalikanBtn').addEventListener('click', () => {
-    showNotification('↺ Silakan pilih buku yang akan dikembalikan.', 'info');
-});
-
-document.getElementById('perpanjangBtn').addEventListener('click', () => {
-    showNotification('🔄 Perpanjangan pinjaman dapat dilakukan H-3 sebelum batas waktu.', 'info');
-});
-
-// Initialize
-updateStats();
-renderTable();
-
-console.log('Halaman Sistem Pinbal Akademik siap dengan 7 data peminjaman!');
 </script>
 @endpush

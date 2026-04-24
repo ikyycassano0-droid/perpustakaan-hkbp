@@ -108,7 +108,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="8" class="text-center">Belum ada数据</td>
+                <td colspan="8" class="text-center">Belum ada</td>
             </tr>
             @endforelse
         </tbody>

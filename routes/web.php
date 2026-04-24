@@ -272,7 +272,7 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
         ->where('category','ebook|e-article|cd|video');
 });
 
-        Route::get('/download/{id}', [FinalProjectController::class, 'download'])
+    Route::get('/download/{id}', [FinalProjectController::class, 'download'])
     ->name('final_project.download')
     ->middleware('auth');
 //Guest
