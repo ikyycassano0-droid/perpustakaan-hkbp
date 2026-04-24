@@ -12,12 +12,48 @@ class CategoryCollection extends Model
     protected $table = 'category_collections';
 
     protected $fillable = [
-        'name'
+        'name',
+        'slug',
+        'description',
+        'active'
     ];
 
-    // ================= RELASI MANY TO MANY =================
+    protected $casts = [
+        'active' => 'boolean'
+    ];
+
+    // ================= RELASI =================
     public function collections()
     {
-        return $this->belongsToMany(Collection::class, 'category_collection_collection');
+        return $this->belongsToMany(
+            Collection::class,
+            'category_collection_collection'
+        )->withTimestamps();
+    }
+
+    // ================= ACCESSOR =================
+    public function getStatusLabelAttribute()
+    {
+        return $this->active ? 'Aktif' : 'Nonaktif';
+    }
+
+    // ================= SCOPES =================
+    public function scopeActive($query)
+    {
+        return $query->where('active', true);
+    }
+
+    // ================= BOOT AUTO SLUG =================
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->slug = \Str::slug($model->name);
+        });
+
+        static::updating(function ($model) {
+            $model->slug = \Str::slug($model->name);
+        });
     }
 }

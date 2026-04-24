@@ -8,15 +8,13 @@ use App\Models\Classification;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Order;
-use App\Models\FinalProject; 
 
 class CollectionController extends Controller
 {
     // ================= ADMIN =================
     public function index_admin()
     {
-        $collections = Collection::with(['classifications','categories','location'])->latest()->get();
+        $collections = Collection::with(['classification','category','location'])->latest()->get();
 
         $categories = CategoryCollection::all();
         $classifications = Classification::all();
@@ -35,53 +33,64 @@ class CollectionController extends Controller
     {
         $request->validate([
             'title' => 'required',
-            'author' => 'required|array',
-            'author.*' => 'required|string',
-
+            'author' => 'required|string',
             'publication_year' => 'nullable|numeric',
+
+            // 🔥 FIX: wajib min 1
+            'stock' => 'required|integer|min:1',
 
             'file_url' => 'nullable|file|mimes:pdf,mp3,wav,ogg|max:20000',
             'cover_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // upload
+        // upload cover
         $cover = $request->hasFile('cover_image')
             ? $request->file('cover_image')->store('collections/cover', 'public')
             : null;
 
+        // upload file
         $file = $request->hasFile('file_url')
             ? $request->file('file_url')->store('collections/file', 'public')
             : null;
 
-        // CREATE COLLECTION TANPA FK
         $collection = Collection::create([
             'title' => $request->title,
-
+            'series_title' => $request->series_title,
             'author' => $request->author,
-            'responsibility_statement' => $request->responsibility_statement ?? [],
-            'content_type' => $request->content_type ?? [],
-            'media_type' => $request->media_type ?? [],
+            'call_number' => $request->call_number,
 
             'publisher' => $request->publisher,
             'publication_year' => $request->publication_year,
+            'edition' => $request->edition,
+            'isbn' => $request->isbn,
+            'language' => $request->language,
+
+            'classification_id' => $request->classification_id,
+            'category_collection_id' => $request->category_collection_id,
+            'subject' => $request->subject,
+
             'description' => $request->description,
 
-            'carrier_type' => $request->carrier_type,
-            'specific_detail_info' => $request->specific_detail_info,
+            'format' => $request->format,
+            'file_url' => $file,
+            'cover_image' => $cover,
 
             'location_id' => $request->location_id,
 
-            'cover_image' => $cover,
-            'file_url' => $file,
+            // 🔥 FIX STOCK
+            'stock' => $request->stock,
+            'available_stock' => $request->stock, // awal semua tersedia
+            'is_available' => true,
+
+            'max_loan_days' => $request->max_loan_days ?? 7,
+            'penalty_per_day' => $request->penalty_per_day ?? 1000,
 
             'created_by' => session('user_id'),
+            'active' => true,
         ]);
 
-        // MANY TO MANY (INI YANG PENTING)
-        $collection->classifications()->sync($request->classification_id ?? []);
-        $collection->categories()->sync($request->category_collection_id ?? []);
-
-        return redirect()->route('admin.collections.index')->with('success', 'Koleksi berhasil ditambahkan'); 
+        return redirect()->route('admin.collections.index')
+            ->with('success', 'Koleksi berhasil ditambahkan');
     }
 
     // ================= UPDATE =================
@@ -89,30 +98,52 @@ class CollectionController extends Controller
     {
         $request->validate([
             'title' => 'required',
-            'author' => 'required|array',
-            'author.*' => 'required|string',
-            'stock' => 'required|integer|min:0',
-            'file_url' => 'nullable|file|mimes:pdf,mp3,wav,ogg|max:20000',
-            'cover_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'author' => 'required|string',
+
+            // 🔥 FIX: wajib min 1
+            'stock' => 'required|integer|min:1',
         ]);
+
+        // 🔥 HITUNG YANG SEDANG DIPINJAM
+        $dipinjam = $collection->stock - $collection->available_stock;
+
+        $newStock = $request->stock;
+
+        // ❌ JANGAN SAMPAI lebih kecil dari yg dipinjam
+        if ($newStock < $dipinjam) {
+            return back()->with('error', 'Stock tidak boleh lebih kecil dari buku yang sedang dipinjam!');
+        }
+
+        // 🔥 HITUNG ULANG AVAILABLE
+        $newAvailable = $newStock - $dipinjam;
 
         $data = [
             'title' => $request->title,
-
+            'series_title' => $request->series_title,
             'author' => $request->author,
-            'responsibility_statement' => $request->responsibility_statement ?? [],
-            'content_type' => $request->content_type ?? [],
-            'media_type' => $request->media_type ?? [],
+            'call_number' => $request->call_number,
 
             'publisher' => $request->publisher,
             'publication_year' => $request->publication_year,
-            'description' => $request->description,
+            'edition' => $request->edition,
+            'isbn' => $request->isbn,
+            'language' => $request->language,
 
-            'carrier_type' => $request->carrier_type,
-            'specific_detail_info' => $request->specific_detail_info,
+            'classification_id' => $request->classification_id,
+            'category_collection_id' => $request->category_collection_id,
+            'subject' => $request->subject,
+
+            'description' => $request->description,
+            'format' => $request->format,
 
             'location_id' => $request->location_id,
-            'stock' => max(0, (int) $request->stock),
+
+            // 🔥 FIX STOCK
+            'stock' => $newStock,
+            'available_stock' => $newAvailable,
+
+            'max_loan_days' => $request->max_loan_days,
+            'penalty_per_day' => $request->penalty_per_day,
 
             'updated_by' => session('user_id'),
         ];
@@ -123,7 +154,8 @@ class CollectionController extends Controller
                 Storage::disk('public')->delete($collection->cover_image);
             }
 
-            $data['cover_image'] = $request->file('cover_image')->store('collections/cover', 'public');
+            $data['cover_image'] = $request->file('cover_image')
+                ->store('collections/cover', 'public');
         }
 
         // file
@@ -132,23 +164,19 @@ class CollectionController extends Controller
                 Storage::disk('public')->delete($collection->file_url);
             }
 
-            $data['file_url'] = $request->file('file_url')->store('collections/file', 'public');
+            $data['file_url'] = $request->file('file_url')
+                ->store('collections/file', 'public');
         }
 
         $collection->update($data);
 
-        $collection->classifications()->sync($request->classification_id ?? []);
-        $collection->categories()->sync($request->category_collection_id ?? []);
-
-        return redirect()->route('admin.collections.index')->with('success', 'Koleksi berhasil diupdate');
+        return redirect()->route('admin.collections.index')
+            ->with('success', 'Koleksi berhasil diupdate');
     }
 
     // ================= DELETE =================
     public function destroy(Collection $collection)
     {
-        $collection->classifications()->detach();
-        $collection->categories()->detach();
-
         if ($collection->cover_image) {
             Storage::disk('public')->delete($collection->cover_image);
         }
@@ -159,56 +187,46 @@ class CollectionController extends Controller
 
         $collection->delete();
 
-        return redirect()->route('admin.collections.index')->with('success', 'Koleksi berhasil dihapus');
+        return redirect()->route('admin.collections.index')
+            ->with('success', 'Koleksi berhasil dihapus');
     }
 
-    public function pinjam(Request $request)
+    // ================= USER PINJAM =================
+    public function pinjam()
     {
-        // Ambil semua koleksi beserta relasi location, classifications, categories
-        $collections = Collection::with(['location', 'classifications', 'categories'])
+        $collections = Collection::with(['location','classification','category'])
+            ->where('active', true)
             ->latest()
             ->get();
 
-        // Kirim ke blade
         return view('user.page.Koleksi.Koleksi Tercetak.pinbal', compact('collections'));
     }
 
     // ================= GUEST =================
     public function index()
     {
-        $collections = Collection::with(['classifications','categories'])->latest()->paginate(9);
+        $collections = Collection::with(['classification','category'])
+            ->latest()
+            ->paginate(9);
 
         return view('guest.page.collection', compact('collections'));
     }
 
     public function show($id)
     {
-        $collection = Collection::with(['classifications','categories','location'])->findOrFail($id);
+        $collection = Collection::with(['classification','category','location'])
+            ->findOrFail($id);
 
         return view('guest.page.collection_detail', compact('collection'));
     }
 
-    public function pengelolaanBuku()
-    {
-        $collections = Collection::all();
-        $orders = Order::with(['user','details.collection'])->latest()->get();
-        $locations = Location::all(); // ini supaya blade bisa pakai $locations
-
-        return view('admin.page.pengelolaan_buku', compact(
-            'collections',
-            'orders',
-            'locations'
-        ));
-    }
-
+    // ================= MENU USER =================
     public function showUserMenu($menu_type)
     {
-        // Ambil koleksi sesuai menu_type
-        $collections = Collection::with(['classifications', 'categories', 'location'])
-            ->where('menu_type', $menu_type) // pastikan field menu_type ada di table collections
+        $collections = Collection::with(['classification','category','location'])
+            ->where('menu_type', $menu_type)
             ->get();
 
-        // Tentukan blade mana yang dipakai berdasarkan menu_type
         $blade = match($menu_type) {
             'jurnal' => 'user.page.Koleksi.Koleksi Tercetak.jurnal',
             'buku_pengayaan' => 'user.page.Koleksi.Koleksi Tercetak.buku_pengayaan',
@@ -218,115 +236,5 @@ class CollectionController extends Controller
         };
 
         return view($blade, compact('collections'));
-    }
-
-    public function globalSearch(Request $request)
-    {
-        $request->validate([
-            'keyword' => 'required|string|max:255',
-        ]);
-
-        $keyword = strtolower($request->keyword);
-
-        // ================= COLLECTION =================
-        $collections = Collection::with(['categories'])
-            ->where(function ($query) use ($keyword) {
-                $query->whereRaw('LOWER(title) LIKE ?', ["%$keyword%"])
-                    ->orWhereRaw('LOWER(description) LIKE ?', ["%$keyword%"])
-                    ->orWhereRaw('LOWER(publisher) LIKE ?', ["%$keyword%"])
-                    ->orWhereRaw("LOWER(JSON_EXTRACT(author, '$')) LIKE ?", ["%$keyword%"]);
-            })
-            ->get()
-            ->map(function ($item) use ($keyword) {
-
-                $score = 0;
-
-                if (str_contains(strtolower($item->title), $keyword)) $score += 5;
-                if ($item->description && str_contains(strtolower($item->description), $keyword)) $score += 2;
-
-                $item->score = $score;
-                $item->type = 'collection';
-
-                return $item;
-            });
-
-        // ================= FINAL PROJECT =================
-        $finalProjects = FinalProject::with(['category'])
-            ->where(function ($query) use ($keyword) {
-                $query->whereRaw('LOWER(title) LIKE ?', ["%$keyword%"])
-                    ->orWhereRaw('LOWER(abstract) LIKE ?', ["%$keyword%"])
-                    ->orWhereRaw('LOWER(keywords) LIKE ?', ["%$keyword%"])
-                    ->orWhereRaw('LOWER(student_name) LIKE ?', ["%$keyword%"]);
-            })
-            ->get()
-            ->map(function ($item) use ($keyword) {
-
-                $score = 0;
-
-                if (str_contains(strtolower($item->title), $keyword)) $score += 5;
-                if ($item->keywords && str_contains(strtolower($item->keywords), $keyword)) $score += 4;
-
-                $item->score = $score;
-                $item->type = 'final_project';
-
-                return $item;
-            });
-
-        // ================= MERGE =================
-        $results = $collections
-            ->merge($finalProjects)
-            ->sortByDesc('score')
-            ->values();
-
-        $isGuest = !auth()->check();
-
-        return view('user.page.search_results', compact('results', 'keyword', 'isGuest'));
-    }   
-
-    public function liveSearch(Request $request)
-    {
-        $keyword = strtolower($request->keyword);
-
-        if (!$keyword) {
-            return response()->json([]);
-        }
-
-        // ================= COLLECTION =================
-        $collections = Collection::where(function ($query) use ($keyword) {
-            $query->whereRaw('LOWER(title) LIKE ?', ["%$keyword%"])
-                ->orWhereRaw('LOWER(description) LIKE ?', ["%$keyword%"])
-                ->orWhereRaw("LOWER(JSON_EXTRACT(author, '$')) LIKE ?", ["%$keyword%"]);
-        })
-        ->limit(5)
-        ->get()
-        ->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'title' => $item->title,
-                'type' => 'collection',
-                'file_url' => null // collection tidak pakai file
-            ];
-        });
-
-        // ================= FINAL PROJECT =================
-        $finalProjects = FinalProject::where(function ($query) use ($keyword) {
-            $query->whereRaw('LOWER(title) LIKE ?', ["%$keyword%"])
-                ->orWhereRaw('LOWER(abstract) LIKE ?', ["%$keyword%"])
-                ->orWhereRaw('LOWER(keywords) LIKE ?', ["%$keyword%"]);
-        })
-        ->limit(5)
-        ->get()
-        ->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'title' => $item->title,
-                'type' => 'final_project',
-                'file_url' => $item->file_url // 🔥 penting untuk buka file
-            ];
-        });
-
-        return response()->json(
-            $collections->merge($finalProjects)
-        );
     }
 }

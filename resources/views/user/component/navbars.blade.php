@@ -29,10 +29,12 @@
                     Profile <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 <ul class="dropdown-menu-modern">
-                    <li><a href="{{ route('guest.page.profile.visi-misi') }}" class="dropdown-item-modern">Visi Misi</a></li>
-                    <li><a href="#" class="dropdown-item-modern">Kerjasama</a></li>
-                    <li><a href="{{ route('guest.page.profile.struktur pengurus') }}" class="dropdown-item-modern">Struktur</a></li>
-                    <li><a href="{{ route('guest.page.profile.tugas-fungsi') }}" class="dropdown-item-modern">Tugas & Fungsi</a></li>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ route('user.profile.visi_misi') }}"class="dropdown-item-modern">Visi Misi</a></li>
+                        <li><a href="{{ route('user.profile.tugas_fungsi') }}"class="dropdown-item-modern">Tugas & Fungsi</a></li>
+                        <li><a href="{{ route('user.profile.struktur') }}"class="dropdown-item-modern">Struktur Pengurus</a></li>
+                        <li><a href="{{ route('user.profile.kerjasama') }}"class="dropdown-item-modern">Kerjasama</a></li>
+                    </ul>
                 </ul>
             </li>
 
@@ -61,10 +63,10 @@
                              Koleksi Tercetak <span class="text-indigo-400 text-xs">▶</span>
                         </a>
                         <ul class="submenu-menu-modern">
-                            <li><a href="#" class="dropdown-item-modern">Jurnal</a></li>
-                            <li><a href="#" class="dropdown-item-modern">Buku Pengayaan</a></li>
-                            <li><a href="#" class="dropdown-item-modern">Buku Referensi</a></li>
-                            <li><a href="#" class="dropdown-item-modern">Majalah</a></li>
+                            <li><a href="{{ route('user.koleksi.jurnal') }}"class="dropdown-item-modern">Jurnal</a></li>
+                            <li><a href="{{ route('user.koleksi.buku_pengayaan') }}"class="dropdown-item-modern">Buku Pengayaan</a></li>
+                            <li><a href="{{ route('user.koleksi.buku_referensi') }}"class="dropdown-item-modern">Buku Referensi</a></li>
+                            <li><a href="{{ route('user.koleksi.majalah') }}"class="dropdown-item-modern">Majalah</a></li>
                             <li><a href="#" class="dropdown-item-modern">Skripsi/Tesis</a></li>
                         </ul>
                     </li>

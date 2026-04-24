@@ -221,6 +221,8 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
 
         Route::get('/struktur', [ProfileController::class, 'showStrukturMahasiswa'])
             ->name('struktur');
+        
+        Route::get('/kerjasama', [ProfileController::class, 'showKerjasamaMahasiswa'])->name('kerjasama');
 
     });
 

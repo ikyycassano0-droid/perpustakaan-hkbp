@@ -58,18 +58,18 @@ class NewsController extends Controller
     // ================= DETAIL (FIX FINAL ANTI 404) =================
     public function show($identifier)
     {
-        $berita = News::published()
+        $news = News::published()
             ->where('slug', $identifier)
             ->orWhere('id', $identifier)
             ->firstOrFail();
 
         $related = News::published()
-            ->where('id', '!=', $berita->id)
+            ->where('id', '!=', $news->id)
             ->latest()
             ->take(3)
             ->get();
 
-        return view('guest.page.berita_detail', compact('berita', 'related'));
+            return view('guest.page.berita_detail', compact('news', 'related'));
     }
 
     // ================= ADMIN =================

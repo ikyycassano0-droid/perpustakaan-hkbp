@@ -10,6 +10,7 @@ class Collection extends Model
     use HasFactory;
 
     protected $table = 'collections';
+
     protected $fillable = [
         'title',
         'series_title',
@@ -47,23 +48,41 @@ class Collection extends Model
     ];
 
     // ================= RELASI MANY TO MANY =================
+
     public function classifications()
     {
-        return $this->belongsToMany(Classification::class, 'classification_collection');
+        return $this->belongsToMany(
+            Classification::class,
+            'classification_collection',
+            'collection_id',
+            'classification_id'
+        );
     }
 
     public function categories()
     {
-        return $this->belongsToMany(CategoryCollection::class, 'category_collection_collection');
+        return $this->belongsToMany(
+            CategoryCollection::class,
+            'category_collection_collection',
+            'collection_id',
+            'category_collection_id'
+        );
     }
 
     // ================= RELASI LAIN =================
+
     public function location()
     {
         return $this->belongsTo(Location::class);
     }
 
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
+
     // ================= ACCESSORS =================
+
     public function getAuthorStringAttribute()
     {
         return $this->author ? implode(', ', $this->author) : '-';
@@ -86,46 +105,64 @@ class Collection extends Model
 
     public function getResponsibilityStringAttribute()
     {
-        return $this->responsibility_statement 
-            ? implode(', ', $this->responsibility_statement) 
+        return $this->responsibility_statement
+            ? implode(', ', $this->responsibility_statement)
             : '-';
     }
 
     public function getClassificationIdsAttribute()
     {
-        return $this->classifications ? $this->classifications->pluck('id')->toArray() : [];
+        return $this->classifications->pluck('id')->toArray();
     }
 
     public function getCategoryIdsAttribute()
     {
-        return $this->categories ? $this->categories->pluck('id')->toArray() : [];
+        return $this->categories->pluck('id')->toArray();
+    }
+
+    public function getCoverUrlAttribute()
+    {
+        return $this->cover_image
+            ? asset('storage/' . $this->cover_image)
+            : asset('images/no-cover.png'); // fallback
     }
 
     // ================= HELPER =================
+
     public function isAudio()
     {
         if (!$this->file_url) return false;
 
-        $ext = pathinfo($this->file_url, PATHINFO_EXTENSION);
-        return in_array(strtolower($ext), ['mp3', 'wav', 'ogg']);
+        $ext = strtolower(pathinfo($this->file_url, PATHINFO_EXTENSION));
+        return in_array($ext, ['mp3', 'wav', 'ogg']);
     }
 
     public function isPdf()
     {
         if (!$this->file_url) return false;
 
-        $ext = pathinfo($this->file_url, PATHINFO_EXTENSION);
-        return strtolower($ext) === 'pdf';
+        return strtolower(pathinfo($this->file_url, PATHINFO_EXTENSION)) === 'pdf';
+    }
+
+    public function isAvailable()
+    {
+        return $this->stock > 0 && $this->active;
     }
 
     // ================= SCOPES =================
+
     public function scopeActive($query)
     {
         return $query->where('active', true);
     }
 
-    public function orderDetails()
+    public function scopeAvailable($query)
     {
-        return $this->hasMany(OrderDetail::class);
+        return $query->where('stock', '>', 0)->where('active', true);
+    }
+
+    public function scopeMenu($query, $menu)
+    {
+        return $query->where('menu_type', $menu);
     }
 }
