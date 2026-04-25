@@ -13,26 +13,74 @@ class News extends Model
 
     protected $fillable = [
         'title',
+        'excerpt',
         'content',
         'image',
-        'status',       
+        'category',
+        'is_featured',
+        'button_text',
+        'button_action',
+        'order',
+        'status',
+        'active',
         'created_by',
         'updated_by',
     ];
 
+    protected $casts = [
+        'is_featured' => 'boolean',
+        'active'      => 'boolean',
+    ];
+
+    // ================= SCOPE UTAMA =================
+
     /**
-     * Scope: hanya berita publish
+     * hanya berita yang tampil di publik
      */
     public function scopePublished($query)
     {
-        return $query->where('status', 'publish');
+        return $query->where('status', 'publish')
+                     ->where('active', true);
     }
 
     /**
-     * Scope: hanya draft
+     * filter kategori (aman + fleksibel)
      */
-    public function scopeDraft($query)
+    public function scopeOfCategory($query, $category = null)
     {
-        return $query->where('status', 'draft');
+        if ($category && $category !== 'all') {
+            return $query->where('category', $category);
+        }
+
+        return $query;
+    }
+
+    /**
+     * featured news
+     */
+    public function scopeFeatured($query)
+    {
+        return $query->where('is_featured', true);
+    }
+
+    /**
+     * urutan tampilan
+     */
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('order', 'asc')
+                     ->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * search (judul + ringkasan + isi)
+     */
+    public function scopeSearch($query, $keyword)
+    {
+        return $query->where(function ($q) use ($keyword) {
+            $q->where('title', 'like', "%{$keyword}%")
+              ->orWhere('excerpt', 'like', "%{$keyword}%")
+              ->orWhere('content', 'like', "%{$keyword}%");
+        });
     }
 }

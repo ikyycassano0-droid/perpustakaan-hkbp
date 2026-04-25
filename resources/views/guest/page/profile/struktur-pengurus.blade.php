@@ -156,213 +156,148 @@
 @section('content')
 <div class="main-content">
 
-    <!-- HERO SECTION -->
-    <section class="pt-28 pb-12 text-center px-5">
-        <div class="inline-block glass-card px-5 py-1.5 rounded-full mb-5 fade-up">
-            <span class="text-indigo-300 text-sm font-medium tracking-wide">👥 STRUKTUR ORGANISASI</span>
-        </div>
-        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight title-main fade-up">
-            Kepemimpinan & Dedikasi
-        </h1>
-        <h2 class="text-2xl md:text-3xl text-indigo-400 font-bold mt-3 fade-up">
-            Akademik
-        </h2>
-        <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
-            Membangun ekosistem literasi berkualitas yang unggul melalui tata kelola perpustakaan profesional.
-        </p>
-    </section>
+```
+<!-- HERO SECTION -->
+<section class="pt-28 pb-12 text-center px-5">
+    <div class="inline-block glass-card px-5 py-1.5 rounded-full mb-5 fade-up">
+        <span class="text-indigo-300 text-sm font-medium tracking-wide">👥 STRUKTUR ORGANISASI</span>
+    </div>
+    <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight title-main fade-up">
+        Kepemimpinan & Dedikasi
+    </h1>
+    <h2 class="text-2xl md:text-3xl text-indigo-400 font-bold mt-3 fade-up">
+        Akademik
+    </h2>
+    <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
+        Membangun ekosistem literasi berkualitas yang unggul melalui tata kelola perpustakaan profesional.
+    </p>
+</section>
 
-    <!-- STATISTIK SECTION -->
-    <section class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-5 px-5 max-w-5xl mx-auto">
-        <div class="stat-card p-5 rounded-xl text-center hover-card fade-up">
-            <div class="stat-number">12</div>
-            <p class="text-gray-400 text-sm mt-1">Staff Ahli</p>
-        </div>
-        <div class="stat-card p-5 rounded-xl text-center hover-card fade-up">
-            <div class="stat-number">45K+</div>
-            <p class="text-gray-400 text-sm mt-1">Koleksi Digital</p>
-        </div>
-        <div class="stat-card p-5 rounded-xl text-center hover-card fade-up">
-            <div class="stat-number">A</div>
-            <p class="text-gray-400 text-sm mt-1">Akreditasi</p>
-        </div>
-        <div class="stat-card p-5 rounded-xl text-center hover-card fade-up">
-            <div class="stat-number">15</div>
-            <p class="text-gray-400 text-sm mt-1">Tahun Pengabdian</p>
-        </div>
-    </section>
+<!-- ================= DATA FILTER ================= -->
+@php
+    $direktur = $struktur->where('jabatan', 'Direktur')->first();
+    $kepala   = $struktur->where('jabatan', 'Kepala Perpustakaan')->first();
+    $staff    = $struktur->whereNotIn('jabatan', ['Direktur','Kepala Perpustakaan']);
+@endphp
 
-    <!-- DIREKTUR SECTION -->
-    <section class="mt-20 text-center px-5">
-        <div class="profile-card inline-block w-[320px] mx-auto fade-up">
-            <div class="p-6">
-                <div class="w-28 h-28 rounded-xl mx-auto mb-4 bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-4xl shadow-lg">
-                    👩‍⚕️
-                </div>
-                <h3 class="font-bold text-xl text-white">Ns. Jane Doe, M.Kep</h3>
-                <p class="text-indigo-300 text-sm mt-1">Direktur AKPER HKBP Balige</p>
-                <div class="mt-3 text-xs text-gray-400">📧 direktur@akperhkpb.ac.id</div>
-            </div>
-        </div>
-        <div class="line mt-6"></div>
-    </section>
+<!-- DIREKTUR -->
+<section class="mt-20 text-center px-5">
+    @if($direktur)
+    <div class="profile-card inline-block w-[320px] mx-auto fade-up">
+        <div class="p-6">
 
-    <!-- KEPALA PERPUSTAKAAN SECTION -->
-    <section class="mt-8 text-center px-5">
-        <div class="profile-card inline-block w-[320px] mx-auto fade-up">
-            <div class="p-6">
-                <div class="w-24 h-24 rounded-lg mx-auto mb-4 bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-3xl shadow-lg">
-                    📚
-                </div>
-                <h3 class="font-semibold text-xl text-white">Bpk. Robert Simanjuntak</h3>
-                <p class="text-indigo-300 text-sm mt-1">Kepala Perpustakaan</p>
-                <div class="mt-3 text-xs text-gray-400">📞 (0632) 12345</div>
-            </div>
-        </div>
-        <div class="line mt-6"></div>
-    </section>
-
-    <!-- STAFF GRID (3 kolom) -->
-    <section class="mt-12 px-5">
-        <div class="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto">
-            <div class="profile-card p-4 rounded-xl flex items-center gap-4 fade-up">
-                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-md">SN</div>
-                <div>
-                    <h4 class="font-semibold text-white">Sri Nurhaliza</h4>
-                    <p class="text-gray-400 text-sm">Pengolahan & Arsip</p>
-                </div>
-            </div>
-            <div class="profile-card p-4 rounded-xl flex items-center gap-4 fade-up">
-                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-md">BS</div>
-                <div>
-                    <h4 class="font-semibold text-white">Budi Santoso</h4>
-                    <p class="text-gray-400 text-sm">Sirkulasi</p>
-                </div>
-            </div>
-            <div class="profile-card p-4 rounded-xl flex items-center gap-4 fade-up">
-                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-md">DA</div>
-                <div>
-                    <h4 class="font-semibold text-white">Dedi Ardiansyah</h4>
-                    <p class="text-gray-400 text-sm">IT Perpustakaan</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- TIMELINE STRUKTUR -->
-    <section class="mt-28 px-5">
-        <div class="text-center mb-12">
-            <div class="inline-flex items-center gap-2 glass-card px-4 py-2 rounded-full mb-3">
-                <span class="text-indigo-400 text-sm">📋</span>
-                <span class="text-indigo-300 text-sm font-medium">Hierarki Organisasi</span>
-            </div>
-            <h3 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">
-                Struktur Kepemimpinan
-            </h3>
-        </div>
-
-        <div class="max-w-4xl mx-auto relative">
-            <!-- GARIS TENGAH VERTIKAL -->
-            <div class="absolute left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-indigo-500/40 via-indigo-400/20 to-transparent hidden md:block"></div>
-
-            <!-- ITEM 1 - DIREKTUR (kiri) -->
-            <div class="mb-16 flex flex-col md:flex-row items-center justify-start fade-up">
-                <div class="md:w-1/2 md:pr-10 text-center md:text-right mb-4 md:mb-0">
-                    <div class="profile-card p-5 rounded-xl inline-block">
-                        <div class="flex items-center gap-3">
-                            <div class="text-2xl">👑</div>
-                            <div>
-                                <h4 class="text-indigo-400 font-bold">Direktur</h4>
-                                <p class="text-gray-400 text-sm">Memimpin seluruh kebijakan akademik</p>
-                            </div>
-                        </div>
+            <div class="w-28 h-28 rounded-xl mx-auto mb-4 overflow-hidden shadow-lg">
+                @if($direktur->image)
+                    <img src="{{ asset('storage/'.$direktur->image) }}" class="w-full h-full object-cover">
+                @else
+                    <div class="avatar-placeholder w-full h-full text-4xl">
+                        {{ strtoupper(substr($direktur->title,0,1)) }}
                     </div>
-                </div>
-                <div class="timeline-dot relative z-10 mx-4">👑</div>
-                <div class="md:w-1/2"></div>
+                @endif
             </div>
 
-            <!-- ITEM 2 - KEPALA PERPUSTAKAAN (kanan) -->
-            <div class="mb-16 flex flex-col md:flex-row items-center justify-end fade-up">
-                <div class="md:w-1/2"></div>
-                <div class="timeline-dot relative z-10 mx-4">📚</div>
-                <div class="md:w-1/2 md:pl-10 text-center md:text-left mt-4 md:mt-0">
-                    <div class="profile-card p-5 rounded-xl inline-block">
-                        <div class="flex items-center gap-3">
-                            <div class="text-2xl">📚</div>
-                            <div>
-                                <h4 class="text-indigo-400 font-bold">Kepala Perpustakaan</h4>
-                                <p class="text-gray-400 text-sm">Mengelola operasional layanan perpustakaan</p>
-                            </div>
-                        </div>
+            <h3 class="font-bold text-xl text-white">{{ $direktur->title }}</h3>
+            <p class="text-indigo-300 text-sm mt-1">{{ $direktur->jabatan }}</p>
+
+        </div>
+    </div>
+    @endif
+    <div class="line mt-6"></div>
+</section>
+
+<!-- KEPALA -->
+<section class="mt-8 text-center px-5">
+    @if($kepala)
+    <div class="profile-card inline-block w-[320px] mx-auto fade-up">
+        <div class="p-6">
+
+            <div class="w-24 h-24 rounded-lg mx-auto mb-4 overflow-hidden shadow-lg">
+                @if($kepala->image)
+                    <img src="{{ asset('storage/'.$kepala->image) }}" class="w-full h-full object-cover">
+                @else
+                    <div class="avatar-placeholder w-full h-full text-3xl">
+                        {{ strtoupper(substr($kepala->title,0,1)) }}
                     </div>
-                </div>
+                @endif
             </div>
 
-            <!-- ITEM 3 - LAYANAN TEKNIS (kiri) -->
-            <div class="mb-16 flex flex-col md:flex-row items-center justify-start fade-up">
-                <div class="md:w-1/2 md:pr-10 text-center md:text-right mb-4 md:mb-0">
-                    <div class="profile-card p-5 rounded-xl inline-block">
-                        <div class="flex items-center gap-3">
-                            <div class="text-2xl">⚙️</div>
-                            <div>
-                                <h4 class="text-indigo-400 font-bold">Layanan Teknis</h4>
-                                <p class="text-gray-400 text-sm">Pengolahan & klasifikasi koleksi</p>
-                            </div>
-                        </div>
+            <h3 class="font-semibold text-xl text-white">{{ $kepala->title }}</h3>
+            <p class="text-indigo-300 text-sm mt-1">{{ $kepala->jabatan }}</p>
+
+        </div>
+    </div>
+    @endif
+    <div class="line mt-6"></div>
+</section>
+
+<!-- STAFF GRID -->
+<section class="mt-12 px-5">
+    <div class="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto">
+
+        @foreach($staff as $item)
+        <div class="profile-card p-4 rounded-xl flex items-center gap-4 fade-up">
+
+            <div class="w-12 h-12 rounded-lg overflow-hidden shadow-md">
+                @if($item->image)
+                    <img src="{{ asset('storage/'.$item->image) }}" class="w-full h-full object-cover">
+                @else
+                    <div class="avatar-placeholder w-full h-full">
+                        {{ strtoupper(substr($item->title,0,2)) }}
                     </div>
-                </div>
-                <div class="timeline-dot relative z-10 mx-4">⚙️</div>
-                <div class="md:w-1/2"></div>
+                @endif
             </div>
+
+            <div>
+                <h4 class="font-semibold text-white">{{ $item->title }}</h4>
+                <p class="text-gray-400 text-sm">{{ $item->jabatan }}</p>
+            </div>
+
         </div>
-    </section>
+        @endforeach
 
-    <!-- TIM PERPUSTAKAAN GRID 4 KOLOM -->
-    <section class="mt-20 mb-24 px-5">
-        <div class="text-center mb-12">
-            <div class="inline-flex items-center gap-2 glass-card px-4 py-2 rounded-full mb-3">
-                <span class="text-indigo-400 text-sm">👥</span>
-                <span class="text-indigo-300 text-sm font-medium">Pengurus Harian</span>
-            </div>
-            <h3 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">
-                Tim Perpustakaan
-            </h3>
+    </div>
+</section>
+
+<!-- TIM GRID -->
+<section class="mt-20 mb-24 px-5">
+    <div class="text-center mb-12">
+        <div class="inline-flex items-center gap-2 glass-card px-4 py-2 rounded-full mb-3">
+            <span class="text-indigo-400 text-sm">👥</span>
+            <span class="text-indigo-300 text-sm font-medium">Pengurus Harian</span>
         </div>
+        <h3 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">
+            Tim Perpustakaan
+        </h3>
+    </div>
 
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            <!-- Card 1 -->
-            <div class="profile-card p-5 rounded-xl text-center fade-up">
-                <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-xl font-bold text-white shadow-lg">SN</div>
-                <h4 class="font-semibold text-white">Sri Nurlailah</h4>
-                <p class="text-indigo-300 text-sm">Pengolahan Koleksi</p>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+
+        @foreach($staff as $item)
+        <div class="profile-card p-5 rounded-xl text-center fade-up">
+
+            <div class="w-16 h-16 mx-auto mb-3 rounded-full overflow-hidden shadow-lg">
+                @if($item->image)
+                    <img src="{{ asset('storage/'.$item->image) }}" class="w-full h-full object-cover">
+                @else
+                    <div class="avatar-placeholder w-full h-full">
+                        {{ strtoupper(substr($item->title,0,2)) }}
+                    </div>
+                @endif
             </div>
 
-            <!-- Card 2 -->
-            <div class="profile-card p-5 rounded-xl text-center fade-up">
-                <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-xl font-bold text-white shadow-lg">BS</div>
-                <h4 class="font-semibold text-white">Budi Santoso</h4>
-                <p class="text-indigo-300 text-sm">Sirkulasi</p>
-            </div>
+            <h4 class="font-semibold text-white">{{ $item->title }}</h4>
+            <p class="text-indigo-300 text-sm">{{ $item->jabatan }}</p>
 
-            <!-- Card 3 -->
-            <div class="profile-card p-5 rounded-xl text-center fade-up">
-                <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-xl font-bold text-white shadow-lg">DA</div>
-                <h4 class="font-semibold text-white">Dedi Arisandi</h4>
-                <p class="text-indigo-300 text-sm">IT Perpustakaan</p>
-            </div>
-
-            <!-- Card 4 -->
-            <div class="profile-card p-5 rounded-xl text-center fade-up">
-                <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-xl font-bold text-white shadow-lg">HW</div>
-                <h4 class="font-semibold text-white">Hendra Wijaya</h4>
-                <p class="text-indigo-300 text-sm">Support & Maintenance</p>
-            </div>
         </div>
-    </section>
+        @endforeach
+
+    </div>
+</section>
+
 
 </div>
 @endsection
+
 
 @push('scripts')
 <script>

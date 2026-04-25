@@ -14,74 +14,103 @@ class ClassificationController extends Controller
         return view('admin.page.classification', compact('data'));
     }
 
-    // ================= STORE BIASA =================
+    // ================= STORE (NORMAL) =================
     public function store(Request $request)
-{
-    $request->validate([
-        'name' => 'required'
-    ]);
+    {
+        $request->validate([
+            'name' => 'required|unique:classifications,name',
+            'description' => 'nullable|string'
+        ]);
 
-    Classification::create([
-        'name' => $request->name,
-        'code' => strtoupper(substr($request->name, 0, 3)) . rand(100,999)
-    ]);
+        $code = 'CLS-' . strtoupper(substr($request->name, 0, 3)) . time();
 
-    return back()->with('success', 'Classification berhasil ditambahkan');
-}
+        Classification::create([
+            'name' => $request->name,
+            'code' => $code,
+        ]);
+
+        return back()->with('success', 'Classification berhasil ditambahkan');
+    }
 
     // ================= STORE AJAX =================
-   public function storeAjax(Request $request)
-{
-    
-    $request->validate([
-        'name' => 'required'
-    ]);
+    public function storeAjax(Request $request)
+    {
+        try {
 
-    $data = Classification::create([
-        'name' => $request->name,
-        'code' => strtoupper(substr($request->name, 0, 3)) . rand(100,999)
-    ]);
+            $request->validate([
+                'name' => 'required|unique:classifications,name',
+            ]);
 
-    return response()->json($data);
-}
+            $data = Classification::create([
+                'name' => $request->name,
+
+                // aman & tidak akan duplicate
+                'code' => 'CLS-' . strtoupper(substr($request->name, 0, 3)) . '-' . time(),
+            ]);
+
+            return response()->json([
+                'id' => $data->id,
+                'name' => $data->name
+            ]);
+
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 
     // ================= UPDATE =================
     public function update(Request $request, Classification $classification)
     {
         $request->validate([
-            'name' => 'required'
+            'name' => 'required|unique:classifications,name,' . $classification->id,
+            'description' => 'nullable|string'
         ]);
 
         $classification->update([
-            'name' => $request->name
+            'name' => $request->name,
         ]);
 
         return back()->with('success', 'Classification berhasil diupdate');
     }
 
+    // ================= TOGGLE ACTIVE (DIHAPUS FIELDNYA) =================
+    public function toggle(Classification $classification)
+    {
+        // karena tidak ada field active di DB, kita skip logic ini
+        return back()->with('error', 'Field active tidak tersedia di database');
+    }
+
     // ================= DESTROY =================
     public function destroy(Classification $classification)
     {
-        // 🔥 detach pivot dulu supaya tidak error di many-to-many
-        $classification->collections()->detach();
+        // aman kalau relasi tidak ada data
+        if (method_exists($classification, 'collections')) {
+            $classification->collections()->detach();
+        }
 
         $classification->delete();
 
         return back()->with('success', 'Classification berhasil dihapus');
     }
 
-    // ================= DELETE LAST =================
+    // ================= DELETE LAST (AJAX) =================
     public function deleteLast()
     {
-        $data = Classification::latest()->first();
+        $last = Classification::latest()->first();
 
-        if ($data) {
-            $data->collections()->detach();
-            $data->delete();
+        if (!$last) {
+            return response()->json(['message' => 'empty'], 404);
         }
 
+        $id = $last->id;
+
+        $last->delete();
+
         return response()->json([
-            'success' => true
+            'id' => $id
         ]);
     }
 }

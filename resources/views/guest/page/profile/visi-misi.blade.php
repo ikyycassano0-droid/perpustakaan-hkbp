@@ -127,7 +127,7 @@
 @section('content')
 <div class="main-content">
 
-    <!-- HERO SECTION VISI MISI -->
+    <!-- HERO -->
     <section class="pt-28 pb-10 text-center px-5 md:pt-32">
         <div class="inline-block hero-badge px-5 py-1.5 rounded-full mb-5 fade-up">
             <span class="text-indigo-300 text-sm font-medium tracking-wide">✨ AKPER HKBP BALIGE</span>
@@ -140,7 +140,7 @@
         </p>
     </section>
 
-    <!-- ABOUT SECTION -->
+    <!-- ABOUT (STATIC - TIDAK DIUBAH) -->
     <section class="section max-w-6xl mx-auto px-5">
         <div class="neon-border fade-up">
             <div class="neon-inner">
@@ -150,16 +150,20 @@
                         Tentang AKPER HKBP
                     </h2>
                 </div>
+                @if($about)
                 <p class="text-gray-300 text-sm md:text-lg leading-relaxed">
-                    Akademi Keperawatan HKBP Balige merupakan institusi pendidikan yang berkomitmen dalam mencetak tenaga kesehatan profesional 
-                    yang unggul, beretika, dan siap menghadapi tantangan global. Perpustakaan menjadi pusat informasi dan pembelajaran yang 
-                    mendukung kegiatan akademik secara optimal, dengan mengintegrasikan teknologi modern dan koleksi pengetahuan terkini.
+                    {{ $about->description }}
                 </p>
+                @else
+                <p class="text-gray-500 italic">
+                    Konten belum tersedia
+                </p>
+                @endif
             </div>
         </div>
     </section>
 
-    <!-- VISI SECTION -->
+    <!-- VISI (DINAMIS) -->
     <section class="section max-w-6xl mx-auto px-5">
         <div class="neon-border fade-up">
             <div class="neon-inner">
@@ -169,15 +173,15 @@
                         Visi
                     </h2>
                 </div>
+
                 <p class="text-gray-300 text-sm md:text-lg leading-relaxed italic border-l-4 border-indigo-500 pl-4 md:pl-5">
-                    "Menjadi perpustakaan akademi keperawatan yang unggul, modern, berbasis teknologi serta mampu mendukung pendidikan, 
-                    penelitian dan pengabdian masyarakat secara berkelanjutan."
+                    "{{ $visi->description ?? 'Visi belum tersedia' }}"
                 </p>
             </div>
         </div>
     </section>
 
-    <!-- MISI SECTION -->
+    <!-- MISI (DINAMIS LOOP) -->
     <section class="section max-w-6xl mx-auto px-5 mt-8 mb-16">
         <div class="text-center mb-10 md:mb-12">
             <div class="inline-flex items-center gap-2 hero-badge px-4 py-2 rounded-full mb-4 fade-up">
@@ -193,71 +197,38 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
-            
-            <!-- MISI CARD 1 -->
-            <div class="misi-card-clean fade-up">
-                <div class="misi-img-wrapper">
-                    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&h=450&fit=crop" 
-                        alt="Koleksi Buku" 
-                        class="misi-img"
-                        loading="lazy">
-                </div>
-                <div class="misi-text-area">
-                    <h3>📚 Koleksi Berkualitas</h3>
-                    <p>Menyediakan sumber belajar terbaik, jurnal ilmiah, dan referensi keperawatan mutakhir yang mendukung kurikulum berbasis riset dan evidence-based practice.</p>
-                </div>
-            </div>
 
-            <!-- MISI CARD 2 -->
+            @forelse($misi as $item)
             <div class="misi-card-clean fade-up">
-                <div class="misi-img-wrapper">
-                    <img src="https://images.unsplash.com/photo-1518779578993-ec3579fee39f?w=600&h=450&fit=crop" 
-                        alt="Teknologi Digital" 
-                        class="misi-img"
-                        loading="lazy">
-                </div>
-                <div class="misi-text-area">
-                    <h3>💻 Teknologi Modern</h3>
-                    <p>Mengintegrasikan akses digital cepat, e-library, basis data terintegrasi, dan layanan online 24/7 untuk mahasiswa, dosen, dan tenaga kependidikan.</p>
-                </div>
-            </div>
 
-            <!-- MISI CARD 3 -->
-            <div class="misi-card-clean fade-up">
                 <div class="misi-img-wrapper">
-                    <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=600&h=450&fit=crop" 
-                        alt="Literatur Keperawatan" 
+                    <img 
+                        src="{{ $item->image ? asset('storage/'.$item->image) : 'https://placehold.co/600x450/1e293b/6366f1?text=Misi' }}"
                         class="misi-img"
                         loading="lazy">
                 </div>
-                <div class="misi-text-area">
-                    <h3>📖 Pengayaan Koleksi</h3>
-                    <p>Memperkaya koleksi cetak dan digital, termasuk jurnal internasional, database keperawatan, serta akses evidence-based nursing resources.</p>
-                </div>
-            </div>
 
-            <!-- MISI CARD 4 -->
-            <div class="misi-card-clean fade-up">
-                <div class="misi-img-wrapper">
-                    <img src="https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=600&h=450&fit=crop" 
-                        alt="Inovasi Digital" 
-                        class="misi-img"
-                        loading="lazy">
-                </div>
                 <div class="misi-text-area">
-                    <h3>🚀 Inovasi Berkelanjutan</h3>
-                    <p>Mengembangkan layanan mandiri, sistem rekomendasi bacaan berbasis AI, dan kolaborasi dengan institusi kesehatan nasional & internasional.</p>
+                    <h3>{{ $item->title }}</h3>
+                    <p>{{ $item->description }}</p>
                 </div>
+
             </div>
+            @empty
+                <p class="text-center text-gray-400 col-span-4">
+                    Data misi belum tersedia
+                </p>
+            @endforelse
+
         </div>
     </section>
 
-    <!-- FOOTER QUOTE -->
+    <!-- FOOTER -->
     <section class="pb-16 md:pb-20 text-center px-5">
         <div class="inline-block px-5 md:px-8 py-4 md:py-5 rounded-full max-w-2xl mx-auto fade-up" 
              style="background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.1)); border-left: 3px solid #6366f1;">
             <p class="text-indigo-200 text-xs md:text-base">
-                📌 "Melayani dengan Kasih, Mendidik dengan Presisi Klinis" — AKPER HKBP Balige
+                📌 "Melayani dengan Kasih, Mendidik dengan Presisi Klinis"
             </p>
         </div>
     </section>

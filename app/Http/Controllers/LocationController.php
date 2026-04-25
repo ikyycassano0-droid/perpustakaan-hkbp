@@ -7,76 +7,105 @@ use Illuminate\Http\Request;
 
 class LocationController extends Controller
 {
+    // ================= INDEX =================
     public function index()
     {
-        $data = Location::latest()->get();
-        return view('admin.page.location', compact('data'));
+        $locations = Location::latest()->get();
+
+        return view('admin.page.location', compact('locations'));
     }
 
+    // ================= STORE =================
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required'
+            'name' => 'required|string|max:255|unique:locations,name',
+            'code' => 'nullable|string|max:50|unique:locations,code'
         ]);
 
         Location::create([
-            'name' => $request->name
+            'name' => $request->name,
+            'code' => $request->code ?? strtoupper(substr($request->name, 0, 3)) . rand(100,999),
         ]);
 
         return back()->with('success', 'Location berhasil ditambahkan');
     }
 
-    // AJAX
+    // ================= STORE AJAX =================
     public function storeAjax(Request $request)
-{
-    $request->validate([
-        'name' => 'required',
-        'code' => 'nullable' 
-    ]);
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
 
-    $data = Location::create([
-        'name' => $request->name,
-        'code' => null // 🔥 WAJIB biar tidak error SQL
-    ]);
+        $location = Location::create([
+            'name' => $request->name,
+            'code' => strtoupper(substr($request->name, 0, 3)) . rand(100,999),
+        ]);
 
-    return response()->json([
-        'success' => true,
-        'id' => $data->id,
-        'name' => $data->name
-    ]);
-}
+        return response()->json([
+            'id' => $location->id,
+            'name' => $location->name
+        ]);
+    }
 
+    // ================= UPDATE =================
     public function update(Request $request, Location $location)
     {
         $request->validate([
-            'name' => 'required'
+            'name' => 'required|string|max:255|unique:locations,name,' . $location->id,
+            'code' => 'nullable|string|max:50|unique:locations,code,' . $location->id,
         ]);
 
         $location->update([
-            'name' => $request->name
+            'name' => $request->name,
+            'code' => $request->code ?? $location->code,
         ]);
 
         return back()->with('success', 'Location berhasil diupdate');
     }
 
+    // ================= DELETE =================
     public function destroy(Location $location)
     {
+        // CEK RELASI
+        if ($location->collections()->count() > 0) {
+            return back()->with('error', 'Location masih digunakan oleh koleksi');
+        }
+
         $location->delete();
 
         return back()->with('success', 'Location berhasil dihapus');
     }
 
-    // DELETE LAST
+    // ================= DELETE LAST (AJAX) =================
     public function deleteLast()
     {
-        $data = Location::latest()->first();
+        $location = Location::latest()->first();
 
-        if ($data) {
-            $data->delete();
+        if (!$location) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data kosong'
+            ], 404);
         }
 
+        // optional safety check (biar sama seperti destroy)
+        if ($location->collections()->count() > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Location masih digunakan'
+            ], 400);
+        }
+
+        $id = $location->id;
+
+        $location->delete();
+
         return response()->json([
-            'success' => true
+            'success' => true,
+            'id' => $id,
+            'name' => $location->name
         ]);
     }
-}
+}   

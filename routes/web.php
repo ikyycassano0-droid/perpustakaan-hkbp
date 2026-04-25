@@ -67,22 +67,23 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
 
     });
 
+    // ================= PROFILE (🔥 SUDAH DINAMIS TYPE) =================
     Route::prefix('profile')->name('profile.')->group(function () {
 
         Route::get('/', [ProfileController::class, 'index'])->name('index');
-        Route::get('/create', [ProfileController::class, 'create'])->name('create');
         Route::post('/', [ProfileController::class, 'store'])->name('store');
-        Route::get('/{id}/edit', [ProfileController::class, 'edit'])->name('edit');
         Route::put('/{id}', [ProfileController::class, 'update'])->name('update');
         Route::delete('/{id}', [ProfileController::class, 'destroy'])->name('destroy');
     });
 
-    Route::prefix('berita')->name('berita.')->group(function () {
-        Route::get('/', [NewsController::class,'index_admin'])->name('index');
-        Route::post('/', [NewsController::class,'store'])->name('store');
-        Route::put('/{news}', [NewsController::class,'update'])->name('update');
-        Route::delete('/{news}', [NewsController::class,'destroy'])->name('destroy');
 
+    // ================= BERITA =================
+    // ================= BERITA =================
+    Route::prefix('berita')->name('berita.')->group(function () {
+        Route::get('/', [NewsController::class, 'index_admin'])->name('index');
+        Route::post('/store', [NewsController::class, 'store'])->name('store');
+        Route::put('/{news}', [NewsController::class, 'update'])->name('update');
+        Route::delete('/{news}', [NewsController::class, 'destroy'])->name('destroy');
     });
 
     // ================= COLLECTION =================
@@ -221,6 +222,20 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
         Route::get('/struktur', [ProfileController::class, 'showStrukturMahasiswa'])
             ->name('struktur');
 
+        Route::get('/kerjasama', [ProfileController::class, 'showKerjasamaMahasiswa'])->name('kerjasama');
+
+    });
+
+        // ================= BERITA =================
+    Route::prefix('berita')->group(function () {
+
+        // LIST BERITA USER
+        Route::get('/', [NewsController::class, 'indexUser'])
+            ->name('user.berita');
+
+        // DETAIL BERITA USER
+        Route::get('/{id}', [NewsController::class, 'showUser'])
+            ->name('user.berita.show');
     });
 
     // ================= KOLEKSI TERCETAK =================
@@ -242,6 +257,8 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
             ->name('user.koleksi.majalah')
             ->defaults('menu_type', 'majalah');
     });
+    Route::get('/collection/{id}', [CollectionController::class, 'show'])
+    ->name('collection.show');
 });
 
     Route::prefix('final-project')->name('final_project.')->group(function() {
@@ -257,7 +274,7 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
         ->where('category','ebook|e-article|cd|video');
 });
 
-        Route::get('/download/{id}', [FinalProjectController::class, 'download'])
+    Route::get('/download/{id}', [FinalProjectController::class, 'download'])
     ->name('final_project.download')
     ->middleware('auth');
 //Guest
@@ -272,16 +289,35 @@ Route::middleware(['web'])->group(function () {
 
     Route::get('/visi-misi', [ProfileController::class, 'showVisiMisi'])
         ->name('guest.page.profile.visi-misi'); // path tetap
+    Route::prefix('profile')->name('guest.profile.')->group(function () {
 
-    Route::get('/tugas-fungsi', [ProfileController::class, 'showTugasFungsi'])
-        ->name('guest.page.profile.tugas-fungsi'); // path tetap
+        Route::get('/visi-misi', [ProfileController::class, 'showVisiMisi'])
+            ->name('visi-misi');
 
-    Route::get('/struktur', [ProfileController::class, 'showStruktur'])
-        ->name('guest.page.profile.struktur pengurus'); // path tetap
-    Route::get('/berita', [NewsController::class,'index'])
-    ->name('guest.berita.index');
-    Route::get('/berita/{id}', [NewsController::class, 'show'])
-    ->name('guest.berita.show');
+        Route::get('/tugas-fungsi', [ProfileController::class, 'showTugasFungsi'])
+            ->name('tugas-fungsi');
+
+        Route::get('/struktur', [ProfileController::class, 'showStruktur'])
+            ->name('struktur');
+
+        Route::get('/kerjasama', [ProfileController::class, 'showKerjasama'])
+            ->name('kerjasama');
+
+    });
+
+// ================= BERITA (FIX FINAL) =================
+    Route::prefix('berita')->name('guest.berita.')->group(function () {
+
+        // LIST
+        Route::get('/', [NewsController::class, 'index'])
+            ->name('index');
+
+        // DETAIL (slug OR id aman)
+        Route::get('/{identifier}', [NewsController::class, 'show'])
+            ->where('identifier', '[0-9a-zA-Z\-]+')
+            ->name('show');
+    });
+
     Route::get('/koleksi/{category}', [FinalProjectController::class, 'index']);
 
     Route::get('/layanan/{category}', [ArchiveController::class, 'indexLayananGuest'])

@@ -223,157 +223,153 @@
 @endpush
 
 @section('content')
+
 <div class="main-content">
 
-    <!-- HERO SECTION - TUGAS POKOK -->
-    <section class="pt-28 pb-12 px-5">
-        <div class="text-center">
-            <div class="inline-block glass-card px-5 py-1.5 rounded-full mb-5 fade-up">
-                <span class="text-indigo-300 text-sm font-medium tracking-wide">📋 TUGAS & FUNGSI</span>
+```
+<!-- ================= HERO - TUGAS ================= -->
+<section class="pt-28 pb-12 px-5">
+    <div class="text-center">
+        <div class="inline-block glass-card px-5 py-1.5 rounded-full mb-5 fade-up">
+            <span class="text-indigo-300 text-sm font-medium tracking-wide">📋 TUGAS & FUNGSI</span>
+        </div>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight title-main fade-up">
+            Tugas Pokok
+        </h1>
+        <div class="line"></div>
+    </div>
+
+    <div class="max-w-4xl mx-auto mt-12 space-y-5">
+
+        @forelse($tugas as $item)
+        <div class="card-rectangle fade-up">
+            <div class="icon">
+                {!! $item->icon ?? '📚' !!}
             </div>
-            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight title-main fade-up">
-                Tugas Pokok
-            </h1>
-            <div class="line"></div>
-            <p class="text-gray-400 max-w-xl mx-auto fade-up">
-                Mendukung kegiatan akademik melalui pengelolaan koleksi, layanan informasi, serta akses sumber belajar modern.
+            <div>
+                <h3 class="font-semibold mb-1 text-lg text-white">
+                    {{ $item->title }}
+                </h3>
+                <p class="text-gray-400 text-sm">
+                    {{ $item->description }}
+                </p>
+            </div>
+        </div>
+        @empty
+        <p class="text-center text-gray-400">Belum ada data tugas.</p>
+        @endforelse
+
+    </div>
+</section>
+
+<!-- ================= FUNGSI ================= -->
+<section class="py-20 px-5">
+    <div class="text-center mb-12">
+        <div class="inline-flex items-center gap-2 glass-card px-4 py-2 rounded-full mb-3 fade-up">
+            <span class="text-indigo-400 text-sm">🎯</span>
+            <span class="text-indigo-300 text-sm font-medium">Peran Strategis</span>
+        </div>
+        <h2 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent fade-up">
+            Fungsi Strategis
+        </h2>
+        <div class="line"></div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+
+        @forelse($fungsi as $item)
+        <div class="misi-card-new fade-up">
+            <div class="icon mx-auto">
+                {!! $item->icon ?? '🎓' !!}
+            </div>
+            <h3 class="font-semibold mt-3 text-white">
+                {{ $item->title }}
+            </h3>
+            <p class="text-gray-400 text-xs mt-2">
+                {{ $item->description }}
             </p>
         </div>
+        @empty
+        <p class="text-center text-gray-400 col-span-4">Belum ada data fungsi.</p>
+        @endforelse
 
-        <div class="max-w-4xl mx-auto mt-12 space-y-5">
-            <!-- Card 1 -->
-            <div class="card-rectangle fade-up">
-                <div class="icon">📚</div>
-                <div>
-                    <h3 class="font-semibold mb-1 text-lg text-white">Pengembangan Koleksi</h3>
-                    <p class="text-gray-400 text-sm">Menyediakan buku, jurnal, dan referensi ilmiah yang relevan dengan dunia keperawatan dan perkembangan ilmu kesehatan terkini.</p>
-                </div>
-            </div>
+    </div>
+</section>
 
-            <!-- Card 2 -->
-            <div class="card-rectangle fade-up">
-                <div class="icon">🧠</div>
-                <div>
-                    <h3 class="font-semibold mb-1 text-lg text-white">Organisasi Informasi</h3>
-                    <p class="text-gray-400 text-sm">Mengelola informasi agar mudah diakses melalui sistem digital modern dengan klasifikasi yang sistematis dan terstruktur.</p>
-                </div>
-            </div>
+<!-- ================= TUJUAN ================= -->
+<section class="py-20 px-5">
+    <div class="max-w-6xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
 
-            <!-- Card 3 -->
-            <div class="card-rectangle fade-up">
-                <div class="icon">🤝</div>
-                <div>
-                    <h3 class="font-semibold mb-1 text-lg text-white">Layanan Pemustaka</h3>
-                    <p class="text-gray-400 text-sm">Memberikan layanan terbaik untuk mahasiswa dan dosen dalam akses informasi, konsultasi literasi, dan bantuan riset.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+            <!-- IMAGE -->
+            <div class="glass-card p-3 rounded-2xl img-hover soft-shadow fade-up">
+                @php
+                    $img = $tujuan->firstWhere('image', '!=', null);
+                @endphp
 
-    <!-- FUNGSI STRATEGIS SECTION -->
-    <section class="py-20 px-5">
-        <div class="text-center mb-12">
-            <div class="inline-flex items-center gap-2 glass-card px-4 py-2 rounded-full mb-3 fade-up">
-                <span class="text-indigo-400 text-sm">🎯</span>
-                <span class="text-indigo-300 text-sm font-medium">Peran Strategis</span>
-            </div>
-            <h2 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent fade-up">
-                Fungsi Strategis
-            </h2>
-            <div class="line"></div>
-            <p class="text-gray-400 max-w-xl mx-auto fade-up">
-                Perpustakaan berperan sebagai pusat ilmu pengetahuan untuk mendukung pendidikan, riset, dan literasi.
-            </p>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            <div class="misi-card-new fade-up">
-                <div class="icon mx-auto">🎓</div>
-                <h3 class="font-semibold mt-3 text-white">Edukasi</h3>
-                <p class="text-gray-400 text-xs mt-2">Mendukung proses belajar mahasiswa dengan koleksi dan fasilitas yang memadai.</p>
-            </div>
-            <div class="misi-card-new fade-up">
-                <div class="icon mx-auto">🌐</div>
-                <h3 class="font-semibold mt-3 text-white">Informasi</h3>
-                <p class="text-gray-400 text-xs mt-2">Akses informasi cepat, akurat, dan terpercaya melalui berbagai platform digital.</p>
-            </div>
-            <div class="misi-card-new fade-up">
-                <div class="icon mx-auto">🔬</div>
-                <h3 class="font-semibold mt-3 text-white">Riset</h3>
-                <p class="text-gray-400 text-xs mt-2">Mendukung penelitian akademik dengan akses jurnal dan database ilmiah.</p>
-            </div>
-            <div class="misi-card-new fade-up">
-                <div class="icon mx-auto">📖</div>
-                <h3 class="font-semibold mt-3 text-white">Rekreasi</h3>
-                <p class="text-gray-400 text-xs mt-2">Meningkatkan minat baca dan literasi melalui koleksi pengayaan.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- TUJUAN SECTION -->
-    <section class="py-20 px-5">
-        <div class="max-w-6xl mx-auto">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <!-- Image Section -->
-                <div class="glass-card p-3 rounded-2xl img-hover soft-shadow fade-up">
+                @if($img && $img->image)
+                    <img src="{{ asset('storage/'.$img->image) }}" class="rounded-xl w-full">
+                @else
                     <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&h=450&fit=crop" 
-                         alt="Perpustakaan" 
                          class="rounded-xl w-full">
-                </div>
-
-                <!-- Text Section -->
-                <div class="fade-up">
-                    <div class="inline-flex items-center gap-2 glass-card px-4 py-2 rounded-full mb-4">
-                        <span class="text-indigo-400 text-sm">🏆</span>
-                        <span class="text-indigo-300 text-sm font-medium">Target Kami</span>
-                    </div>
-                    <h2 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent mb-6">
-                        Tujuan Kami
-                    </h2>
-
-                    <div class="space-y-6">
-                        <div class="flex gap-4 items-start">
-                            <span class="number-badge">01</span>
-                            <div>
-                                <h3 class="font-semibold text-white mb-1">Literasi Modern</h3>
-                                <p class="text-gray-400 text-sm">Meningkatkan budaya literasi berbasis digital yang relevan dengan perkembangan zaman dan teknologi informasi.</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-4 items-start">
-                            <span class="number-badge">02</span>
-                            <div>
-                                <h3 class="font-semibold text-white mb-1">Transformasi Digital</h3>
-                                <p class="text-gray-400 text-sm">Mengembangkan sistem perpustakaan digital yang mudah diakses kapan saja dan dari mana saja.</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-4 items-start">
-                            <span class="number-badge">03</span>
-                            <div>
-                                <h3 class="font-semibold text-white mb-1">Budaya Riset</h3>
-                                <p class="text-gray-400 text-sm">Mendukung pengembangan penelitian mahasiswa dan dosen secara berkelanjutan melalui akses sumber daya ilmiah.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button class="btn mt-8" onclick="showNotif('Jelajahi koleksi kami di perpustakaan digital!', 'success')">
-                        Jelajahi Lebih Lanjut →
-                    </button>
-                </div>
+                @endif
             </div>
-        </div>
-    </section>
 
-    <!-- FOOTER QUOTE -->
-    <section class="pb-24 text-center px-5">
-        <div class="glass-card inline-block px-8 py-5 rounded-full max-w-2xl mx-auto fade-up">
-            <p class="text-indigo-200 text-sm md:text-base">
-                📌 "Melayani dengan Kasih, Mendidik dengan Presisi Klinis"
-            </p>
+            <!-- TEXT -->
+            <div class="fade-up">
+                <div class="inline-flex items-center gap-2 glass-card px-4 py-2 rounded-full mb-4">
+                    <span class="text-indigo-400 text-sm">🏆</span>
+                    <span class="text-indigo-300 text-sm font-medium">Target Kami</span>
+                </div>
+
+                <h2 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent mb-6">
+                    Tujuan Kami
+                </h2>
+
+                <div class="space-y-6">
+
+                    @forelse($tujuan as $index => $item)
+                    <div class="flex gap-4 items-start">
+                        <span class="number-badge">
+                            {{ str_pad($index+1, 2, '0', STR_PAD_LEFT) }}
+                        </span>
+                        <div>
+                            <h3 class="font-semibold text-white mb-1">
+                                {{ $item->title }}
+                            </h3>
+                            <p class="text-gray-400 text-sm">
+                                {{ $item->description }}
+                            </p>
+                        </div>
+                    </div>
+                    @empty
+                    <p class="text-gray-400">Belum ada data tujuan.</p>
+                    @endforelse
+
+                </div>
+
+                <button class="btn mt-8" onclick="showNotif('Jelajahi koleksi kami di perpustakaan digital!', 'success')">
+                    Jelajahi Lebih Lanjut →
+                </button>
+            </div>
+
         </div>
-    </section>
+    </div>
+</section>
+
+<!-- QUOTE -->
+<section class="pb-24 text-center px-5">
+    <div class="glass-card inline-block px-8 py-5 rounded-full max-w-2xl mx-auto fade-up">
+        <p class="text-indigo-200 text-sm md:text-base">
+            📌 "{{ $tujuan->last()->description ?? 'Melayani dengan Kasih, Mendidik dengan Presisi Klinis' }}"
+        </p>
+    </div>
+</section>
+```
 
 </div>
 @endsection
+
 
 @push('scripts')
 <script>

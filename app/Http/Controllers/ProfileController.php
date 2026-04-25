@@ -7,9 +7,16 @@ use App\Models\Profile;
 
 class ProfileController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $profiles = Profile::orderBy('key')->orderBy('sequence')->get();
+        $type = $request->type;
+
+        $profiles = Profile::when($type, function ($q) use ($type) {
+                $q->where('type', $type);
+            })
+            ->orderBy('order')
+            ->get();
+
         return view('admin.page.profile.index', compact('profiles'));
     }
 
@@ -17,111 +24,105 @@ class ProfileController extends Controller
 
     public function showVisiMisi()
     {
-        $visi = Profile::where('key', 'visi')->where('active', true)->first();
-        $misi = Profile::where('key', 'misi')->where('active', true)->orderBy('sequence')->get();
+        $visi = Profile::where('type', 'visi_misi')
+            ->where('sub_type', 'visi')
+            ->where('active', true)
+            ->first();
 
-        return view('guest.page.profile.visi-misi', compact('visi', 'misi'));
+        $misi = Profile::where('type', 'visi_misi')
+            ->where('sub_type', 'misi')
+            ->where('active', true)
+            ->orderBy('order')
+            ->get();
+
+        $about = Profile::where('type', 'visi_misi')
+            ->where('sub_type', 'about')
+            ->where('active', true)
+            ->first();
+
+        return view('guest.page.profile.visi-misi', compact('visi', 'misi', 'about'));
     }
 
     public function showTugasFungsi()
     {
-        $tugas = Profile::where('key', 'tugas')->where('active', true)->orderBy('sequence')->get();
-        $fungsi = Profile::where('key', 'fungsi')->where('active', true)->orderBy('sequence')->get();
-        $tujuan = Profile::where('key', 'tujuan')->where('active', true)->orderBy('sequence')->get();
+        $tugas = Profile::where('type', 'tugas_fungsi')
+            ->where('sub_type', 'tugas')
+            ->where('active', true)
+            ->orderBy('order')
+            ->get();
+
+        $fungsi = Profile::where('type', 'tugas_fungsi')
+            ->where('sub_type', 'fungsi')
+            ->where('active', true)
+            ->orderBy('order')
+            ->get();
+
+        $tujuan = Profile::where('type', 'tugas_fungsi')
+            ->where('sub_type', 'tujuan')
+            ->where('active', true)
+            ->orderBy('order')
+            ->get();
 
         return view('guest.page.profile.tugas-fungsi', compact('tugas', 'fungsi', 'tujuan'));
     }
 
     public function showStruktur()
     {
-        $struktur = Profile::where('key', 'struktur')
+        $struktur = Profile::where('type', 'struktur')
             ->where('active', true)
-            ->orderBy('sequence')
+            ->orderBy('order')
             ->get();
 
         return view('guest.page.profile.struktur-pengurus', compact('struktur'));
     }
 
-    // ================= Mahasiswa =================
-    public function showVisiMisiMahasiswa()
+    public function showKerjasama()
     {
-        $visi = Profile::where('key', 'visi')->where('active', true)->first();
-        $misi = Profile::where('key', 'misi')->where('active', true)->orderBy('sequence')->get();
-
-        return view('user.page.profile.visi-misi', compact('visi', 'misi'));
-    }
-
-    public function showTugasFungsiMahasiswa()
-    {
-        $tugas = Profile::where('key', 'tugas')->where('active', true)->orderBy('sequence')->get();
-        $fungsi = Profile::where('key', 'fungsi')->where('active', true)->orderBy('sequence')->get();
-        $tujuan = Profile::where('key', 'tujuan')->where('active', true)->orderBy('sequence')->get();
-
-        return view('user.page.profile.tugas-fungsi', compact('tugas', 'fungsi', 'tujuan'));
-    }
-
-    public function showStrukturMahasiswa()
-    {
-        $struktur = Profile::where('key', 'struktur')
+        $kerjasama = Profile::where('type', 'kerjasama')
             ->where('active', true)
-            ->orderBy('sequence')
+            ->orderBy('order')
             ->get();
 
-        return view('user.page.profile.struktur-pengurus', compact('struktur'));
+        return view('guest.page.profile.kerjasama', compact('kerjasama'));
     }
 
-    // ================= Dosen =================
-    public function showVisiMisiDosen()
-    {
-        $visi = Profile::where('key', 'visi')->where('active', true)->first();
-        $misi = Profile::where('key', 'misi')->where('active', true)->orderBy('sequence')->get();
-
-        return view('dosen.page.profile.visi-misi', compact('visi', 'misi'));
-    }
-
-    public function showTugasFungsiDosen()
-    {
-        $tugas = Profile::where('key', 'tugas')->where('active', true)->orderBy('sequence')->get();
-        $fungsi = Profile::where('key', 'fungsi')->where('active', true)->orderBy('sequence')->get();
-        $tujuan = Profile::where('key', 'tujuan')->where('active', true)->orderBy('sequence')->get();
-
-        return view('dosen.page.profile.tugas-fungsi', compact('tugas', 'fungsi', 'tujuan'));
-    }
-
-    public function showStrukturDosen()
-    {
-        $struktur = Profile::where('key', 'struktur')
-            ->where('active', true)
-            ->orderBy('sequence')
-            ->get();
-
-        return view('dosen.page.profile.struktur-pengurus', compact('struktur'));
-    }
-
-    // ================= ADMIN CRUD =================
+    // ================= ADMIN =================
 
     public function store(Request $request)
     {
         $request->validate([
-            'key' => 'required',
+            'type' => 'required',
+            'sub_type' => 'nullable',
             'title' => 'required',
-            'description' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'order' => 'required|integer|min:1',
         ]);
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('profiles', 'public');
+        $order = (int) $request->order;
+
+        if ($order < 1) $order = 1;
+
+        // 🔥 HANDLE NULL SUB TYPE
+        $query = Profile::where('type', $request->type);
+
+        if ($request->sub_type) {
+            $query->where('sub_type', $request->sub_type);
+        } else {
+            $query->whereNull('sub_type');
         }
 
+        // SHIFT
+        $query->where('order', '>=', $order)->increment('order');
+
         Profile::create([
-            'key'         => $request->key,
+            'type'        => $request->type,
+            'sub_type'    => $request->sub_type,
             'title'       => $request->title,
             'description' => $request->description,
-            'image'       => $imagePath,
-            'sequence'    => $request->sequence ?? 0,
+            'jabatan'     => $request->jabatan,
+            'icon'        => $request->icon,
+            'order'       => $order,
             'active'      => true,
-            'created_by'  => session('user_id'), 
+            'created_by'  => session('user_id'),
         ]);
 
         return back()->with('success', 'Data berhasil ditambahkan');
@@ -131,17 +132,35 @@ class ProfileController extends Controller
     {
         $item = Profile::findOrFail($id);
 
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('profiles', 'public');
-            $item->image = $imagePath;
-        }    
+        $request->validate([
+            'order' => 'required|integer|min:1',
+        ]);
+
+        $newOrder = (int) $request->order;
+        $oldOrder = $item->order;
+
+        if ($newOrder < 1) $newOrder = 1;
+
+        if ($newOrder != $oldOrder) {
+
+            if ($newOrder < $oldOrder) {
+                // NAIK → geser ke bawah
+                Profile::where('type', $item->type)
+                    ->where('sub_type', $item->sub_type)
+                    ->whereBetween('order', [$newOrder, $oldOrder - 1])
+                    ->increment('order');
+            } else {
+                // TURUN → geser ke atas
+                Profile::where('type', $item->type)
+                    ->where('sub_type', $item->sub_type)
+                    ->whereBetween('order', [$oldOrder + 1, $newOrder])
+                    ->decrement('order');
+            }
+        }
 
         $item->update([
-            'title'       => $request->title,
-            'description' => $request->description,
-            'sequence'    => $request->sequence,
-            'active'      => $request->has('active'),
-            'updated_by'  => session('user_id'),
+            'title' => $request->title,
+            'order' => $newOrder,
         ]);
 
         return back()->with('success', 'Data berhasil diupdate');
@@ -150,7 +169,6 @@ class ProfileController extends Controller
     public function destroy($id)
     {
         Profile::destroy($id);
-
         return back()->with('success', 'Data berhasil dihapus');
     }
 }

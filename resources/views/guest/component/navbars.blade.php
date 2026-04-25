@@ -23,16 +23,39 @@
                 <a href="{{ route('home') }}" class="px-3 py-2 block">Home</a>
             </li>
 
-            <!-- PROFILE DROPDOWN -->
+          <!-- PROFILE DROPDOWN -->
             <li class="dropdown-modern nav-item-modern">
                 <button class="flex items-center gap-1 px-3 py-2">
-                    Profile <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    Profile 
+                    <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
                 </button>
+
                 <ul class="dropdown-menu-modern">
-                    <li><a href="{{ route('guest.page.profile.visi-misi') }}" class="dropdown-item-modern">Visi Misi</a></li>
-                    <li><a href="#" class="dropdown-item-modern">Kerjasama</a></li>
-                    <li><a href="{{ route('guest.page.profile.struktur pengurus') }}" class="dropdown-item-modern">Struktur</a></li>
-                    <li><a href="{{ route('guest.page.profile.tugas-fungsi') }}" class="dropdown-item-modern">Tugas & Fungsi</a></li>
+                    <li>
+                        <a href="{{ route('guest.profile.visi-misi') }}" class="dropdown-item-modern">
+                            Visi Misi
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('guest.profile.kerjasama') }}" class="dropdown-item-modern">
+                            Kerjasama
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('guest.profile.struktur') }}" class="dropdown-item-modern">
+                            Struktur
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('guest.profile.tugas-fungsi') }}" class="dropdown-item-modern">
+                            Tugas & Fungsi
+                        </a>
+                    </li>
                 </ul>
             </li>
 

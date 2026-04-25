@@ -9,6 +9,7 @@ use App\Models\Collection;
 use App\Models\Location;
 use Carbon\Carbon;
 use App\Models\Notification;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -29,10 +30,29 @@ class OrderController extends Controller
     // ================= USER PINJAM =================
     public function store(Request $request)
     {
+        $request->validate([
+            'collection_id' => 'required|exists:collections,id',
+            'order_date' => 'required|date',
+            'return_date' => 'required|date|after:order_date',
+        ]);
+
+        if (!auth()->check()) {
+            return back()->with('error', 'Silakan login terlebih dahulu');
+        }
+
         $collection = Collection::findOrFail($request->collection_id);
 
         if ($collection->stock <= 0) {
             return back()->with('error', 'Stok buku habis');
+        }
+
+        // 🔥 BATAS PINJAM (misalnya max 3 buku aktif)
+        $activeOrders = Order::where('user_id', auth()->id())
+            ->whereIn('status', ['PENDING','APPROVED'])
+            ->count();
+
+        if ($activeOrders >= 3) {
+            return back()->with('error', 'Maksimal 3 buku aktif');
         }
 
         $start = Carbon::parse($request->order_date);
@@ -42,18 +62,23 @@ class OrderController extends Controller
             return back()->with('error', 'Maksimal peminjaman 14 hari');
         }
 
-        $order = Order::create([
-            'user_id' => auth()->id(),
-            'order_date' => $start,
-            'return_date' => $end,
-            'status' => 'PENDING'
-        ]);
+        DB::transaction(function () use ($request, $collection, $start, $end) {
 
-        OrderDetail::create([
-            'order_id' => $order->id,
-            'collection_id' => $collection->id,
-            'qty' => 1
-        ]);
+            $order = Order::create([
+                'user_id' => auth()->id(),
+                'order_date' => $start,
+                'return_date' => $end,
+                'status' => 'PENDING',
+                'fine' => 0,
+                'extension_count' => 0,
+            ]);
+
+            OrderDetail::create([
+                'order_id' => $order->id,
+                'collection_id' => $collection->id,
+                'qty' => 1
+            ]);
+        });
 
         return back()->with('success', 'Pengajuan peminjaman dikirim');
     }
@@ -61,28 +86,30 @@ class OrderController extends Controller
     // ================= ADMIN APPROVE =================
     public function approve($id)
     {
-        $order = Order::with('details.collection')->findOrFail($id);
+        DB::transaction(function () use ($id) {
 
-        foreach ($order->details as $detail) {
-            if ($detail->collection->stock < $detail->qty) {
-                return back()->with('error', 'Stok tidak cukup');
+            $order = Order::with('details.collection')->findOrFail($id);
+
+            foreach ($order->details as $detail) {
+                if ($detail->collection->stock < $detail->qty) {
+                    throw new \Exception('Stok tidak cukup');
+                }
             }
-        }
 
-        foreach ($order->details as $detail) {
-            $detail->collection->decrement('stock', $detail->qty);
+            foreach ($order->details as $detail) {
+                $detail->collection->decrement('stock', $detail->qty);
 
-            // 🔥 NOTIF PINJAM
-            $this->sendNotif(
-                $order->user_id,
-                'Peminjaman Berhasil',
-                'Anda berhasil meminjam buku "' . $detail->collection->title . '"'
-            );
-        }
+                $this->sendNotif(
+                    $order->user_id,
+                    'Peminjaman Disetujui',
+                    'Buku "' . $detail->collection->title . '" siap diambil'
+                );
+            }
 
-        $order->update([
-            'status' => 'APPROVED'
-        ]);
+            $order->update([
+                'status' => 'APPROVED'
+            ]);
+        });
 
         return back()->with('success', 'Peminjaman disetujui');
     }
@@ -91,84 +118,69 @@ class OrderController extends Controller
     public function reject($id)
     {
         $order = Order::findOrFail($id);
-        $order->update(['status' => 'REJECTED']);
+
+        $order->update([
+            'status' => 'REJECTED'
+        ]);
+
         return back()->with('success', 'Peminjaman ditolak');
-    }
-
-    // ================= HITUNG DENDA =================
-    private function calculateFine($due, $return)
-    {
-        $lateDays = Carbon::parse($due)->diffInDays($return, false);
-
-        if ($lateDays <= 0) return 0;
-
-        if ($lateDays <= 3) return $lateDays * 1000;
-        if ($lateDays <= 7) return $lateDays * 2000;
-        return $lateDays * 5000;
     }
 
     // ================= RETURN =================
     public function returnBook($id)
     {
-        $order = Order::with('details.collection')->findOrFail($id);
-        $today = now();
-        $fine = $this->calculateFine($order->return_date, $today);
+        DB::transaction(function () use ($id) {
 
-        foreach ($order->details as $detail) {
-            $detail->collection->increment('stock', $detail->qty);
+            $order = Order::with('details.collection')->findOrFail($id);
 
-            // 🔥 NOTIF RETURN
-            $this->sendNotif(
-                $order->user_id,
-                'Pengembalian Buku',
-                'Anda telah mengembalikan buku "' . $detail->collection->title . '"'
-            );
+            $today = now();
+            $fine = $this->calculateFine($order->return_date, $today);
 
-            // 🔥 NOTIF DENDA
-            if ($fine > 0) {
-                $lateDays = Carbon::parse($order->return_date)->diffInDays($today);
+            foreach ($order->details as $detail) {
+                $detail->collection->increment('stock', $detail->qty);
 
                 $this->sendNotif(
                     $order->user_id,
-                    'Denda Keterlambatan',
-                    'Anda dikenakan denda Rp ' . number_format($fine) .
-                    ' karena terlambat ' . $lateDays .
-                    ' hari mengembalikan buku "' . $detail->collection->title . '"'
+                    'Pengembalian Buku',
+                    'Buku "' . $detail->collection->title . '" berhasil dikembalikan'
                 );
-            }
-        }
 
-        $order->update([
-            'actual_return_date' => $today,
-            'fine' => $fine,
-            'status' => 'RETURNED'
-        ]);
+                if ($fine > 0) {
+                    $lateDays = Carbon::parse($order->return_date)->diffInDays($today);
+
+                    $this->sendNotif(
+                        $order->user_id,
+                        'Denda',
+                        'Denda Rp ' . number_format($fine) .
+                        ' (' . $lateDays . ' hari terlambat)'
+                    );
+                }
+            }
+
+            $order->update([
+                'actual_return_date' => $today,
+                'fine' => $fine,
+                'status' => 'RETURNED'
+            ]);
+        });
 
         return back()->with('success', 'Buku dikembalikan');
     }
+
     // ================= PERPANJANG =================
     public function extend($id)
     {
         $order = Order::with('details.collection')->findOrFail($id);
+
         $today = now();
         $due = Carbon::parse($order->return_date);
 
         if ($today > $due) {
-            return back()->with('error', 'Sudah terlambat');
+            return back()->with('error', 'Tidak bisa perpanjang, sudah terlambat');
         }
 
         if ($order->extension_count >= 2) {
-            return back()->with('error', 'Maksimal 2x');
-        }
-
-        foreach ($order->details as $detail) {
-
-            $this->sendNotif(
-                $order->user_id,
-                'Perpanjangan Berhasil',
-                'Anda memperpanjang peminjaman buku "' .
-                $detail->collection->title . '" selama 7 hari'
-            );
+            return back()->with('error', 'Maksimal 2x perpanjangan');
         }
 
         $order->update([
@@ -176,18 +188,41 @@ class OrderController extends Controller
             'extension_count' => $order->extension_count + 1
         ]);
 
+        foreach ($order->details as $detail) {
+            $this->sendNotif(
+                $order->user_id,
+                'Perpanjangan',
+                'Buku "' . $detail->collection->title . '" diperpanjang 7 hari'
+            );
+        }
+
         return back()->with('success', 'Perpanjangan berhasil');
     }
 
+    // ================= HISTORY USER =================
     public function history()
     {
         $orders = Order::with('details.collection')
             ->where('user_id', auth()->id())
-            ->whereIn('status', ['APPROVED', 'RETURNED', 'PENDING'])
             ->latest()
             ->get();
+
         return view('user.page.history', compact('orders'));
     }
+
+    // ================= DENDA =================
+    private function calculateFine($due, $return)
+    {
+        $lateDays = Carbon::parse($due)->diffInDays($return, false);
+
+        if ($lateDays <= 0) return 0;
+        if ($lateDays <= 3) return $lateDays * 1000;
+        if ($lateDays <= 7) return $lateDays * 2000;
+
+        return $lateDays * 5000;
+    }
+
+    // ================= NOTIF =================
     private function sendNotif($userId, $title, $message)
     {
         Notification::create([

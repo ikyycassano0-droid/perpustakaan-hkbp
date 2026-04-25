@@ -300,6 +300,7 @@
 </style>
 @endpush
 
+
 @section('content')
 <div class="main-content">
 
@@ -308,11 +309,13 @@
         <div class="inline-block glass-card px-5 py-2 rounded-full mb-5 fade-up">
             <span class="text-indigo-300 text-sm font-medium tracking-wide">📚 AKPER HKBP BALIGE</span>
         </div>
+
         <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight title-main fade-up">
             Koleksi Buku Referensi
         </h1>
+
         <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
-            Akses ke sumber daya medis otoritatif termasuk ensiklopedia klinis modern, kamus medis, dan panduan teknis keperawatan untuk menunjang studi akademik Anda.
+            Akses ke sumber daya medis otoritatif untuk menunjang pembelajaran akademik.
         </p>
     </section>
 
@@ -320,82 +323,71 @@
     <section class="section max-w-7xl mx-auto px-5">
         <div class="neon-border fade-up">
             <div class="neon-inner">
-                
+
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                    
-                    <!-- SIDEBAR KATEGORI -->
+
+                    <!-- SIDEBAR -->
                     <div class="lg:col-span-1">
+
                         <div class="sidebar-menu">
                             <div class="sidebar-title">📂 Koleksi Referensi</div>
+
                             <div class="sidebar-item active" data-category="all">📚 Semua Referensi</div>
-                            <div class="sidebar-item" data-category="kamus">📖 Kamus & Ensiklopedia</div>
-                            <div class="sidebar-item" data-category="klinis">🏥 Panduan Klinis</div>
-                            <div class="sidebar-item" data-category="anatomi">🧬 Anatomi & Fisiologi</div>
+                            <div class="sidebar-item" data-category="kamus">📖 Kamus</div>
+                            <div class="sidebar-item" data-category="klinis">🏥 Klinis</div>
+                            <div class="sidebar-item" data-category="anatomi">🧬 Anatomi</div>
                             <div class="sidebar-item" data-category="farmakologi">💊 Farmakologi</div>
-                            <div class="sidebar-item" data-category="pediatri">👶 Keperawatan Anak</div>
-                            <div class="sidebar-item" data-category="keperawatan">👩‍⚕️ Keperawatan Umum</div>
+                            <div class="sidebar-item" data-category="pediatri">👶 Pediatri</div>
                         </div>
-                        
-                        <!-- KOLEKSI LAINNYA -->
-                        <div class="sidebar-menu mt-6">
-                            <div class="sidebar-title">📖 Koleksi Lainnya</div>
-                            <div class="sidebar-item" data-collection="buku-pengayaan">📘 Buku Pengayaan</div>
-                            <div class="sidebar-item" data-collection="majalah">📰 Majalah</div>
-                            <div class="sidebar-item" data-collection="e-book">📱 E-book</div>
-                            <div class="sidebar-item" data-collection="e-article">📄 E-article</div>
-                            <div class="sidebar-item" data-collection="cd">💿 CD</div>
-                            <div class="sidebar-item" data-collection="video">🎬 Video</div>
-                            <div class="sidebar-item" data-collection="kti">📑 Karya Tulis Ilmiah</div>
-                        </div>
+
                     </div>
-                    
-                    <!-- MAIN CONTENT AREA -->
+
+                    <!-- CONTENT -->
                     <div class="lg:col-span-3">
-                        
-                        <!-- Search Bar -->
+
+                        <!-- SEARCH -->
                         <div class="mb-6">
-                            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Cari judul, penulis, atau nomor panggil...">
+                            <input type="text" id="searchInput"
+                                class="search-input"
+                                placeholder="🔍 Cari buku...">
                         </div>
-                        
-                        <!-- FEATURED BOOKS -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" id="featuredBooks">
-                            <!-- Featured books will be inserted here -->
-                        </div>
-                        
-                        <!-- TABLE SECTION -->
+
+                        <!-- FEATURED -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" id="featuredBooks"></div>
+
+                        <!-- TABLE -->
                         <div class="mt-6">
-                            <h3 class="text-lg font-semibold text-indigo-200 mb-4">📋 Daftar Lengkap Koleksi Referensi</h3>
+                            <h3 class="text-lg font-semibold text-indigo-200 mb-4">
+                                📋 Daftar Buku Referensi
+                            </h3>
+
                             <div class="table-container">
                                 <table class="data-table">
                                     <thead>
                                         <tr>
-                                            <th>📖 INFORMASI BUKU</th>
-                                            <th>📅 TAHUN / EDISI</th>
-                                            <th>🏷️ KATEGORI</th>
-                                            <th>📌 STATUS</th>
-                                            <th>⚡ AKSI</th>
+                                            <th>INFORMASI</th>
+                                            <th>TAHUN</th>
+                                            <th>KATEGORI</th>
+                                            <th>STATUS</th>
+                                            <th>AKSI</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="tableBody">
-                                        <!-- Table rows will be inserted by JavaScript -->
-                                    </tbody>
+
+                                    <tbody id="tableBody"></tbody>
                                 </table>
                             </div>
                         </div>
-                        
-                        <!-- Pagination Info & Buttons -->
-                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
-                            <div class="text-sm text-gray-400" id="paginationInfo">
-                                Menampilkan 1-10 dari 48 buku referensi
-                            </div>
-                            <div class="flex gap-2" id="paginationButtons">
-                                <!-- Pagination buttons will be inserted here -->
-                            </div>
+
+                        <!-- PAGINATION -->
+                        <div class="flex justify-between items-center mt-6">
+                            <div id="paginationInfo" class="text-sm text-gray-400"></div>
+                            <div id="paginationButtons" class="flex gap-2"></div>
                         </div>
-                        
+
                     </div>
+
                 </div>
-                
+
             </div>
         </div>
     </section>
@@ -403,209 +395,69 @@
 </div>
 @endsection
 
+
 @push('scripts')
+
 <script>
 // ============================================
-// JAVASCRIPT KHUSUS UNTUK HALAMAN BUKU REFERENSI
-// Hanya JS yang BELUM ADA di master blade
+// DATA DARI LARAVEL (CRUD READY)
 // ============================================
 
-// DATA BUKU REFERENSI
-let referenceBooks = [
-    {
-        id: 1,
-        title: "Dorland's Illustrated Medical Dictionary",
-        author: "Dorland",
-        edition: "Edisi 33",
-        year: 2023,
-        category: "kamus",
-        categoryName: "Kamus & Ensiklopedia",
-        status: "tersedia",
-        location: "Rak A-12",
-        description: "Referensi standar internasional untuk terminologi medis dengan ilustrasi lengkap."
-    },
-    {
-        id: 2,
-        title: "Manual of Nursing Practice",
-        author: "Lippincott",
-        edition: "Edisi 11",
-        year: 2022,
-        category: "klinis",
-        categoryName: "Panduan Klinis",
-        status: "dipinjam",
-        location: "Rak B-03",
-        returnDate: "12 Desember 2024",
-        description: "Handbook klinis utama untuk praktik keperawatan profesional."
-    },
-    {
-        id: 3,
-        title: "Miller-Keane Encyclopedia & Dictionary of Medicine",
-        author: "Miller & Keane",
-        edition: "Edisi 28",
-        year: 2021,
-        category: "kamus",
-        categoryName: "Kamus & Ensiklopedia",
-        status: "tersedia",
-        location: "Rak A-15",
-        description: "Sumber referensi terlengkap untuk terminologi medis dan praktik klinis keperawatan modern."
-    },
-    {
-        id: 4,
-        title: "MIMS Drug Reference 2024",
-        author: "MIMS Indonesia",
-        edition: "Edisi 28",
-        year: 2024,
-        category: "farmakologi",
-        categoryName: "Farmakologi",
-        status: "tersedia",
-        location: "Rak D-05",
-        description: "Katalog obat-obatan terintegrasi untuk praktik klinis."
-    },
-    {
-        id: 5,
-        title: "Gray's Anatomy for Students",
-        author: "Richard Drake, et al.",
-        edition: "Edisi 4",
-        year: 2023,
-        category: "anatomi",
-        categoryName: "Anatomi & Fisiologi",
-        status: "tersedia",
-        location: "Rak B-02",
-        description: "Atlas anatomi terlengkap untuk mahasiswa kedokteran dan keperawatan."
-    },
-    {
-        id: 6,
-        title: "Encyclopedia of Nursing Care Quality",
-        author: "Gunawan, S. & Team",
-        edition: "Edisi 2",
-        year: 2023,
-        category: "keperawatan",
-        categoryName: "Keperawatan Umum",
-        status: "tersedia",
-        location: "Rak C-08",
-        description: "Ensiklopedia mutu asuhan keperawatan."
-    },
-    {
-        id: 7,
-        title: "Kamus Kedokteran Indonesia",
-        author: "Ramai, A. et al.",
-        edition: "Edisi 28",
-        year: 2021,
-        category: "kamus",
-        categoryName: "Kamus & Ensiklopedia",
-        status: "kosong",
-        location: "Rak A-18",
-        description: "Kamus kedokteran terlengkap dalam bahasa Indonesia."
-    },
-    {
-        id: 8,
-        title: "Pocket Guide to Pediatric Nursing",
-        author: "Hockenberry, M.J.",
-        edition: "Edisi Baru",
-        year: 2024,
-        category: "pediatri",
-        categoryName: "Keperawatan Anak",
-        status: "tersedia",
-        location: "Rak E-02",
-        description: "Panduan saku untuk praktik keperawatan anak."
-    },
-    {
-        id: 9,
-        title: "Brunner & Suddarth's Textbook of Medical-Surgical Nursing",
-        author: "Brunner & Suddarth",
-        edition: "Edisi 15",
-        year: 2022,
-        category: "klinis",
-        categoryName: "Panduan Klinis",
-        status: "dipinjam",
-        location: "Rak B-10",
-        returnDate: "20 Januari 2025",
-        description: "Buku teks standar untuk keperawatan medikal-bedah."
-    },
-    {
-        id: 10,
-        title: "NANDA International Nursing Diagnoses",
-        author: "NANDA International",
-        edition: "Edisi 12",
-        year: 2023,
-        category: "keperawatan",
-        categoryName: "Keperawatan Umum",
-        status: "tersedia",
-        location: "Rak C-05",
-        description: "Standar diagnosis keperawatan internasional."
-    },
-    {
-        id: 11,
-        title: "Pediatric Nursing Made Incredibly Easy",
-        author: "Lippincott",
-        edition: "Edisi 3",
-        year: 2022,
-        category: "pediatri",
-        categoryName: "Keperawatan Anak",
-        status: "tersedia",
-        location: "Rak E-08",
-        description: "Panduan keperawatan anak dengan pendekatan mudah dipahami."
-    },
-    {
-        id: 12,
-        title: "Pharmacology for Nurses",
-        author: "Adams & Holland",
-        edition: "Edisi 10",
-        year: 2023,
-        category: "farmakologi",
-        categoryName: "Farmakologi",
-        status: "tersedia",
-        location: "Rak D-10",
-        description: "Buku farmakologi untuk praktik keperawatan."
-    },
-    {
-        id: 13,
-        title: "Essentials of Pathophysiology",
-        author: "Carol Mattson Porth",
-        edition: "Edisi 5",
-        year: 2021,
-        category: "anatomi",
-        categoryName: "Anatomi & Fisiologi",
-        status: "dipinjam",
-        location: "Rak B-15",
-        returnDate: "05 Maret 2025",
-        description: "Dasar-dasar patofisiologi untuk mahasiswa keperawatan."
-    },
-    {
-        id: 14,
-        title: "Community Health Nursing",
-        author: "Mary A. Nies",
-        edition: "Edisi 8",
-        year: 2022,
-        category: "keperawatan",
-        categoryName: "Keperawatan Umum",
-        status: "tersedia",
-        location: "Rak C-12",
-        description: "Buku teks keperawatan komunitas."
-    }
-];
+// ambil data dari backend Laravel
+let referenceBooks = @json($collections ?? []);
 
-// Featured books data (top 4)
+// mapping agar sesuai format JS kamu
+referenceBooks = referenceBooks.map(item => ({
+    id: item.id,
+    title: item.title,
+    author: item.author_string ?? (item.author ? item.author.join(', ') : '-'),
+    edition: item.edition ?? '-',
+    year: item.publication_year ?? '-',
+    category: item.category?.slug ?? 'umum',
+    categoryName: item.category?.name ?? 'Tidak ada kategori',
+    status: item.stock > 0 ? 'tersedia' : 'kosong',
+    location: item.location?.name ?? '-',
+    returnDate: null,
+    description: item.description ?? '-'
+}));
+
+// fallback jika kosong
+if (referenceBooks.length === 0) {
+    referenceBooks = [];
+}
+
+// Featured books
 let featuredBooks = referenceBooks.slice(0, 4);
 
-// Render featured books
+// ============================================
+// RENDER FEATURED
+// ============================================
 function renderFeaturedBooks() {
     const container = document.getElementById('featuredBooks');
     container.innerHTML = '';
-    
+
     featuredBooks.forEach(book => {
         const card = document.createElement('div');
         card.className = 'featured-card p-4';
+
         card.innerHTML = `
             <div class="flex items-start gap-3">
                 <div class="text-3xl">📘</div>
                 <div class="flex-1">
                     <h3 class="font-semibold text-indigo-200 text-sm">${book.title}</h3>
                     <p class="text-xs text-gray-400">${book.author}</p>
-                    <p class="text-xs text-gray-500 mt-1">${book.description.substring(0, 80)}...</p>
+                    <p class="text-xs text-gray-500 mt-1">
+                        ${book.description.substring(0, 80)}...
+                    </p>
+
                     <div class="flex items-center justify-between mt-2">
-                        <span class="status-badge status-${book.status}">${book.status === 'tersedia' ? '✓ TERSEDIA' : book.status === 'dipinjam' ? '📖 DIPINJAM' : '⚡ KOSONG'}</span>
-                        <button class="btn-link text-xs" onclick="showDetail(${book.id})">Lihat Detail →</button>
+                        <span class="status-badge status-${book.status}">
+                            ${book.status === 'tersedia' ? '✓ TERSEDIA' : '⚡ KOSONG'}
+                        </span>
+
+                        <button class="btn-link text-xs" onclick="showDetail(${book.id})">
+                            Lihat Detail →
+                        </button>
                     </div>
                 </div>
             </div>
@@ -614,7 +466,9 @@ function renderFeaturedBooks() {
     });
 }
 
-// Render table
+// ============================================
+// TABLE RENDER (CRUD READY)
+// ============================================
 let currentPage = 1;
 const itemsPerPage = 10;
 let currentCategory = 'all';
@@ -622,243 +476,134 @@ let searchQuery = '';
 
 function renderTable() {
     let filteredData = [...referenceBooks];
-    
-    // Filter by search
+
     if (searchQuery) {
-        filteredData = filteredData.filter(item => 
+        filteredData = filteredData.filter(item =>
             item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.description.toLowerCase().includes(searchQuery.toLowerCase())
+            item.author.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }
-    
-    // Filter by category
+
     if (currentCategory !== 'all') {
-        filteredData = filteredData.filter(item => item.category === currentCategory);
+        filteredData = filteredData.filter(item =>
+            item.category === currentCategory
+        );
     }
-    
-    // Pagination
+
     const totalItems = filteredData.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
+
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
+
     const currentData = filteredData.slice(startIndex, endIndex);
-    
-    // Update pagination info
-    document.getElementById('paginationInfo').innerHTML = 
+
+    document.getElementById('paginationInfo').innerHTML =
         `Menampilkan ${startIndex + 1} - ${Math.min(endIndex, totalItems)} dari ${totalItems} buku referensi`;
-    
-    // Generate table rows
+
     const tbody = document.getElementById('tableBody');
     tbody.innerHTML = '';
-    
+
     if (currentData.length === 0) {
         tbody.innerHTML = `
             <tr>
                 <td colspan="5" class="text-center py-8 text-gray-400">
-                    📭 Tidak ada data buku referensi yang ditemukan
+                    📭 Tidak ada data dari database
                 </td>
             </tr>
         `;
-    } else {
-        currentData.forEach(book => {
-            const row = tbody.insertRow();
-            
-            // Column: Informasi Buku
-            const cellInfo = row.insertCell(0);
-            cellInfo.innerHTML = `
-                <div class="font-semibold text-indigo-200 text-sm">${book.title}</div>
-                <div class="text-xs text-gray-400">${book.author}</div>
-            `;
-            
-            // Column: Tahun/Edisi
-            const cellEdition = row.insertCell(1);
-            cellEdition.innerHTML = `
-                <div class="text-sm">${book.year}</div>
-                <div class="text-xs text-gray-500">${book.edition}</div>
-            `;
-            
-            // Column: Kategori
-            const cellCategory = row.insertCell(2);
-            cellCategory.innerHTML = `<span class="text-xs">${book.categoryName}</span>`;
-            
-            // Column: Status
-            const cellStatus = row.insertCell(3);
-            let statusHtml = `<span class="status-badge status-${book.status}">`;
-            if (book.status === 'tersedia') {
-                statusHtml += '✓ ADA';
-            } else if (book.status === 'dipinjam') {
-                statusHtml += `📖 DIPINJAM<br><span class="text-xs">Kembali: ${book.returnDate}</span>`;
-            } else {
-                statusHtml += '⚡ KOSONG';
-            }
-            statusHtml += `</span>`;
-            cellStatus.innerHTML = statusHtml;
-            
-            // Column: Aksi
-            const cellAction = row.insertCell(4);
-            if (book.status === 'tersedia') {
-                cellAction.innerHTML = `
-                    <button class="btn-primary text-xs py-1 px-3" onclick="pinjamBuku(${book.id})">
-                        📖 Pesan Buku
-                    </button>
-                `;
-            } else if (book.status === 'kosong') {
-                cellAction.innerHTML = `
-                    <button class="btn-outline text-xs py-1 px-3" onclick="remindMe(${book.id})">
-                        🔔 Ingatkan Saya
-                    </button>
-                `;
-            } else {
-                cellAction.innerHTML = `
-                    <button class="btn-outline text-xs py-1 px-3" disabled style="opacity:0.5;">
-                        ⏳ Tidak Tersedia
-                    </button>
-                `;
-            }
-        });
+        return;
     }
-    
-    // Render pagination
+
+    currentData.forEach(book => {
+        const row = tbody.insertRow();
+
+        row.insertCell(0).innerHTML = `
+            <div class="font-semibold text-indigo-200 text-sm">${book.title}</div>
+            <div class="text-xs text-gray-400">${book.author}</div>
+        `;
+
+        row.insertCell(1).innerHTML = `
+            <div class="text-sm">${book.year}</div>
+            <div class="text-xs text-gray-500">${book.edition}</div>
+        `;
+
+        row.insertCell(2).innerHTML = `
+            <span class="text-xs">${book.categoryName}</span>
+        `;
+
+        row.insertCell(3).innerHTML = `
+            <span class="status-badge status-${book.status}">
+                ${book.status === 'tersedia' ? '✓ TERSEDIA' : '⚡ KOSONG'}
+            </span>
+        `;
+
+        row.insertCell(4).innerHTML = `
+            <button class="btn-primary text-xs" onclick="showDetail(${book.id})">
+                Detail
+            </button>
+        `;
+    });
+
     renderPagination(totalPages);
 }
 
+// ============================================
+// PAGINATION (TETAP)
+// ============================================
 function renderPagination(totalPages) {
-    const paginationContainer = document.getElementById('paginationButtons');
+    const container = document.getElementById('paginationButtons');
     if (totalPages <= 1) {
-        paginationContainer.innerHTML = '';
+        container.innerHTML = '';
         return;
     }
-    
-    let paginationHtml = '<div class="flex gap-2">';
-    
-    paginationHtml += `
+
+    let html = `<div class="flex gap-2">`;
+
+    html += `
         <button class="pagination-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
             ◀
         </button>
     `;
-    
-    const startPage = Math.max(1, currentPage - 2);
-    const endPage = Math.min(totalPages, currentPage + 2);
-    
-    if (startPage > 1) {
-        paginationHtml += `<button class="pagination-btn" onclick="changePage(1)">1</button>`;
-        if (startPage > 2) paginationHtml += `<span class="px-2 text-gray-500">...</span>`;
-    }
-    
-    for (let i = startPage; i <= endPage; i++) {
-        paginationHtml += `
+
+    for (let i = 1; i <= totalPages; i++) {
+        html += `
             <button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
                 ${i}
             </button>
         `;
     }
-    
-    if (endPage < totalPages) {
-        if (endPage < totalPages - 1) paginationHtml += `<span class="px-2 text-gray-500">...</span>`;
-        paginationHtml += `<button class="pagination-btn" onclick="changePage(${totalPages})">${totalPages}</button>`;
-    }
-    
-    paginationHtml += `
+
+    html += `
         <button class="pagination-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
             ▶
         </button>
     `;
-    
-    paginationHtml += '</div>';
-    paginationContainer.innerHTML = paginationHtml;
+
+    html += `</div>`;
+    container.innerHTML = html;
 }
 
 function changePage(page) {
-    let filteredData = [...referenceBooks];
-    if (searchQuery) {
-        filteredData = filteredData.filter(item => 
-            item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.author.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    }
-    if (currentCategory !== 'all') {
-        filteredData = filteredData.filter(item => item.category === currentCategory);
-    }
-    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-    
-    if (page >= 1 && page <= totalPages) {
-        currentPage = page;
-        renderTable();
-        window.scrollTo({ top: 500, behavior: 'smooth' });
-    }
+    currentPage = page;
+    renderTable();
 }
 
+// ============================================
+// DETAIL
+// ============================================
 function showDetail(id) {
     const book = referenceBooks.find(b => b.id === id);
     if (book) {
-        showNotification(`📖 ${book.title} - ${book.author}\n📍 Rak: ${book.location}`, 'info');
+        alert(`${book.title}\n${book.author}\nRak: ${book.location}`);
     }
 }
 
-function pinjamBuku(id) {
-    const book = referenceBooks.find(b => b.id === id);
-    if (book) {
-        showNotification(`✅ Berhasil memesan "${book.title}". Silakan ambil di Rak ${book.location}.`, 'success');
-    }
-}
-
-function remindMe(id) {
-    const book = referenceBooks.find(b => b.id === id);
-    if (book) {
-        showNotification(`🔔 Anda akan diingatkan saat buku "${book.title}" tersedia.`, 'info');
-    }
-}
-
-// Notification system
-function showNotification(message, type = 'success') {
-    const notification = document.createElement('div');
-    notification.className = 'notification';
-    notification.innerHTML = `
-        <div class="flex items-center gap-2">
-            <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
-            <span>${message}</span>
-        </div>
-    `;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.classList.add('show'), 10);
-    setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
-}
-
-// Filter event listeners for sidebar
-document.querySelectorAll('.sidebar-item[data-category]').forEach(item => {
-    item.addEventListener('click', (e) => {
-        const category = e.target.getAttribute('data-category');
-        currentCategory = category;
-        currentPage = 1;
-        
-        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-        e.target.classList.add('active');
-        
-        renderTable();
-    });
-});
-
-// Search event
-document.getElementById('searchInput').addEventListener('input', (e) => {
-    searchQuery = e.target.value;
-    currentPage = 1;
-    renderTable();
-});
-
-// Make functions global
-window.showDetail = showDetail;
-window.pinjamBuku = pinjamBuku;
-window.remindMe = remindMe;
-window.changePage = changePage;
-
-// Initialize
+// ============================================
+// INIT
+// ============================================
 renderFeaturedBooks();
 renderTable();
 
-console.log('Halaman Koleksi Buku Referensi siap dengan 14 buku dan fitur filter!');
 </script>
 @endpush

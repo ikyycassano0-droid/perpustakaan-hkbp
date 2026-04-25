@@ -16,18 +16,16 @@ class CollectionController extends Controller
     // ================= ADMIN =================
     public function index_admin()
     {
-        $collections = Collection::with(['classifications','categories','location'])->latest()->get();
+        $collections = Collection::with(['classifications', 'categories', 'location'])
+            ->latest()
+            ->get();
 
-        $categories = CategoryCollection::all();
-        $classifications = Classification::all();
-        $locations = Location::all();
-
-        return view('admin.page.collection', compact(
-            'collections',
-            'categories',
-            'classifications',
-            'locations'
-        ));
+        return view('admin.page.collection', [
+            'collections' => $collections,
+            'categories' => CategoryCollection::all(),
+            'classifications' => Classification::all(),
+            'locations' => Location::all(),
+        ]);
     }
 
     // ================= STORE =================
@@ -35,86 +33,143 @@ class CollectionController extends Controller
     {
         $request->validate([
             'title' => 'required',
-            'author' => 'required|array',
-            'author.*' => 'required|string',
-            'publication_year' => 'nullable|numeric',
-            'file_url' => 'nullable|file|mimes:pdf,mp3,wav,ogg|max:20000',
-            'cover_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'author' => 'required',
+            'stock' => 'required|integer|min:1',
+            'isbn' => 'nullable|unique:collections,isbn',
         ]);
 
-        $cover = $request->hasFile('cover_image')
+        // FILE
+        $cover = $request->file('cover_image')
             ? $request->file('cover_image')->store('collections/cover', 'public')
             : null;
 
-        $file = $request->hasFile('file_url')
+        $file = $request->file('file_url')
             ? $request->file('file_url')->store('collections/file', 'public')
             : null;
 
+        // SIMPAN DATA
         $collection = Collection::create([
             'title' => $request->title,
-            'author' => $request->author,
-            'responsibility_statement' => $request->responsibility_statement ?? [],
-            'content_type' => $request->content_type ?? [],
-            'media_type' => $request->media_type ?? [],
+            'series_title' => $request->series_title,
+
+            'author' => is_array($request->author)
+                ? $request->author
+                : [$request->author],
+
+            'responsibility_statement' => $request->responsibility_statement,
+            'content_type' => $request->content_type,
+            'media_type' => $request->media_type,
+
             'publisher' => $request->publisher,
             'publication_year' => $request->publication_year,
+            'language' => $request->language,
+            'isbn' => $request->isbn,
+            'edition' => $request->edition,
+            'subject' => $request->subject,
             'description' => $request->description,
             'carrier_type' => $request->carrier_type,
             'specific_detail_info' => $request->specific_detail_info,
+
+            'keywords' => $request->keywords
+                ? explode(',', $request->keywords)
+                : null,
+
             'location_id' => $request->location_id,
-            'cover_image' => $cover,
             'file_url' => $file,
+            'cover_image' => $cover,
+            'format' => $request->format,
+
+            'stock' => (int) $request->stock,
+            'available_stock' => (int) $request->stock,
+            'is_available' => 1,
+
+            'menu_type' => $request->menu_type,
+            'active' => 1,
+
             'created_by' => session('user_id'),
         ]);
 
+        // RELASI
         $collection->classifications()->sync($request->classification_id ?? []);
         $collection->categories()->sync($request->category_collection_id ?? []);
 
-        return redirect()->route('admin.collections.index')->with('success', 'Koleksi berhasil ditambahkan');
+        return redirect()
+            ->route('admin.collections.index')
+            ->with('success', 'Koleksi berhasil ditambahkan');
     }
-
-    // ================= UPDATE =================
+        // ================= UPDATE =================
     public function update(Request $request, Collection $collection)
     {
         $request->validate([
             'title' => 'required',
-            'author' => 'required|array',
-            'author.*' => 'required|string',
-            'stock' => 'required|integer|min:0',
-            'file_url' => 'nullable|file|mimes:pdf,mp3,wav,ogg|max:20000',
-            'cover_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'author' => 'required',
+            'stock' => 'required|integer|min:1',
+            'isbn' => 'nullable|unique:collections,isbn,' . $collection->id,
         ]);
+
+        // HITUNG DIPINJAM
+        $dipinjam = $collection->stock - $collection->available_stock;
+
+        if ($request->stock < $dipinjam) {
+            return back()->with('error', 'Stock tidak boleh lebih kecil dari yang sedang dipinjam');
+        }
+
+        $available = $request->stock - $dipinjam;
 
         $data = [
             'title' => $request->title,
-            'author' => $request->author,
-            'responsibility_statement' => $request->responsibility_statement ?? [],
-            'content_type' => $request->content_type ?? [],
-            'media_type' => $request->media_type ?? [],
+            'series_title' => $request->series_title,
+
+            'author' => is_array($request->author)
+                ? $request->author
+                : [$request->author],
+
+            'responsibility_statement' => $request->responsibility_statement,
+            'content_type' => $request->content_type,
+            'media_type' => $request->media_type,
+
             'publisher' => $request->publisher,
             'publication_year' => $request->publication_year,
+            'language' => $request->language,
+            'isbn' => $request->isbn,
+            'edition' => $request->edition,
+            'subject' => $request->subject,
             'description' => $request->description,
             'carrier_type' => $request->carrier_type,
             'specific_detail_info' => $request->specific_detail_info,
+
+            'keywords' => $request->keywords
+                ? explode(',', $request->keywords)
+                : null,
+
             'location_id' => $request->location_id,
-            'stock' => max(0, (int) $request->stock),
+            'format' => $request->format,
+
+            'stock' => (int) $request->stock,
+            'available_stock' => (int) $available,
+
+            'menu_type' => $request->menu_type,
             'updated_by' => session('user_id'),
         ];
 
+        // COVER
         if ($request->hasFile('cover_image')) {
             if ($collection->cover_image) {
                 Storage::disk('public')->delete($collection->cover_image);
             }
 
-            $data['cover_image'] = $request->file('cover_image')->store('collections/cover', 'public');
+            $data['cover_image'] = $request->file('cover_image')
+                ->store('collections/cover', 'public');
         }
 
+        // FILE
         if ($request->hasFile('file_url')) {
             if ($collection->file_url) {
                 Storage::disk('public')->delete($collection->file_url);
             }
 
-            $data['file_url'] = $request->file('file_url')->store('collections/file', 'public');
+            $data['file_url'] = $request->file('file_url')
+                ->store('collections/file', 'public');
         }
 
         $collection->update($data);
@@ -122,26 +177,20 @@ class CollectionController extends Controller
         $collection->classifications()->sync($request->classification_id ?? []);
         $collection->categories()->sync($request->category_collection_id ?? []);
 
-        return redirect()->route('admin.collections.index')->with('success', 'Koleksi berhasil diupdate');
+        return back()->with('success', 'Koleksi berhasil diupdate');
     }
 
     // ================= DELETE =================
     public function destroy(Collection $collection)
     {
-        $collection->classifications()->detach();
-        $collection->categories()->detach();
-
-        if ($collection->cover_image) {
-            Storage::disk('public')->delete($collection->cover_image);
-        }
-
-        if ($collection->file_url) {
-            Storage::disk('public')->delete($collection->file_url);
-        }
+        Storage::disk('public')->delete([
+            $collection->cover_image,
+            $collection->file_url
+        ]);
 
         $collection->delete();
 
-        return redirect()->route('admin.collections.index')->with('success', 'Koleksi berhasil dihapus');
+        return back()->with('success', 'Koleksi berhasil dihapus');
     }
 
     public function pinjam(Request $request)
@@ -161,9 +210,11 @@ class CollectionController extends Controller
         return view('guest.page.collection', compact('collections'));
     }
 
+        // ================= SHOW DETAIL =================
     public function show($id)
     {
-        $collection = Collection::with(['classifications','categories','location'])->findOrFail($id);
+        $collection = Collection::with(['classifications', 'categories', 'location'])
+            ->findOrFail($id);
 
         // 🔒 RESTRICTED CHECK
         if ($collection->is_restricted && !auth()->check()) {
@@ -172,20 +223,30 @@ class CollectionController extends Controller
         }
 
         return view('guest.page.collection_detail', compact('collection'));
+        // 🔥 Mapping view berdasarkan menu_type
+        $viewMap = [
+            'jurnal' => 'user.page.Koleksi.Koleksi Tercetak.detail_jurnal',
+            'buku_pengayaan' => 'user.page.Koleksi.Koleksi Tercetak.detail_buku_pengayaan',
+            'buku_referensi' => 'user.page.Koleksi.Koleksi Tercetak.detail_buku_referensi',
+            'majalah' => 'user.page.Koleksi.Koleksi Tercetak.detail_majalah',
+        ];
+
+        $view = $viewMap[$collection->menu_type]
+            ?? 'user.page.Koleksi.Koleksi Tercetak.detail_buku_pengayaan';
+
+        return view($view, compact('collection'));
     }
 
-    public function pengelolaanBuku()
+    // ================= USER MENU =================
+    public function showUserMenu(Request $request, $menu_type)
     {
-        $collections = Collection::all();
-        $orders = Order::with(['user','details.collection'])->latest()->get();
-        $locations = Location::all();
+        $query = Collection::with(['categories', 'location'])
+            ->where('menu_type', $menu_type)
+            ->where('active', 1);
 
-        return view('admin.page.pengelolaan_buku', compact(
-            'collections',
-            'orders',
-            'locations'
-        ));
-    }
+        // 🔍 SEARCH
+        if ($request->search) {
+            $search = $request->search;
 
     public function showUserMenu($menu_type)
     {
@@ -194,15 +255,25 @@ class CollectionController extends Controller
             ->get();
 
         $blade = match($menu_type) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%$search%")
+                  ->orWhere('publisher', 'like', "%$search%")
+                  ->orWhere('author', 'like', "%$search%")
+                  ->orWhere('keywords', 'like', "%$search%");
+            });
+        }
+
+        // 🔥 PAGINATION (BEBAS MAU 6 / 9 / 12)
+        $collections = $query->latest()->paginate(9);
+
+        $viewMap = [
             'jurnal' => 'user.page.Koleksi.Koleksi Tercetak.jurnal',
             'buku_pengayaan' => 'user.page.Koleksi.Koleksi Tercetak.buku_pengayaan',
             'buku_referensi' => 'user.page.Koleksi.Koleksi Tercetak.buku_referensi',
             'majalah' => 'user.page.Koleksi.Koleksi Tercetak.majalah',
-            default => abort(404),
-        };
+        ];
 
-        return view($blade, compact('collections'));
-    }
+        $view = $viewMap[$menu_type] ?? $viewMap['buku_referensi'];
 
     // ================= GLOBAL SEARCH =================
     public function globalSearch(Request $request)
@@ -321,5 +392,9 @@ class CollectionController extends Controller
         return response()->json(
             $collections->merge($finalProjects)
         );
+        return view($view, [
+            'collections' => $collections,
+            'menuType' => $menu_type
+        ]);
     }
 }
