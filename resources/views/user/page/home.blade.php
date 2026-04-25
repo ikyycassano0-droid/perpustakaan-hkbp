@@ -11,9 +11,9 @@
 
     {{-- SEARCH FORM --}}
     <form action="{{ route('user.global_search') }}" method="GET" class="d-flex ms-3" style="gap:5px;">
-        <input type="text" name="keyword" placeholder="Cari Koleksi..." 
+        <input type="text" name="keyword" placeholder="Cari Koleksi..."
             class="form-control form-control-sm" required style="min-width:150px;">
-        
+
         <select name="category" class="form-select form-select-sm">
             <option value="">Semua</option>
             <option value="collection">Koleksi Tercetak</option>
@@ -123,7 +123,7 @@
         <div class="label-header" style="margin-bottom: 0;"><i class="fas fa-bullhorn"></i> Berita & Panduan Member</div>
         <a href="#" style="color: var(--primary-color); font-weight: bold;">Lihat Semua <i class="fas fa-chevron-right"></i></a>
     </div>
-    
+
     <div class="berita-grid">
         <div class="news-item">
             <div class="news-thumb" style="background-image: url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=500&q=60');"><div class="news-tag">Panduan</div></div>

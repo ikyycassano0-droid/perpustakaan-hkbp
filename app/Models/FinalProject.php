@@ -8,17 +8,19 @@ use App\Models\User; // pastikan ini import
 class FinalProject extends Model
 {
     protected $fillable = [
-        'student_name',
-        'npm',
-        'study_program',
-        'title',
-        'year',
-        'abstract',
-        'file_url',
-        'category_final_project_id',
-        'first_supervisor_id',  // foreign key ke users
-        'second_supervisor_id'  // foreign key ke users
-    ];
+    'user_id', // 🔥 WAJIB
+    'student_name',
+    'npm',
+    'study_program',
+    'title',
+    'year',
+    'abstract',
+    'file_url',
+    'category_final_project_id',
+    'first_supervisor_id',
+    'second_supervisor_id',
+    'status' // 🔥 WAJIB
+];
 
     // Relasi ke kategori
     public function category()

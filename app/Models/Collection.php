@@ -44,6 +44,7 @@ class Collection extends Model
         'media_type' => 'array',
         'active' => 'boolean',
         'stock' => 'integer',
+        'is_restricted' => 'boolean',
     ];
 
     // ================= RELASI MANY TO MANY =================
@@ -86,8 +87,8 @@ class Collection extends Model
 
     public function getResponsibilityStringAttribute()
     {
-        return $this->responsibility_statement 
-            ? implode(', ', $this->responsibility_statement) 
+        return $this->responsibility_statement
+            ? implode(', ', $this->responsibility_statement)
             : '-';
     }
 

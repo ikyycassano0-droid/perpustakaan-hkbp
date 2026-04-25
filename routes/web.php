@@ -61,7 +61,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(func
         Route::put('/{id}', [MemberController::class, 'update'])->name('update');
         Route::delete('/{id}/delete', [MemberController::class, 'destroy'])->name('destroy');
 
-        
+
         Route::post('/{id}/resend', [MemberController::class, 'resendVerification'])
             ->name('resend');
 
@@ -267,6 +267,9 @@ Route::middleware(['web'])->group(function () {
         return view('guest.page.home'); // path Blade tetap: guest.page.home
     })->name('home');
 
+    Route::get('/collections/{id}', [CollectionController::class, 'show'])
+    ->name('collections.show');
+
     Route::get('/visi-misi', [ProfileController::class, 'showVisiMisi'])
         ->name('guest.page.profile.visi-misi'); // path tetap
 
@@ -293,7 +296,11 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // routes/web.php
+Route::prefix('user')->name('user.')->group(function () {
+    Route::get('/search-results', [CollectionController::class, 'globalSearch'])
+        ->name('global_search');
+});
+
 Route::prefix('user')->group(function () {
-    Route::get('/search', [CollectionController::class, 'globalSearch'])
-        ->name('user.global_search');
+    Route::get('/live-search', [CollectionController::class, 'liveSearch']);
 });

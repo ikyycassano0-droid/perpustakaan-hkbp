@@ -9,7 +9,7 @@ use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Order;
-use App\Models\FinalProject; 
+use App\Models\FinalProject;
 
 class CollectionController extends Controller
 {
@@ -37,14 +37,11 @@ class CollectionController extends Controller
             'title' => 'required',
             'author' => 'required|array',
             'author.*' => 'required|string',
-
             'publication_year' => 'nullable|numeric',
-
             'file_url' => 'nullable|file|mimes:pdf,mp3,wav,ogg|max:20000',
             'cover_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // upload
         $cover = $request->hasFile('cover_image')
             ? $request->file('cover_image')->store('collections/cover', 'public')
             : null;
@@ -53,35 +50,27 @@ class CollectionController extends Controller
             ? $request->file('file_url')->store('collections/file', 'public')
             : null;
 
-        // CREATE COLLECTION TANPA FK
         $collection = Collection::create([
             'title' => $request->title,
-
             'author' => $request->author,
             'responsibility_statement' => $request->responsibility_statement ?? [],
             'content_type' => $request->content_type ?? [],
             'media_type' => $request->media_type ?? [],
-
             'publisher' => $request->publisher,
             'publication_year' => $request->publication_year,
             'description' => $request->description,
-
             'carrier_type' => $request->carrier_type,
             'specific_detail_info' => $request->specific_detail_info,
-
             'location_id' => $request->location_id,
-
             'cover_image' => $cover,
             'file_url' => $file,
-
             'created_by' => session('user_id'),
         ]);
 
-        // MANY TO MANY (INI YANG PENTING)
         $collection->classifications()->sync($request->classification_id ?? []);
         $collection->categories()->sync($request->category_collection_id ?? []);
 
-        return redirect()->route('admin.collections.index')->with('success', 'Koleksi berhasil ditambahkan'); 
+        return redirect()->route('admin.collections.index')->with('success', 'Koleksi berhasil ditambahkan');
     }
 
     // ================= UPDATE =================
@@ -98,26 +87,20 @@ class CollectionController extends Controller
 
         $data = [
             'title' => $request->title,
-
             'author' => $request->author,
             'responsibility_statement' => $request->responsibility_statement ?? [],
             'content_type' => $request->content_type ?? [],
             'media_type' => $request->media_type ?? [],
-
             'publisher' => $request->publisher,
             'publication_year' => $request->publication_year,
             'description' => $request->description,
-
             'carrier_type' => $request->carrier_type,
             'specific_detail_info' => $request->specific_detail_info,
-
             'location_id' => $request->location_id,
             'stock' => max(0, (int) $request->stock),
-
             'updated_by' => session('user_id'),
         ];
 
-        // cover
         if ($request->hasFile('cover_image')) {
             if ($collection->cover_image) {
                 Storage::disk('public')->delete($collection->cover_image);
@@ -126,7 +109,6 @@ class CollectionController extends Controller
             $data['cover_image'] = $request->file('cover_image')->store('collections/cover', 'public');
         }
 
-        // file
         if ($request->hasFile('file_url')) {
             if ($collection->file_url) {
                 Storage::disk('public')->delete($collection->file_url);
@@ -164,12 +146,10 @@ class CollectionController extends Controller
 
     public function pinjam(Request $request)
     {
-        // Ambil semua koleksi beserta relasi location, classifications, categories
         $collections = Collection::with(['location', 'classifications', 'categories'])
             ->latest()
             ->get();
 
-        // Kirim ke blade
         return view('user.page.Koleksi.Koleksi Tercetak.pinbal', compact('collections'));
     }
 
@@ -185,6 +165,12 @@ class CollectionController extends Controller
     {
         $collection = Collection::with(['classifications','categories','location'])->findOrFail($id);
 
+        // 🔒 RESTRICTED CHECK
+        if ($collection->is_restricted && !auth()->check()) {
+            return redirect()->route('login')
+                ->with('error', 'Anda harus login terlebih dahulu untuk mengakses Koleksi Tercetak');
+        }
+
         return view('guest.page.collection_detail', compact('collection'));
     }
 
@@ -192,7 +178,7 @@ class CollectionController extends Controller
     {
         $collections = Collection::all();
         $orders = Order::with(['user','details.collection'])->latest()->get();
-        $locations = Location::all(); // ini supaya blade bisa pakai $locations
+        $locations = Location::all();
 
         return view('admin.page.pengelolaan_buku', compact(
             'collections',
@@ -203,12 +189,10 @@ class CollectionController extends Controller
 
     public function showUserMenu($menu_type)
     {
-        // Ambil koleksi sesuai menu_type
         $collections = Collection::with(['classifications', 'categories', 'location'])
-            ->where('menu_type', $menu_type) // pastikan field menu_type ada di table collections
+            ->where('menu_type', $menu_type)
             ->get();
 
-        // Tentukan blade mana yang dipakai berdasarkan menu_type
         $blade = match($menu_type) {
             'jurnal' => 'user.page.Koleksi.Koleksi Tercetak.jurnal',
             'buku_pengayaan' => 'user.page.Koleksi.Koleksi Tercetak.buku_pengayaan',
@@ -220,6 +204,7 @@ class CollectionController extends Controller
         return view($blade, compact('collections'));
     }
 
+    // ================= GLOBAL SEARCH =================
     public function globalSearch(Request $request)
     {
         $request->validate([
@@ -228,13 +213,13 @@ class CollectionController extends Controller
 
         $keyword = strtolower($request->keyword);
 
-        // ================= COLLECTION =================
         $collections = Collection::with(['categories'])
+            ->where('active', true)
             ->where(function ($query) use ($keyword) {
-                $query->whereRaw('LOWER(title) LIKE ?', ["%$keyword%"])
-                    ->orWhereRaw('LOWER(description) LIKE ?', ["%$keyword%"])
-                    ->orWhereRaw('LOWER(publisher) LIKE ?', ["%$keyword%"])
-                    ->orWhereRaw("LOWER(JSON_EXTRACT(author, '$')) LIKE ?", ["%$keyword%"]);
+                $query->where('title', 'LIKE', "%$keyword%")
+                    ->orWhere('description', 'LIKE', "%$keyword%")
+                    ->orWhere('publisher', 'LIKE', "%$keyword%")
+                    ->orWhereJsonContains('author', $keyword); // ✅ FIX
             })
             ->get()
             ->map(function ($item) use ($keyword) {
@@ -242,29 +227,37 @@ class CollectionController extends Controller
                 $score = 0;
 
                 if (str_contains(strtolower($item->title), $keyword)) $score += 5;
-                if ($item->description && str_contains(strtolower($item->description), $keyword)) $score += 2;
+
+                foreach ($item->author ?? [] as $author) {
+                    if (str_contains(strtolower($author), $keyword)) {
+                        $score += 4;
+                    }
+                }
+
+                if ($item->description && str_contains(strtolower($item->description), $keyword)) {
+                    $score += 2;
+                }
 
                 $item->score = $score;
                 $item->type = 'collection';
+                $item->is_restricted = $item->is_restricted ?? false;
 
                 return $item;
             });
 
-        // ================= FINAL PROJECT =================
         $finalProjects = FinalProject::with(['category'])
+    ->where('status', 'Approved') // 🔥 WAJIB
             ->where(function ($query) use ($keyword) {
-                $query->whereRaw('LOWER(title) LIKE ?', ["%$keyword%"])
-                    ->orWhereRaw('LOWER(abstract) LIKE ?', ["%$keyword%"])
-                    ->orWhereRaw('LOWER(keywords) LIKE ?', ["%$keyword%"])
-                    ->orWhereRaw('LOWER(student_name) LIKE ?', ["%$keyword%"]);
+                $query->where('title', 'LIKE', "%$keyword%")
+                    ->orWhere('abstract', 'LIKE', "%$keyword%")
+                    ->orWhere('student_name', 'LIKE', "%$keyword%");
             })
             ->get()
             ->map(function ($item) use ($keyword) {
 
                 $score = 0;
 
-                if (str_contains(strtolower($item->title), $keyword)) $score += 5;
-                if ($item->keywords && str_contains(strtolower($item->keywords), $keyword)) $score += 4;
+                if (str_contains(strtolower($item->title), $keyword)) $score += 5; // ✅ FIX
 
                 $item->score = $score;
                 $item->type = 'final_project';
@@ -272,58 +265,58 @@ class CollectionController extends Controller
                 return $item;
             });
 
-        // ================= MERGE =================
         $results = $collections
             ->merge($finalProjects)
             ->sortByDesc('score')
             ->values();
 
-        $isGuest = !auth()->check();
+        return view('user.page.search_results', compact('results', 'keyword'));
+    }
 
-        return view('user.page.search_results', compact('results', 'keyword', 'isGuest'));
-    }   
-
+    // ================= LIVE SEARCH =================
     public function liveSearch(Request $request)
     {
-        $keyword = strtolower($request->keyword);
+        $keyword = $request->keyword;
 
         if (!$keyword) {
             return response()->json([]);
         }
 
-        // ================= COLLECTION =================
-        $collections = Collection::where(function ($query) use ($keyword) {
-            $query->whereRaw('LOWER(title) LIKE ?', ["%$keyword%"])
-                ->orWhereRaw('LOWER(description) LIKE ?', ["%$keyword%"])
-                ->orWhereRaw("LOWER(JSON_EXTRACT(author, '$')) LIKE ?", ["%$keyword%"]);
-        })
-        ->limit(5)
-        ->get()
-        ->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'title' => $item->title,
-                'type' => 'collection',
-                'file_url' => null // collection tidak pakai file
-            ];
-        });
+        $collections = Collection::where('active', true) // ✅ FIX
+            ->where(function ($query) use ($keyword) {
+                $query->where('title', 'LIKE', "%$keyword%")
+                    ->orWhere('description', 'LIKE', "%$keyword%")
+                    ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(author, '$')) LIKE ?", ["%$keyword%"]);
+            })
+            ->limit(50)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'title' => $item->title,
+                    'type' => 'collection',
+                    'file_url' => null,
+                    'is_restricted' => $item->is_restricted ?? false
+                ];
+            });
 
-        // ================= FINAL PROJECT =================
-        $finalProjects = FinalProject::where(function ($query) use ($keyword) {
-            $query->whereRaw('LOWER(title) LIKE ?', ["%$keyword%"])
-                ->orWhereRaw('LOWER(abstract) LIKE ?', ["%$keyword%"])
-                ->orWhereRaw('LOWER(keywords) LIKE ?', ["%$keyword%"]);
-        })
-        ->limit(5)
-        ->get()
-        ->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'title' => $item->title,
-                'type' => 'final_project',
-                'file_url' => $item->file_url // 🔥 penting untuk buka file
-            ];
-        });
+        $finalProjects = FinalProject::where('status', 'Approved') // 🔥 WAJIB
+                ->where(function ($query) use ($keyword) {
+                $query->where('title', 'LIKE', "%$keyword%")
+                    ->orWhere('abstract', 'LIKE', "%$keyword%")
+                    ->orWhere('student_name', 'LIKE', "%$keyword%");
+            })
+            ->limit(5)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'title' => $item->title,
+                    'type' => 'final_project', // ✅ FIX
+                    'file_url' => null,
+                    'is_restricted' => false
+                ];
+            });
 
         return response()->json(
             $collections->merge($finalProjects)

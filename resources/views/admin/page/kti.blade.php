@@ -30,7 +30,7 @@
             </thead>
             <tbody>
                 @foreach($data as $index => $kti)
-                    <tr>
+                    <tr class="{{ $kti->status == 'Pending' ? 'table-warning' : '' }}">
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $kti->student_name }}</td>
                         <td>{{ $kti->npm }}</td>
@@ -38,13 +38,19 @@
                         <td>{{ $kti->title }}</td>
                         <td>{{ $kti->firstSupervisor ? $kti->firstSupervisor->name : '-' }}</td>
                         <td>{{ $kti->secondSupervisor ? $kti->secondSupervisor->name : '-' }}</td>
+
+                        {{-- FILE --}}
                         <td>
                             @if($kti->file_url)
-                                <a href="{{ asset('storage/'.$kti->file_url) }}" target="_blank">Download</a>
+                                <a href="{{ route('final_project.download', $kti->id) }}" target="_blank">
+                                    Download
+                                </a>
                             @else
                                 -
                             @endif
                         </td>
+
+                        {{-- STATUS --}}
                         <td>
                             @if($kti->status == 'Pending')
                                 <span class="badge bg-warning">Pending</span>
@@ -54,20 +60,30 @@
                                 <span class="badge bg-danger">Rejected</span>
                             @endif
                         </td>
+
+                        {{-- AKSI --}}
                         <td>
                             @if($kti->status == 'Pending')
                                 <form action="{{ route('admin.kti.approve', $kti->id) }}" method="POST" class="d-inline">
                                     @csrf
-                                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        Approve
+                                    </button>
                                 </form>
+
                                 <form action="{{ route('admin.kti.reject', $kti->id) }}" method="POST" class="d-inline">
                                     @csrf
-                                    <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                    <button type="submit"
+                                        class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Yakin ingin menolak KTI ini?')">
+                                        Reject
+                                    </button>
                                 </form>
                             @else
-                                - {{-- tombol hilang jika sudah di-approve atau reject --}}
+                                <span class="text-muted">Selesai</span>
                             @endif
                         </td>
+
                     </tr>
                 @endforeach
             </tbody>
