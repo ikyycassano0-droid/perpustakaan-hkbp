@@ -272,7 +272,7 @@
         </h1>
 
         <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
-            Kumpulan artikel ilmiah, penelitian keperawatan, dan publikasi akademik dari civitas academica AKPER HKBP Balige.
+            Kumpulan artikel ilmiah, penelitian keperawatan, dan publikasi akademik.
         </p>
     </section>
 
@@ -283,252 +283,131 @@
             <div class="neon-inner">
 
                 <!-- SEARCH -->
-                <div class="mb-6">
-                    <input type="text" id="searchInput" class="search-input"
-                        placeholder="🔍 Cari jurnal, penulis, atau kata kunci...">
-                </div>
+                <form method="GET" class="mb-6">
+                    <input type="text" name="search"
+                           value="{{ request('search') }}"
+                           class="search-input"
+                           placeholder="🔍 Cari jurnal...">
+                </form>
 
-                <!-- FILTER -->
-                <div class="flex flex-wrap gap-3 mb-8">
-                    <button class="filter-btn active" data-filter="all">Semua</button>
-                    <button class="filter-btn" data-filter="keperawatan">Keperawatan</button>
-                    <button class="filter-btn" data-filter="kesehatan">Kesehatan</button>
-                    <button class="filter-btn" data-filter="penelitian">Penelitian</button>
-                    <button class="filter-btn" data-filter="2024">2024</button>
-                </div>
+                <!-- GRID DATA -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                <!-- GRID -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="journalGrid"></div>
+                    @forelse ($collections as $item)
+
+                        <div class="journal-card">
+
+                            <!-- HEADER -->
+                            <div class="journal-header">
+                                <div class="journal-title">
+                                    {{ $item->title }}
+                                </div>
+
+                                <div class="journal-meta">
+                                    <span>👨‍⚕️ 
+                                        {{ is_array($item->author) ? implode(', ', $item->author) : $item->author }}
+                                    </span>
+
+                                    <span>📅 {{ $item->publication_year ?? '-' }}</span>
+
+                                    <span>📄 {{ $item->edition ?? '-' }}</span>
+                                </div>
+                            </div>
+
+                            <!-- BODY -->
+                            <div class="journal-body">
+
+                                <div class="journal-abstract">
+                                    {{ Str::limit($item->description, 150) }}
+                                </div>
+
+                                <!-- ACTION -->
+                                <div class="flex gap-2 mt-3">
+
+                                    <a href="{{ route('collection.show', $item->id) }}"
+                                       class="btn-outline">
+                                        📖 Detail
+                                    </a>
+
+                                    @if($item->file_url)
+                                        <a href="{{ asset('storage/'.$item->file_url) }}"
+                                           target="_blank"
+                                           class="btn-primary">
+                                            📥 PDF
+                                        </a>
+                                    @endif
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    @empty
+
+                        <div class="col-span-2 text-center py-10 text-gray-400">
+                            📭 Jurnal belum tersedia
+                        </div>
+
+                    @endforelse
+
+                </div>
 
                 <!-- PAGINATION -->
-                <div class="flex justify-between items-center mt-8">
-
-                    <div class="text-sm text-gray-400" id="paginationInfo">
-                        Menampilkan data...
-                    </div>
-
-                    <div class="flex gap-2">
-                        <button class="pagination-btn" id="prevPage">◀</button>
-                        <button class="pagination-btn" id="nextPage">▶</button>
-                    </div>
-
+                <div class="mt-8">
+                    {{ $collections->links() }}
                 </div>
 
             </div>
-        </div>
-
-    </section>
-
-    <!-- CTA SECTION -->
-    <section class="section max-w-6xl mx-auto px-5 mb-16">
-
-        <div class="glass-card p-6 rounded-2xl text-center fade-up">
-
-            <h3 class="font-semibold text-indigo-200 mb-2">
-                Ingin Mempublikasikan Jurnal?
-            </h3>
-
-            <p class="text-sm text-gray-400 mb-4">
-                Kirimkan artikel ilmiah Anda untuk direview dan dipublikasikan.
-            </p>
-
-            <button id="submitJournalBtn" class="btn-primary">
-                Submit Jurnal →
-            </button>
-
         </div>
 
     </section>
 
 </div>
 @endsection
-
 @push('scripts')
 <script>
+
 // ============================================
-// FIX & LANJUTAN SCRIPT JURNAL
+// SIMPLE SCRIPT (UNTUK UI SAJA)
 // ============================================
 
-// STATE
-let currentPage = 1;
-const itemsPerPage = 4;
-let currentFilter = 'all';
-let searchQuery = '';
+// SEARCH (Frontend simple filter)
+document.getElementById('searchInput')?.addEventListener('input', function () {
+    const keyword = this.value.toLowerCase();
+    const items = document.querySelectorAll('.journal-card');
 
-// VIEW DETAIL (opsional jika nanti mau modal)
-function viewJournal(id) {
-    const journal = journalData.find(j => j.id === id);
-    if (journal) {
-        showNotification(`📖 ${journal.title}`, 'info');
-    }
-}
+    items.forEach(item => {
+        const text = item.innerText.toLowerCase();
 
-// DOWNLOAD
-function downloadJournal(id) {
-    const journal = journalData.find(j => j.id === id);
-    if (journal) {
-        showNotification(`📥 Download: ${journal.title}`, 'success');
-    }
-}
+        if (text.includes(keyword)) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+});
 
-// NOTIFICATION
+// NOTIFICATION (optional)
 function showNotification(message, type = 'success') {
     const notif = document.createElement('div');
-    notif.className = 'notification';
+    notif.className = 'notification show';
+
     notif.innerHTML = `
         <div class="flex items-center gap-2">
-            <span>
-                ${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}
-            </span>
+            <span>${type === 'success' ? '✅' : 'ℹ️'}</span>
             <span>${message}</span>
         </div>
     `;
 
     document.body.appendChild(notif);
 
-    setTimeout(() => notif.classList.add('show'), 50);
-
     setTimeout(() => {
-        notif.classList.remove('show');
-        setTimeout(() => notif.remove(), 300);
-    }, 3000);
+        notif.remove();
+    }, 2500);
 }
 
-// RENDER FUNCTION (FIXED)
-function renderJournals() {
-    let filtered = [...journalData];
+console.log('Jurnal page ready (Laravel Mode)');
 
-    // search
-    if (searchQuery) {
-        filtered = filtered.filter(item =>
-            item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.authors.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.keywords.some(k => k.toLowerCase().includes(searchQuery.toLowerCase()))
-        );
-    }
-
-    // filter
-    if (currentFilter !== 'all') {
-        filtered = filtered.filter(item =>
-            item.category === currentFilter ||
-            item.year.toString() === currentFilter
-        );
-    }
-
-    const totalItems = filtered.length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-    if (currentPage > totalPages) currentPage = 1;
-
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    const data = filtered.slice(start, end);
-
-    // GRID
-    const grid = document.getElementById('journalGrid');
-    grid.innerHTML = '';
-
-    if (data.length === 0) {
-        grid.innerHTML = `
-            <div class="col-span-2 text-center py-10 text-gray-400">
-                📭 Jurnal tidak ditemukan
-            </div>
-        `;
-        return;
-    }
-
-    data.forEach(j => {
-        const el = document.createElement('div');
-        el.className = 'journal-card fade-up';
-
-        el.innerHTML = `
-            <div class="journal-header">
-                <div class="journal-title">${j.title}</div>
-                <div class="journal-meta">
-                    <span>👨‍⚕️ ${j.authors}</span>
-                    <span>📅 ${j.year}</span>
-                    <span>📄 ${j.volume}</span>
-                </div>
-            </div>
-
-            <div class="journal-body">
-                <div class="journal-abstract">
-                    ${j.abstract.substring(0, 160)}...
-                </div>
-
-                <div class="journal-keywords">
-                    ${j.keywords.map(k => `<span class="keyword-tag">#${k}</span>`).join('')}
-                </div>
-
-                <div class="flex gap-2 mt-3">
-                    <button class="btn-outline" onclick="viewJournal(${j.id})">
-                        📖 Detail
-                    </button>
-                    <button class="btn-primary" onclick="downloadJournal(${j.id})">
-                        📥 PDF
-                    </button>
-                </div>
-            </div>
-        `;
-
-        grid.appendChild(el);
-    });
-
-    // pagination info
-    document.getElementById('paginationInfo').innerText =
-        `Menampilkan ${start + 1} - ${Math.min(end, totalItems)} dari ${totalItems}`;
-
-    // update button pagination
-    document.getElementById('prevPage').disabled = currentPage === 1;
-    document.getElementById('nextPage').disabled = currentPage === totalPages || totalPages === 0;
-
-    // animate
-    setTimeout(() => {
-        document.querySelectorAll('.journal-card').forEach((el, i) => {
-            el.style.setProperty('--delay', `${i * 0.05}s`);
-            el.classList.add('show');
-        });
-    }, 50);
-}
-
-// FILTER CLICK
-document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        currentFilter = e.target.dataset.filter;
-        currentPage = 1;
-
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-
-        renderJournals();
-    });
-});
-
-// SEARCH
-document.getElementById('searchInput').addEventListener('input', (e) => {
-    searchQuery = e.target.value;
-    currentPage = 1;
-    renderJournals();
-});
-
-// PAGINATION
-document.getElementById('prevPage').addEventListener('click', () => {
-    if (currentPage > 1) {
-        currentPage--;
-        renderJournals();
-    }
-});
-
-document.getElementById('nextPage').addEventListener('click', () => {
-    currentPage++;
-    renderJournals();
-});
-
-// INIT
-document.addEventListener('DOMContentLoaded', () => {
-    renderJournals();
-});
-
-console.log('Jurnal page loaded successfully 🚀');
 </script>
 @endpush

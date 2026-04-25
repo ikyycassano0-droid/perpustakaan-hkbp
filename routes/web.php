@@ -257,6 +257,8 @@ Route::middleware(['auth'])->prefix('user')->group(function () {
             ->name('user.koleksi.majalah')
             ->defaults('menu_type', 'majalah');
     });
+    Route::get('/collection/{id}', [CollectionController::class, 'show'])
+    ->name('collection.show');
 });
 
     Route::prefix('final-project')->name('final_project.')->group(function() {

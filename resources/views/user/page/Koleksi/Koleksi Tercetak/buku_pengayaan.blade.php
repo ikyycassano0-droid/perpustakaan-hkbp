@@ -339,9 +339,9 @@
                         {{-- BUTTON --}}
                         <div class="flex gap-2 mt-3">
 
-                            <button class="btn-outline w-full">
+                            <a href="{{ route('collection.show', $book->id) }}" class="btn-outline w-full text-center">
                                 Detail
-                            </button>
+                            </a>
 
                             @if($book->available_stock > 0)
                                 <button class="btn-primary">

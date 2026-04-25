@@ -144,6 +144,9 @@
                     <label class="fw-bold">Judul Buku</label>
                     <input type="text" name="title" class="form-control mb-2" required>
 
+                    <label class="fw-bold">Series Title</label>
+                    <input type="text" name="series_title" class="form-control mb-2">
+
                     {{-- AUTHOR --}}
                     <label class="fw-bold">Author</label>
                     <div id="authorWrapper">
@@ -186,6 +189,36 @@
                             🗑 Hapus Terakhir
                         </button>
                     </div>
+
+                    <label>Language</label>
+                    <input type="text" name="language" class="form-control mb-2">
+
+                    @error('isbn')
+                    <div class="text-red-500 text-sm mt-1">ISBN sudah digunakan!</div>
+                    @enderror
+
+                    <label>Edition</label>
+                    <input type="text" name="edition" class="form-control mb-2">
+
+                    <label>Subject</label>
+                    <input type="text" name="subject" class="form-control mb-2">
+
+                    <label>Spesifik Description</label>
+                    <textarea name="spesifik_description" class="form-control mb-2"></textarea>
+                    <label>Carrier Type</label>
+                    <input type="text" name="carrier_type" class="form-control mb-2">
+
+                    <label>Format</label>
+                    <input type="text" name="format" class="form-control mb-2">
+
+                    <label class="fw-bold">Content Type</label>
+                    <input type="text" name="content_type[]" class="form-control mb-2">
+
+                    <label class="fw-bold">Media Type</label>
+                    <input type="text" name="media_type[]" class="form-control mb-2">
+
+                    <label class="fw-bold">Responsibility Statement</label>
+                    <input type="text" name="responsibility_statement[]" class="form-control mb-2">
 
                     {{-- CATEGORY --}}
                     <label class="fw-bold mt-3">Category</label>

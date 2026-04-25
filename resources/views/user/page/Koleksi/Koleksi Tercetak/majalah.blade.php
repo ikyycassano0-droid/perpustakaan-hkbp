@@ -318,18 +318,9 @@
 
 @section('content')
 
-@push('styles')
-{{-- CSS kamu tetap pakai yang sudah ada (tidak diubah) --}}
-<style>
-    /* CSS kamu tetap di sini (sudah bagus untuk UI) */
-</style>
-@endpush
-
-@section('content')
-
 <div class="main-content">
 
-    <!-- HERO SECTION -->
+    <!-- HERO -->
     <section class="pt-28 pb-8 text-center px-5">
         <div class="inline-block glass-card px-5 py-2 rounded-full mb-5 fade-up">
             <span class="text-indigo-300 text-sm font-medium tracking-wide">
@@ -340,13 +331,9 @@
         <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight title-main fade-up">
             Koleksi Majalah
         </h1>
-
-        <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
-            Eksplorasi wawasan terbaru dalam dunia keperawatan dan publikasi akademik.
-        </p>
     </section>
 
-    <!-- MAIN SECTION (READY CRUD LAYOUT) -->
+    <!-- CONTENT -->
     <section class="section max-w-7xl mx-auto px-5">
 
         <div class="neon-border fade-up">
@@ -354,65 +341,41 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
-                    <!-- SIDEBAR FILTER (NANTI BISA DARI DB) -->
+                    <!-- SIDEBAR -->
                     <div class="lg:col-span-1">
-
                         <div class="sidebar-menu">
                             <div class="sidebar-title">📂 Kategori</div>
 
-                            <a href="#" class="sidebar-item">
-                                📰 Semua Majalah
-                            </a>
-
-                            <a href="#" class="sidebar-item">
-                                🔬 Riset Keperawatan
-                            </a>
-
-                            <a href="#" class="sidebar-item">
-                                🏥 Klinis & Bedah
-                            </a>
-
-                            <a href="#" class="sidebar-item">
-                                👶 Pediatrik
-                            </a>
-
-                            <a href="#" class="sidebar-item">
-                                🌿 Wellness
-                            </a>
+                            <a href="#" class="sidebar-item">📰 Semua Majalah</a>
+                            <a href="#" class="sidebar-item">🔬 Riset Keperawatan</a>
+                            <a href="#" class="sidebar-item">🏥 Klinis & Bedah</a>
                         </div>
-
                     </div>
 
-                    <!-- CONTENT GRID (INI SUDAH CRUD READY) -->
+                    <!-- GRID -->
                     <div class="lg:col-span-3">
 
-                        <!-- SEARCH (NANTI PAKAI REQUEST QUERY) -->
-                        <form method="GET" action="#" class="mb-6">
-                            <input
-                                type="text"
-                                name="search"
-                                value="{{ request('search') }}"
-                                class="search-input"
-                                placeholder="🔍 Cari majalah..."
-                            >
+                        <form method="GET" class="mb-6">
+                            <input type="text" name="search" class="search-input"
+                                   placeholder="🔍 Cari majalah...">
                         </form>
 
-                        <!-- GRID DATA DARI DATABASE -->
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
 
-                            @forelse ($majalahs as $item)
+                            {{-- FIX INI --}}
+                            @forelse ($collections as $item)
 
                                 <div class="magazine-card">
 
                                     <div class="magazine-cover"
-                                         style="background-image: url('{{ asset('storage/'.$item->cover) }}')">
+                                         style="background-image: url('{{ asset('storage/'.$item->cover_image) }}')">
                                     </div>
 
                                     <div class="p-4">
 
                                         <div class="flex justify-between mb-2">
                                             <span class="text-xs text-indigo-300">
-                                                {{ $item->kategori }}
+                                                {{ $item->category ?? '-' }}
                                             </span>
 
                                             <span class="text-xs text-gray-500">
@@ -421,24 +384,17 @@
                                         </div>
 
                                         <h3 class="font-semibold text-indigo-200 text-sm">
-                                            {{ $item->judul }}
+                                            {{ $item->title }}
                                         </h3>
 
-                                        <p class="text-xs text-gray-400 mt-2">
-                                            {{ Str::limit($item->deskripsi, 80) }}
-                                        </p>
-
                                         <div class="flex justify-between items-center mt-3">
-
                                             <span class="text-xs text-gray-500">
-                                                👁 {{ $item->views ?? 0 }}
+                                                📚 Stok: {{ $item->stock }}
                                             </span>
 
-                                            <a href="{{ route('majalah.show', $item->id) }}"
-                                               class="btn-link text-xs">
-                                                Baca →
+                                            <a href="#" class="btn-link text-xs">
+                                                Detail →
                                             </a>
-
                                         </div>
 
                                     </div>
@@ -446,18 +402,11 @@
                                 </div>
 
                             @empty
-
                                 <div class="col-span-3 text-center text-gray-400 py-10">
                                     📭 Data majalah belum tersedia
                                 </div>
-
                             @endforelse
 
-                        </div>
-
-                        <!-- PAGINATION LARAVEL -->
-                        <div class="mt-8">
-                            {{ $majalahs->links() }}
                         </div>
 
                     </div>
@@ -474,87 +423,19 @@
 
 @push('scripts')
 <script>
-@push('scripts')
-<script>
-// ============================================
-// KOLEKSI MAJALAH - FRONTEND UX SCRIPT (CRUD READY)
-// Tidak pakai dummy data lagi
-// ============================================
+// SIMPLE CLEAN SCRIPT (NO DUPLICATE)
 
-// SEARCH AUTO SUBMIT (ENTER / LIVE OPTIONAL)
-const searchInput = document.querySelector('input[name="search"]');
-
-if (searchInput) {
-    searchInput.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') {
-            this.form.submit();
-        }
-    });
-}
-
-// SIDEBAR ACTIVE STATE HANDLER
-const sidebarItems = document.querySelectorAll('.sidebar-item');
-
-sidebarItems.forEach(item => {
-    item.addEventListener('click', function () {
-        sidebarItems.forEach(i => i.classList.remove('active'));
-        this.classList.add('active');
-    });
-});
-
-// NOTIFICATION SYSTEM (UNTUK CRUD RESPONSE NANTI)
 function showNotification(message, type = 'success') {
-    const notification = document.createElement('div');
-
-    let icon = 'ℹ️';
-    if (type === 'success') icon = '✅';
-    if (type === 'error') icon = '❌';
-    if (type === 'warning') icon = '⚠️';
-
-    notification.className = 'notification show';
-    notification.innerHTML = `
-        <div class="flex items-center gap-2">
-            <span>${icon}</span>
-            <span>${message}</span>
-        </div>
-    `;
-
-    document.body.appendChild(notification);
+    const n = document.createElement('div');
+    n.className = 'notification show';
+    n.innerHTML = message;
+    document.body.appendChild(n);
 
     setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => notification.remove(), 300);
+        n.remove();
     }, 2500);
 }
 
-// DETEKSI SUCCESS MESSAGE DARI LARAVEL SESSION
-@if(session('success'))
-    showNotification("{{ session('success') }}", 'success');
-@endif
-
-@if(session('error'))
-    showNotification("{{ session('error') }}", 'error');
-@endif
-
-// IMAGE LAZY LOAD (optional optimization)
-const covers = document.querySelectorAll('.magazine-cover');
-
-if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = 1;
-            }
-        });
-    });
-
-    covers.forEach(img => observer.observe(img));
-}
-
-// DEBUG INFO
-console.log('📚 Koleksi Majalah CRUD Mode Active');
-
-</script>
-@endpush
+console.log('Majalah page ready');
 </script>
 @endpush

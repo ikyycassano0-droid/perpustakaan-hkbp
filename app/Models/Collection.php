@@ -15,10 +15,16 @@ class Collection extends Model
 
     protected $table = 'collections';
 
+    // ================= FILLABLE =================
     protected $fillable = [
         'title',
         'series_title',
+
         'author',
+        'responsibility_statement',
+        'content_type',
+        'media_type',
+
         'publisher',
         'publication_year',
         'language',
@@ -26,6 +32,11 @@ class Collection extends Model
         'edition',
         'subject',
         'description',
+
+        'carrier_type',
+        'specific_detail_info',
+
+        'keywords',
 
         'location_id',
         'file_url',
@@ -43,15 +54,25 @@ class Collection extends Model
         'is_available',
     ];
 
+    // ================= CAST =================
     protected $casts = [
         'author' => 'array',
+        'responsibility_statement' => 'array',
+        'content_type' => 'array',
+        'media_type' => 'array',
+        'keywords' => 'array',
+
         'active' => 'boolean',
         'is_available' => 'boolean',
+
         'stock' => 'integer',
         'available_stock' => 'integer',
+        'publication_year' => 'integer',
     ];
 
-    // RELASI MANY TO MANY
+    // ================= RELASI =================
+
+    // MANY TO MANY
     public function classifications()
     {
         return $this->belongsToMany(
@@ -72,16 +93,55 @@ class Collection extends Model
         );
     }
 
+    // BELONGS TO
     public function location()
     {
         return $this->belongsTo(Location::class);
     }
 
-    // ACCESSOR
+    // OPTIONAL (kalau dipakai)
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
+
+    // ================= ACCESSOR =================
+
+    // AUTHOR STRING
     public function getAuthorStringAttribute()
     {
         return is_array($this->author)
             ? implode(', ', $this->author)
             : $this->author;
+    }
+
+    // KEYWORDS STRING
+    public function getKeywordsStringAttribute()
+    {
+        return is_array($this->keywords)
+            ? implode(', ', $this->keywords)
+            : $this->keywords;
+    }
+
+    // STATUS STOCK
+    public function getStockStatusAttribute()
+    {
+        if ($this->available_stock <= 0) return 'Habis';
+        if ($this->available_stock < 3) return 'Hampir Habis';
+        return 'Tersedia';
+    }
+
+    // COVER IMAGE URL (AMAN)
+    public function getCoverUrlAttribute()
+    {
+        return $this->cover_image
+            ? asset('storage/' . $this->cover_image)
+            : 'https://via.placeholder.com/300x400?text=No+Cover';
+    }
+
+    // FILE URL (PDF / DLL)
+    public function getFileUrlAttribute($value)
+    {
+        return $value ? asset('storage/' . $value) : null;
     }
 }
