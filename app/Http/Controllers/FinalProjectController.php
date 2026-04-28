@@ -33,9 +33,10 @@ class FinalProjectController extends Controller
         ->latest()
         ->get();
 
-    $supervisors = User::all();
+    $supervisors = User::whereHas('role', function ($q) {
+    $q->where('name', 'Dosen'); 
+})->get();
 
-    // ✅ TAMBAHKAN INI
     $categories = CategoryFinalProject::all();
 
     return view('user.page.Koleksi_Elektronik.kti', [
@@ -52,13 +53,19 @@ class FinalProjectController extends Controller
     // Store user (upload KTI)
     public function store(Request $request)
 {
-    $request->validate([
+        $request->validate([
         'student_name' => 'required|string|max:255',
         'npm' => 'required|string|max:50',
         'study_program' => 'required|string|max:255',
         'title' => 'required|string|max:255',
+
         'first_supervisor_id' => ['required','exists:users,id'],
-        'second_supervisor_id' => ['nullable','exists:users,id'],
+        'second_supervisor_id' => [
+            'nullable',
+            'exists:users,id',
+            'different:first_supervisor_id' // 🔥 INI KUNCINYA
+        ],
+
         'abstract' => 'nullable|string',
         'file_url' => 'required|file|mimes:pdf,docx|max:10240',
     ]);
@@ -73,7 +80,6 @@ class FinalProjectController extends Controller
         'abstract',
     ]);
 
-    // 🔥 INI YANG KEMARIN HILANG
     $data['user_id'] = auth()->id();
 
     $category = CategoryFinalProject::where('name', 'kti')->firstOrFail();
@@ -91,10 +97,10 @@ class FinalProjectController extends Controller
         ->with('success', 'KTI berhasil diupload');
 }
 
-    // Update user (edit KTI)
+    
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $request->validate([    
             'student_name' => 'required|string|max:255',
             'npm' => 'required|string|max:50',
             'study_program' => 'required|string|max:255',
@@ -105,7 +111,8 @@ class FinalProjectController extends Controller
             ],
             'second_supervisor_id' => [
                 'nullable',
-                'exists:users,id'
+                'exists:users,id',
+                'different:first_supervisor_id'
             ],
             'abstract' => 'nullable|string',
             'file_url' => 'nullable|file|mimes:pdf,docx|max:10240', // 10MB
@@ -224,18 +231,18 @@ class FinalProjectController extends Controller
 
     // Delete
     public function destroy($id)
-{
-    $item = FinalProject::findOrFail($id);
+    {
+        $item = FinalProject::findOrFail($id);
 
-    // hapus file jika ada
-    if ($item->file_url && Storage::disk('public')->exists($item->file_url)) {
-        Storage::disk('public')->delete($item->file_url);
+        // hapus file jika ada
+        if ($item->file_url && Storage::disk('public')->exists($item->file_url)) {
+            Storage::disk('public')->delete($item->file_url);
+        }
+
+        $item->delete();
+
+        return back()->with('success', 'Data berhasil dihapus');
     }
-
-    $item->delete();
-
-    return back()->with('success', 'Data berhasil dihapus');
-}
 
     // ================= Pending / Approval KTI =================
     public function approve($id)
@@ -248,109 +255,119 @@ class FinalProjectController extends Controller
     }
 
     public function reject($id)
-{
-    $kti = FinalProject::findOrFail($id);
+    {
+        $kti = FinalProject::findOrFail($id);
 
-    // ❗ HAPUS FILE jika ada
-    if ($kti->file_url && Storage::disk('public')->exists($kti->file_url)) {
-        Storage::disk('public')->delete($kti->file_url);
+        
+        if ($kti->file_url && Storage::disk('public')->exists($kti->file_url)) {
+            Storage::disk('public')->delete($kti->file_url);
+        }
+
+        $kti->file_url = null; // optional (biar bersih di DB)
+        $kti->status = 'Rejected';
+        $kti->save();
+
+        return redirect()->back()->with('success', 'KTI berhasil di-reject.');
     }
 
-    $kti->file_url = null; // optional (biar bersih di DB)
-    $kti->status = 'Rejected';
-    $kti->save();
+        // ================= Koleksi Elektronik (Admin Upload) =================
+        public function showAdminUpload(Request $request, $category)
+    {
+        $viewMap = [
+            'ebook' => 'e_book',
+            'e-article' => 'e_article',
+            'cd' => 'cd',
+            'video' => 'video',
+        ];
 
-    return redirect()->back()->with('success', 'KTI berhasil di-reject.');
-}
+        $categoryData = CategoryFinalProject::where('slug', $category)->firstOrFail();
 
-    // ================= Koleksi Elektronik (Admin Upload) =================
-    public function showAdminUpload(Request $request, $category)
-{
-    $viewMap = [
-        'ebook' => 'e_book',
-        'e-article' => 'e_article',
-        'cd' => 'cd',
-        'video' => 'video',
-    ];
+        $query = FinalProject::where('category_final_project_id', $categoryData->id)
+            ->where('status', 'Approved');
 
-    $categoryData = CategoryFinalProject::where('slug', $category)->firstOrFail();
+        // 🔍 SEARCH (INI YANG BUTUH $request)
+        if ($request->search) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                ->orWhere('abstract', 'like', '%' . $request->search . '%');
+            });
+        }
 
-    $query = FinalProject::where('category_final_project_id', $categoryData->id)
-        ->where('status', 'Approved');
+        $data = $query->latest()->paginate(6);
 
-    // 🔍 SEARCH (INI YANG BUTUH $request)
-    if ($request->search) {
-        $query->where(function ($q) use ($request) {
-            $q->where('title', 'like', '%' . $request->search . '%')
-              ->orWhere('abstract', 'like', '%' . $request->search . '%');
-        });
+        $categories = CategoryFinalProject::all();
+
+        return view(
+            'user.page.Koleksi_Elektronik.' . $viewMap[$category],
+            [
+                'data' => $data,
+                'ebooks' => $data,
+                'videos' => $data,
+                'categories' => $categories
+            ]
+        );
     }
 
-    $data = $query->latest()->paginate(6);
+    public function download($id)
+    {
+        $file = FinalProject::findOrFail($id);
 
-    $categories = CategoryFinalProject::all();
+        // 🔥 CEK STATUS
+        if ($file->status !== 'Approved') {
+            abort(403, 'File belum tersedia.');
+        }
 
-    return view(
-        'user.page.Koleksi_Elektronik.' . $viewMap[$category],
-        [
-            'data' => $data,
-            'ebooks' => $data,
-            'videos' => $data,
-            'categories' => $categories
-        ]
-    );
-}
+        // 🔥 CEK FILE ADA DI DB
+        if (!$file->file_url) {
+            abort(404, 'File tidak ditemukan.');
+        }
 
-public function download($id)
-{
-    $file = FinalProject::findOrFail($id);
+        $path = storage_path('app/public/' . $file->file_url);
 
-    // 🔥 CEK STATUS
-    if ($file->status !== 'Approved') {
-        abort(403, 'File belum tersedia.');
+        // 🔥 CEK FILE FISIK ADA
+        if (!file_exists($path)) {
+            abort(404, 'File fisik tidak ditemukan.');
+        }
+
+        return response()->download($path);
     }
 
-    // 🔥 CEK FILE ADA DI DB
-    if (!$file->file_url) {
-        abort(404, 'File tidak ditemukan.');
+    public function pending_admin()
+    {
+        $data = FinalProject::with('category', 'firstSupervisor', 'secondSupervisor')
+            ->where('status', 'Pending')
+            ->latest()
+            ->get();
+
+        return view('admin.page.kti', compact('data'));
     }
 
-    $path = storage_path('app/public/' . $file->file_url);
+    public function tutorial_simulasi(Request $request)
+    {
+        $query = FinalProject::where('status', 'Approved')
+            ->whereHas('category', function ($q) {
+                $q->where('slug', 'video');
+            });
 
-    // 🔥 CEK FILE FISIK ADA
-    if (!file_exists($path)) {
-        abort(404, 'File fisik tidak ditemukan.');
+        if ($request->search) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                ->orWhere('abstract', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $videos = $query->latest()->paginate(6);
+
+        return view('user.page.Koleksi_Elektronik.video', compact('videos'));
     }
 
-    return response()->download($path);
-}
+    public function create()
+    {
+        $supervisors = User::whereHas('role', function ($q) {
+    $q->where('name', 'Dosen');
+})->get();
+        $categories = CategoryFinalProject::all();
 
-public function pending_admin()
-{
-    $data = FinalProject::with('category', 'firstSupervisor', 'secondSupervisor')
-        ->where('status', 'Pending')
-        ->latest()
-        ->get();
-
-    return view('admin.page.kti', compact('data'));
-}
-
-public function tutorial_simulasi(Request $request)
-{
-    $query = FinalProject::where('status', 'Approved')
-        ->whereHas('category', function ($q) {
-            $q->where('slug', 'video');
-        });
-
-    if ($request->search) {
-        $query->where(function ($q) use ($request) {
-            $q->where('title', 'like', '%' . $request->search . '%')
-              ->orWhere('abstract', 'like', '%' . $request->search . '%');
-        });
+        return view('user.page.Koleksi_Elektronik.create_kti', compact('supervisors', 'categories'));
     }
-
-    $videos = $query->latest()->paginate(6);
-
-    return view('user.page.Koleksi_Elektronik.video', compact('videos'));
-}
 }

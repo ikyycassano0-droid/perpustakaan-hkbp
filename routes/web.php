@@ -265,26 +265,24 @@
         ->name('collection.show');
     });
 
-    // ================= FINAL PROJECT =================
-        Route::prefix('final-project')->name('final_project.')->group(function() {
+    
+    Route::prefix('final-project')->name('final_project.')->group(function() {
 
-            // KTI (upload user)
-            Route::get('/kti', [FinalProjectController::class,'index'])
-                ->name('kti')->defaults('category','kti');
+    Route::get('/kti', [FinalProjectController::class,'index'])
+        ->name('kti')
+        ->defaults('category','kti');
 
-            Route::post('/kti/store', [FinalProjectController::class,'store'])->name('kti.store');
-            Route::post('/kti/update/{id}', [FinalProjectController::class,'update'])->name('kti.update');
-            Route::delete('/kti/delete/{id}', [FinalProjectController::class,'destroy'])->name('kti.delete');
+    Route::middleware('auth')->group(function () {
+        Route::post('/kti/store', [FinalProjectController::class,'store'])->name('kti.store');
+        Route::post('/kti/update/{id}', [FinalProjectController::class,'update'])->name('kti.update');
+        Route::delete('/kti/delete/{id}', [FinalProjectController::class,'destroy'])->name('kti.delete');
+    });
 
-            // 🔥 KOLEKSI ELEKTRONIK
-            Route::get('/koleksi/{category}', [FinalProjectController::class,'index'])
-                ->name('koleksi')
-                ->where('category','ebook|e-article|cd|video');
-        });
+    Route::get('/koleksi/{category}', [FinalProjectController::class,'index'])
+        ->name('koleksi')
+        ->where('category','ebook|e-article|cd|video');
+});
 
-        Route::get('/download/{id}', [FinalProjectController::class, 'download'])
-        ->name('final_project.download')
-        ->middleware('auth');
     //Guest
 
     Route::middleware(['web'])->group(function () {
