@@ -1,28 +1,28 @@
-<style>
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-}
+<!-- NAVBAR MODERN FUTURISTIC -->
+<header class="fixed top-0 left-0 w-full z-[999] px-6 py-4">
+    <div class="navbar-container flex items-center justify-between">
 
-/* ================= NAVBAR MODERN ================= */
-.navbar {
-    position: sticky;
-    top: 0; 
-    width: 100%;
-    backdrop-filter: blur(14px);
-    background: linear-gradient(135deg, rgba(10,20,80,0.85), rgba(40,0,80,0.85));
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    color: white;
-    padding: 8px 16px;
-    font-size: 0.8rem;
-    z-index: 1000;
+        <!-- LOGO SECTION -->
+        <div class="flex items-center gap-3">
+            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-400/30">
+                <img src="assets/logo akper.png"
+                    alt="Logo AKPER"
+                    class="w-7 h-7 object-contain">
+            </div>
+            <div>
+                <span class="nav-logo">AKPER HKBP</span>
+                <div class="text-[10px] text-indigo-300/60 tracking-wider">BALIGE</div>
+            </div>
+        </div>
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-}
+        <!-- DESKTOP MENU -->
+        <ul class="desktop-menu flex items-center gap-1 lg:gap-2">
+
+            <!-- HOME -->
+            <li class="nav-item-modern">
+                <a href="{{ route('home') }}" class="px-3 py-2 block">Home</a>
+            </li>
+
             <!-- PROFILE DROPDOWN -->
             <li class="dropdown-modern nav-item-modern">
                 <button class="flex items-center gap-1 px-3 py-2">
@@ -38,24 +38,18 @@
                 </ul>
             </li>
 
-/* LOGO */
-.logo-container {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
+            <!-- LAYANAN DROPDOWN -->
+            <li class="dropdown-modern nav-item-modern">
+                <button class="flex items-center gap-1 px-3 py-2">
+                    Layanan <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <ul class="dropdown-menu-modern">
+                    <li><a href="{{ route('guest.layanan.show', 'pinjam_buku') }}" class="dropdown-item-modern">Pinjam Buku</a></li>
+                    <li><a href="{{ route('guest.layanan.show', 'upload_ta') }}" class="dropdown-item-modern">Upload TA</a></li>
+                    <li><a href="{{ route('guest.layanan.show', 'waktu_layanan') }}" class="dropdown-item-modern">Waktu Layanan</a></li>
+                </ul>
+            </li>
 
-.logo-img {
-    width: 38px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2));
-    border: 1px solid rgba(99,102,241,0.4);
-    font-size: 18px;
-}
             <!-- KOLEKSI DROPDOWN (Dengan Submenu) -->
             <li class="dropdown-modern nav-item-modern">
                 <button class="flex items-center gap-1 px-3 py-2">
@@ -83,169 +77,65 @@
                              Koleksi Elektronik <span class="text-indigo-400 text-xs">▶</span>
                         </a>
                         <ul class="submenu-menu-modern">
-                            <li><a href="#" class="dropdown-item-modern">E-book</a></li>
-                            <li><a href="#" class="dropdown-item-modern">E-article</a></li>
-                            <li><a href="#" class="dropdown-item-modern">CD/DVD</a></li>
-                            <li><a href="#" class="dropdown-item-modern">Video Edukasi</a></li>
-                            <li><a href="#" class="dropdown-item-modern">KTI Digital</a></li>
-                            <li><a href="#" class="dropdown-item-modern">Jurnal Online</a></li>
-                        </ul>
+    <li>
+        <a href="{{ route('final_project.koleksi', 'ebook') }}" class="dropdown-item-modern">
+            E-book
+        </a>
+    </li>
+
+    <li>
+        <a href="{{ route('final_project.koleksi', 'e-article') }}" class="dropdown-item-modern">
+            E-article
+        </a>
+    </li>
+
+    <li>
+        <a href="{{ route('final_project.koleksi', 'cd') }}" class="dropdown-item-modern">
+            CD/DVD
+        </a>
+    </li>
+
+    <li>
+        <a href="{{ route('final_project.koleksi', 'video') }}" class="dropdown-item-modern">
+            Video Edukasi
+        </a>
+    </li>
+
+    <li>
+        <a href="{{ route('final_project.kti') }}" class="dropdown-item-modern">
+            KTI Digital
+        </a>
+    </li>
+</ul>
                     </li>
 
                 </ul>
             </li>
 
-.logo-text h1 {
-    font-size: 0.9rem;
-    margin: 0;
-    font-weight: 600;
-}
+            <!-- BERITA -->
+            <li class="nav-item-modern">
+                <a href="{{ route('guest.berita.index') }}" class="px-3 py-2 block">Berita</a>
+            </li>
 
-.logo-text span {
-    font-size: 0.65rem;
-    color: rgba(255,255,255,0.6);
-}
+            <!-- INFORMASI DROPDOWN -->
+            <li class="dropdown-modern nav-item-modern">
+                <button class="flex items-center gap-1 px-3 py-2">
+                    Informasi <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <ul class="dropdown-menu-modern">
+                    <li><a href="#" class="dropdown-item-modern">Panduan</a></li>
+                </ul>
+            </li>
+        </ul>
 
-/* MENU */
-.navbar nav ul {
-    display: flex;
-    gap: 6px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.navbar nav ul li a {
-    color: #e0e7ff;
-    text-decoration: none;
-    padding: 6px 10px;
-    border-radius: 8px;
-    transition: all 0.25s ease;
-}
-
-.navbar nav ul li a:hover {
-    background: rgba(99,102,241,0.2);
-    color: #fff;
-}
-
-/* DROPDOWN */
-.dropdown-menu {
-    display: none;
-    position: absolute;
-    top: 110%;
-    left: 0;
-    background: rgba(20,20,60,0.95);
-    backdrop-filter: blur(12px);
-    border-radius: 12px;
-    padding: 6px 0;
-    min-width: 180px;
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-}
-
-.navbar nav ul li:hover > .dropdown-menu {
-    display: block;
-}
-
-.dropdown-menu li a {
-    padding: 8px 12px;
-    display: block;
-    border-radius: 6px;
-}
-
-.dropdown-menu li a:hover {
-    background: rgba(99,102,241,0.25);
-}
-
-/* SUBMENU */
-.submenu {
-    left: 100%;
-    top: 0;
-}
-
-/* SEARCH */
-.navbar form {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-}
-
-.navbar form input,
-.navbar form select {
-    padding: 6px 8px;
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.2);
-    background: rgba(255,255,255,0.05);
-    color: white;
-    font-size: 0.75rem;
-}
-
-.navbar form input::placeholder {
-    color: rgba(255,255,255,0.5);
-}
-
-.navbar form button {
-    padding: 6px 10px;
-    border-radius: 8px;
-    border: none;
-    background: linear-gradient(135deg, #6366f1, #a855f7);
-    color: white;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.navbar form button:hover {
-    opacity: 0.85;
-}
-
-/* USER AREA */
-.user-area button {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    padding: 6px 10px;
-    border-radius: 10px;
-    color: #facc15;
-}
-
-/* NOTIF */
-#notif-badge {
-    animation: pulse 1s infinite;
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-    .navbar {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .navbar nav ul {
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .navbar form {
-        width: 100%;
-        margin-top: 8px;
-        flex-wrap: wrap;
-    }
-
-    .navbar form input,
-    .navbar form select,
-    .navbar form button {
-        width: 48%;
-    }
-
-    .navbar form button {
-        width: 100%;
-    }
-
-    .dropdown-menu {
-        position: relative;
-    }
-
-    .submenu {
-        left: 0;
-    }
-}
-</style>
+        <!-- LOGIN BUTTON & MOBILE MENU -->
+        <div class="flex items-center gap-3">
+            <button onclick="window.location.href='{{ route('login') }}'" class="btn-login-modern">
+                <span class="hidden sm:inline"></span> Login
+            </button>
+            <div class="mobile-menu-btn" id="mobileMenuBtn">
+                <svg class="w-6 h-6 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </div>
+        </div>
+    </div>
+</header>

@@ -1,6 +1,6 @@
 @extends('user.component.main')
     <header>
-      @include('user.component.navbar')
+      @include('user.component.navbars')
     </header>
 @section('title', 'History Peminjaman')
 
@@ -34,7 +34,7 @@
                 </p>
 
                 <!-- COUNTDOWN -->
-                <div 
+                <div
                     class="countdown fw-bold"
                     data-date="{{ $due->format('Y-m-d H:i:s') }}"
                     data-status="{{ $order->status }}">

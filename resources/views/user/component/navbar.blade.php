@@ -195,10 +195,10 @@
                         <li><a class="dropdown-item" href="{{ route('final_project.kti') }}">KTI</a></li>
 
                         <!-- Admin Upload -->
-                        <a href="{{ route('final_project.index', 'ebook') }}">E-Book</a>
-                        <a href="{{ route('final_project.index', 'e-article') }}">E-Article</a>
-                        <a href="{{ route('final_project.index', 'cd') }}">CD</a>
-                        <a href="{{ route('final_project.index', 'video') }}">Video</a>
+                        <li><a class="dropdown-item" href="{{ route('final_project.koleksi', 'ebook') }}">E-Book</a></li>
+                        <li><a class="dropdown-item" href="{{ route('final_project.koleksi', 'e-article') }}">E-Article</a></li>
+                        <li><a class="dropdown-item" href="{{ route('final_project.koleksi', 'cd') }}">CD</a></li>
+                        <li><a class="dropdown-item" href="{{ route('final_project.koleksi', 'video') }}">Video</a></li>
                     </ul>
                 </li>
 

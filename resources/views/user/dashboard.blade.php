@@ -2,7 +2,7 @@
 
 @section('user_content')
     <header>
-      @include('user.component.navbar')
+      @include('user.component.navbars')
     </header>
   <div class="page-header">
         <h1>Jaringan Kerjasama</h1>
@@ -18,8 +18,8 @@
         <br>
         <a href="guest.html" style="color: #021e69; font-weight: bold; text-decoration: none;"><i class="fas fa-arrow-left"></i> Kembali</a>
     </div>
-    
-  
+
+
     <footer>
       @include('user.component.footer')
     </footer>

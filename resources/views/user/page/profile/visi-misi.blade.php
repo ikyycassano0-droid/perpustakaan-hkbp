@@ -1,7 +1,7 @@
 @extends('user.component.main')
 @section('user_content')
     <header>
-      @include('user.component.navbar')
+      @include('user.component.navbars')
     </header>
     <div class="page-banner">
     <h1>Visi & Misi</h1>

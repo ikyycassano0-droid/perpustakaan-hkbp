@@ -237,43 +237,31 @@ class CollectionController extends Controller
         return view($view, compact('collection'));
     }
 
-    // ================= USER MENU =================
     public function showUserMenu(Request $request, $menu_type)
-    {
-        $query = Collection::with(['categories', 'location'])
-            ->where('menu_type', $menu_type)
-            ->where('active', 1);
+{
+    $query = Collection::with(['categories', 'location'])
+        ->where('menu_type', $menu_type)
+        ->where('active', 1);
 
-        // 🔍 SEARCH
-        if ($request->search) {
-            $search = $request->search;
+    if ($request->search) {
+        $search = $request->search;
 
-    public function showUserMenu($menu_type)
-    {
-        $collections = Collection::with(['classifications', 'categories', 'location'])
-            ->where('menu_type', $menu_type)
-            ->get();
+        $query->where('title', 'like', '%' . $search . '%');
+    }
 
-        $blade = match($menu_type) {
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%$search%")
-                  ->orWhere('publisher', 'like', "%$search%")
-                  ->orWhere('author', 'like', "%$search%")
-                  ->orWhere('keywords', 'like', "%$search%");
-            });
-        }
+    $collections = $query->paginate(9);
 
-        // 🔥 PAGINATION (BEBAS MAU 6 / 9 / 12)
-        $collections = $query->latest()->paginate(9);
+    $viewMap = [
+        'jurnal' => 'user.page.Koleksi.Koleksi Tercetak.jurnal',
+        'buku_pengayaan' => 'user.page.Koleksi.Koleksi Tercetak.buku_pengayaan',
+        'buku_referensi' => 'user.page.Koleksi.Koleksi Tercetak.buku_referensi',
+        'majalah' => 'user.page.Koleksi.Koleksi Tercetak.majalah',
+    ];
 
-        $viewMap = [
-            'jurnal' => 'user.page.Koleksi.Koleksi Tercetak.jurnal',
-            'buku_pengayaan' => 'user.page.Koleksi.Koleksi Tercetak.buku_pengayaan',
-            'buku_referensi' => 'user.page.Koleksi.Koleksi Tercetak.buku_referensi',
-            'majalah' => 'user.page.Koleksi.Koleksi Tercetak.majalah',
-        ];
+    $view = $viewMap[$menu_type] ?? $viewMap['buku_referensi'];
 
-        $view = $viewMap[$menu_type] ?? $viewMap['buku_referensi'];
+    return view($view, compact('collections', 'menu_type'));
+}
 
     // ================= GLOBAL SEARCH =================
     public function globalSearch(Request $request)

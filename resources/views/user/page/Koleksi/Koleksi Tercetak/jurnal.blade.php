@@ -8,7 +8,7 @@
        CSS KHUSUS UNTUK HALAMAN JURNAL
        Hanya CSS yang BELUM ADA di master blade
     ============================================ */
-    
+
     /* Glass card untuk jurnal */
     .glass-card {
         background: rgba(15, 23, 42, 0.55);
@@ -17,7 +17,7 @@
         border-radius: 2rem;
         transition: all 0.3s ease;
     }
-    
+
     /* Title utama */
     .title-main {
         font-weight: 800;
@@ -27,7 +27,7 @@
         color: transparent;
         text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
     }
-    
+
     /* Neon border */
     .neon-border {
         position: relative;
@@ -35,11 +35,11 @@
         background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2));
         transition: all 0.3s ease;
     }
-    
+
     .neon-border:hover {
         box-shadow: 0 0 30px rgba(99,102,241,0.3);
     }
-    
+
     .neon-inner {
         background: rgba(15, 23, 42, 0.7);
         backdrop-filter: blur(20px);
@@ -47,7 +47,7 @@
         padding: 2rem;
         border: 1px solid rgba(255,255,255,0.08);
     }
-    
+
     /* Search input */
     .search-input {
         width: 100%;
@@ -59,17 +59,17 @@
         font-size: 0.9rem;
         transition: all 0.3s ease;
     }
-    
+
     .search-input:focus {
         outline: none;
         border-color: #6366f1;
         box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
     }
-    
+
     .search-input::placeholder {
         color: #64748b;
     }
-    
+
     /* Journal Card */
     .journal-card {
         background: rgba(15, 23, 42, 0.6);
@@ -80,19 +80,19 @@
         border: 1px solid rgba(99, 102, 241, 0.3);
         height: 100%;
     }
-    
+
     .journal-card:hover {
         transform: translateY(-8px);
         border-color: rgba(99, 102, 241, 0.7);
         box-shadow: 0 20px 35px -12px rgba(99, 102, 241, 0.3);
     }
-    
+
     .journal-header {
         background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.1));
         padding: 1rem 1.25rem;
         border-bottom: 1px solid rgba(99, 102, 241, 0.3);
     }
-    
+
     .journal-title {
         font-weight: 700;
         font-size: 1.1rem;
@@ -100,7 +100,7 @@
         color: #c7d2fe;
         margin-bottom: 0.5rem;
     }
-    
+
     .journal-meta {
         display: flex;
         flex-wrap: wrap;
@@ -108,25 +108,25 @@
         font-size: 0.7rem;
         color: #94a3b8;
     }
-    
+
     .journal-body {
         padding: 1.25rem;
     }
-    
+
     .journal-abstract {
         font-size: 0.85rem;
         color: #cbd5e1;
         line-height: 1.5;
         margin-bottom: 1rem;
     }
-    
+
     .journal-keywords {
         display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
         margin-bottom: 1rem;
     }
-    
+
     .keyword-tag {
         background: rgba(99, 102, 241, 0.15);
         border: 1px solid rgba(99, 102, 241, 0.3);
@@ -135,7 +135,7 @@
         font-size: 0.65rem;
         color: #a5b4fc;
     }
-    
+
     .journal-ref {
         font-size: 0.7rem;
         color: #64748b;
@@ -143,7 +143,7 @@
         padding-top: 0.75rem;
         margin-top: 0.5rem;
     }
-    
+
     /* Buttons */
     .btn-primary {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
@@ -156,12 +156,12 @@
         color: white;
         font-size: 0.85rem;
     }
-    
+
     .btn-primary:hover {
         transform: scale(1.05);
         box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
     }
-    
+
     .btn-outline {
         background: transparent;
         padding: 8px 20px;
@@ -173,12 +173,12 @@
         color: #c7d2fe;
         font-size: 0.8rem;
     }
-    
+
     .btn-outline:hover {
         background: rgba(99, 102, 241, 0.2);
         border-color: #6366f1;
     }
-    
+
     /* Filter button */
     .filter-btn {
         padding: 6px 16px;
@@ -191,18 +191,18 @@
         border: 1px solid rgba(99, 102, 241, 0.3);
         color: #cbd5e1;
     }
-    
+
     .filter-btn.active {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         border-color: transparent;
         color: white;
     }
-    
+
     .filter-btn:hover {
         border-color: #6366f1;
         color: white;
     }
-    
+
     /* Pagination */
     .pagination-btn {
         padding: 8px 14px;
@@ -213,17 +213,17 @@
         cursor: pointer;
         transition: all 0.3s ease;
     }
-    
+
     .pagination-btn:hover:not(:disabled) {
         background: rgba(99, 102, 241, 0.2);
         border-color: #6366f1;
     }
-    
+
     .pagination-btn:disabled {
         opacity: 0.5;
         cursor: not-allowed;
     }
-    
+
     /* Notification */
     .notification {
         position: fixed;
@@ -239,16 +239,16 @@
         transform: translateX(120%);
         transition: transform 0.3s ease;
     }
-    
+
     .notification.show {
         transform: translateX(0);
     }
-    
+
     /* Section spacing */
     .section {
         margin-top: 40px;
     }
-    
+
     /* Delay utilities */
     .delay-1 { transition-delay: 0.1s; }
     .delay-2 { transition-delay: 0.2s; }
@@ -304,7 +304,7 @@
                                 </div>
 
                                 <div class="journal-meta">
-                                    <span>👨‍⚕️ 
+                                    <span>👨‍⚕️
                                         {{ is_array($item->author) ? implode(', ', $item->author) : $item->author }}
                                     </span>
 

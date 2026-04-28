@@ -12,7 +12,7 @@ class FinalProjectController extends Controller
 {
     // ================= USER =================
     // Halaman list final project user berdasarkan kategori
-    public function index(Request $request, $category = 'kti')
+   public function index(Request $request, $category = 'kti')
 {
     $viewMap = [
         'ebook' => 'e_book',
@@ -24,24 +24,29 @@ class FinalProjectController extends Controller
 
     if (!isset($viewMap[$category])) abort(404);
 
-    if ($category === 'kti') {
-        // User hanya melihat KTI miliknya sendiri
-        $data = FinalProject::with('category')
+    // ================= KTI =================
+   if ($category === 'kti') {
+
+    $finalProjects = FinalProject::with(['category', 'firstSupervisor', 'secondSupervisor'])
         ->where('user_id', auth()->id())
+        ->where('status', 'Approved')
         ->latest()
         ->get();
 
-        $supervisors = User::whereHas('role', function ($q) {
-            $q->where('name', 'Dosen');
-        })->get();
+    $supervisors = User::all();
 
-        return view('user.page.Koleksi_Elektronik.' . $viewMap[$category],
-            compact('data','category','supervisors')
-        );
-    }
+    // ✅ TAMBAHKAN INI
+    $categories = CategoryFinalProject::all();
 
-    // Kategori lain → Koleksi elektronik admin upload
-    return $this->showAdminUpload($category);
+    return view('user.page.Koleksi_Elektronik.kti', [
+        'ktis' => $finalProjects,
+        'supervisors' => $supervisors,
+        'categories' => $categories
+    ]);
+}
+
+    // ================= NON KTI =================
+    return $this->showAdminUpload($request, $category);
 }
 
     // Store user (upload KTI)
@@ -259,7 +264,7 @@ class FinalProjectController extends Controller
 }
 
     // ================= Koleksi Elektronik (Admin Upload) =================
-    public function showAdminUpload($category)
+    public function showAdminUpload(Request $request, $category)
 {
     $viewMap = [
         'ebook' => 'e_book',
@@ -270,12 +275,30 @@ class FinalProjectController extends Controller
 
     $categoryData = CategoryFinalProject::where('slug', $category)->firstOrFail();
 
-    $data = FinalProject::where('category_final_project_id', $categoryData->id)
-        ->where('status', 'Approved')
-        ->latest()
-        ->get();
+    $query = FinalProject::where('category_final_project_id', $categoryData->id)
+        ->where('status', 'Approved');
 
-    return view('user.page.Koleksi_Elektronik.' . $viewMap[$category], compact('data'));
+    // 🔍 SEARCH (INI YANG BUTUH $request)
+    if ($request->search) {
+        $query->where(function ($q) use ($request) {
+            $q->where('title', 'like', '%' . $request->search . '%')
+              ->orWhere('abstract', 'like', '%' . $request->search . '%');
+        });
+    }
+
+    $data = $query->latest()->paginate(6);
+
+    $categories = CategoryFinalProject::all();
+
+    return view(
+        'user.page.Koleksi_Elektronik.' . $viewMap[$category],
+        [
+            'data' => $data,
+            'ebooks' => $data,
+            'videos' => $data,
+            'categories' => $categories
+        ]
+    );
 }
 
 public function download($id)
@@ -310,5 +333,24 @@ public function pending_admin()
         ->get();
 
     return view('admin.page.kti', compact('data'));
+}
+
+public function tutorial_simulasi(Request $request)
+{
+    $query = FinalProject::where('status', 'Approved')
+        ->whereHas('category', function ($q) {
+            $q->where('slug', 'video');
+        });
+
+    if ($request->search) {
+        $query->where(function ($q) use ($request) {
+            $q->where('title', 'like', '%' . $request->search . '%')
+              ->orWhere('abstract', 'like', '%' . $request->search . '%');
+        });
+    }
+
+    $videos = $query->latest()->paginate(6);
+
+    return view('user.page.Koleksi_Elektronik.video', compact('videos'));
 }
 }
