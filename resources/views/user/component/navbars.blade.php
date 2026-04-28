@@ -67,7 +67,6 @@
                             <li><a href="{{ route('user.koleksi.buku_pengayaan') }}"class="dropdown-item-modern">Buku Pengayaan</a></li>
                             <li><a href="{{ route('user.koleksi.buku_referensi') }}"class="dropdown-item-modern">Buku Referensi</a></li>
                             <li><a href="{{ route('user.koleksi.majalah') }}"class="dropdown-item-modern">Majalah</a></li>
-                            <li><a href="#" class="dropdown-item-modern">Skripsi/Tesis</a></li>
                         </ul>
                     </li>
 

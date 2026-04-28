@@ -324,7 +324,7 @@
                                 <!-- ACTION -->
                                 <div class="flex gap-2 mt-3">
 
-                                    <a href="{{ route('collection.show', $item->id) }}"
+                                    <a href="{{ route('user.koleksi.show', $item->id) }}"
                                        class="btn-outline">
                                         📖 Detail
                                     </a>

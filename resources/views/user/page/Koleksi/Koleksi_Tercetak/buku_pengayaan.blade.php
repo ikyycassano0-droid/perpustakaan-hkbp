@@ -338,11 +338,9 @@
 
                         {{-- BUTTON --}}
                         <div class="flex gap-2 mt-3">
-
-                            <a href="{{ route('collection.show', $book->id) }}" class="btn-outline w-full text-center">
+                            <a href="{{ route('user.koleksi.show', $book->id) }}" class="btn-outline w-full text-center">
                                 Detail
                             </a>
-
                             @if($book->available_stock > 0)
                                 <button class="btn-primary">
                                     Pinjam

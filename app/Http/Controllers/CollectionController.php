@@ -180,6 +180,15 @@ class CollectionController extends Controller
         return back()->with('success', 'Koleksi berhasil diupdate');
     }
 
+    public function edit(Collection $collection)
+    {
+        return view('admin.page.edit_collection', [
+            'collection' => $collection,
+            'categories' => CategoryCollection::all(),
+            'classifications' => Classification::all(),
+            'locations' => Location::all(),
+        ]);
+    }
     // ================= DELETE =================
     public function destroy(Collection $collection)
     {
@@ -193,21 +202,21 @@ class CollectionController extends Controller
         return back()->with('success', 'Koleksi berhasil dihapus');
     }
 
-    public function pinjam(Request $request)
+    public function pinjam()
     {
         $collections = Collection::with(['location', 'classifications', 'categories'])
             ->latest()
             ->get();
 
-        return view('user.page.Koleksi.Koleksi Tercetak.pinbal', compact('collections'));
+        return view('user.page.Koleksi.Koleksi_Tercetak.pinbal', compact('collections'));
     }
 
-    // ================= GUEST =================
+    // ================= User =================
     public function index()
     {
         $collections = Collection::with(['classifications','categories'])->latest()->paginate(9);
 
-        return view('guest.page.collection', compact('collections'));
+        return view('user.page.collection', compact('collections'));
     }
 
         // ================= SHOW DETAIL =================
@@ -216,52 +225,47 @@ class CollectionController extends Controller
         $collection = Collection::with(['classifications', 'categories', 'location'])
             ->findOrFail($id);
 
-        // 🔒 RESTRICTED CHECK
         if ($collection->is_restricted && !auth()->check()) {
             return redirect()->route('login')
                 ->with('error', 'Anda harus login terlebih dahulu untuk mengakses Koleksi Tercetak');
         }
 
-        return view('guest.page.collection_detail', compact('collection'));
-        // 🔥 Mapping view berdasarkan menu_type
         $viewMap = [
-            'jurnal' => 'user.page.Koleksi.Koleksi Tercetak.detail_jurnal',
-            'buku_pengayaan' => 'user.page.Koleksi.Koleksi Tercetak.detail_buku_pengayaan',
-            'buku_referensi' => 'user.page.Koleksi.Koleksi Tercetak.detail_buku_referensi',
-            'majalah' => 'user.page.Koleksi.Koleksi Tercetak.detail_majalah',
+            'jurnal' => 'user.page.Koleksi.Koleksi_Tercetak.detail_jurnal',
+            'buku_pengayaan' => 'user.page.Koleksi.Koleksi_Tercetak.detail_buku_pengayaan',
+            'buku_referensi' => 'user.page.Koleksi.Koleksi_Tercetak.detail_buku_referensi',
+            'majalah' => 'user.page.Koleksi.Koleksi_Tercetak.detail_majalah',
         ];
 
         $view = $viewMap[$collection->menu_type]
-            ?? 'user.page.Koleksi.Koleksi Tercetak.detail_buku_pengayaan';
+            ?? 'user.page.Koleksi.Koleksi_Tercetak.detail_buku_pengayaan';
 
         return view($view, compact('collection'));
     }
 
     public function showUserMenu(Request $request, $menu_type)
-{
-    $query = Collection::with(['categories', 'location'])
-        ->where('menu_type', $menu_type)
-        ->where('active', 1);
+    {
+        $query = Collection::with(['categories', 'location'])
+            ->where('menu_type', $menu_type)
+            ->where('active', 1);
 
-    if ($request->search) {
-        $search = $request->search;
+        if ($request->search) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
 
-        $query->where('title', 'like', '%' . $search . '%');
+        $collections = $query->paginate(9);
+
+        $viewMap = [
+            'jurnal' => 'user.page.Koleksi.Koleksi_Tercetak.jurnal',
+            'buku_pengayaan' => 'user.page.Koleksi.Koleksi_Tercetak.buku_pengayaan',
+            'buku_referensi' => 'user.page.Koleksi.Koleksi_Tercetak.buku_referensi',
+            'majalah' => 'user.page.Koleksi.Koleksi_Tercetak.majalah',
+        ];
+
+        $view = $viewMap[$menu_type] ?? $viewMap['buku_referensi'];
+
+        return view($view, compact('collections', 'menu_type'));
     }
-
-    $collections = $query->paginate(9);
-
-    $viewMap = [
-        'jurnal' => 'user.page.Koleksi.Koleksi Tercetak.jurnal',
-        'buku_pengayaan' => 'user.page.Koleksi.Koleksi Tercetak.buku_pengayaan',
-        'buku_referensi' => 'user.page.Koleksi.Koleksi Tercetak.buku_referensi',
-        'majalah' => 'user.page.Koleksi.Koleksi Tercetak.majalah',
-    ];
-
-    $view = $viewMap[$menu_type] ?? $viewMap['buku_referensi'];
-
-    return view($view, compact('collections', 'menu_type'));
-}
 
     // ================= GLOBAL SEARCH =================
     public function globalSearch(Request $request)

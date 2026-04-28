@@ -90,6 +90,7 @@
         Route::prefix('collections')->name('collections.')->group(function () {
             Route::get('/', [CollectionController::class, 'index_admin'])->name('index');
             Route::post('/', [CollectionController::class, 'store'])->name('store');
+            Route::get('/{collection}/edit', [CollectionController::class, 'edit'])->name('edit');
             Route::put('/{collection}', [CollectionController::class, 'update'])->name('update');
             Route::delete('/{collection}', [CollectionController::class, 'destroy'])->name('destroy');
             Route::get('/pengelolaan-buku', [CollectionController::class, 'pengelolaanBuku'])->name('pengelolaan_buku');
@@ -199,16 +200,40 @@
             return view('user.page.home');
         })->name('user.dashboard');
 
-        // Halaman pinjam
+        // ================= PINJAM =================
         Route::get('/pinjam', [CollectionController::class, 'pinjam'])
             ->name('user.pinjam');
 
-        // Orders
+        // ================= ORDERS =================
         Route::post('/orders', [OrderController::class, 'store'])
             ->name('orders.store');
 
         Route::get('/history', [OrderController::class, 'history'])
             ->name('user.history');
+
+        // ================= KOLEKSI =================
+        Route::prefix('koleksi')->name('user.koleksi.')->group(function () {
+
+            Route::get('/jurnal', [CollectionController::class, 'showUserMenu'])
+                ->name('jurnal')
+                ->defaults('menu_type', 'jurnal');
+
+            Route::get('/buku-pengayaan', [CollectionController::class, 'showUserMenu'])
+                ->name('buku_pengayaan')
+                ->defaults('menu_type', 'buku_pengayaan');
+
+            Route::get('/buku-referensi', [CollectionController::class, 'showUserMenu'])
+                ->name('buku_referensi')
+                ->defaults('menu_type', 'buku_referensi');
+
+            Route::get('/majalah', [CollectionController::class, 'showUserMenu'])
+                ->name('majalah')
+                ->defaults('menu_type', 'majalah');
+
+            Route::get('/{id}', [CollectionController::class, 'show'])
+                ->name('show');
+
+        });
 
         // ================= PROFILE =================
         Route::prefix('profile')->name('user.profile.')->group(function () {
@@ -239,30 +264,6 @@
                 ->name('user.berita.show');
         });
 
-        // ================= KOLEKSI TERCETAK =================
-        Route::prefix('koleksi')->group(function () {
-
-            Route::get('/jurnal', [CollectionController::class, 'showUserMenu'])
-                ->name('user.koleksi.jurnal')
-                ->defaults('menu_type', 'jurnal');
-
-            Route::get('/buku-pengayaan', [CollectionController::class, 'showUserMenu'])
-                ->name('user.koleksi.buku_pengayaan')
-                ->defaults('menu_type', 'buku_pengayaan');
-
-            Route::get('/buku-referensi', [CollectionController::class, 'showUserMenu'])
-                ->name('user.koleksi.buku_referensi')
-                ->defaults('menu_type', 'buku_referensi');
-
-            Route::get('/majalah', [CollectionController::class, 'showUserMenu'])
-                ->name('user.koleksi.majalah')
-                ->defaults('menu_type', 'majalah');
-
-                Route::get('/koleksi-elektronik/tutorial-simulasi', [FinalProjectController::class, 'tutorial_simulasi'])
-                ->name('koleksi_elektronik.tutorial_simulasi');
-        });
-        Route::get('/collection/{id}', [CollectionController::class, 'show'])
-        ->name('collection.show');
     });
 
     
