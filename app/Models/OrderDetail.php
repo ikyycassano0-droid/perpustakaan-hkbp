@@ -12,6 +12,8 @@ class OrderDetail extends Model
         'qty'
     ];
 
+    // ================= RELATION =================
+
     public function order()
     {
         return $this->belongsTo(Order::class);

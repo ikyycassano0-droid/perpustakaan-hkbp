@@ -283,7 +283,6 @@
     }
 </style>
 @endpush
-
 @section('content')
 
 <div class="main-content">
@@ -298,16 +297,15 @@
         </p>
     </section>
 
-    {{-- CONTENT --}}
+    {{-- GRID --}}
     <section class="max-w-7xl mx-auto px-5 pb-20">
 
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        <div id="booksGrid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5">
 
             @forelse($collections as $book)
 
                 <div class="book-card">
 
-                    {{-- COVER --}}
                     <div class="book-cover"
                          style="background-image:url('{{ $book->cover_url }}')">
 
@@ -317,10 +315,9 @@
 
                     </div>
 
-                    {{-- BODY --}}
                     <div class="p-4">
 
-                        <h3 class="text-indigo-200 font-semibold">
+                        <h3 class="font-semibold text-indigo-200">
                             {{ $book->title }}
                         </h3>
 
@@ -328,28 +325,30 @@
                             {{ $book->author_string }}
                         </p>
 
-                        <p class="text-xs text-gray-500 mt-1">
-                            📍 {{ $book->location->name ?? '-' }}
-                        </p>
-
-                        <p class="text-xs text-indigo-300 mt-2">
-                            {{ $book->categories->first()->name ?? 'Umum' }}
-                        </p>
-
-                        {{-- BUTTON --}}
                         <div class="flex gap-2 mt-3">
-                            <a href="{{ route('user.koleksi.show', $book->id) }}" class="btn-outline w-full text-center">
+
+                            <a href="{{ route('user.koleksi.show', $book->id) }}"
+                               class="btn-outline flex-1 text-center">
                                 Detail
                             </a>
-                            @if($book->available_stock > 0)
-                                <button class="btn-primary">
-                                    Pinjam
-                                </button>
+
+                            @auth
+                                @if($book->available_stock > 0)
+                                    <button type="button"
+                                            onclick="openModal({{ $book->id }}, '{{ $book->title }}')"
+                                            class="btn-primary flex-1">
+                                        Pinjam
+                                    </button>
+                                @else
+                                    <button class="btn-outline flex-1 opacity-50" disabled>
+                                        Habis
+                                    </button>
+                                @endif
                             @else
-                                <button class="btn-outline opacity-50 cursor-not-allowed">
-                                    Habis
-                                </button>
-                            @endif
+                                <a href="{{ route('login') }}" class="btn-primary flex-1 text-center">
+                                    Login
+                                </a>
+                            @endauth
 
                         </div>
 
@@ -358,11 +357,9 @@
                 </div>
 
             @empty
-
-                <div class="col-span-4 text-center text-gray-400">
-                    Belum ada koleksi buku
+                <div class="col-span-4 text-center text-gray-400 py-10">
+                    📭 Belum ada koleksi buku
                 </div>
-
             @endforelse
 
         </div>
@@ -371,68 +368,187 @@
 
 </div>
 
+{{-- MODAL PINJAM --}}
+<div id="pinjamModal"
+     class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
+
+    <div class="bg-slate-900 w-full max-w-md rounded-2xl border border-indigo-500/30 p-6">
+
+        <h2 class="text-xl font-bold text-indigo-300 mb-4">
+            Form Peminjaman
+        </h2>
+
+        <form id="pinjamForm" method="POST" action="{{ route('orders.store') }}">
+            @csrf
+
+            <input type="hidden" name="collection_id" id="collection_id">
+
+            <div class="mb-3">
+                <label class="text-xs text-gray-400">Judul Buku</label>
+                <input type="text" id="book_title"
+                       class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700"
+                       readonly>
+            </div>
+
+            {{-- BORROW DATE --}}
+            <div class="mb-3">
+                <label class="text-xs text-gray-400">Tanggal Pinjam</label>
+                <input type="date" name="borrow_date" id="borrow_date"
+                       class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700"
+                       required>
+            </div>
+
+            {{-- RETURN DATE --}}
+            <div class="mb-3">
+                <label class="text-xs text-gray-400">Tanggal Kembali</label>
+                <input type="date" name="return_date" id="return_date"
+                       class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700"
+                       required>
+            </div>
+
+            <div class="flex gap-2">
+                <button type="button"
+                        onclick="closeModal()"
+                        class="w-full py-2 rounded bg-gray-700 text-white">
+                    Batal
+                </button>
+
+                <button type="submit"
+                        class="w-full py-2 rounded bg-indigo-600 text-white font-semibold">
+                    Pinjam
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
 <script>
 
-// ================= DATA DARI LARAVEL =================
+// ================= DATA =================
 let booksData = @json($collections);
 
 // ================= STATE =================
 let currentPage = 1;
 const itemsPerPage = 6;
-let currentCategory = 'all';
 let searchQuery = '';
 
-// ================= RENDER =================
+// ================= FORMAT DATE =================
+function formatDate(date) {
+    return date.toISOString().split('T')[0];
+}
+
+// ================= OPEN MODAL =================
+function openModal(id, title) {
+
+    const modal = document.getElementById('pinjamModal');
+    modal.classList.remove('hidden');
+
+    document.getElementById('collection_id').value = id;
+    document.getElementById('book_title').value = title;
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    const borrowInput = document.getElementById('borrow_date');
+    const returnInput = document.getElementById('return_date');
+
+    // ================= BORROW DATE =================
+    borrowInput.min = formatDate(today);
+    borrowInput.value = formatDate(today);
+
+    // ================= RETURN DATE RULE =================
+    const minReturn = new Date(today);
+    minReturn.setDate(today.getDate() + 1);
+
+    const maxReturn = new Date(today);
+    maxReturn.setDate(today.getDate() + 7);
+
+    returnInput.min = formatDate(minReturn);
+    returnInput.max = formatDate(maxReturn);
+    returnInput.value = formatDate(minReturn);
+}
+
+// ================= CLOSE MODAL =================
+function closeModal() {
+    document.getElementById('pinjamModal').classList.add('hidden');
+}
+
+// klik luar modal
+document.addEventListener('click', function(e){
+    const modal = document.getElementById('pinjamModal');
+    if (e.target === modal) closeModal();
+});
+
+// ================= VALIDASI DINAMIS =================
+document.addEventListener('change', function(e){
+
+    if (e.target.id === 'borrow_date') {
+
+        const borrow = new Date(e.target.value);
+        borrow.setHours(0,0,0,0);
+
+        const returnInput = document.getElementById('return_date');
+
+        const minReturn = new Date(borrow);
+        minReturn.setDate(minReturn.getDate() + 1);
+
+        const maxReturn = new Date(borrow);
+        maxReturn.setDate(maxReturn.getDate() + 7);
+
+        returnInput.min = formatDate(minReturn);
+        returnInput.max = formatDate(maxReturn);
+
+        // auto koreksi kalau return tidak valid
+        const currentReturn = new Date(returnInput.value);
+
+        if (currentReturn < minReturn || currentReturn > maxReturn) {
+            returnInput.value = formatDate(minReturn);
+        }
+    }
+});
+
+// ================= RENDER BOOKS =================
 function renderBooks() {
 
-    let filteredData = [...booksData];
+    let filtered = [...booksData];
 
-    // SEARCH
     if (searchQuery) {
-        filteredData = filteredData.filter(item =>
-            (item.title ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (item.author_string ?? '').toLowerCase().includes(searchQuery.toLowerCase())
+        filtered = filtered.filter(b =>
+            (b.title ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (b.author_string ?? '').toLowerCase().includes(searchQuery.toLowerCase())
         );
     }
 
-    // CATEGORY (kalau ada relasi category pertama)
-    if (currentCategory !== 'all') {
-        filteredData = filteredData.filter(item =>
-            item.categories?.length &&
-            item.categories[0].slug === currentCategory
-        );
-    }
-
-    // PAGINATION
-    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
     const start = (currentPage - 1) * itemsPerPage;
-    const currentData = filteredData.slice(start, start + itemsPerPage);
+    const data = filtered.slice(start, start + itemsPerPage);
 
     const grid = document.getElementById('booksGrid');
     grid.innerHTML = '';
 
-    if (currentData.length === 0) {
+    if (data.length === 0) {
         grid.innerHTML = `
-            <div class="col-span-2 text-center py-12 text-gray-400">
+            <div class="col-span-4 text-center text-gray-400 py-10">
                 📭 Tidak ada data buku
             </div>
         `;
         return;
     }
 
-    currentData.forEach(book => {
+    data.forEach(book => {
 
         let cover = book.cover_url ?? 'https://via.placeholder.com/200x180';
-        let status = (book.available_stock > 0);
+        let status = book.available_stock > 0;
 
         grid.innerHTML += `
             <div class="book-card">
 
                 <div class="book-cover"
-                    style="background-image:url('${cover}')">
+                     style="background-image:url('${cover}')">
 
                     <span class="status-badge ${status ? 'status-tersedia' : 'status-dipinjam'}">
                         ${status ? 'TERSEDIA' : 'DIPINJAM'}
@@ -442,11 +558,7 @@ function renderBooks() {
 
                 <div class="p-4">
 
-                    <span class="text-xs text-indigo-300">
-                        ${book.categories?.[0]?.name ?? 'Umum'}
-                    </span>
-
-                    <h3 class="font-semibold text-indigo-200 mt-1">
+                    <h3 class="font-semibold text-indigo-200">
                         ${book.title ?? '-'}
                     </h3>
 
@@ -454,25 +566,22 @@ function renderBooks() {
                         ${book.author_string ?? '-'}
                     </p>
 
-                    <p class="text-xs text-gray-500">
-                        📍 ${book.location?.name ?? '-'}
-                    </p>
-
                     <div class="flex gap-2 mt-3">
 
-                        <button class="btn-outline flex-1" onclick="showDetail(${book.id})">
+                        <a href="/user/koleksi/${book.id}"
+                           class="btn-outline flex-1 text-center">
                             Detail
-                        </button>
+                        </a>
 
-                        ${status ? `
-                            <button class="btn-primary" onclick="pinjamBuku(${book.id})">
-                                Pinjam
-                            </button>
-                        ` : `
-                            <button class="btn-outline opacity-50" disabled>
-                                Habis
-                            </button>
-                        `}
+                        ${status
+                            ? `<button onclick="openModal(${book.id}, \`${book.title}\`)"
+                                       class="btn-primary flex-1">
+                                    Pinjam
+                               </button>`
+                            : `<button class="btn-outline flex-1 opacity-50" disabled>
+                                    Habis
+                               </button>`
+                        }
 
                     </div>
 
@@ -480,63 +589,45 @@ function renderBooks() {
             </div>
         `;
     });
-
-    renderPagination(totalPages);
 }
 
-// ================= PAGINATION =================
-function renderPagination(totalPages) {
+// ================= FORM VALIDASI FRONTEND =================
+document.addEventListener('submit', function(e){
 
-    const el = document.getElementById('paginationButtons');
-    if (!el) return;
+    if (e.target.id === 'pinjamForm') {
 
-    if (totalPages <= 1) {
-        el.innerHTML = '';
-        return;
-    }
+        const borrow = new Date(document.getElementById('borrow_date').value);
+        const ret = new Date(document.getElementById('return_date').value);
 
-    let html = '';
+        borrow.setHours(0,0,0,0);
+        ret.setHours(0,0,0,0);
 
-    for (let i = 1; i <= totalPages; i++) {
-        html += `
-            <button class="pagination-btn ${i === currentPage ? 'active' : ''}"
-                onclick="changePage(${i})">
-                ${i}
-            </button>
-        `;
-    }
+        const diff = (ret - borrow) / (1000 * 60 * 60 * 24);
 
-    el.innerHTML = html;
-}
+        // ❌ minimal 1 hari
+        if (diff < 1) {
+            alert('Minimal peminjaman 1 hari');
+            e.preventDefault();
+            return;
+        }
 
-function changePage(page) {
-    currentPage = page;
-    renderBooks();
-}
+        // ❌ maksimal 7 hari
+        if (diff > 7) {
+            alert('Maksimal peminjaman hanya 7 hari');
+            e.preventDefault();
+            return;
+        }
 
-// ================= SEARCH =================
-document.addEventListener('input', function(e){
-    if (e.target.id === 'searchInput') {
-        searchQuery = e.target.value;
-        currentPage = 1;
-        renderBooks();
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.innerText = 'Memproses...';
+        btn.disabled = true;
     }
 });
 
-// ================= DETAIL =================
-function showDetail(id) {
-    let book = booksData.find(b => b.id === id);
-    alert(book?.title ?? 'Tidak ditemukan');
-}
-
-// ================= PINJAM =================
-function pinjamBuku(id) {
-    let book = booksData.find(b => b.id === id);
-    alert('Pinjam: ' + (book?.title ?? ''));
-}
-
 // ================= INIT =================
-renderBooks();
+document.addEventListener('DOMContentLoaded', function(){
+    renderBooks();
+});
 
 </script>
 @endpush

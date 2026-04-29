@@ -16,7 +16,10 @@ class OrderController extends Controller
     // ================= ADMIN =================
     public function index()
     {
-        $orders = Order::with(['user','details.collection.location'])->latest()->get();
+        $orders = Order::with(['user','details.collection.location'])
+            ->latest()
+            ->get();
+
         $collections = Collection::with('location')->get();
         $locations = Location::all();
 
@@ -32,55 +35,61 @@ class OrderController extends Controller
     {
         $request->validate([
             'collection_id' => 'required|exists:collections,id',
-            'order_date' => 'required|date',
-            'return_date' => 'required|date|after:order_date',
+            'borrow_date'   => 'required|date|after_or_equal:today',
+            'return_date'   => 'required|date|after:borrow_date',
         ]);
 
         if (!auth()->check()) {
-            return back()->with('error', 'Silakan login terlebih dahulu');
+            return back()->with('error', 'Silakan login');
         }
 
         $collection = Collection::findOrFail($request->collection_id);
 
-        if ($collection->stock <= 0) {
-            return back()->with('error', 'Stok buku habis');
+        if ($collection->available_stock < 1) {
+            return back()->with('error', 'Stock habis');
         }
 
-        // 🔥 BATAS PINJAM (misalnya max 3 buku aktif)
-        $activeOrders = Order::where('user_id', auth()->id())
-            ->whereIn('status', ['PENDING','APPROVED'])
-            ->count();
+        $borrow = Carbon::parse($request->borrow_date);
+        $return = Carbon::parse($request->return_date);
 
-        if ($activeOrders >= 3) {
-            return back()->with('error', 'Maksimal 3 buku aktif');
+        // 🔥 RULE: maksimal 7 hari WINDOW (bukan fixed return)
+        $maxAllowedReturn = $borrow->copy()->addDays(7);
+
+        if ($return->gt($maxAllowedReturn)) {
+            return back()->with(
+                'error',
+                'Tanggal kembali maksimal 7 hari dari tanggal pinjam'
+            );
         }
 
-        $start = Carbon::parse($request->order_date);
-        $end = Carbon::parse($request->return_date);
+        DB::transaction(function () use ($request, $collection, $borrow, $return) {
 
-        if ($start->diffInDays($end) > 14) {
-            return back()->with('error', 'Maksimal peminjaman 14 hari');
-        }
-
-        DB::transaction(function () use ($request, $collection, $start, $end) {
-
-            $order = Order::create([
-                'user_id' => auth()->id(),
-                'order_date' => $start,
-                'return_date' => $end,
-                'status' => 'PENDING',
-                'fine' => 0,
-                'extension_count' => 0,
+            Order::create([
+                'user_id'        => auth()->id(),
+                'order_date'     => now(),
+                'borrow_date'    => $borrow,
+                'due_date'       => $return, // user pilih sendiri
+                'status'         => 'PENDING',
+                'fine'           => 0,
+                'extension_count'=> 0,
             ]);
 
             OrderDetail::create([
-                'order_id' => $order->id,
+                'order_id'      => Order::latest()->first()->id,
                 'collection_id' => $collection->id,
-                'qty' => 1
+                'qty'           => 1
             ]);
+
+            foreach (\App\Models\User::where('role', 'admin')->get() as $admin) {
+                Notification::create([
+                    'user_id' => $admin->id,
+                    'title'   => 'Pengajuan Peminjaman',
+                    'message' => auth()->user()->name . ' meminjam "' . $collection->title . '"'
+                ]);
+            }
         });
 
-        return back()->with('success', 'Pengajuan peminjaman dikirim');
+        return back()->with('success', 'Permintaan peminjaman berhasil dikirim dan menunggu approval admin');
     }
 
     // ================= ADMIN APPROVE =================
@@ -91,27 +100,27 @@ class OrderController extends Controller
             $order = Order::with('details.collection')->findOrFail($id);
 
             foreach ($order->details as $detail) {
-                if ($detail->collection->stock < $detail->qty) {
-                    throw new \Exception('Stok tidak cukup');
+                if ($detail->collection->available_stock < $detail->qty) {
+                    throw new \Exception('Stock tidak cukup');
                 }
             }
 
             foreach ($order->details as $detail) {
-                $detail->collection->decrement('stock', $detail->qty);
+                $detail->collection->decrement('available_stock', $detail->qty);
 
                 $this->sendNotif(
                     $order->user_id,
                     'Peminjaman Disetujui',
-                    'Buku "' . $detail->collection->title . '" siap diambil'
+                    'Buku "' . $detail->collection->title . '" disetujui'
                 );
             }
 
             $order->update([
-                'status' => 'APPROVED'
+                'status' => 'APPROVED',
             ]);
         });
 
-        return back()->with('success', 'Peminjaman disetujui');
+        return back()->with('success', 'Disetujui');
     }
 
     // ================= ADMIN REJECT =================
@@ -126,7 +135,7 @@ class OrderController extends Controller
         return back()->with('success', 'Peminjaman ditolak');
     }
 
-    // ================= RETURN =================
+    // ================= RETURN BOOK =================
     public function returnBook($id)
     {
         DB::transaction(function () use ($id) {
@@ -134,27 +143,24 @@ class OrderController extends Controller
             $order = Order::with('details.collection')->findOrFail($id);
 
             $today = now();
-            $fine = $this->calculateFine($order->return_date, $today);
+            $fine = $this->calculateFine($order->due_date, $today);
 
             foreach ($order->details as $detail) {
-                $detail->collection->increment('stock', $detail->qty);
+                $detail->collection->increment('available_stock', $detail->qty);
 
                 $this->sendNotif(
                     $order->user_id,
-                    'Pengembalian Buku',
-                    'Buku "' . $detail->collection->title . '" berhasil dikembalikan'
+                    'Pengembalian',
+                    'Buku "' . $detail->collection->title . '" dikembalikan'
                 );
+            }
 
-                if ($fine > 0) {
-                    $lateDays = Carbon::parse($order->return_date)->diffInDays($today);
-
-                    $this->sendNotif(
-                        $order->user_id,
-                        'Denda',
-                        'Denda Rp ' . number_format($fine) .
-                        ' (' . $lateDays . ' hari terlambat)'
-                    );
-                }
+            if ($fine > 0) {
+                $this->sendNotif(
+                    $order->user_id,
+                    'Denda',
+                    'Denda Rp ' . number_format($fine)
+                );
             }
 
             $order->update([
@@ -164,42 +170,52 @@ class OrderController extends Controller
             ]);
         });
 
-        return back()->with('success', 'Buku dikembalikan');
+        return back()->with('success', 'Dikembalikan');
     }
 
-    // ================= PERPANJANG =================
+    // ================= EXTEND =================
     public function extend($id)
     {
         $order = Order::with('details.collection')->findOrFail($id);
 
-        $today = now();
-        $due = Carbon::parse($order->return_date);
+        $today = Carbon::now();
+        $due = Carbon::parse($order->due_date);
 
-        if ($today > $due) {
-            return back()->with('error', 'Tidak bisa perpanjang, sudah terlambat');
+        // ❌ 1. sudah jatuh tempo (telat)
+        if ($today->gt($due)) {
+            return back()->with('error', 'Tidak bisa perpanjang karena sudah melewati jatuh tempo');
         }
 
-        if ($order->extension_count >= 2) {
-            return back()->with('error', 'Maksimal 2x perpanjangan');
+        // ❌ 2. sudah pernah perpanjangan
+        if ($order->extension_count >= 1) {
+            return back()->with('error', 'Peminjaman ini sudah pernah diperpanjang (maksimal 1 kali)');
         }
 
-        $order->update([
-            'return_date' => $due->addDays(7),
-            'extension_count' => $order->extension_count + 1
-        ]);
+        // ❌ 3. harus H-1 saja (lebih ketat)
+        if ($today->lt($due->copy()->subDay())) {
+            return back()->with('error', 'Perpanjangan hanya bisa dilakukan H-1 sebelum jatuh tempo');
+        }
 
-        foreach ($order->details as $detail) {
+        DB::transaction(function () use ($order, $due) {
+
+            // 🔥 tambah 7 hari dari due_date lama
+            $newDue = Carbon::parse($order->due_date)->addDays(7);
+
+            $order->update([
+                'due_date' => $newDue,
+                'extension_count' => $order->extension_count + 1
+            ]);
+
             $this->sendNotif(
                 $order->user_id,
-                'Perpanjangan',
-                'Buku "' . $detail->collection->title . '" diperpanjang 7 hari'
+                'Perpanjangan Disetujui',
+                'Masa pinjam diperpanjang sampai ' . $newDue->format('d M Y')
             );
-        }
+        });
 
         return back()->with('success', 'Perpanjangan berhasil');
     }
-
-    // ================= HISTORY USER =================
+    // ================= HISTORY =================
     public function history()
     {
         $orders = Order::with('details.collection')
@@ -210,16 +226,20 @@ class OrderController extends Controller
         return view('user.page.history', compact('orders'));
     }
 
-    // ================= DENDA =================
+    // ================= FINE CALC =================
     private function calculateFine($due, $return)
     {
         $lateDays = Carbon::parse($due)->diffInDays($return, false);
 
         if ($lateDays <= 0) return 0;
-        if ($lateDays <= 3) return $lateDays * 1000;
-        if ($lateDays <= 7) return $lateDays * 2000;
 
-        return $lateDays * 5000;
+        $fine = 0;
+
+        for ($i = 1; $i <= $lateDays; $i++) {
+            $fine += ($i <= 3) ? 2000 : 5000;
+        }
+
+        return $fine;
     }
 
     // ================= NOTIF =================
