@@ -32,7 +32,9 @@ class OrderController extends Controller
 
     // ================= USER PINJAM =================
     public function store(Request $request)
-    {
+{
+    try {
+
         $request->validate([
             'collection_id' => 'required|exists:collections,id',
             'borrow_date'   => 'required|date|after_or_equal:today',
@@ -52,46 +54,48 @@ class OrderController extends Controller
         $borrow = Carbon::parse($request->borrow_date);
         $return = Carbon::parse($request->return_date);
 
-        // 🔥 RULE: maksimal 7 hari WINDOW (bukan fixed return)
         $maxAllowedReturn = $borrow->copy()->addDays(7);
 
         if ($return->gt($maxAllowedReturn)) {
-            return back()->with(
-                'error',
-                'Tanggal kembali maksimal 7 hari dari tanggal pinjam'
-            );
+            return back()->with('error', 'Maksimal 7 hari');
         }
 
         DB::transaction(function () use ($request, $collection, $borrow, $return) {
 
-            Order::create([
+            $order = Order::create([
                 'user_id'        => auth()->id(),
                 'order_date'     => now(),
                 'borrow_date'    => $borrow,
-                'due_date'       => $return, // user pilih sendiri
+                'due_date'       => $return,
                 'status'         => 'PENDING',
                 'fine'           => 0,
                 'extension_count'=> 0,
             ]);
 
             OrderDetail::create([
-                'order_id'      => Order::latest()->first()->id,
+                'order_id'      => $order->id,
                 'collection_id' => $collection->id,
                 'qty'           => 1
             ]);
 
-            foreach (\App\Models\User::where('role', 'admin')->get() as $admin) {
-                Notification::create([
-                    'user_id' => $admin->id,
-                    'title'   => 'Pengajuan Peminjaman',
-                    'message' => auth()->user()->name . ' meminjam "' . $collection->title . '"'
-                ]);
-            }
+            // ❌ MATIKAN DULU NOTIF (INI SERING JADI BIANG)
+            // foreach (\App\Models\User::where('role', 'admin')->get() as $admin) {
+            //     Notification::create([
+            //         'user_id' => $admin->id,
+            //         'title'   => 'Pengajuan Peminjaman',
+            //         'message' => auth()->user()->name . ' meminjam "' . $collection->title . '"'
+            //     ]);
+            // }
+
         });
 
-        return back()->with('success', 'Permintaan peminjaman berhasil dikirim dan menunggu approval admin');
-    }
+        return back()->with('success', 'BERHASIL MASUK DB');
 
+    } catch (\Exception $e) {
+
+        return back()->with('error', 'ERROR: ' . $e->getMessage());
+    }
+}
     // ================= ADMIN APPROVE =================
     public function approve($id)
     {

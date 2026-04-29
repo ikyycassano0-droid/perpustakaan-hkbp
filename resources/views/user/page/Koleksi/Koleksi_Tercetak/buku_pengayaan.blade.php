@@ -287,6 +287,19 @@
 
 <div class="main-content">
 
+    {{-- 🔥 NOTIFICATION --}}
+    @if(session('success'))
+        <div id="notif" class="notification">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div id="notif" class="notification" style="border-color:red">
+            {{ session('error') }}
+        </div>
+    @endif
+
     {{-- HERO --}}
     <section class="pt-28 pb-8 text-center px-5">
         <h1 class="text-4xl md:text-5xl font-bold title-main">
@@ -297,17 +310,17 @@
         </p>
     </section>
 
-    {{-- GRID --}}
+    {{-- GRID (🔥 SEKARANG PAKAI BLADE, BUKAN JS) --}}
     <section class="max-w-7xl mx-auto px-5 pb-20">
 
-        <div id="booksGrid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5">
 
             @forelse($collections as $book)
 
                 <div class="book-card">
 
                     <div class="book-cover"
-                         style="background-image:url('{{ $book->cover_url }}')">
+                         style="background-image:url('{{ $book->cover_url ?? asset('images/no-image.png') }}')">
 
                         <span class="status-badge {{ $book->available_stock > 0 ? 'status-tersedia' : 'status-dipinjam' }}">
                             {{ $book->available_stock > 0 ? 'TERSEDIA' : 'DIPINJAM' }}
@@ -334,8 +347,7 @@
 
                             @auth
                                 @if($book->available_stock > 0)
-                                    <button type="button"
-                                            onclick="openModal({{ $book->id }}, '{{ $book->title }}')"
+                                    <button onclick="openModal({{ $book->id }}, '{{ $book->title }}')"
                                             class="btn-primary flex-1">
                                         Pinjam
                                     </button>
@@ -358,7 +370,7 @@
 
             @empty
                 <div class="col-span-4 text-center text-gray-400 py-10">
-                    📭 Belum ada koleksi buku
+                    📭 Tidak ada data buku
                 </div>
             @endforelse
 
@@ -368,7 +380,7 @@
 
 </div>
 
-{{-- MODAL PINJAM --}}
+{{-- ================= MODAL PINJAM ================= --}}
 <div id="pinjamModal"
      class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
 
@@ -390,7 +402,6 @@
                        readonly>
             </div>
 
-            {{-- BORROW DATE --}}
             <div class="mb-3">
                 <label class="text-xs text-gray-400">Tanggal Pinjam</label>
                 <input type="date" name="borrow_date" id="borrow_date"
@@ -398,7 +409,6 @@
                        required>
             </div>
 
-            {{-- RETURN DATE --}}
             <div class="mb-3">
                 <label class="text-xs text-gray-400">Tanggal Kembali</label>
                 <input type="date" name="return_date" id="return_date"
@@ -429,14 +439,6 @@
 @push('scripts')
 <script>
 
-// ================= DATA =================
-let booksData = @json($collections);
-
-// ================= STATE =================
-let currentPage = 1;
-const itemsPerPage = 6;
-let searchQuery = '';
-
 // ================= FORMAT DATE =================
 function formatDate(date) {
     return date.toISOString().split('T')[0];
@@ -457,16 +459,16 @@ function openModal(id, title) {
     const borrowInput = document.getElementById('borrow_date');
     const returnInput = document.getElementById('return_date');
 
-    // ================= BORROW DATE =================
+    // minimal hari ini
     borrowInput.min = formatDate(today);
     borrowInput.value = formatDate(today);
 
-    // ================= RETURN DATE RULE =================
+    // return H+1 sampai H+7
     const minReturn = new Date(today);
-    minReturn.setDate(today.getDate() + 1);
+    minReturn.setDate(minReturn.getDate() + 1);
 
     const maxReturn = new Date(today);
-    maxReturn.setDate(today.getDate() + 7);
+    maxReturn.setDate(maxReturn.getDate() + 7);
 
     returnInput.min = formatDate(minReturn);
     returnInput.max = formatDate(maxReturn);
@@ -484,7 +486,7 @@ document.addEventListener('click', function(e){
     if (e.target === modal) closeModal();
 });
 
-// ================= VALIDASI DINAMIS =================
+// ================= UPDATE RETURN DINAMIS =================
 document.addEventListener('change', function(e){
 
     if (e.target.id === 'borrow_date') {
@@ -503,7 +505,6 @@ document.addEventListener('change', function(e){
         returnInput.min = formatDate(minReturn);
         returnInput.max = formatDate(maxReturn);
 
-        // auto koreksi kalau return tidak valid
         const currentReturn = new Date(returnInput.value);
 
         if (currentReturn < minReturn || currentReturn > maxReturn) {
@@ -512,86 +513,7 @@ document.addEventListener('change', function(e){
     }
 });
 
-// ================= RENDER BOOKS =================
-function renderBooks() {
-
-    let filtered = [...booksData];
-
-    if (searchQuery) {
-        filtered = filtered.filter(b =>
-            (b.title ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (b.author_string ?? '').toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    }
-
-    const start = (currentPage - 1) * itemsPerPage;
-    const data = filtered.slice(start, start + itemsPerPage);
-
-    const grid = document.getElementById('booksGrid');
-    grid.innerHTML = '';
-
-    if (data.length === 0) {
-        grid.innerHTML = `
-            <div class="col-span-4 text-center text-gray-400 py-10">
-                📭 Tidak ada data buku
-            </div>
-        `;
-        return;
-    }
-
-    data.forEach(book => {
-
-        let cover = book.cover_url ?? 'https://via.placeholder.com/200x180';
-        let status = book.available_stock > 0;
-
-        grid.innerHTML += `
-            <div class="book-card">
-
-                <div class="book-cover"
-                     style="background-image:url('${cover}')">
-
-                    <span class="status-badge ${status ? 'status-tersedia' : 'status-dipinjam'}">
-                        ${status ? 'TERSEDIA' : 'DIPINJAM'}
-                    </span>
-
-                </div>
-
-                <div class="p-4">
-
-                    <h3 class="font-semibold text-indigo-200">
-                        ${book.title ?? '-'}
-                    </h3>
-
-                    <p class="text-xs text-gray-400">
-                        ${book.author_string ?? '-'}
-                    </p>
-
-                    <div class="flex gap-2 mt-3">
-
-                        <a href="/user/koleksi/${book.id}"
-                           class="btn-outline flex-1 text-center">
-                            Detail
-                        </a>
-
-                        ${status
-                            ? `<button onclick="openModal(${book.id}, \`${book.title}\`)"
-                                       class="btn-primary flex-1">
-                                    Pinjam
-                               </button>`
-                            : `<button class="btn-outline flex-1 opacity-50" disabled>
-                                    Habis
-                               </button>`
-                        }
-
-                    </div>
-
-                </div>
-            </div>
-        `;
-    });
-}
-
-// ================= FORM VALIDASI FRONTEND =================
+// ================= VALIDASI SUBMIT =================
 document.addEventListener('submit', function(e){
 
     if (e.target.id === 'pinjamForm') {
@@ -604,14 +526,12 @@ document.addEventListener('submit', function(e){
 
         const diff = (ret - borrow) / (1000 * 60 * 60 * 24);
 
-        // ❌ minimal 1 hari
         if (diff < 1) {
             alert('Minimal peminjaman 1 hari');
             e.preventDefault();
             return;
         }
 
-        // ❌ maksimal 7 hari
         if (diff > 7) {
             alert('Maksimal peminjaman hanya 7 hari');
             e.preventDefault();
@@ -622,11 +542,6 @@ document.addEventListener('submit', function(e){
         btn.innerText = 'Memproses...';
         btn.disabled = true;
     }
-});
-
-// ================= INIT =================
-document.addEventListener('DOMContentLoaded', function(){
-    renderBooks();
 });
 
 </script>
