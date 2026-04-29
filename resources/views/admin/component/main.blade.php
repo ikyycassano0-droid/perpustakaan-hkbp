@@ -4,617 +4,342 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'HKBP Dashboard - Sistem Informasi Perpustakaan')</title>
+    <title>@yield('title', 'Admin Dashboard') - Neptix Admin</title>
 
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- Font Awesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- ApexCharts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    
+    <!-- Google Fonts: Inter Only -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
 
     <style>
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
             font-family: 'Inter', sans-serif;
-            background: #f5f7fb;
-            overflow-x: hidden;
         }
-
-        /* Sidebar Styles */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            height: 100vh;
-            width: 280px;
-            background: linear-gradient(180deg, #0B2B40 0%, #0A1C2A 100%);
-            color: white;
-            transition: all 0.3s ease;
-            z-index: 1000;
-            overflow-y: auto;
+        
+        body {
+            background: #0f172a;
         }
-
-        .sidebar::-webkit-scrollbar {
-            width: 5px;
+        
+        /* Sidebar - Solid Dark Elegant */
+        .sidebar-dark {
+            background: #0f172a;
+            border-right: 1px solid #1e293b;
         }
-
-        .sidebar::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.1);
+        
+        /* Navbar Clean */
+        .navbar-clean {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
         }
-
-        .sidebar::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.3);
-            border-radius: 10px;
-        }
-
-        .sidebar-header {
-            padding: 30px 24px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 20px;
-        }
-
-        .logo-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #2E8B57, #1E6B3F);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-        }
-
-        .logo-icon i {
-            font-size: 30px;
-            color: white;
-        }
-
-        .sidebar-header h3 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin: 0;
-            letter-spacing: 1px;
-        }
-
-        .sidebar-header p {
-            font-size: 0.7rem;
-            opacity: 0.7;
-            margin: 5px 0 0;
-        }
-
-        .nav-section {
-            padding: 0 24px;
-            margin: 20px 0 10px;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: rgba(255,255,255,0.5);
-        }
-
-        .sidebar .nav-item {
-            margin: 5px 16px;
-        }
-
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.7);
-            padding: 12px 16px;
-            border-radius: 12px;
-            transition: all 0.3s;
-            font-weight: 500;
-            font-size: 0.9rem;
-            display: block;
-        }
-
-        .sidebar .nav-link:hover {
-            background: rgba(46, 139, 86, 0.2);
-            color: white;
-            transform: translateX(5px);
-        }
-
-        .sidebar .nav-link.active {
-            background: linear-gradient(135deg, #2E8B57, #1E6B3F);
-            color: white;
-            box-shadow: 0 4px 15px rgba(46, 139, 86, 0.3);
-        }
-
-        .sidebar .nav-link i {
-            width: 24px;
-            margin-right: 12px;
-            font-size: 1.1rem;
-        }
-
-        /* Main Content */
-        .main-content {
-            margin-left: 280px;
-            min-height: 100vh;
-        }
-
-        /* Top Navigation */
-        .top-nav {
-            background: white;
-            padding: 16px 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        
+        /* Card Modern */
+        .card-modern {
+            background: #ffffff;
+            border-radius: 20px;
+            border: 1px solid #f1f5f9;
+            transition: all 0.2s ease;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 99;
         }
-
-        .page-title h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1a2c3e;
-            margin: 0;
+        
+        .card-modern:hover {
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08);
+            border-color: #e2e8f0;
         }
-
-        .page-title p {
-            font-size: 0.85rem;
-            color: #6c757d;
-            margin: 5px 0 0;
-        }
-
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .notification-icon {
-            position: relative;
-            cursor: pointer;
-        }
-
-        .notification-icon i {
-            font-size: 1.3rem;
-            color: #6c757d;
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #dc3545;
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 10px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-        }
-
-        .user-avatar {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, #2E8B57, #1E6B3F);
+        
+        /* Menu Item Minimal */
+        .menu-item-minimal {
+            transition: all 0.2s ease;
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
+            color: #94a3b8;
         }
-
-        .user-details {
-            text-align: right;
+        
+        .menu-item-minimal:hover {
+            background: #1e293b;
+            color: #ffffff;
         }
-
-        .user-name {
-            font-weight: 700;
-            color: #1a2c3e;
-            font-size: 0.9rem;
+        
+        .menu-item-minimal.active {
+            background: #1e293b;
+            color: #ffffff;
         }
-
-        .user-role {
-            font-size: 0.75rem;
-            color: #6c757d;
+        
+        .menu-item-minimal.active i {
+            color: #3b82f6;
         }
-
-        /* Content Area */
-        .content-area {
-            padding: 32px;
+        
+        /* Submenu styling */
+        .submenu {
+            margin-left: 28px;
+            padding-left: 12px;
+            border-left: 1px solid #1e293b;
         }
-
-        /* Welcome Card */
-        .welcome-card {
-            background: linear-gradient(135deg, #2E8B57 0%, #1E6B3F 100%);
+        
+        .submenu-item {
+            transition: all 0.2s ease;
+            border-radius: 10px;
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+        
+        .submenu-item:hover {
+            background: #1e293b;
+            color: #ffffff;
+        }
+        
+        .submenu-item.active {
+            background: #1e293b;
+            color: #ffffff;
+        }
+        
+        .submenu-item.active i {
+            color: #3b82f6;
+        }
+        
+        /* Dropdown arrow rotation */
+        .dropdown-toggle .dropdown-arrow {
+            transition: transform 0.2s ease;
+        }
+        
+        .dropdown-toggle.open .dropdown-arrow {
+            transform: rotate(90deg);
+        }
+        
+        /* Scrollbar Minimal */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Animasi Halus */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fadeIn {
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        /* Badge Minimal */
+        .badge-success {
+            background: #dcfce7;
+            color: #166534;
+            padding: 4px 10px;
             border-radius: 20px;
-            padding: 32px;
-            margin-bottom: 32px;
-            color: white;
-            position: relative;
-            overflow: hidden;
+            font-size: 11px;
+            font-weight: 500;
         }
-
-        .welcome-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 300px;
-            height: 300px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-        }
-
-        .welcome-card h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .welcome-card p {
-            opacity: 0.9;
-            margin-bottom: 0;
-        }
-
-        /* Stat Cards */
-        .stat-card {
-            background: white;
+        
+        .badge-warning {
+            background: #fef9c3;
+            color: #854d0e;
+            padding: 4px 10px;
             border-radius: 20px;
-            padding: 24px;
-            transition: all 0.3s;
-            border: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            margin-bottom: 24px;
+            font-size: 11px;
+            font-weight: 500;
         }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
         }
-
+        
         .stat-icon {
-            width: 55px;
-            height: 55px;
-            border-radius: 15px;
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #1a2c3e;
-            margin: 10px 0 5px;
-        }
-
-        .stat-label {
-            color: #6c757d;
-            font-size: 0.85rem;
-            margin-bottom: 8px;
-        }
-
-        .stat-change {
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .stat-change.positive {
-            color: #2E8B57;
-        }
-
-        .stat-change.negative {
-            color: #dc3545;
-        }
-
-        /* Chart Cards */
-        .chart-card {
-            background: white;
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            height: 100%;
-            transition: all 0.3s;
-        }
-
-        .chart-card:hover {
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        }
-
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .chart-header h5 {
-            font-weight: 700;
-            color: #1a2c3e;
-            margin: 0;
-        }
-
-        .chart-header i {
-            color: #2E8B57;
-            font-size: 1.2rem;
-        }
-
-        /* Table Card */
-        .table-card {
-            background: white;
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .table-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .table-header h5 {
-            font-weight: 700;
-            color: #1a2c3e;
-            margin: 0;
-        }
-
-        .btn-primary-custom {
-            background: linear-gradient(135deg, #2E8B57, #1E6B3F);
-            border: none;
-            padding: 8px 20px;
-            border-radius: 10px;
-            font-weight: 500;
-            transition: all 0.3s;
-            color: white;
-        }
-
-        .btn-primary-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(46, 139, 86, 0.3);
-            color: white;
-        }
-
-        .table {
-            margin-bottom: 0;
-        }
-
-        .table thead th {
-            background: #f8f9fa;
-            border: none;
-            padding: 12px 16px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #495057;
-        }
-
-        .table tbody td {
-            padding: 12px 16px;
-            vertical-align: middle;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .badge-status {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .badge-active {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .badge-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        /* Mobile Menu Button */
-        .mobile-menu-btn {
-            display: none;
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1001;
-            background: #2E8B57;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 10px 15px;
-            cursor: pointer;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .mobile-menu-btn {
-                display: block;
-            }
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            .main-content {
-                margin-left: 0;
-            }
-            .content-area {
-                padding: 20px;
-            }
-            .top-nav {
-                padding: 12px 20px;
-            }
-            .page-title h2 {
-                font-size: 1.2rem;
-            }
         }
     </style>
-
+    
     @stack('styles')
 </head>
-<body>
+<body class="overflow-hidden bg-slate-50">
 
-<!-- Mobile Menu Button -->
-<button class="mobile-menu-btn" onclick="toggleSidebar()">
-    <i class="fas fa-bars"></i>
-</button>
-
-<!-- Sidebar -->
-<div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <div class="logo-icon">
-            <i class="fas fa-church"></i>
-        </div>
-        <h3>HKBP Admin</h3>
-        <p>Perpustakaan AKPER HKBP</p>
-    </div>
-
-    <div class="nav-section">MAIN MENU</div>
-    <div class="nav-item">
-        <a class="nav-link {{ request()->routeIs('admin.home') ? 'active' : '' }}" href="{{ route('admin.home') }}">
-            <i class="fas fa-th-large"></i> Dashboard
-        </a>
-    </div>
-    <div class="nav-item">
-        <a class="nav-link {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}"
-        href="{{ route('admin.profile.index') }}">
-        <i class="fas fa-book"></i>Profile
-        </a>
-    </div>
-    <div class="nav-item">
-        <a class="nav-link {{ request()->routeIs('admin.layanan.*') ? 'active' : '' }}"
-        href="{{ route('admin.layanan.index') }}">
-            <i class="fas fa-concierge-bell"></i> Layanan
-        </a>
-    </div>
-    <div class="nav-item">
-        <a class="nav-link {{ request()->routeIs('admin.members.*') ? 'active' : '' }}"
-        href="{{ route('admin.members.index') }}">
-            <i class="fas fa-users"></i> Manajemen Anggota
-        </a>
-    </div>
-    <div class="nav-item">
-        <a class="nav-link {{ request()->routeIs('admin.berita.*') ? 'active' : '' }}"
-        href="{{ route('admin.berita.index') }}">
-            <i class="fas fa-newspaper"></i> Berita
-        </a>
-    </div>
-    <div class="nav-item">
-        <a class="nav-link" href="{{ route('admin.collections.index') }}">
-            <i class="fas fa-book"></i> Manajemen Buku
-        </a>
-    </div>
-    <div class="nav-item">
-        <a class="nav-link" href="{{ route('admin.koleksi_elektronik.index') }}">
-            <i class="fas fa-laptop"></i> Koleksi Elektronik
-        </a>
-    </div>
-    <div class="nav-item">
-        <a class="nav-link" href="{{ route('admin.orders.index') }}">
-            <i class="fas fa-hand-holding-heart"></i> Peminjaman
-        </a>
-    </div>
-    <div class="nav-item">
-        <a class="nav-link" href="{{ route('admin.kti.index') }}">
-            <i class="fas fa-book"></i> KTI
-        </a>
-    </div>
-    <div class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="fas fa-chart-line"></i> Laporan
-        </a>
-    </div>
-
-    <div class="nav-section mt-4">SETTINGS</div>
-    <div class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="fas fa-user-cog"></i> Pengaturan Akun
-        </a>
-    </div>
-    <div class="nav-item">
-        <a class="nav-link" href="{{ route('home') }}">
-            <i class="fas fa-sign-out-alt"></i> Keluar Sistem
-        </a>
-    </div>
-</div>
-
-<!-- Main Content -->
-<div class="main-content">
-    <!-- Top Navigation -->
-    <div class="top-nav">
-        <div class="page-title">
-            <h2>@yield('page-title', 'Dashboard Overview')</h2>
-            <p><i class="far fa-calendar-alt me-1"></i> {{ \Carbon\Carbon::now()->isoFormat('dddd, DD MMMM YYYY') }}</p>
-        </div>
-        <div class="user-menu">
-            <div class="notification-icon">
-                <i class="far fa-bell"></i>
-                <span class="notification-badge">3</span>
-            </div>
-            <div class="user-info">
-                <div class="user-details">
-                    <div class="user-name">{{ session('user_name') ?? 'AP' }}</div>
-                    <div class="user-role">{{ session('user_role') == 1 ? 'Administrator' : 'Member' }}</div>
-                </div>
-                <div class="user-avatar">
-                    <i class="fas fa-user"></i>
+    <div class="flex h-screen">
+        <!-- SIDEBAR - DARK ELEGANT -->
+        <aside class="w-72 sidebar-dark flex-shrink-0 overflow-y-auto">
+            <div class="p-6 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-500 flex items-center justify-center">
+                        <i class="fas fa-chart-line text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-white text-xl font-semibold tracking-tight">Neptix</h1>
+                        <p class="text-slate-500 text-[11px]">Admin Dashboard</p>
+                    </div>
                 </div>
             </div>
+            
+            <div class="px-4 py-6">
+                <!-- MAIN MENU -->
+                <p class="text-slate-500 text-[10px] uppercase tracking-wider font-semibold mb-3 px-3">Main</p>
+                <nav class="space-y-1">
+                    <!-- Dashboard -->
+                    <a href="{{ route('admin.home') }}" class="menu-item-minimal {{ request()->routeIs('admin.home') ? 'active' : '' }} flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-th-large w-4 text-sm"></i>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <!-- Manajemen Anggota -->
+                    <a href="{{ route('admin.members.index') }}" class="menu-item-minimal {{ request()->routeIs('admin.members.*') ? 'active' : '' }} flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-users w-4 text-sm"></i>
+                        <span>Manajemen Anggota</span>
+                    </a>
+
+                    <!-- Profile Website -->
+                    <a href="{{ route('admin.profile.index') }}" class="menu-item-minimal {{ request()->routeIs('admin.profile.*') ? 'active' : '' }} flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-globe w-4 text-sm"></i>
+                        <span>Profile Website</span>
+                    </a>
+
+                    <!-- Berita (lengkap) -->
+                    <a href="{{ route('admin.berita.index') }}" class="menu-item-minimal {{ request()->routeIs('admin.berita.*') ? 'active' : '' }} flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-newspaper w-4 text-sm"></i>
+                        <span>Berita</span>
+                    </a>
+
+                    <!-- Koleksi (DROPDOWN dengan Submenu) -->
+                    <div x-data="{ open: {{ request()->routeIs('admin.collections.*') || request()->routeIs('admin.koleksi_elektronik.*') ? 'true' : 'false' }} }" class="w-full">
+                        <div @click="open = !open" class="menu-item-minimal flex items-center justify-between px-4 py-2.5 text-sm font-medium cursor-pointer {{ (request()->routeIs('admin.collections.*') || request()->routeIs('admin.koleksi_elektronik.*')) ? 'active' : '' }}">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-book w-4 text-sm"></i>
+                                <span>Koleksi</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-xs transition-transform" :class="open ? 'rotate-90' : ''"></i>
+                        </div>
+                        <div x-show="open" x-transition class="submenu mt-1 space-y-1">
+                            <a href="{{ route('admin.collections.index') }}" class="submenu-item flex items-center gap-3 px-4 py-2 text-sm font-medium {{ request()->routeIs('admin.collections.*') ? 'active' : '' }}">
+                                <i class="fas fa-book-open w-3 text-xs"></i>
+                                <span>Koleksi Tercetak</span>
+                            </a>
+                            <a href="{{ route('admin.koleksi_elektronik.index') }}" class="submenu-item flex items-center gap-3 px-4 py-2 text-sm font-medium {{ request()->routeIs('admin.koleksi_elektronik.*') ? 'active' : '' }}">
+                                <i class="fas fa-laptop w-3 text-xs"></i>
+                                <span>Koleksi Elektronik</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Peminjaman -->
+                    <a href="{{ route('admin.orders.index') }}" class="menu-item-minimal {{ request()->routeIs('admin.orders.*') ? 'active' : '' }} flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-hand-holding-heart w-4 text-sm"></i>
+                        <span>Peminjaman</span>
+                    </a>
+
+                    <!-- Analytics -->
+                    <a href="#" class="menu-item-minimal {{ request()->routeIs('admin.analytics') ? 'active' : '' }} flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-chart-bar w-4 text-sm"></i>
+                        <span>Analytics</span>
+                    </a>
+
+                    <!-- Projects -->
+                    <a href="#" class="menu-item-minimal flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-folder w-4 text-sm"></i>
+                        <span>Projects</span>
+                    </a>
+                </nav>
+                
+                <!-- MANAGEMENT MENU -->
+                <p class="text-slate-500 text-[10px] uppercase tracking-wider font-semibold mt-6 mb-3 px-3">Management</p>
+                <nav class="space-y-1">
+                    <a href="#" class="menu-item-minimal flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-shopping-cart w-4 text-sm"></i>
+                        <span>Orders</span>
+                        <span class="ml-auto bg-slate-800 text-slate-300 text-[10px] px-2 py-0.5 rounded-full">12</span>
+                    </a>
+                    <a href="#" class="menu-item-minimal flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-tag w-4 text-sm"></i>
+                        <span>Products</span>
+                    </a>
+                    <a href="#" class="menu-item-minimal flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-cog w-4 text-sm"></i>
+                        <span>Settings</span>
+                    </a>
+                </nav>
+            </div>
+            
+            <!-- Profile Footer -->
+            <div class="absolute bottom-6 left-0 right-0 px-4">
+                <div class="bg-slate-800/50 rounded-xl p-3 border border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <img src="https://ui-avatars.com/api/?background=3b82f6&color=fff&bold=true&size=40&name=AD" class="w-9 h-9 rounded-xl" alt="Avatar">
+                        <div class="flex-1">
+                            <p class="text-white text-sm font-medium">Alex Devara</p>
+                            <p class="text-slate-500 text-[10px]">admin@neptix.com</p>
+                        </div>
+                        <i class="fas fa-sign-out-alt text-slate-500 text-sm cursor-pointer hover:text-white transition"></i>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="flex-1 flex flex-col overflow-hidden bg-slate-50">
+            <!-- NAVBAR CLEAN -->
+            <header class="navbar-clean px-8 py-4 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <div class="lg:hidden">
+                        <i class="fas fa-bars text-slate-600 text-xl cursor-pointer"></i>
+                    </div>
+                    <div class="relative hidden md:block">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" placeholder="Search..." class="pl-9 pr-4 py-2 rounded-xl border border-slate-200 w-72 focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm bg-slate-50">
+                    </div>
+                </div>
+                <div class="flex items-center gap-5">
+                    <div class="relative">
+                        <i class="far fa-bell text-slate-500 text-lg cursor-pointer hover:text-indigo-600 transition"></i>
+                        <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-indigo-500 rounded-full text-white text-[8px] flex items-center justify-center">3</span>
+                    </div>
+                    <div class="flex items-center gap-3 cursor-pointer group">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-semibold text-slate-700">Alex Devara</p>
+                            <p class="text-[11px] text-slate-400">Administrator</p>
+                        </div>
+                        <img src="https://ui-avatars.com/api/?background=3b82f6&color=fff&bold=true&size=40&name=AD" class="w-9 h-9 rounded-xl border border-slate-200 group-hover:border-indigo-300 transition">
+                    </div>
+                </div>
+            </header>
+
+            <!-- PAGE CONTENT -->
+            <main class="flex-1 overflow-y-auto p-8">
+                <div class="animate-fadeIn">
+                    @yield('content')
+                </div>
+            </main>
         </div>
     </div>
 
-    <!-- Content Area -->
-    <div class="content-area">
-        @yield('admin_content')
-    </div>
-</div>
+    <!-- Alpine.js untuk dropdown -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('show');
-    }
-
-    // Close sidebar when clicking outside on mobile
-    document.addEventListener('click', function(event) {
-        const sidebar = document.getElementById('sidebar');
-        const mobileBtn = document.querySelector('.mobile-menu-btn');
-
-        if (window.innerWidth <= 768) {
-            if (!sidebar.contains(event.target) && !mobileBtn.contains(event.target)) {
-                sidebar.classList.remove('show');
-            }
-        }
-    });
-</script>
-<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
-<script>
-const editorEl = document.querySelector('#editor');
-
-if (editorEl) {
-    ClassicEditor
-        .create(editorEl)
-        .then(editor => {
-            console.log('CKEditor siap');
-        })
-        .catch(error => {
-            console.error(error);
-        });
-}
-</script>
-@stack('scripts')
+    @stack('scripts')
 </body>
 </html>
