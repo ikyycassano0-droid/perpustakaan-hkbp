@@ -28,11 +28,6 @@
     .cover-preview:hover {
         transform: scale(1.05);
     }
-    
-    /* Sembunyikan modal saat pertama kali load */
-    .modal {
-        display: none;
-    }
 </style>
 
 <div class="max-w-7xl mx-auto">
@@ -165,7 +160,7 @@
 {{-- ========================================= --}}
 {{-- MODAL FORM TAMBAH/EDIT KOLEKSI --}}
 {{-- ========================================= --}}
-<div class="modal fade" id="modalForm" tabindex="-1" aria-hidden="true" style="display: none;">
+<div class="modal fade" id="modalForm" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content rounded-2xl border-0 shadow-2xl">
             <form id="formCollection" method="POST" enctype="multipart/form-data">
@@ -177,7 +172,7 @@
                         <i class="fas fa-book-open text-indigo-500"></i>
                         <h5 id="modalTitle" class="font-semibold text-slate-800 text-lg">Tambah Koleksi</h5>
                     </div>
-                    <button type="button" class="text-slate-400 hover:text-slate-600 transition" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="text-slate-400 hover:text-slate-600 transition" data-bs-dismiss="modal">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -257,7 +252,7 @@
                         <textarea name="description" id="description" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 transition text-sm text-slate-700"></textarea>
                     </div>
 
-                    <!-- CLASSIFICATION -->
+                    <!-- CLASSIFICATION + TOMBOL TAMBAH -->
                     <div class="mt-4">
                         <div class="flex justify-between items-center mb-2">
                             <label class="block text-sm font-medium text-slate-700">Classification</label>
@@ -272,7 +267,7 @@
                         </select>
                     </div>
 
-                    <!-- CATEGORY -->
+                    <!-- CATEGORY + TOMBOL TAMBAH -->
                     <div class="mt-4">
                         <div class="flex justify-between items-center mb-2">
                             <label class="block text-sm font-medium text-slate-700">Category</label>
@@ -287,7 +282,7 @@
                         </select>
                     </div>
 
-                    <!-- LOCATION -->
+                    <!-- LOCATION + TOMBOL TAMBAH -->
                     <div class="mt-4">
                         <div class="flex justify-between items-center mb-2">
                             <label class="block text-sm font-medium text-slate-700">Location</label>
@@ -328,7 +323,7 @@
 </div>
 
 {{-- MODAL TAMBAH CLASSIFICATION --}}
-<div class="modal fade" id="modalAddClassification" tabindex="-1" aria-hidden="true" style="display: none;">
+<div class="modal fade" id="modalAddClassification" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-2xl border-0 shadow-2xl">
             <div class="modal-header border-b border-slate-100 px-6 py-4">
@@ -336,7 +331,7 @@
                     <i class="fas fa-tag text-indigo-500"></i>
                     <h5 class="font-semibold text-slate-800 text-lg">Tambah Classification</h5>
                 </div>
-                <button type="button" class="text-slate-400 hover:text-slate-600 transition" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="text-slate-400 hover:text-slate-600 transition" data-bs-dismiss="modal">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -353,7 +348,7 @@
 </div>
 
 {{-- MODAL TAMBAH CATEGORY --}}
-<div class="modal fade" id="modalAddCategory" tabindex="-1" aria-hidden="true" style="display: none;">
+<div class="modal fade" id="modalAddCategory" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-2xl border-0 shadow-2xl">
             <div class="modal-header border-b border-slate-100 px-6 py-4">
@@ -361,7 +356,7 @@
                     <i class="fas fa-folder text-indigo-500"></i>
                     <h5 class="font-semibold text-slate-800 text-lg">Tambah Category</h5>
                 </div>
-                <button type="button" class="text-slate-400 hover:text-slate-600 transition" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="text-slate-400 hover:text-slate-600 transition" data-bs-dismiss="modal">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -378,7 +373,7 @@
 </div>
 
 {{-- MODAL TAMBAH LOCATION --}}
-<div class="modal fade" id="modalAddLocation" tabindex="-1" aria-hidden="true" style="display: none;">
+<div class="modal fade" id="modalAddLocation" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-2xl border-0 shadow-2xl">
             <div class="modal-header border-b border-slate-100 px-6 py-4">
@@ -386,7 +381,7 @@
                     <i class="fas fa-map-marker-alt text-indigo-500"></i>
                     <h5 class="font-semibold text-slate-800 text-lg">Tambah Location</h5>
                 </div>
-                <button type="button" class="text-slate-400 hover:text-slate-600 transition" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="text-slate-400 hover:text-slate-600 transition" data-bs-dismiss="modal">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -413,12 +408,13 @@
     const baseUrl = "/admin/collections";
     
     // ========================================
-    // SELECT2 INIT - TANPA dropdownParent AGAR TIDAK MEMICU MODAL
+    // SELECT2 INIT
     // ========================================
     $(document).ready(function() {
         $('.select2-multi').select2({
             placeholder: "Pilih / cari",
             width: '100%',
+            dropdownParent: $('#modalForm'),
             closeOnSelect: false,
             allowClear: true
         });
@@ -426,6 +422,7 @@
         $('.select2-single').select2({
             placeholder: "Pilih lokasi",
             width: '100%',
+            dropdownParent: $('#modalForm'),
             allowClear: true
         });
     });
@@ -451,7 +448,7 @@
     });
     
     // ========================================
-    // TAMBAH DATA KOLEKSI - PAKAI BOOTSTRAP MODAL BIASA
+    // TAMBAH DATA KOLEKSI
     // ========================================
     $('#btnTambah, #btnTambahEmpty').click(function() {
         $('#modalTitle').text('Tambah Koleksi');
@@ -518,115 +515,112 @@
     });
     
     // ========================================
-    // TAMBAH CLASSIFICATION (AJAX)
+    // TAMBAH CLASSIFICATION (AJAX) - MENGGUNAKAN URL LANGSUNG
     // ========================================
-    $('.btn-add-classification').click(function() {
-        $('#newClassificationName').val('');
-        $('#modalAddClassification').modal('show');
-    });
-    
-    $('#saveClassificationBtn').click(function() {
-        let name = $('#newClassificationName').val();
-        if (!name) {
-            alert('Nama classification harus diisi!');
-            return;
+$('#saveClassificationBtn').click(function() {
+    let name = $('#newClassificationName').val();
+
+    if (!name) {
+        alert('Nama classification harus diisi!');
+        return;
+    }
+
+    $.ajax({
+        url: "{{ route('admin.classification.storeAjax') }}",
+        method: "POST",
+        data: {
+            name: name,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(res) {
+
+            // ❌ HAPUS response.success
+            // ✅ LANGSUNG PAKAI res.id
+
+            let newOption = new Option(res.name, res.id, true, true);
+            $('#classificationDropdown').append(newOption).trigger('change');
+
+            $('#modalAddClassification').modal('hide');
+            $('#newClassificationName').val('');
+
+            alert('Classification berhasil ditambahkan!');
+        },
+        error: function(xhr) {
+            console.log(xhr.responseText);
+            alert('Gagal: ' + xhr.responseText);
         }
-        
-        $.ajax({
-            url: '/admin/classifications',
-            method: 'POST',
-            data: {
-                name: name,
-                _token: '{{ csrf_token() }}'
-            },
-            success: function(response) {
-                if (response.success) {
-                    let newOption = new Option(response.data.name, response.data.id, false, false);
-                    $('#classificationDropdown').append(newOption).trigger('change');
-                    $('#modalAddClassification').modal('hide');
-                    $('#newClassificationName').val('');
-                    alert('Classification berhasil ditambahkan!');
-                }
-            },
-            error: function(xhr) {
-                alert('Gagal menambahkan classification: ' + (xhr.responseJSON?.message || 'Terjadi kesalahan'));
-            }
-        });
     });
+});
     
     // ========================================
-    // TAMBAH CATEGORY (AJAX)
+    // TAMBAH CATEGORY (AJAX) - MENGGUNAKAN URL LANGSUNG
     // ========================================
-    $('.btn-add-category').click(function() {
-        $('#newCategoryName').val('');
-        $('#modalAddCategory').modal('show');
-    });
-    
     $('#saveCategoryBtn').click(function() {
-        let name = $('#newCategoryName').val();
-        if (!name) {
-            alert('Nama category harus diisi!');
-            return;
+    let name = $('#newCategoryName').val();
+
+    if (!name) {
+        alert('Nama category harus diisi!');
+        return;
+    }
+
+    $.ajax({
+        url: "{{ route('admin.category.storeAjax') }}",
+        method: "POST",
+        data: {
+            name: name,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(res) {
+
+            let newOption = new Option(res.name, res.id, true, true);
+            $('#categoryDropdown').append(newOption).trigger('change');
+
+            $('#modalAddCategory').modal('hide');
+            $('#newCategoryName').val('');
+
+            alert('Category berhasil ditambahkan!');
+        },
+        error: function(xhr) {
+            console.log(xhr.responseText);
+            alert('Gagal: ' + xhr.responseText);
         }
-        
-        $.ajax({
-            url: '/admin/categories',
-            method: 'POST',
-            data: {
-                name: name,
-                _token: '{{ csrf_token() }}'
-            },
-            success: function(response) {
-                if (response.success) {
-                    let newOption = new Option(response.data.name, response.data.id, false, false);
-                    $('#categoryDropdown').append(newOption).trigger('change');
-                    $('#modalAddCategory').modal('hide');
-                    $('#newCategoryName').val('');
-                    alert('Category berhasil ditambahkan!');
-                }
-            },
-            error: function(xhr) {
-                alert('Gagal menambahkan category: ' + (xhr.responseJSON?.message || 'Terjadi kesalahan'));
-            }
-        });
     });
+});
     
     // ========================================
-    // TAMBAH LOCATION (AJAX)
+    // TAMBAH LOCATION (AJAX) - MENGGUNAKAN URL LANGSUNG
     // ========================================
-    $('.btn-add-location').click(function() {
-        $('#newLocationName').val('');
-        $('#modalAddLocation').modal('show');
-    });
-    
     $('#saveLocationBtn').click(function() {
-        let name = $('#newLocationName').val();
-        if (!name) {
-            alert('Nama location harus diisi!');
-            return;
+    let name = $('#newLocationName').val();
+
+    if (!name) {
+        alert('Nama location harus diisi!');
+        return;
+    }
+
+    $.ajax({
+        url: "{{ route('admin.location.storeAjax') }}",
+        method: "POST",
+        data: {
+            name: name,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(res) {
+
+            let newOption = new Option(res.name, res.id, true, true);
+            $('#locationDropdown').append(newOption).trigger('change');
+
+            $('#modalAddLocation').modal('hide');
+            $('#newLocationName').val('');
+
+            alert('Location berhasil ditambahkan!');
+        },
+        error: function(xhr) {
+            console.log(xhr.responseText);
+            alert('Gagal: ' + xhr.responseText);
         }
-        
-        $.ajax({
-            url: '/admin/locations',
-            method: 'POST',
-            data: {
-                name: name,
-                _token: '{{ csrf_token() }}'
-            },
-            success: function(response) {
-                if (response.success) {
-                    let newOption = new Option(response.data.name, response.data.id, false, false);
-                    $('#locationDropdown').append(newOption).trigger('change');
-                    $('#modalAddLocation').modal('hide');
-                    $('#newLocationName').val('');
-                    alert('Location berhasil ditambahkan!');
-                }
-            },
-            error: function(xhr) {
-                alert('Gagal menambahkan location: ' + (xhr.responseJSON?.message || 'Terjadi kesalahan'));
-            }
-        });
     });
+});
 </script>
 
 @endsection
