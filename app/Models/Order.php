@@ -11,6 +11,7 @@ class Order extends Model
     'order_date',
     'borrow_date',
     'due_date',
+    'return_date',
     'actual_return_date',
     'fine',
     'extension_count',
@@ -51,5 +52,21 @@ class Order extends Model
         if (!$this->due_date) return 0;
 
         return now()->diffInDays($this->due_date, false);
+    }
+
+    public function scopeActiveBorrow($query)
+    {
+        return $query->whereIn('status', ['PENDING', 'APPROVED'])
+            ->whereNull('actual_return_date');
+    }
+
+    public static function canBorrow($userId, $collectionId)
+    {
+        return !self::where('user_id', $userId)
+            ->activeBorrow()
+            ->whereHas('details', function ($q) use ($collectionId) {
+                $q->where('collection_id', $collectionId);
+            })
+            ->exists();
     }
 }

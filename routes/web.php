@@ -93,7 +93,6 @@
             Route::get('/{collection}/edit', [CollectionController::class, 'edit'])->name('edit');
             Route::put('/{collection}', [CollectionController::class, 'update'])->name('update');
             Route::delete('/{collection}', [CollectionController::class, 'destroy'])->name('destroy');
-            Route::get('/pengelolaan-buku', [CollectionController::class, 'pengelolaanBuku'])->name('pengelolaan_buku');
         });
 
         // ================= CLASSIFICATION =================

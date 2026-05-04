@@ -98,6 +98,11 @@
         transform: translateY(-2px);
     }
     
+    .btn-outline:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
     .btn-link {
         background: transparent;
         border: none;
@@ -145,61 +150,6 @@
         margin-top: 0.25rem;
     }
     
-    .chapter-list {
-        list-style: none;
-        padding: 0;
-    }
-    
-    .chapter-list li {
-        padding: 0.75rem 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    
-    .chapter-list li:hover {
-        padding-left: 0.5rem;
-        color: #a5b4fc;
-    }
-    
-    .chapter-number {
-        width: 28px;
-        height: 28px;
-        background: rgba(99, 102, 241, 0.2);
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.7rem;
-        font-weight: 600;
-        color: #a5b4fc;
-    }
-    
-    /* Recommendation Card */
-    .recommend-card {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(12px);
-        border-radius: 1.25rem;
-        overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-        border: 1px solid rgba(99, 102, 241, 0.3);
-    }
-    
-    .recommend-card:hover {
-        transform: translateY(-5px);
-        border-color: rgba(99, 102, 241, 0.7);
-        box-shadow: 0 15px 30px -12px rgba(99, 102, 241, 0.3);
-    }
-    
-    .recommend-img {
-        height: 160px;
-        width: 100%;
-        object-fit: cover;
-    }
-    
     /* Notification */
     .notification {
         position: fixed;
@@ -220,19 +170,6 @@
         transform: translateX(0);
     }
     
-    /* Rating bar */
-    .rating-bar {
-        height: 8px;
-        background: #334155;
-        border-radius: 4px;
-        overflow: hidden;
-    }
-    
-    .rating-fill {
-        height: 100%;
-        border-radius: 4px;
-    }
-    
     /* Delay utilities */
     .delay-1 { transition-delay: 0.1s; }
     .delay-2 { transition-delay: 0.2s; }
@@ -242,6 +179,19 @@
 
 @section('content')
 <div class="main-content">
+
+    {{-- 🔥 NOTIFICATION --}}
+    @if(session('success'))
+        <div id="notif" class="notification">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div id="notif" class="notification" style="border-color:red">
+            {{ session('error') }}
+        </div>
+    @endif
 
     <!-- HERO -->
     <section class="pt-28 pb-8 text-center px-5">
@@ -276,50 +226,81 @@
                     <!-- COVER -->
                     <div class="flex flex-col">
 
-                    <!-- COVER -->
                         <div class="book-cover-large">
                             <img src="{{ $collection->cover_image ? asset('storage/'.$collection->cover_image) : 'https://via.placeholder.com/400x500' }}"
                                 class="w-full">
                         </div>
 
-                        <!-- BUTTON (FIX DI BAWAH COVER) -->
+                        <!-- BUTTON SECTION - LOGIKA SAMA DENGAN HALAMAN KOLEKSI -->
                         <div class="mt-4 flex flex-col gap-3">
 
-                            <button onclick="borrowBook()" class="btn-primary w-full">
-                                📖 Pinjam Buku
-                            </button>
+                            @php
+                                $hasPending = false;
+
+                                if(auth()->check()) {
+                                    $hasPending = \App\Models\Order::where('user_id', auth()->id())
+                                        ->where('status', 'PENDING')
+                                        ->whereHas('details', function($q) use ($collection) {
+                                            $q->where('collection_id', $collection->id);
+                                        })
+                                        ->exists();
+                                }
+                            @endphp
+
+                            @auth
+                                @if($hasPending)
+                                    <button class="btn-primary w-full opacity-50" disabled>
+                                        ⏳ Menunggu Persetujuan
+                                    </button>
+                                    <small class="text-center text-yellow-500 text-xs">Anda sudah meminjam buku ini, menunggu konfirmasi admin</small>
+                                @elseif($collection->available_stock > 0)
+                                    <button onclick="openModal({{ $collection->id }}, '{{ $collection->title }}')"
+                                            class="btn-primary w-full">
+                                        📖 Pinjam Buku
+                                    </button>
+                                @else
+                                    <button class="btn-outline w-full opacity-50" disabled>
+                                        ❌ Stok Habis
+                                    </button>
+                                @endif
+                            @else
+                                <a href="{{ route('login') }}" class="btn-primary w-full text-center">
+                                    🔐 Login untuk Pinjam
+                                </a>
+                            @endauth
 
                             @if($collection->file_url)
                                 <a href="{{ asset('storage/'.$collection->file_url) }}"
-                                target="_blank"
-                                class="btn-outline w-full text-center block">
+                                   target="_blank"
+                                   class="btn-outline w-full text-center block">
                                     👁️ Lihat PDF
                                 </a>
                             @endif
 
                         </div>
 
-                            <!-- STATUS -->
-                            <div class="glass-card p-4 mt-6 text-center">
+                        <!-- STATUS -->
+                        <div class="glass-card p-4 mt-6 text-center">
+                            @if($collection->available_stock > 0)
                                 <span class="text-green-400 font-semibold">
-                                    {{ $collection->is_available ? 'Tersedia' : 'Tidak tersedia' }}
+                                    ✅ Tersedia ({{ $collection->available_stock }} tersisa)
                                 </span>
+                            @else
+                                <span class="text-red-400 font-semibold">
+                                    ❌ Tidak tersedia
+                                </span>
+                            @endif
 
-                                <p class="text-xs text-gray-400 mt-2">
-                                    Stok: {{ $collection->available_stock }}
-                                </p>
-
-                                <p class="text-xs text-gray-500">
-                                    📍 {{ $collection->location->name ?? '-' }}
-                                </p>
-                            </div>
+                            <p class="text-xs text-gray-500 mt-2">
+                                📍 {{ $collection->location->name ?? '-' }}
+                            </p>
+                        </div>
 
                     </div>
 
                     <!-- DETAIL -->
                     <div class="lg:col-span-2">
 
-                        <!-- DESKRIPSI -->
                         <div class="mb-6">
                             <h2 class="text-xl font-bold text-indigo-200 mb-3">
                                 📖 Deskripsi
@@ -330,7 +311,6 @@
                             </p>
                         </div>
 
-                        <!-- METADATA -->
                         <div class="mb-6">
                             <h2 class="text-xl font-bold text-indigo-200 mb-3">
                                 📋 Informasi
@@ -375,7 +355,6 @@
                             </div>
                         </div>
 
-                        <!-- KEYWORDS -->
                         @if($collection->keywords)
                         <div class="mb-6">
                             <h2 class="text-xl font-bold text-indigo-200 mb-3">
@@ -384,7 +363,7 @@
 
                             <div class="flex flex-wrap gap-2">
                                 @foreach($collection->keywords as $key)
-                                    <span class="keyword-tag">{{ $key }}</span>
+                                    <span class="category-badge category-pengayaan">{{ $key }}</span>
                                 @endforeach
                             </div>
                         </div>
@@ -405,103 +384,188 @@
     </div>
 
 </div>
+
+{{-- ================= MODAL PINJAM (SAMA DENGAN KOLEKSI) ================= --}}
+<div id="pinjamModal"
+     class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
+
+    <div class="bg-slate-900 w-full max-w-md rounded-2xl border border-indigo-500/30 p-6">
+
+        <h2 class="text-xl font-bold text-indigo-300 mb-4">
+            Form Peminjaman
+        </h2>
+
+        <form id="pinjamForm" method="POST" action="{{ route('orders.store') }}">
+            @csrf
+
+            <input type="hidden" name="collection_id" id="collection_id">
+
+            <div class="mb-3">
+                <label class="text-xs text-gray-400">Judul Buku</label>
+                <input type="text" id="book_title"
+                       class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700"
+                       readonly>
+            </div>
+
+            <div class="mb-3">
+                <label class="text-xs text-gray-400">Tanggal Pinjam</label>
+                <input type="date" name="borrow_date" id="borrow_date"
+                       class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700"
+                       required>
+            </div>
+
+            <div class="mb-3">
+                <label class="text-xs text-gray-400">Tanggal Kembali</label>
+                <input type="date" name="return_date" id="return_date"
+                       class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700"
+                       required>
+            </div>
+
+            <div class="flex gap-2">
+                <button type="button"
+                        onclick="closeModal()"
+                        class="w-full py-2 rounded bg-gray-700 text-white">
+                    Batal
+                </button>
+
+                <button type="submit"
+                        class="w-full py-2 rounded bg-indigo-600 text-white font-semibold">
+                    Pinjam
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
 @endsection
 
 @push('scripts')
 <script>
-// ============================================
-// JAVASCRIPT KHUSUS UNTUK HALAMAN DETAIL BUKU PENGAYAAN
-// Hanya JS yang BELUM ADA di master blade
-// ============================================
 
-// Book data
-const currentBook = {
-    id: 1,
-    title: "Fundamentals of Nursing: The Art and Science of Person-Centered Care",
-    author: "Carol R. Taylor, Pamela Lynn",
-    edition: "Edisi 9",
-    year: 2023,
-    isbn: "978-1-9751-6815-1",
-    pages: 1856,
-    category: "Nursing Fundamentals",
-    location: "Rak A-12",
-    status: "tersedia",
-    stock: 3,
-    rating: 4.8
-};
+// ================= FORMAT DATE =================
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
 
-function borrowBook() {
-    showNotification('✅ Buku berhasil dipinjam! Silakan ambil di Rak A-12.', 'success');
+    return `${year}-${month}-${day}`;
 }
 
-function previewBook() {
-    showNotification('👁️ Preview sampel buku akan segera terbuka...', 'info');
-}
-
-function addToWishlist() {
-    showNotification('🤍 Buku ditambahkan ke wishlist Anda.', 'success');
-}
-
-function goToChapter(chapter) {
-    showNotification(`📑 Membuka bab ${chapter}...`, 'info');
-}
-
-function viewAllChapters() {
-    showNotification('📚 Menampilkan semua 54 bab buku ini.', 'info');
-}
-
-function viewBook(id) {
-    showNotification(`📖 Membuka detail buku...`, 'info');
-}
-
-function goBack() {
-    window.history.back();
-}
-
-// Custom notification (akan menggunakan showNotif dari master jika ada)
-function showNotification(message, type = 'success') {
-    if (typeof showNotif === 'function') {
-        showNotif(message, type);
-    } else {
-        // Fallback notification
-        const notification = document.createElement('div');
-        notification.className = 'notification';
-        notification.innerHTML = `
-            <div class="flex items-center gap-2">
-                <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
-                <span>${message}</span>
-            </div>
-        `;
-        document.body.appendChild(notification);
-        setTimeout(() => notification.classList.add('show'), 10);
+// ================= AUTO CLOSE NOTIFICATION =================
+document.addEventListener('DOMContentLoaded', function() {
+    const notif = document.getElementById('notif');
+    if (notif) {
+        setTimeout(() => notif.classList.add('show'), 100);
         setTimeout(() => {
-            notification.classList.remove('show');
-            setTimeout(() => notification.remove(), 300);
+            notif.classList.remove('show');
+            setTimeout(() => notif.remove(), 300);
         }, 3000);
     }
+});
+
+// ================= OPEN MODAL =================
+function openModal(id, title) {
+
+    const modal = document.getElementById('pinjamModal');
+    modal.classList.remove('hidden');
+
+    document.getElementById('collection_id').value = id;
+    document.getElementById('book_title').value = title;
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    const borrowInput = document.getElementById('borrow_date');
+    const returnInput = document.getElementById('return_date');
+
+    // Reset value dulu
+    borrowInput.value = '';
+    returnInput.value = '';
+
+    // Set ulang
+    borrowInput.min = formatDate(today);
+    borrowInput.value = formatDate(today);
+
+    const minReturn = new Date(today);
+    minReturn.setDate(minReturn.getDate() + 1);
+
+    const maxReturn = new Date(today);
+    maxReturn.setDate(maxReturn.getDate() + 7);
+
+    returnInput.min = formatDate(minReturn);
+    returnInput.max = formatDate(maxReturn);
+    returnInput.value = formatDate(minReturn);
 }
 
-// Stagger animation untuk recommendation cards
-const recCards = document.querySelectorAll('.recommend-card');
-recCards.forEach((card, idx) => {
-    card.style.transitionDelay = `${idx * 0.1}s`;
+// ================= CLOSE MODAL =================
+function closeModal() {
+    document.getElementById('pinjamModal').classList.add('hidden');
+}
+
+// Klik luar modal
+document.addEventListener('click', function(e){
+    const modal = document.getElementById('pinjamModal');
+    if (e.target === modal) closeModal();
 });
 
-// Stagger animation untuk metadata items
-const metadataItems = document.querySelectorAll('.metadata-item');
-metadataItems.forEach((item, idx) => {
-    item.style.transitionDelay = `${idx * 0.05}s`;
+// ================= UPDATE RETURN DINAMIS =================
+document.addEventListener('change', function(e){
+
+    if (e.target.id === 'borrow_date') {
+
+        const borrow = new Date(e.target.value);
+        borrow.setHours(0,0,0,0);
+
+        const returnInput = document.getElementById('return_date');
+
+        const minReturn = new Date(borrow);
+        minReturn.setDate(minReturn.getDate() + 1);
+
+        const maxReturn = new Date(borrow);
+        maxReturn.setDate(maxReturn.getDate() + 7);
+
+        returnInput.min = formatDate(minReturn);
+        returnInput.max = formatDate(maxReturn);
+
+        const currentReturn = new Date(returnInput.value);
+
+        if (currentReturn < minReturn || currentReturn > maxReturn) {
+            returnInput.value = formatDate(minReturn);
+        }
+    }
 });
 
-// Make functions global
-window.borrowBook = borrowBook;
-window.previewBook = previewBook;
-window.addToWishlist = addToWishlist;
-window.goToChapter = goToChapter;
-window.viewAllChapters = viewAllChapters;
-window.viewBook = viewBook;
-window.goBack = goBack;
+// ================= VALIDASI SUBMIT =================
+document.addEventListener('submit', function(e){
 
-console.log('Halaman Detail Buku Pengayaan siap!');
+    if (e.target.id === 'pinjamForm') {
+
+        const borrow = new Date(document.getElementById('borrow_date').value);
+        const ret = new Date(document.getElementById('return_date').value);
+
+        borrow.setHours(0,0,0,0);
+        ret.setHours(0,0,0,0);
+
+        const diff = (ret - borrow) / (1000 * 60 * 60 * 24);
+
+        if (diff < 1) {
+            alert('⚠️ Minimal peminjaman 1 hari');
+            e.preventDefault();
+            return;
+        }
+
+        if (diff > 7) {
+            alert('⚠️ Maksimal peminjaman hanya 7 hari');
+            e.preventDefault();
+            return;
+        }
+
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.innerText = 'Memproses...';
+        btn.disabled = true;
+    }
+});
+
 </script>
 @endpush

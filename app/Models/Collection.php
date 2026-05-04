@@ -196,10 +196,4 @@ class Collection extends Model
             ? asset('storage/' . $this->cover_image)
             : 'https://via.placeholder.com/300x400?text=No+Cover';
     }
-
-    // FILE URL (PDF / DLL)
-    public function getFileUrlAttribute($value)
-    {
-        return $value ? asset('storage/' . $value) : null;
-    }
 }

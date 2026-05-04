@@ -8,8 +8,6 @@ use App\Models\Classification;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Order;
-use App\Models\FinalProject;
 
 class CollectionController extends Controller
 {
@@ -67,6 +65,7 @@ class CollectionController extends Controller
             'edition' => $request->edition,
             'subject' => $request->subject,
             'description' => $request->description,
+
             'carrier_type' => $request->carrier_type,
             'specific_detail_info' => $request->specific_detail_info,
 
@@ -135,6 +134,7 @@ class CollectionController extends Controller
             'edition' => $request->edition,
             'subject' => $request->subject,
             'description' => $request->description,
+
             'carrier_type' => $request->carrier_type,
             'specific_detail_info' => $request->specific_detail_info,
 
@@ -180,15 +180,6 @@ class CollectionController extends Controller
         return back()->with('success', 'Koleksi berhasil diupdate');
     }
 
-    public function edit(Collection $collection)
-    {
-        return view('admin.page.edit_collection', [
-            'collection' => $collection,
-            'categories' => CategoryCollection::all(),
-            'classifications' => Classification::all(),
-            'locations' => Location::all(),
-        ]);
-    }
     // ================= DELETE =================
     public function destroy(Collection $collection)
     {
@@ -201,35 +192,13 @@ class CollectionController extends Controller
 
         return back()->with('success', 'Koleksi berhasil dihapus');
     }
-
-    public function pinjam()
-    {
-        $collections = Collection::with(['location', 'classifications', 'categories'])
-            ->latest()
-            ->get();
-
-        return view('user.page.Koleksi.Koleksi_Tercetak.pinbal', compact('collections'));
-    }
-
-    // ================= User =================
-    public function index()
-    {
-        $collections = Collection::with(['classifications','categories'])->latest()->paginate(9);
-
-        return view('user.page.collection', compact('collections'));
-    }
-
         // ================= SHOW DETAIL =================
     public function show($id)
     {
         $collection = Collection::with(['classifications', 'categories', 'location'])
             ->findOrFail($id);
 
-        if ($collection->is_restricted && !auth()->check()) {
-            return redirect()->route('login')
-                ->with('error', 'Anda harus login terlebih dahulu untuk mengakses Koleksi Tercetak');
-        }
-
+        // 🔥 Mapping view berdasarkan menu_type
         $viewMap = [
             'jurnal' => 'user.page.Koleksi.Koleksi_Tercetak.detail_jurnal',
             'buku_pengayaan' => 'user.page.Koleksi.Koleksi_Tercetak.detail_buku_pengayaan',
@@ -237,23 +206,33 @@ class CollectionController extends Controller
             'majalah' => 'user.page.Koleksi.Koleksi_Tercetak.detail_majalah',
         ];
 
-        $view = $viewMap[$collection->menu_type]
-            ?? 'user.page.Koleksi.Koleksi_Tercetak.detail_buku_pengayaan';
+        $view = $viewMap[$collection->menu_type] 
+            ?? 'user.page.Koleksi.Koleksi Tercetak.detail_buku_pengayaan';
 
         return view($view, compact('collection'));
     }
 
+    // ================= USER MENU =================
     public function showUserMenu(Request $request, $menu_type)
     {
         $query = Collection::with(['categories', 'location'])
             ->where('menu_type', $menu_type)
             ->where('active', 1);
 
+        // 🔍 SEARCH
         if ($request->search) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%$search%")
+                  ->orWhere('publisher', 'like', "%$search%")
+                  ->orWhere('author', 'like', "%$search%")
+                  ->orWhere('keywords', 'like', "%$search%");
+            });
         }
 
-        $collections = $query->paginate(9);
+        // 🔥 PAGINATION (BEBAS MAU 6 / 9 / 12)
+        $collections = $query->latest()->paginate(9);
 
         $viewMap = [
             'jurnal' => 'user.page.Koleksi.Koleksi_Tercetak.jurnal',
@@ -264,129 +243,10 @@ class CollectionController extends Controller
 
         $view = $viewMap[$menu_type] ?? $viewMap['buku_referensi'];
 
-        return view($view, compact('collections', 'menu_type'));
-    }
-
-    // ================= GLOBAL SEARCH =================
-    public function globalSearch(Request $request)
-    {
-        $request->validate([
-            'keyword' => 'required|string|max:255',
-        ]);
-
-        $keyword = strtolower($request->keyword);
-
-        $collections = Collection::with(['categories'])
-            ->where('active', true)
-            ->where(function ($query) use ($keyword) {
-                $query->where('title', 'LIKE', "%$keyword%")
-                    ->orWhere('description', 'LIKE', "%$keyword%")
-                    ->orWhere('publisher', 'LIKE', "%$keyword%")
-                    ->orWhereJsonContains('author', $keyword); // ✅ FIX
-            })
-            ->get()
-            ->map(function ($item) use ($keyword) {
-
-                $score = 0;
-
-                if (str_contains(strtolower($item->title), $keyword)) $score += 5;
-
-                foreach ($item->author ?? [] as $author) {
-                    if (str_contains(strtolower($author), $keyword)) {
-                        $score += 4;
-                    }
-                }
-
-                if ($item->description && str_contains(strtolower($item->description), $keyword)) {
-                    $score += 2;
-                }
-
-                $item->score = $score;
-                $item->type = 'collection';
-                $item->is_restricted = $item->is_restricted ?? false;
-
-                return $item;
-            });
-
-        $finalProjects = FinalProject::with(['category'])
-    ->where('status', 'Approved') // 🔥 WAJIB
-            ->where(function ($query) use ($keyword) {
-                $query->where('title', 'LIKE', "%$keyword%")
-                    ->orWhere('abstract', 'LIKE', "%$keyword%")
-                    ->orWhere('student_name', 'LIKE', "%$keyword%");
-            })
-            ->get()
-            ->map(function ($item) use ($keyword) {
-
-                $score = 0;
-
-                if (str_contains(strtolower($item->title), $keyword)) $score += 5; // ✅ FIX
-
-                $item->score = $score;
-                $item->type = 'final_project';
-
-                return $item;
-            });
-
-        $results = $collections
-            ->merge($finalProjects)
-            ->sortByDesc('score')
-            ->values();
-
-        return view('user.page.search_results', compact('results', 'keyword'));
-    }
-
-    // ================= LIVE SEARCH =================
-    public function liveSearch(Request $request)
-    {
-        $keyword = $request->keyword;
-
-        if (!$keyword) {
-            return response()->json([]);
-        }
-
-        $collections = Collection::where('active', true) // ✅ FIX
-            ->where(function ($query) use ($keyword) {
-                $query->where('title', 'LIKE', "%$keyword%")
-                    ->orWhere('description', 'LIKE', "%$keyword%")
-                    ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(author, '$')) LIKE ?", ["%$keyword%"]);
-            })
-            ->limit(50)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'title' => $item->title,
-                    'type' => 'collection',
-                    'file_url' => null,
-                    'is_restricted' => $item->is_restricted ?? false
-                ];
-            });
-
-        $finalProjects = FinalProject::where('status', 'Approved') // 🔥 WAJIB
-                ->where(function ($query) use ($keyword) {
-                $query->where('title', 'LIKE', "%$keyword%")
-                    ->orWhere('abstract', 'LIKE', "%$keyword%")
-                    ->orWhere('student_name', 'LIKE', "%$keyword%");
-            })
-            ->limit(5)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'title' => $item->title,
-                    'type' => 'final_project', // ✅ FIX
-                    'file_url' => null,
-                    'is_restricted' => false
-                ];
-            });
-
-        return response()->json(
-            $collections->merge($finalProjects)
-        );
         return view($view, [
             'collections' => $collections,
             'menuType' => $menu_type
         ]);
     }
+
 }
