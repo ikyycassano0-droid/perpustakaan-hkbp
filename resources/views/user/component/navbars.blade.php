@@ -235,48 +235,5 @@
             </div>
 
         </div>
-    </section>
-
-</div>
-@endsection
-
-@push('scripts')
-<script>
-    function editProfile() {
-        showNotification('✏️ Fitur edit profil akan segera tersedia', 'info');
-        
-    }
-
-    function settings() {
-        showNotification('⚙️ Halaman pengaturan sedang dalam pengembangan', 'info');
-        
-    }
-
-    function logout() {
-        if (confirm('Apakah Anda yakin ingin keluar?')) {
-            window.location.href = "{{ route('logout') }}";
-        }
-    }
-
-    function showNotification(message, type = 'success') {
-        if (typeof showNotif === 'function') {
-            showNotif(message, type);
-        } else {
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.innerHTML = `
-                <div class="flex items-center gap-2">
-                    <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
-                    <span>${message}</span>
-                </div>
-            `;
-            document.body.appendChild(notification);
-            setTimeout(() => notification.classList.add('show'), 10);
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
-    }
-</script>
-@endpush
+    </div>
+</header>
