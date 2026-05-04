@@ -130,6 +130,7 @@
     .data-table {
         width: 100%;
         border-collapse: collapse;
+        min-width: 800px;
     }
     
     .data-table th {
@@ -184,14 +185,17 @@
     /* Buttons */
     .btn-primary {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        padding: 8px 16px;
+        padding: 6px 14px;
         border-radius: 30px;
         font-weight: 600;
         transition: all 0.3s ease;
         border: none;
         cursor: pointer;
         color: white;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
+        display: inline-block;
+        white-space: nowrap;
+        text-decoration: none;
     }
     
     .btn-primary:hover {
@@ -199,16 +203,25 @@
         box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
     }
     
+    .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
     .btn-outline {
         background: transparent;
-        padding: 8px 16px;
+        padding: 6px 14px;
         border-radius: 30px;
         font-weight: 500;
         transition: all 0.3s ease;
         border: 1px solid rgba(99, 102, 241, 0.5);
         cursor: pointer;
         color: #c7d2fe;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
+        display: inline-block;
+        white-space: nowrap;
+        text-decoration: none;
     }
     
     .btn-outline:hover {
@@ -282,9 +295,51 @@
         transform: translateX(0);
     }
     
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(12px);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        visibility: hidden;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+    
+    .modal-overlay.active {
+        visibility: visible;
+        opacity: 1;
+    }
+    
+    .modal-container {
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(99, 102, 241, 0.5);
+        border-radius: 1.5rem;
+        width: 100%;
+        max-width: 28rem;
+        margin: 1rem;
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+    }
+    
+    .modal-overlay.active .modal-container {
+        transform: scale(1);
+    }
+    
     /* Section spacing */
     .section {
         margin-top: 40px;
+    }
+    
+    /* Kolom aksi dibuat tetap tidak pecah */
+    .data-table th:last-child,
+    .data-table td:last-child {
+        white-space: nowrap;
     }
     
     /* Responsive */
@@ -292,9 +347,14 @@
         .sidebar-menu {
             margin-bottom: 20px;
         }
-        .data-table th, .data-table td {
+        .data-table th, 
+        .data-table td {
             padding: 0.75rem;
             font-size: 0.75rem;
+        }
+        .btn-primary, .btn-outline {
+            padding: 4px 8px;
+            font-size: 0.65rem;
         }
     }
 </style>
@@ -307,7 +367,9 @@
     <!-- HERO SECTION -->
     <section class="pt-28 pb-8 text-center px-5">
         <div class="inline-block glass-card px-5 py-2 rounded-full mb-5 fade-up">
-            <span class="text-indigo-300 text-sm font-medium tracking-wide">📚 AKPER HKBP BALIGE</span>
+            <span class="text-indigo-300 text-sm font-medium tracking-wide">
+                📚 AKPER HKBP BALIGE
+            </span>
         </div>
 
         <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight title-main fade-up">
@@ -321,6 +383,7 @@
 
     <!-- MAIN CONTENT -->
     <section class="section max-w-7xl mx-auto px-5">
+
         <div class="neon-border fade-up">
             <div class="neon-inner">
 
@@ -332,12 +395,12 @@
                         <div class="sidebar-menu">
                             <div class="sidebar-title">📂 Koleksi Referensi</div>
 
-                            <div class="sidebar-item active" data-category="all">📚 Semua Referensi</div>
-                            <div class="sidebar-item" data-category="kamus">📖 Kamus</div>
-                            <div class="sidebar-item" data-category="klinis">🏥 Klinis</div>
-                            <div class="sidebar-item" data-category="anatomi">🧬 Anatomi</div>
-                            <div class="sidebar-item" data-category="farmakologi">💊 Farmakologi</div>
-                            <div class="sidebar-item" data-category="pediatri">👶 Pediatri</div>
+                            <div class="sidebar-item active">📚 Semua Referensi</div>
+                            <div class="sidebar-item">📖 Kamus</div>
+                            <div class="sidebar-item">🏥 Klinis</div>
+                            <div class="sidebar-item">🧬 Anatomi</div>
+                            <div class="sidebar-item">💊 Farmakologi</div>
+                            <div class="sidebar-item">👶 Pediatri</div>
                         </div>
 
                     </div>
@@ -346,14 +409,55 @@
                     <div class="lg:col-span-3">
 
                         <!-- SEARCH -->
-                        <div class="mb-6">
-                            <input type="text" id="searchInput"
-                                class="search-input"
-                                placeholder="🔍 Cari buku...">
-                        </div>
+                        <form method="GET" class="mb-6">
+                            <input type="text"
+                                   name="search"
+                                   value="{{ request('search') }}"
+                                   class="search-input"
+                                   placeholder="🔍 Cari buku...">
+                        </form>
 
-                        <!-- FEATURED -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" id="featuredBooks"></div>
+                        <!-- FEATURED (ambil 4 pertama dari pagination data) -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+
+                            @foreach($collections->take(4) as $item)
+                                <div class="featured-card p-4">
+
+                                    <div class="flex items-start gap-3">
+                                        <div class="text-3xl">📘</div>
+
+                                        <div class="flex-1">
+                                            <h3 class="font-semibold text-indigo-200 text-sm">
+                                                {{ $item->title }}
+                                            </h3>
+
+                                            <p class="text-xs text-gray-400">
+                                                {{ is_array($item->author) ? implode(', ', $item->author) : $item->author }}
+                                            </p>
+
+                                            <p class="text-xs text-gray-500 mt-1">
+                                                {{ \Illuminate\Support\Str::limit($item->description, 80) }}
+                                            </p>
+
+                                            <div class="flex items-center justify-between mt-2">
+
+                                                <span class="status-badge {{ $item->stock > 0 ? 'status-tersedia' : 'status-kosong' }}">
+                                                    {{ $item->stock > 0 ? '✓ TERSEDIA' : '⚡ KOSONG' }}
+                                                </span>
+
+                                                <a href="{{ route('user.koleksi.show', $item->id) }}"
+                                                   class="btn-link text-xs">
+                                                    Lihat Detail →
+                                                </a>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            @endforeach
+
+                        </div>
 
                         <!-- TABLE -->
                         <div class="mt-6">
@@ -363,25 +467,108 @@
 
                             <div class="table-container">
                                 <table class="data-table">
+
                                     <thead>
                                         <tr>
                                             <th>INFORMASI</th>
                                             <th>TAHUN</th>
                                             <th>KATEGORI</th>
                                             <th>STATUS</th>
-                                            <th>AKSI</th>
+                                            <th style="width: 85px;">DETAIL</th>
+                                            <th style="width: 85px;">PINJAM</th>
                                         </tr>
                                     </thead>
 
-                                    <tbody id="tableBody"></tbody>
+                                    <tbody>
+                                        @forelse($collections as $item)
+                                            @php
+                                                $hasPending = in_array($item->id, $pendingCollectionIds ?? []);
+                                            @endphp
+                                            <tr>
+
+                                                <!-- INFORMASI -->
+                                                <td>
+                                                    <div class="font-semibold text-indigo-200 text-sm">
+                                                        {{ $item->title }}
+                                                    </div>
+                                                    <div class="text-xs text-gray-400">
+                                                        {{ is_array($item->author) ? implode(', ', $item->author) : $item->author }}
+                                                    </div>
+                                                </td>
+
+                                                <!-- TAHUN -->
+                                                <td>
+                                                    <div class="text-sm">
+                                                        {{ $item->publication_year ?? '-' }}
+                                                    </div>
+                                                    <div class="text-xs text-gray-500">
+                                                        {{ $item->edition ?? '-' }}
+                                                    </div>
+                                                </td>
+
+                                                <!-- KATEGORI -->
+                                                <td>
+                                                    <span class="text-xs text-gray-300">
+                                                        {{ $item->categories->first()->name ?? 'Umum' }}
+                                                    </span>
+                                                </td>
+
+                                                <!-- STATUS -->
+                                                <td>
+                                                    <span class="status-badge {{ $item->stock > 0 ? 'status-tersedia' : 'status-kosong' }}">
+                                                        {{ $item->stock > 0 ? '✓ TERSEDIA' : '⚡ KOSONG' }}
+                                                    </span>
+                                                </td>
+
+                                                <!-- DETAIL -->
+                                                <td>
+                                                    <a href="{{ route('user.koleksi.show', $item->id) }}"
+                                                       class="btn-primary">
+                                                        Detail
+                                                    </a>
+                                                </td>
+
+                                                <!-- PINJAM -->
+                                                <td>
+                                                    @auth
+                                                        @if($hasPending)
+                                                            <button class="btn-outline" disabled>
+                                                                Diproses
+                                                            </button>
+                                                        @elseif($item->stock > 0)
+                                                            <button onclick="openModal({{ $item->id }}, '{{ addslashes($item->title) }}')"
+                                                                    class="btn-primary">
+                                                                Pinjam
+                                                            </button>
+                                                        @else
+                                                            <button class="btn-outline" disabled>
+                                                                Habis
+                                                            </button>
+                                                        @endif
+                                                    @else
+                                                        <a href="{{ route('login') }}" class="btn-primary">
+                                                            Login
+                                                        </a>
+                                                    @endauth
+                                                </td>
+
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="text-center py-8 text-gray-400">
+                                                    📭 Data tidak ditemukan
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+
                                 </table>
                             </div>
                         </div>
 
-                        <!-- PAGINATION -->
-                        <div class="flex justify-between items-center mt-6">
-                            <div id="paginationInfo" class="text-sm text-gray-400"></div>
-                            <div id="paginationButtons" class="flex gap-2"></div>
+                        <!-- PAGINATION LARAVEL -->
+                        <div class="flex justify-center mt-6">
+                            {{ $collections->withQueryString()->links() }}
                         </div>
 
                     </div>
@@ -390,220 +577,202 @@
 
             </div>
         </div>
+
     </section>
 
 </div>
+
+{{-- ================= MODAL PINJAM ================= --}}
+<div id="pinjamModal" class="modal-overlay">
+    <div class="modal-container p-6">
+
+        <h2 class="text-xl font-bold text-indigo-300 mb-4">
+            Form Peminjaman
+        </h2>
+
+        <form id="pinjamForm" method="POST" action="{{ route('orders.store') }}">
+            @csrf
+
+            <input type="hidden" name="collection_id" id="collection_id">
+
+            <div class="mb-3">
+                <label class="text-xs text-gray-400">Judul Buku</label>
+                <input type="text" id="book_title"
+                       class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700"
+                       readonly>
+            </div>
+
+            <div class="mb-3">  
+                <label class="text-xs text-gray-400">Tanggal Pinjam</label>
+                <input type="date" name="borrow_date" id="borrow_date"
+                       class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700"
+                       required>
+            </div>
+
+            <div class="mb-3">
+                <label class="text-xs text-gray-400">Tanggal Kembali</label>
+                <input type="date" name="return_date" id="return_date"
+                       class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700"
+                       required>
+            </div>
+
+            <div class="flex gap-2">
+                <button type="button"
+                        onclick="closeModal()"
+                        class="w-full py-2 rounded bg-gray-700 text-white">
+                    Batal
+                </button>
+
+                <button type="submit"
+                        id="submitPinjamBtn"
+                        class="w-full py-2 rounded bg-indigo-600 text-white font-semibold">
+                    Pinjam
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
 @endsection
 
 
 @push('scripts')
-
 <script>
-// ============================================
-// DATA DARI LARAVEL (CRUD READY)
-// ============================================
 
-// ambil data dari backend Laravel
-let referenceBooks = @json($collections ?? []);
-
-// mapping agar sesuai format JS kamu
-referenceBooks = referenceBooks.map(item => ({
-    id: item.id,
-    title: item.title,
-    author: item.author_string ?? (item.author ? item.author.join(', ') : '-'),
-    edition: item.edition ?? '-',
-    year: item.publication_year ?? '-',
-    category: item.category?.slug ?? 'umum',
-    categoryName: item.category?.name ?? 'Tidak ada kategori',
-    status: item.stock > 0 ? 'tersedia' : 'kosong',
-    location: item.location?.name ?? '-',
-    returnDate: null,
-    description: item.description ?? '-'
-}));
-
-// fallback jika kosong
-if (referenceBooks.length === 0) {
-    referenceBooks = [];
+// ================= FORMAT DATE =================
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
 }
 
-// Featured books
-let featuredBooks = referenceBooks.slice(0, 4);
+// ================= OPEN MODAL =================
+function openModal(id, title) {
+    const modal = document.getElementById('pinjamModal');
+    modal.classList.add('active');
 
-// ============================================
-// RENDER FEATURED
-// ============================================
-function renderFeaturedBooks() {
-    const container = document.getElementById('featuredBooks');
-    container.innerHTML = '';
+    document.getElementById('collection_id').value = id;
+    document.getElementById('book_title').value = title;
 
-    featuredBooks.forEach(book => {
-        const card = document.createElement('div');
-        card.className = 'featured-card p-4';
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-        card.innerHTML = `
-            <div class="flex items-start gap-3">
-                <div class="text-3xl">📘</div>
-                <div class="flex-1">
-                    <h3 class="font-semibold text-indigo-200 text-sm">${book.title}</h3>
-                    <p class="text-xs text-gray-400">${book.author}</p>
-                    <p class="text-xs text-gray-500 mt-1">
-                        ${book.description.substring(0, 80)}...
-                    </p>
+    const borrowInput = document.getElementById('borrow_date');
+    const returnInput = document.getElementById('return_date');
 
-                    <div class="flex items-center justify-between mt-2">
-                        <span class="status-badge status-${book.status}">
-                            ${book.status === 'tersedia' ? '✓ TERSEDIA' : '⚡ KOSONG'}
-                        </span>
+    // Reset value
+    borrowInput.value = '';
+    returnInput.value = '';
 
-                        <button class="btn-link text-xs" onclick="showDetail(${book.id})">
-                            Lihat Detail →
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-        container.appendChild(card);
-    });
+    // Set borrow date = hari ini
+    borrowInput.min = formatDate(today);
+    borrowInput.value = formatDate(today);
+
+    const minReturn = new Date(today);
+    minReturn.setDate(minReturn.getDate() + 1);
+
+    const maxReturn = new Date(today);
+    maxReturn.setDate(maxReturn.getDate() + 7);
+
+    returnInput.min = formatDate(minReturn);
+    returnInput.max = formatDate(maxReturn);
+    returnInput.value = formatDate(minReturn);
 }
 
-// ============================================
-// TABLE RENDER (CRUD READY)
-// ============================================
-let currentPage = 1;
-const itemsPerPage = 10;
-let currentCategory = 'all';
-let searchQuery = '';
-
-function renderTable() {
-    let filteredData = [...referenceBooks];
-
-    if (searchQuery) {
-        filteredData = filteredData.filter(item =>
-            item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.author.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    }
-
-    if (currentCategory !== 'all') {
-        filteredData = filteredData.filter(item =>
-            item.category === currentCategory
-        );
-    }
-
-    const totalItems = filteredData.length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-
-    const currentData = filteredData.slice(startIndex, endIndex);
-
-    document.getElementById('paginationInfo').innerHTML =
-        `Menampilkan ${startIndex + 1} - ${Math.min(endIndex, totalItems)} dari ${totalItems} buku referensi`;
-
-    const tbody = document.getElementById('tableBody');
-    tbody.innerHTML = '';
-
-    if (currentData.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="5" class="text-center py-8 text-gray-400">
-                    📭 Tidak ada data dari database
-                </td>
-            </tr>
-        `;
-        return;
-    }
-
-    currentData.forEach(book => {
-        const row = tbody.insertRow();
-
-        row.insertCell(0).innerHTML = `
-            <div class="font-semibold text-indigo-200 text-sm">${book.title}</div>
-            <div class="text-xs text-gray-400">${book.author}</div>
-        `;
-
-        row.insertCell(1).innerHTML = `
-            <div class="text-sm">${book.year}</div>
-            <div class="text-xs text-gray-500">${book.edition}</div>
-        `;
-
-        row.insertCell(2).innerHTML = `
-            <span class="text-xs">${book.categoryName}</span>
-        `;
-
-        row.insertCell(3).innerHTML = `
-            <span class="status-badge status-${book.status}">
-                ${book.status === 'tersedia' ? '✓ TERSEDIA' : '⚡ KOSONG'}
-            </span>
-        `;
-
-        row.insertCell(4).innerHTML = `
-            <button class="btn-primary text-xs" onclick="showDetail(${book.id})">
-                Detail
-            </button>
-        `;
-    });
-
-    renderPagination(totalPages);
-}
-
-// ============================================
-// PAGINATION (TETAP)
-// ============================================
-function renderPagination(totalPages) {
-    const container = document.getElementById('paginationButtons');
-    if (totalPages <= 1) {
-        container.innerHTML = '';
-        return;
-    }
-
-    let html = `<div class="flex gap-2">`;
-
-    html += `
-        <button class="pagination-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
-            ◀
-        </button>
-    `;
-
-    for (let i = 1; i <= totalPages; i++) {
-        html += `
-            <button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
-                ${i}
-            </button>
-        `;
-    }
-
-    html += `
-        <button class="pagination-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
-            ▶
-        </button>
-    `;
-
-    html += `</div>`;
-    container.innerHTML = html;
-}
-
-function changePage(page) {
-    currentPage = page;
-    renderTable();
-}
-
-// ============================================
-// DETAIL
-// ============================================
-function showDetail(id) {
-    const book = referenceBooks.find(b => b.id === id);
-    if (book) {
-        alert(`${book.title}\n${book.author}\nRak: ${book.location}`);
+// ================= CLOSE MODAL =================
+function closeModal() {
+    const modal = document.getElementById('pinjamModal');
+    modal.classList.remove('active');
+    
+    // Reset form
+    document.getElementById('pinjamForm').reset();
+    
+    // Enable submit button
+    const submitBtn = document.getElementById('submitPinjamBtn');
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Pinjam';
     }
 }
 
+// Klik luar modal untuk menutup
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('pinjamModal');
+    if (e.target === modal) {
+        closeModal();
+    }
+});
+
+// ================= UPDATE RETURN DINAMIS =================
+document.addEventListener('change', function(e) {
+    if (e.target.id === 'borrow_date') {
+        const borrow = new Date(e.target.value);
+        borrow.setHours(0, 0, 0, 0);
+
+        const returnInput = document.getElementById('return_date');
+        const minReturn = new Date(borrow);
+        minReturn.setDate(minReturn.getDate() + 1);
+        const maxReturn = new Date(borrow);
+        maxReturn.setDate(maxReturn.getDate() + 7);
+
+        returnInput.min = formatDate(minReturn);
+        returnInput.max = formatDate(maxReturn);
+
+        const currentReturn = new Date(returnInput.value);
+        if (currentReturn < minReturn || currentReturn > maxReturn) {
+            returnInput.value = formatDate(minReturn);
+        }
+    }
+});
+
+// ================= VALIDASI SUBMIT =================
+document.addEventListener('submit', function(e) {
+    if (e.target.id === 'pinjamForm') {
+        const borrow = new Date(document.getElementById('borrow_date').value);
+        const ret = new Date(document.getElementById('return_date').value);
+
+        borrow.setHours(0, 0, 0, 0);
+        ret.setHours(0, 0, 0, 0);
+
+        const diff = (ret - borrow) / (1000 * 60 * 60 * 24);
+
+        if (diff < 1) {
+            alert('Minimal peminjaman 1 hari');
+            e.preventDefault();
+            return;
+        }
+
+        if (diff > 7) {
+            alert('Maksimal peminjaman hanya 7 hari');
+            e.preventDefault();
+            return;
+        }
+
+        const btn = document.getElementById('submitPinjamBtn');
+        if (btn) {
+            btn.innerText = 'Memproses...';
+            btn.disabled = true;
+        }
+    }
+});
+
 // ============================================
-// INIT
+// NOTIFICATION AUTO CLOSE
 // ============================================
-renderFeaturedBooks();
-renderTable();
+setTimeout(function() {
+    const notif = document.getElementById('notif');
+    if (notif) {
+        notif.classList.add('show');
+        setTimeout(function() {
+            notif.style.transform = 'translateX(120%)';
+        }, 4000);
+    }
+}, 100);
+
+console.log('📚 Buku Referensi page loaded (Laravel Pagination Mode)');
 
 </script>
 @endpush

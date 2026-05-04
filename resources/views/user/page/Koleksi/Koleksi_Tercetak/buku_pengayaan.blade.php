@@ -316,18 +316,8 @@
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5">
 
             @forelse($collections as $book)
-
                 @php
-                    $hasPending = false;
-
-                    if(auth()->check()) {
-                        $hasPending = \App\Models\Order::where('user_id', auth()->id())
-                            ->where('status', 'PENDING')
-                            ->whereHas('details', function($q) use ($book) {
-                                $q->where('collection_id', $book->id);
-                            })
-                            ->exists();
-                    }
+                $hasPending = in_array($book->id, $pendingCollectionIds ?? []);
                 @endphp
 
                 <div class="book-card">

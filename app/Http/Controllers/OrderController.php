@@ -72,6 +72,7 @@ class OrderController extends Controller
                     'user_id'         => auth()->id(),
                     'order_date'      => now(),
                     'due_date'        => $return,
+                    'return_date'     => $return,
                     'status'          => 'PENDING',
                     'fine'            => 0,
                     'extension_count' => 0,
