@@ -35,30 +35,18 @@ class ClassificationController extends Controller
     // ================= STORE AJAX =================
     public function storeAjax(Request $request)
     {
-        try {
+        $request->validate([
+            'name' => 'required|unique:classifications,name'
+        ]);
 
-            $request->validate([
-                'name' => 'required|unique:classifications,name',
-            ]);
+        $classification = Classification::create([
+            'name' => $request->name
+        ]);
 
-            $data = Classification::create([
-                'name' => $request->name,
-
-                // aman & tidak akan duplicate
-                'code' => 'CLS-' . strtoupper(substr($request->name, 0, 3)) . '-' . time(),
-            ]);
-
-            return response()->json([
-                'id' => $data->id,
-                'name' => $data->name
-            ]);
-
-        } catch (\Throwable $e) {
-
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'id' => $classification->id,
+            'name' => $classification->name
+        ], 200);
     }
 
     // ================= UPDATE =================
