@@ -14,6 +14,7 @@
     use App\Http\Controllers\NotificationController;
     use App\Http\Controllers\FinalProjectController;
     use App\Http\Controllers\ArchiveController;
+    use App\Http\Controllers\ProfileMenuController;
     use Illuminate\Http\Request;
     use App\Models\User;
 
@@ -43,7 +44,7 @@
     Route::post('login', [AuthController::class, 'login'])->name('login.submit');
 
     // Logout
-    Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
     // Dashboard admin
     Route::get('admin/dashboard', function(){
@@ -266,7 +267,7 @@
 
     });
 
-    
+
     Route::prefix('final-project')->name('final_project.')->group(function() {
 
     Route::get('/kti', [FinalProjectController::class,'index'])
@@ -347,3 +348,13 @@
     Route::prefix('user')->group(function () {
         Route::get('/live-search', [CollectionController::class, 'liveSearch']);
     });
+
+    // Route untuk menu profil (ikon profil)
+Route::middleware(['auth'])->get('/profile-menu', [ProfileMenuController::class, 'index'])->name('profile.menu');
+
+// Group route profil user
+Route::prefix('user')->name('user.')->middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileMenuController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileMenuController::class, 'editProfile'])->name('profile.edit');
+    Route::put('/profile/update', [ProfileMenuController::class, 'updateProfile'])->name('profile.update');
+});

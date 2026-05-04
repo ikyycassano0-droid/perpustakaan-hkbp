@@ -1,4 +1,3 @@
-{{-- resources/views/home.blade.php --}}
 @extends('guest.component.master')
 
 @section('title', 'Beranda - AKPER HKBP Balige')
@@ -9,7 +8,7 @@
        CSS KHUSUS UNTUK HALAMAN HOME
        Hanya CSS yang BELUM ADA di master blade
     ============================================ */
-    
+
     /* Carousel Buku */
     .book-carousel-section {
         position: relative;
@@ -18,24 +17,24 @@
         padding: 40px 0;
         margin-top: 40px;
     }
-    
+
     .book-carousel-container {
         position: relative;
         width: 100%;
         overflow: hidden;
     }
-    
+
     .book-carousel-track {
         display: flex;
         gap: 30px;
         width: max-content;
         animation: scrollBooksRight 35s linear infinite;
     }
-    
+
     .book-carousel-track:hover {
         animation-play-state: paused;
     }
-    
+
     @keyframes scrollBooksRight {
         0% {
             transform: translateX(0);
@@ -44,7 +43,7 @@
             transform: translateX(-50%);
         }
     }
-    
+
     /* Card Buku */
     .book-card-medium {
         width: 220px;
@@ -57,24 +56,24 @@
         flex-shrink: 0;
         position: relative;
     }
-    
+
     .book-card-medium:hover {
         transform: translateY(-10px) scale(1.03);
         border-color: rgba(99, 102, 241, 0.8);
         box-shadow: 0 20px 35px -12px rgba(99, 102, 241, 0.4);
     }
-    
+
     .book-cover-medium {
         width: 100%;
         height: 280px;
         object-fit: cover;
         transition: transform 0.5s ease;
     }
-    
+
     .book-card-medium:hover .book-cover-medium {
         transform: scale(1.05);
     }
-    
+
     .book-info-overlay-medium {
         position: absolute;
         bottom: 0;
@@ -85,11 +84,11 @@
         transform: translateY(100%);
         transition: transform 0.35s ease;
     }
-    
+
     .book-card-medium:hover .book-info-overlay-medium {
         transform: translateY(0);
     }
-    
+
     .book-title-medium {
         font-weight: 700;
         font-size: 0.85rem;
@@ -97,12 +96,12 @@
         margin-bottom: 4px;
         line-height: 1.3;
     }
-    
+
     .book-author-medium {
         font-size: 0.65rem;
         color: #cbd5e1;
     }
-    
+
     /* Section background carousel */
     .carousel-bg-section {
         position: relative;
@@ -113,12 +112,12 @@
         border-top: 1px solid rgba(99, 102, 241, 0.2);
         border-bottom: 1px solid rgba(99, 102, 241, 0.2);
     }
-    
+
     .carousel-title-section {
         text-align: center;
         margin-bottom: 40px;
     }
-    
+
     .carousel-title-section h2 {
         font-size: 2rem;
         font-weight: 700;
@@ -127,18 +126,18 @@
         -webkit-background-clip: text;
         color: transparent;
     }
-    
+
     .carousel-title-section p {
         color: #94a3b8;
         margin-top: 8px;
         font-size: 0.9rem;
     }
-    
+
     /* Cart & Modal styles */
     #cart {
         transition: transform 0.3s ease;
     }
-    
+
     /* Responsif untuk mobile */
     @media (max-width: 768px) {
         .book-card-medium {
@@ -175,7 +174,7 @@
     <!-- 3D CARD -->
     <div class="mt-20 flex justify-center">
         <div class="tilt glass p-8 rounded-3xl shadow-2xl float" id="tiltCard">
-            
+
             <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d"
                  class="rounded-2xl w-[600px] max-w-full depth-3">
 
@@ -300,7 +299,7 @@
                     <div class="book-author-medium">Prof. Dr. Maria Ulfah</div>
                 </div>
             </div>
-            
+
             <!-- DUPLIKASI UNTUK EFEK INFINITE SCROLL -->
             <!-- Buku 2 duplicate -->
             <div class="book-card-medium">

@@ -1,161 +1,652 @@
-@extends('user.component.main')
+@extends('user.component.master')
 
-<header>
-    @include('user.component.navbar')
-</header>
+@section('title', 'Beranda - AKPER HKBP Balige')
 
-@section('user_content')
-<section class="hero">
-    <h2>Selamat Datang di Portal Anggota</h2>
-    <p>Halo, Mahasiswa! Gunakan layanan mandiri perpustakaan untuk mendukung studi keperawatan Anda.</p>
+@push('styles')
+<style>
+    /* ============================================
+       CSS KHUSUS UNTUK HALAMAN HOME
+       Hanya CSS yang BELUM ADA di master blade
+    ============================================ */
 
-    {{-- SEARCH FORM --}}
-    <form action="{{ route('user.global_search') }}" method="GET" class="d-flex ms-3" style="gap:5px;">
-        <input type="text" name="keyword" placeholder="Cari Koleksi..."
-            class="form-control form-control-sm" required style="min-width:150px;">
+    /* Carousel Buku */
+    .book-carousel-section {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        padding: 40px 0;
+        margin-top: 40px;
+    }
 
-        <select name="category" class="form-select form-select-sm">
-            <option value="">Semua</option>
-            <option value="collection">Koleksi Tercetak</option>
-            <option value="cd">CD</option>
-            <option value="e_book">E-book</option>
-            <option value="e_article">E-article</option>
-            <option value="video">Video</option>
-        </select>
+    .book-carousel-container {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+    }
 
-        <button type="submit" class="btn btn-sm btn-warning">Cari</button>
-    </form>
-</section>
+    .book-carousel-track {
+        display: flex;
+        gap: 30px;
+        width: max-content;
+        animation: scrollBooksRight 35s linear infinite;
+    }
 
-<!-- FITUR SECTION -->
-<section class="feature-section">
-    <div class="feature-grid">
-        <div class="feature-card animate-float">
-            <i class="fas fa-book-reader"></i>
-            <h3>Buku Pinjaman</h3>
-            <p>Lihat daftar buku fisik yang sedang Anda pinjam dan pantau tanggal jatuh tempo pengembaliannya.</p>
-        </div>
-        <div class="feature-card animate-float" style="animation-delay: 0.5s;">
-            <i class="fas fa-history"></i>
-            <h3>Riwayat Baca</h3>
-            <p>Pantau semua koleksi digital dan jurnal yang pernah Anda akses melalui portal perpustakaan.</p>
-        </div>
-        <div class="feature-card animate-float" style="animation-delay: 1s;">
-            <i class="fas fa-star"></i>
-            <h3>Koleksi Favorit</h3>
-            <p>Simpan referensi medis penting ke dalam daftar favorit agar mudah diakses saat dibutuhkan kembali.</p>
-        </div>
-        <div class="feature-card">
-            <i class="fas fa-envelope-open-text"></i>
-            <h3>Notifikasi</h3>
-            <p>Dapatkan informasi terbaru mengenai ketersediaan buku baru atau pengingat pengembalian buku.</p>
-        </div>
-    </div>
-</section>
+    .book-carousel-track:hover {
+        animation-play-state: paused;
+    }
 
-<!-- JAM LAYANAN BANNER -->
-<section class="jam-layanan-section">
-    <div class="jam-banner">
-        <div class="jam-text">
-            <h2>Jam Layanan Perpustakaan</h2>
-            <p>Jadwal operasional layanan fisik di gedung perpustakaan.</p>
-        </div>
-        <div class="jam-table">
-            <div class="jam-row"><span>Senin</span><span>08.30 - 20.00 WIB</span></div>
-            <div class="jam-row"><span>Selasa - Jumat</span><span>08.00 - 20.00 WIB</span></div>
-            <div class="jam-row"><span>Sabtu - Minggu</span><span style="color: var(--accent-yellow); font-weight: bold;">TUTUP</span></div>
-        </div>
-    </div>
-</section>
-
-<!-- LAYANAN MANDIRI SECTION -->
-<section class="section-container">
-    <div class="label-header">
-        <i class="fas fa-user-shield"></i> Layanan Mandiri Mahasiswa
-    </div>
-    <div class="grid-layanan-modern">
-        <div class="card-layanan">
-            <i class="fas fa-id-card"></i>
-            <h3>Kartu Digital</h3>
-            <p>Gunakan kartu anggota digital untuk akses masuk dan peminjaman buku fisik di perpustakaan secara luring.</p>
-        </div>
-        <div class="card-layanan">
-            <i class="fas fa-upload"></i>
-            <h3>Unggah Mandiri</h3>
-            <p>Unggah Karya Tulis Ilmiah (KTI) atau Tugas Akhir Anda secara mandiri ke dalam Repositori HKBP.</p>
-        </div>
-        <div class="card-layanan">
-            <i class="fas fa-sync-alt"></i>
-            <h3>Perpanjangan</h3>
-            <p>Lakukan perpanjangan waktu peminjaman buku secara daring tanpa harus datang langsung ke perpustakaan.</p>
-        </div>
-        <div class="card-layanan">
-            <i class="fas fa-file-invoice"></i>
-            <h3>Tagihan & Denda</h3>
-            <p>Pantau rincian administrasi jika terdapat keterlambatan pengembalian koleksi yang Anda pinjam.</p>
-        </div>
-        <div class="card-layanan">
-            <i class="fas fa-certificate"></i>
-            <h3>Bebas Pustaka</h3>
-            <p>Ajukan permohonan surat keterangan bebas pustaka untuk keperluan kelulusan atau wisuda secara online.</p>
-        </div>
-        <div class="card-layanan">
-            <i class="fas fa-comment-dots"></i>
-            <h3>Usulan Buku</h3>
-            <p>Mahasiswa berhak memberikan usulan buku medis terbaru untuk ditambahkan ke koleksi perpustakaan HKBP.</p>
-        </div>
-    </div>
-</section>
-
-<!-- STATISTIK & BERITA SECTION -->
-<section class="section-container" style="background: #fdfdfd;">
-    <div class="label-header">
-        <i class="fas fa-chart-line"></i> Statistik Aktivitas Member
-    </div>
-    <div class="stats-grid">
-        <div class="stat-item"><div class="stat-info"><span>12</span><p>Buku Telah Dibaca</p></div><i class="fas fa-book-open"></i></div>
-        <div class="stat-item"><div class="stat-info"><span>5</span><p>Jurnal Terunduh</p></div><i class="fas fa-file-medical"></i></div>
-        <div class="stat-item"><div class="stat-info"><span>2</span><p>Usulan Buku Diterima</p></div><i class="fas fa-check-circle"></i></div>
-        <div class="stat-item"><div class="stat-info"><span>100%</span><p>Kepatuhan Balik</p></div><i class="fas fa-award"></i></div>
-    </div>
-
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <div class="label-header" style="margin-bottom: 0;"><i class="fas fa-bullhorn"></i> Berita & Panduan Member</div>
-        <a href="#" style="color: var(--primary-color); font-weight: bold;">Lihat Semua <i class="fas fa-chevron-right"></i></a>
-    </div>
-
-    <div class="berita-grid">
-        <div class="news-item">
-            <div class="news-thumb" style="background-image: url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=500&q=60');"><div class="news-tag">Panduan</div></div>
-            <div class="news-desc"><h4>Tutorial Unggah Mandiri KTI bagi Mahasiswa Tingkat Akhir AKPER HKBP</h4></div>
-        </div>
-        <div class="news-item">
-            <div class="news-thumb" style="background-image: url('https://images.unsplash.com/photo-1581056771107-24ca5f033842?auto=format&fit=crop&w=500&q=60');"><div class="news-tag">Koleksi Baru</div></div>
-            <div class="news-desc"><h4>Koleksi Baru: E-book Keperawatan Gawat Darurat Edisi Internasional</h4></div>
-        </div>
-        <div class="news-item">
-            <div class="news-thumb" style="background-image: url('https://images.unsplash.com/photo-1527613426441-4da17471b66d?auto=format&fit=crop&w=500&q=60');"><div class="news-tag">Workshop</div></div>
-            <div class="news-desc"><h4>Workshop Literasi Digital: Membedah Jurnal Medis Terindeks Scopus</h4></div>
-        </div>
-        <div class="news-item">
-            <div class="news-thumb" style="background-image: url('https://images.unsplash.com/photo-1505751172676-43ad3358c38c?auto=format&fit=crop&w=500&q=60');"><div class="news-tag">Pengumuman</div></div>
-            <div class="news-desc"><h4>Layanan Perpanjangan Buku Kini Bisa Dilakukan via Aplikasi Mobile</h4></div>
-        </div>
-    </div>
-</section>
-
-{{-- Tambahan Script: cek login untuk search Koleksi Tercetak --}}
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.querySelector('form[action="{{ route('user.global_search') }}"]');
-    form.addEventListener('submit', function(e) {
-        const category = form.querySelector('select[name="category"]').value;
-        const isLoggedIn = {{ auth()->check() ? 'true' : 'false' }};
-        if (category === 'collection' && !isLoggedIn) {
-            e.preventDefault();
-            alert('Harap login terlebih dahulu untuk mengakses Koleksi Tercetak!');
+    @keyframes scrollBooksRight {
+        0% {
+            transform: translateX(0);
         }
-    });
-});
-</script>
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    /* Card Buku */
+    .book-card-medium {
+        width: 220px;
+        background: rgba(15, 23, 42, 0.7);
+        backdrop-filter: blur(12px);
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(99, 102, 241, 0.35);
+        transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        flex-shrink: 0;
+        position: relative;
+    }
+
+    .book-card-medium:hover {
+        transform: translateY(-10px) scale(1.03);
+        border-color: rgba(99, 102, 241, 0.8);
+        box-shadow: 0 20px 35px -12px rgba(99, 102, 241, 0.4);
+    }
+
+    .book-cover-medium {
+        width: 100%;
+        height: 280px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .book-card-medium:hover .book-cover-medium {
+        transform: scale(1.05);
+    }
+
+    .book-info-overlay-medium {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 14px 12px;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.7), transparent);
+        transform: translateY(100%);
+        transition: transform 0.35s ease;
+    }
+
+    .book-card-medium:hover .book-info-overlay-medium {
+        transform: translateY(0);
+    }
+
+    .book-title-medium {
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: white;
+        margin-bottom: 4px;
+        line-height: 1.3;
+    }
+
+    .book-author-medium {
+        font-size: 0.65rem;
+        color: #cbd5e1;
+    }
+
+    /* Section background carousel */
+    .carousel-bg-section {
+        position: relative;
+        margin-top: 60px;
+        margin-bottom: 60px;
+        padding: 50px 0;
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.03));
+        border-top: 1px solid rgba(99, 102, 241, 0.2);
+        border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+    }
+
+    .carousel-title-section {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .carousel-title-section h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #ffffff, #c7d2fe);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+
+    .carousel-title-section p {
+        color: #94a3b8;
+        margin-top: 8px;
+        font-size: 0.9rem;
+    }
+
+    /* Cart & Modal styles */
+    #cart {
+        transition: transform 0.3s ease;
+    }
+
+    /* Responsif untuk mobile */
+    @media (max-width: 768px) {
+        .book-card-medium {
+            width: 180px;
+        }
+        .book-cover-medium {
+            height: 230px;
+        }
+        .book-carousel-track {
+            gap: 20px;
+        }
+    }
+</style>
+@endpush
+
+@section('content')
+<!-- HERO -->
+<!-- HERO -->
+<section class="text-center mt-40 px-6">
+      <h2 class="text-5xl md:text-7xl font-bold fade-up depth-2">
+        Perpustakaan Digital<br>AKPER HKBP Balige
+    </h2>
+
+    <p class="mt-6 text-gray-300 max-w-xl mx-auto fade-up depth-1">
+        Menyediakan koleksi buku, jurnal, dan referensi ilmiah keperawatan yang terintegrasi dan mudah diakses kapan saja.
+    </p>
+
+    <div class="mt-10 fade-up">
+        <button class="bg-indigo-500 px-8 py-3 rounded-full glow hover:scale-110 transition">
+            Mulai Jelajah
+        </button>
+    </div>
+
+    <!-- 3D CARD -->
+    <div class="mt-20 flex justify-center">
+        <div class="tilt glass p-8 rounded-3xl shadow-2xl float" id="tiltCard">
+
+            <img src="https://images.unsplash.com/photo-1522542550221-31fd19575a2d"
+                 class="rounded-2xl w-[600px] max-w-full depth-3">
+
+        </div>
+    </div>
+</section>
+
+<!-- FLOATING ELEMENTS -->
+<div class="absolute top-40 left-10 text-indigo-400 float">✦</div>
+<div class="absolute top-60 right-20 text-indigo-300 float">✧</div>
+<div class="absolute bottom-40 left-20 text-indigo-500 float">✦</div>
+
+<!-- FEATURES -->
+<section class="mt-40 grid md:grid-cols-3 gap-10 px-10 text-center">
+
+    <div class="glass p-6 rounded-2xl fade-up hover:scale-110 transition">
+        <h3 class="text-lg font-semibold mb-2">Real 3D Depth</h3>
+        <p class="text-gray-400 text-sm">
+            Multi-layer perspective and movement.
+        </p>
+    </div>
+
+    <div class="glass p-6 rounded-2xl fade-up hover:scale-110 transition">
+        <h3 class="text-lg font-semibold mb-2">Interactive UI</h3>
+        <p class="text-gray-400 text-sm">
+            Responds to cursor and scroll.
+        </p>
+    </div>
+
+    <div class="glass p-6 rounded-2xl fade-up hover:scale-110 transition">
+        <h3 class="text-lg font-semibold mb-2">Premium Design</h3>
+        <p class="text-gray-400 text-sm">
+            Inspired by top modern websites.
+        </p>
+    </div>
+
+</section>
+
+<!-- CTA -->
+<section class="mt-40 text-center">
+    <h2 class="text-4xl font-bold fade-up">
+        Build Something Amazing
+    </h2>
+
+    <button class="mt-6 bg-indigo-500 px-8 py-3 rounded-full glow hover:scale-110 transition fade-up">
+        Get Started
+    </button>
+</section>
+
+<!-- PARALLAX SECTION -->
+<!-- ===== PARALLAX SECTION YANG DIUBAH MENJADI CAROUSEL BUKU ===== -->
+<!-- CAROUSEL BUKU SECTION -->
+<div class="carousel-bg-section">
+    <div class="carousel-title-section">
+        <h2>📚 Koleksi Buku Unggulan</h2>
+        <p>Rekomendasi buku terpopuler di perpustakaan digital kami</p>
+    </div>
+
+    <div class="book-carousel-container">
+        <div class="book-carousel-track">
+            <!-- Buku 1 -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/EGC Malpraktik dalam keperawatan.jpg') }}" alt="Buku Keperawatan" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Malpraktik+Keperawatan'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Malpraktik dalam Keperawatan</div>
+                    <div class="book-author-medium">Ns. Siti Aminah, M.Kep</div>
+                </div>
+            </div>
+            <!-- Buku 2 -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/Noltes The Human Brain_ An Introduction to its Functional Anatomy.jpg') }}" alt="Buku Anatomi" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Anatomi+Otak'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Nolte's The Human Brain</div>
+                    <div class="book-author-medium">Prof. Dr. Budi Santoso</div>
+                </div>
+            </div>
+            <!-- Buku 3 -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/[TERBARU] Original Farmakologi dan Terapi Ed 6 UI FKUI 2017.jpg') }}" alt="Buku Farmakologi" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Farmakologi+dan+Terapi'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Farmakologi dan Terapi</div>
+                    <div class="book-author-medium">apt. Dewi Lestari, M.Sc</div>
+                </div>
+            </div>
+            <!-- Buku 4 -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/Ilmu Dasar Keperawatan Anak.jpg') }}" alt="Buku Keperawatan Anak" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Keperawatan+Anak'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Ilmu Dasar Keperawatan Anak</div>
+                    <div class="book-author-medium">Ns. Maya Sari, M.Kep</div>
+                </div>
+            </div>
+            <!-- Buku 5 -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/Deepublish - Buku Buku Ajar Keperawatan Medikal Bedah Sistem Persyarafan - Buku Keperawatan.jpg') }}" alt="Buku Medikal Bedah" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Keperawatan+Medikal+Bedah'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Keperawatan Medikal Bedah</div>
+                    <div class="book-author-medium">Ns. Rudi Hartono, M.Kep</div>
+                </div>
+            </div>
+            <!-- Buku 6 -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/Buku Pendidikan dan Promosi Kesehatan - Original.jpg') }}" alt="Buku Kesehatan Masyarakat" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Pendidikan+Kesehatan'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Pendidikan & Promosi Kesehatan</div>
+                    <div class="book-author-medium">Dr. Andi Pratama</div>
+                </div>
+            </div>
+            <!-- Buku 7 -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/EGC Metodologi Penelitian Kedokteran dan Kesehatan.jpg') }}" alt="Buku Penelitian" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Metodologi+Penelitian'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Metodologi Penelitian Kesehatan</div>
+                    <div class="book-author-medium">Dr. Rina Wijaya</div>
+                </div>
+            </div>
+            <!-- Buku 8 -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/EGC Malpraktik dalam keperawatan.jpg') }}" alt="Buku Etika" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Etika+Keperawatan'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Etika Keperawatan Profesional</div>
+                    <div class="book-author-medium">Prof. Dr. Maria Ulfah</div>
+                </div>
+            </div>
+
+            <!-- DUPLIKASI UNTUK EFEK INFINITE SCROLL -->
+            <!-- Buku 2 duplicate -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/Noltes The Human Brain_ An Introduction to its Functional Anatomy.jpg') }}" alt="Buku Anatomi" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Anatomi+Otak'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Nolte's The Human Brain</div>
+                    <div class="book-author-medium">Prof. Dr. Budi Santoso</div>
+                </div>
+            </div>
+            <!-- Buku 3 duplicate -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/[TERBARU] Original Farmakologi dan Terapi Ed 6 UI FKUI 2017.jpg') }}" alt="Buku Farmakologi" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Farmakologi+dan+Terapi'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Farmakologi dan Terapi</div>
+                    <div class="book-author-medium">apt. Dewi Lestari, M.Sc</div>
+                </div>
+            </div>
+            <!-- Buku 4 duplicate -->
+            <div class="book-card-medium">
+                <img src="{{ asset('assets/img/Ilmu Dasar Keperawatan Anak.jpg') }}" alt="Buku Keperawatan Anak" class="book-cover-medium" onerror="this.src='https://placehold.co/220x280/1e293b/6366f1?text=Keperawatan+Anak'">
+                <div class="book-info-overlay-medium">
+                    <div class="book-title-medium">Ilmu Dasar Keperawatan Anak</div>
+                    <div class="book-author-medium">Ns. Maya Sari, M.Kep</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- INTERACTIVE CARDS -->
+<section class="mt-40 grid md:grid-cols-3 gap-10 px-10">
+
+    <!-- Card -->
+    <div class="tilt glass p-6 rounded-2xl card3d">
+        <h3 class="text-lg font-semibold mb-2">Hover Me</h3>
+        <p class="text-gray-400 text-sm">
+            Card reacts with depth.
+        </p>
+    </div>
+
+    <div class="tilt glass p-6 rounded-2xl card3d">
+        <h3 class="text-lg font-semibold mb-2">Dynamic UI</h3>
+        <p class="text-gray-400 text-sm">
+            Smooth and responsive.
+        </p>
+    </div>
+
+    <div class="tilt glass p-6 rounded-2xl card3d">
+        <h3 class="text-lg font-semibold mb-2">Immersive</h3>
+        <p class="text-gray-400 text-sm">
+            Feels like a real app.
+        </p>
+    </div>
+
+</section>
+<!-- PRODUCT SHOWCASE -->
+<section class="mt-40 px-10">
+
+    <h2 class="text-4xl font-bold text-center mb-16 fade-up">
+        Featured Product
+    </h2>
+
+    <div class="grid md:grid-cols-2 gap-16 items-center">
+
+        <!-- TEXT -->
+        <div class="fade-up">
+            <h3 class="text-3xl font-semibold mb-4">
+                Ultra Smart Device
+            </h3>
+
+            <p class="text-gray-400 mb-6">
+                Designed with cutting-edge technology and futuristic aesthetics.
+                Built to deliver performance, style, and innovation.
+            </p>
+
+            <ul class="space-y-3 text-gray-300">
+                <li>✔ AI Powered</li>
+                <li>✔ Ultra Fast Processing</li>
+                <li>✔ Premium Material</li>
+            </ul>
+
+            <button class="magnetic mt-8 bg-indigo-500 px-6 py-3 rounded-full glow">
+                Buy Now
+            </button>
+        </div>
+
+        <!-- IMAGE -->
+        <div class="tilt glass p-6 rounded-3xl shadow-2xl float">
+            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8"
+                 class="rounded-2xl depth-3 w-full">
+        </div>
+
+    </div>
+
+</section>
+<!-- PRODUCT GRID -->
+<section class="mt-40 px-10">
+
+    <h2 class="text-3xl font-bold text-center mb-12 fade-up">
+        Our Products
+    </h2>
+
+    <div class="grid md:grid-cols-3 gap-8">
+
+        <!-- CARD -->
+        <div class="card3d glass p-6 rounded-2xl text-center fade-up">
+            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475"
+                 class="rounded-xl mb-4">
+            <h3 class="font-semibold">Product One</h3>
+            <p class="text-gray-400 text-sm mb-4">Minimal & powerful</p>
+            <button class="magnetic bg-indigo-500 px-4 py-2 rounded-full">
+                Buy
+            </button>
+        </div>
+
+        <div class="card3d glass p-6 rounded-2xl text-center fade-up">
+            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8"
+                 class="rounded-xl mb-4">
+            <h3 class="font-semibold">Product Two</h3>
+            <p class="text-gray-400 text-sm mb-4">Elegant design</p>
+            <button class="magnetic bg-indigo-500 px-4 py-2 rounded-full">
+                Buy
+            </button>
+        </div>
+
+        <div class="card3d glass p-6 rounded-2xl text-center fade-up">
+            <img src="https://images.unsplash.com/photo-1492724441997-5dc865305da7"
+                 class="rounded-xl mb-4">
+            <h3 class="font-semibold">Product Three</h3>
+            <p class="text-gray-400 text-sm mb-4">Future ready</p>
+            <button class="magnetic bg-indigo-500 px-4 py-2 rounded-full">
+                Buy
+            </button>
+        </div>
+
+    </div>
+
+</section>
+<!-- TESTIMONIAL -->
+<section class="mt-40 px-10 text-center">
+
+    <h2 class="text-3xl font-bold mb-12 fade-up">
+        What People Say
+    </h2>
+
+    <div class="grid md:grid-cols-3 gap-8">
+
+        <div class="glass p-6 rounded-2xl fade-up">
+            <p class="text-gray-400 mb-4">
+                “This product changed my workflow completely.”
+            </p>
+            <h4 class="font-semibold">Alex</h4>
+        </div>
+
+        <div class="glass p-6 rounded-2xl fade-up">
+            <p class="text-gray-400 mb-4">
+                “Feels like using something from the future.”
+            </p>
+            <h4 class="font-semibold">Sarah</h4>
+        </div>
+
+        <div class="glass p-6 rounded-2xl fade-up">
+            <p class="text-gray-400 mb-4">
+                “Premium quality and amazing performance.”
+            </p>
+            <h4 class="font-semibold">John</h4>
+        </div>
+
+    </div>
+
+</section>
+<!-- PRICING -->
+<section class="mt-40 px-10 text-center">
+
+    <h2 class="text-3xl font-bold mb-12 fade-up">
+        Pricing Plan
+    </h2>
+
+    <div class="grid md:grid-cols-3 gap-8">
+
+        <div class="glass p-8 rounded-2xl fade-up">
+            <h3 class="text-xl mb-4">Basic</h3>
+            <p class="text-4xl font-bold mb-4">$29</p>
+            <button class="magnetic bg-indigo-500 px-6 py-2 rounded-full">
+                Choose
+            </button>
+        </div>
+
+        <div class="glass p-8 rounded-2xl glow fade-up">
+            <h3 class="text-xl mb-4">Pro</h3>
+            <p class="text-4xl font-bold mb-4">$59</p>
+            <button class="magnetic bg-indigo-500 px-6 py-2 rounded-full">
+                Choose
+            </button>
+        </div>
+
+        <div class="glass p-8 rounded-2xl fade-up">
+            <h3 class="text-xl mb-4">Enterprise</h3>
+            <p class="text-4xl font-bold mb-4">$99</p>
+            <button class="magnetic bg-indigo-500 px-6 py-2 rounded-full">
+                Choose
+            </button>
+        </div>
+
+    </div>
+    <br>
+    <br>
+    <br>
+<!-- PRODUCT MODAL -->
+<div id="productModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-[9999]">
+
+    <div class="glass p-8 rounded-3xl max-w-lg w-full relative">
+
+        <button onclick="closeModal()" class="absolute top-4 right-4 text-white text-xl">
+            ✕
+        </button>
+
+        <img id="modalImg" class="rounded-xl mb-4">
+
+        <h3 id="modalTitle" class="text-xl font-semibold mb-2"></h3>
+        <p id="modalDesc" class="text-gray-400 mb-4"></p>
+
+        <button class="magnetic bg-indigo-500 px-6 py-2 rounded-full w-full">
+            Add to Cart
+        </button>
+
+    </div>
+
+</div>
+<!-- UPDATE PRODUCT CARD -->
+<div class="card3d glass p-10 rounded-2xl text-center fade-up">
+
+    <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085"
+         class="rounded-xl mb-4 cursor-pointer"
+         onclick="openModal(this)">
+
+    <!-- JUDUL DIBESARKAN -->
+<h2 class="font-semibold text-2xl tracking-wide"></h2>
+    <!-- DESKRIPSI DIBESARKAN -->
+     <h3 class="font-semibold text-lg mb-15 leading-relaxed">Minimal & powerful</h3>
+    <div class="flex justify-center gap-3">
+
+        <!-- TEKS BUTTON DIBESARKAN -->
+        <button class="magnetic bg-indigo-500 px-4 py-2 rounded-full text-base">
+            Buy
+        </button>
+
+        <button onclick="toggleWishlist(this)" class="text-xl">
+            🤍
+        </button>
+
+    </div>
+</div>
+
+<!-- FILTER -->
+<div class="flex justify-center gap-4 mt-10">
+
+    <button onclick="filterProducts('all')" class="magnetic px-4 py-2 glass rounded-full">
+        All
+    </button>
+
+    <button onclick="filterProducts('tech')" class="magnetic px-4 py-2 glass rounded-full">
+        Tech
+    </button>
+
+    <button onclick="filterProducts('design')" class="magnetic px-4 py-2 glass rounded-full">
+        Design
+    </button>
+
+</div>
+<!-- CART -->
+<div id="cart" class="fixed top-0 right-0 w-80 h-full bg-black/90 p-6 hidden z-[9999]">
+
+    <h2 class="text-xl mb-4">Cart</h2>
+
+    <div id="cartItems" class="space-y-3"></div>
+
+    <div class="mt-6">
+        <button class="bg-indigo-500 w-full py-2 rounded-full">
+            Checkout
+        </button>
+    </div>
+
+</div>
+
+<button onclick="toggleCart()" class="fixed bottom-6 right-6 bg-indigo-500 p-4 rounded-full glow">
+    🛒
+</button>
+</section>
+
+<!-- FINAL CTA -->
+<section class="mt-32 mb-32 text-center px-6">
+
+    <h3 class="text-4xl md:text-5xl font-bold fade-up leading-tight mb-8">
+        Ready to Experience the Future?
+    </h3>
+
+    <button onclick="openStartForm()"
+        class="magnetic bg-indigo-500 px-8 py-3 rounded-full glow hover:scale-105 transition">
+        Get Started
+    </button>
+
+</section>
 @endsection
+
+@push('scripts')
+<script>
+// ==========================
+// JAVASCRIPT KHUSUS UNTUK HALAMAN HOME
+// ==========================
+
+// Cart functions
+function toggleCart() {
+    const cart = document.getElementById('cart');
+    if (cart.classList.contains('hidden')) {
+        cart.classList.remove('hidden');
+    } else {
+        cart.classList.add('hidden');
+    }
+}
+
+function openStartForm() {
+    showNotif('Fitur segera hadir!', 'success');
+}
+
+function toggleWishlist(btn) {
+    if (btn.innerHTML === '🤍') {
+        btn.innerHTML = '❤️';
+        showNotif('Ditambahkan ke wishlist', 'success');
+    } else {
+        btn.innerHTML = '🤍';
+        showNotif('Dihapus dari wishlist', 'warning');
+    }
+}
+
+function openModal(imgElement) {
+    alert('Detail produk akan segera hadir');
+}
+
+function closeModal() {
+    // Fungsi untuk menutup modal
+}
+
+function filterProducts(category) {
+    showNotif(`Menampilkan produk kategori: ${category}`, 'success');
+}
+
+console.log('Halaman Home siap dengan carousel buku dan efek 3D!');
+</script>
+@endpush

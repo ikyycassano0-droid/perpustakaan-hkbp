@@ -21,7 +21,7 @@
         /* Glow background blobs */
         .blob {
             position: absolute;
-            width: 400px;
+            width: 450px;
             height: 400px;
             background: radial-gradient(circle, #6366f1, transparent);
             filter: blur(120px);
@@ -78,8 +78,8 @@
         ========================== */
         .cursor-glow {
             position: fixed;
-            width: 150px;
-            height: 180px;
+            width: 50px;
+            height: 50px;
             pointer-events: none;
             transform: translate(-50%, -50%);
             z-index: 9999;
@@ -250,7 +250,7 @@
             font-size: 0.9rem;
             transition: all 0.3s ease;
             cursor: pointer;
-            color: #e2e8f0;
+            color: #ffffff;
         }
 
         .nav-item-modern a, .nav-item-modern button {
@@ -259,13 +259,13 @@
         }
 
         .nav-item-modern:hover {
-            color: #a5b4fc;
-            text-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
+            color: #ffffff;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
         }
 
         /* Active Nav Item */
         .nav-item-modern.active {
-            color: #ffffff;
+            color: #818cf8;
         }
 
         .nav-item-modern.active::after {
@@ -275,7 +275,7 @@
             left: 0;
             width: 100%;
             height: 2px;
-            background: linear-gradient(90deg, #6366f1, #a855f7);
+            background: linear-gradient(90deg, #6366f1, #e7e4e9);
             border-radius: 2px;
             box-shadow: 0 0 8px rgba(99, 102, 241, 0.6);
         }
@@ -366,11 +366,11 @@
         }
 
         .btn-login-modern:hover {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            background: linear-gradient(135deg, #6366f1 , #4731c6);
             border-color: transparent;
             color: white;
             transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 0 25px rgba(99, 102, 241, 0.6);
         }
 
         /* Chevron Icon */
@@ -568,7 +568,7 @@
 
 <!-- Cursor glow -->
 <div class="cursor-glow" id="cursorGlow"></div>
-@include('user.component.navbars')
+@include('guest.component.navbars')
 
 <!-- LOGIN MODAL -->
 <div id="loginModal"
