@@ -171,4 +171,33 @@ class ProfileController extends Controller
         Profile::destroy($id);
         return back()->with('success', 'Data berhasil dihapus');
     }
+
+// ================= USER (MAHASISWA) =================
+public function studentProfile()
+{
+    $user = auth()->user();
+
+    // Hitung total peminjaman (misal dari model Order)
+    $totalPinjam = \App\Models\Order::where('user_id', $user->id)->count();
+    $aktifPinjam = \App\Models\Order::where('user_id', $user->id)
+                    ->where('status', 'dipinjam')
+                    ->count();
+
+    // Hitung total KTI yang approved
+    $totalKti = \App\Models\FinalProject::where('user_id', $user->id)
+                ->where('status', 'Approved')
+                ->count();
+
+    // Hitung notifikasi belum dibaca
+    $unreadNotif = \App\Models\Notification::where('user_id', $user->id)
+                   ->where('is_read', false)
+                   ->count();
+
+    // Poin aktivitas (opsional, bisa 0 jika belum ada sistem)
+    $point = 0;
+
+    return view('profileAkun.menu', compact(
+    'totalPinjam', 'aktifPinjam', 'totalKti', 'unreadNotif', 'point'
+));
+}
 }

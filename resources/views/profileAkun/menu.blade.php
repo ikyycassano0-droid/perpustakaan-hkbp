@@ -1,51 +1,303 @@
-@extends('user.component.navbars')
+@extends('user.component.master')
+
+@section('title', 'Profil Mahasiswa - AKPER HKBP Balige')
+
+@push('styles')
+<style>
+    /* ===== KHUSUS UNTUK HALAMAN PROFIL ===== */
+    .profile-card {
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(12px);
+        border-radius: 1.5rem;
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto;
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .profile-info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .profile-label {
+        color: #94a3b8;
+        font-size: 0.85rem;
+    }
+
+    .profile-value {
+        color: #c7d2fe;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .stat-card-mini {
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(12px);
+        border-radius: 1rem;
+        padding: 0.75rem;
+        text-align: center;
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .stat-card-mini:hover {
+        transform: translateY(-3px);
+        border-color: rgba(99, 102, 241, 0.6);
+    }
+
+    .menu-card {
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(12px);
+        border-radius: 1.25rem;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        height: 100%;
+        cursor: pointer;
+    }
+
+    .menu-card:hover {
+        transform: translateY(-8px);
+        border-color: rgba(99, 102, 241, 0.7);
+        box-shadow: 0 20px 35px -12px rgba(99, 102, 241, 0.4);
+    }
+
+    .menu-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        display: inline-block;
+    }
+
+    .menu-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #c7d2fe, #a5b4fc);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+
+    .menu-desc {
+        font-size: 0.75rem;
+        color: #94a3b8;
+    }
+
+    .badge-notif {
+        background: #ef4444;
+        color: white;
+        border-radius: 20px;
+        padding: 2px 8px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-left: 8px;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(1.05); }
+    }
+</style>
+@endpush
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <div class="max-w-md mx-auto bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-6 border border-white/20">
-        <!-- Header Profil -->
-        <div class="flex items-center gap-4 border-b border-white/20 pb-4 mb-4">
-            <div class="w-12 h-12 rounded-full bg-indigo-500/30 flex items-center justify-center">
-                <svg class="w-6 h-6 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
+<div class="main-content">
+
+    <!-- HERO SECTION -->
+    <section class="pt-28 pb-8 text-center px-5">
+        <div class="inline-block glass-card px-5 py-2 rounded-full mb-5 fade-up">
+            <span class="text-indigo-300 text-sm font-medium tracking-wide">👤 AKPER HKBP BALIGE</span>
+        </div>
+        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight title-main fade-up">
+            Profil Mahasiswa
+        </h1>
+        <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
+            Kelola informasi akun Anda.
+        </p>
+    </section>
+
+    <!-- KONTEN UTAMA -->
+    <section class="section max-w-6xl mx-auto px-5">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- SIDEBAR KIRI: INFORMASI PROFIL -->
+            <div class="lg:col-span-1">
+                <div class="profile-card p-6">
+                    <div class="profile-avatar">
+                        👨‍🎓
+                    </div>
+                    <h2 class="text-center text-xl font-bold text-indigo-200 mt-4">{{ auth()->user()->name }}</h2>
+                    <p class="text-center text-xs text-indigo-300/70">{{ auth()->user()->role ?? 'Mahasiswa' }}</p>
+
+                    <div class="mt-6 space-y-2">
+                        <div class="profile-info-item">
+                            <span class="profile-label">📧 Email</span>
+                            <span class="profile-value">{{ auth()->user()->email }}</span>
+                        </div>
+                        <div class="profile-info-item">
+                            <span class="profile-label">🆔 NPM / NIDN</span>
+                            <span class="profile-value">{{ auth()->user()->npm ?? '-' }}</span>
+                        </div>
+                        <div class="profile-info-item">
+                            <span class="profile-label">🎓 Program Studi</span>
+                            <span class="profile-value">{{ auth()->user()->study_program ?? 'D3 Keperawatan' }}</span>
+                        </div>
+                        <div class="profile-info-item">
+                            <span class="profile-label">📅 Angkatan</span>
+                            <span class="profile-value">{{ auth()->user()->angkatan ?? '-' }}</span>
+                        </div>
+                        <div class="profile-info-item">
+                            <span class="profile-label">📱 No. Telepon</span>
+                            <span class="profile-value">{{ auth()->user()->phone ?? '-' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-white/10 text-center">
+                        <button onclick="editProfile()" class="btn-outline w-full text-sm py-2">
+                            ✏️ Edit Profil
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div>
-                <h2 class="text-xl font-bold text-white">{{ Auth::user()->name }}</h2>
-                <p class="text-indigo-300 text-sm">{{ Auth::user()->email }}</p>
+
+            <!-- SISI KANAN: STATISTIK + MENU -->
+            <div class="lg:col-span-2">
+                <!-- Statistik Ringkas -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                    <div class="stat-card-mini">
+                        <div class="text-2xl font-bold text-indigo-300">{{ $totalPinjam ?? 0 }}</div>
+                        <div class="text-xs text-gray-400">Total Peminjaman</div>
+                    </div>
+                    <div class="stat-card-mini">
+                        <div class="text-2xl font-bold text-yellow-400">{{ $aktifPinjam ?? 0 }}</div>
+                        <div class="text-xs text-gray-400">Sedang Dipinjam</div>
+                    </div>
+                    <div class="stat-card-mini">
+                        <div class="text-2xl font-bold text-green-400">{{ $totalKti ?? 0 }}</div>
+                        <div class="text-xs text-gray-400">KTI Terupload</div>
+                    </div>
+                    <div class="stat-card-mini">
+                        <div class="text-2xl font-bold text-purple-400">{{ $point ?? 0 }}</div>
+                        <div class="text-xs text-gray-400">Poin Aktivitas</div>
+                    </div>
+                </div>
+
+                <!-- Menu-Menu Utama (Card) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                    <!-- Menu History Peminjaman -->
+                    <a href="{{ route('user.history') }}" class="no-underline block">
+                        <div class="menu-card">
+                            <div class="menu-icon">📚</div>
+                            <h3 class="menu-title">History Peminjaman</h3>
+                            <p class="menu-desc">Lihat riwayat peminjaman buku, status, dan denda</p>
+                            <div class="mt-3 text-indigo-400 text-sm">Lihat detail →</div>
+                        </div>
+                    </a>
+
+                    <!-- Menu Inbox (Notifikasi) -->
+                    <a href="{{ route('user.inbox') }}" class="no-underline block">
+                        <div class="menu-card">
+                            <div class="menu-icon">📥</div>
+                            <h3 class="menu-title">
+                                Inbox
+                                @if(($unreadNotif ?? 0) > 0)
+                                    <span class="badge-notif">{{ $unreadNotif }}</span>
+                                @endif
+                            </h3>
+                            <p class="menu-desc">Pesan dan notifikasi dari sistem perpustakaan</p>
+                            <div class="mt-3 text-indigo-400 text-sm">Buka kotak masuk →</div>
+                        </div>
+                    </a>
+
+                    <!-- Menu Pengaturan -->
+                    <div class="menu-card" onclick="settings()">
+                        <div class="menu-icon">⚙️</div>
+                        <h3 class="menu-title">Pengaturan</h3>
+                        <p class="menu-desc">Atur preferensi akun, notifikasi, dan keamanan</p>
+                        <div class="mt-3 text-indigo-400 text-sm">Kelola →</div>
+                    </div>
+
+                    <!-- Menu Logout -->
+                    <div class="menu-card" onclick="logout()">
+                        <div class="menu-icon">🚪</div>
+                        <h3 class="menu-title">Logout</h3>
+                        <p class="menu-desc">Keluar dari akun Anda</p>
+                        <div class="mt-3 text-red-400 text-sm">Logout →</div>
+                    </div>
+
+                </div>
             </div>
         </div>
-
-        <!-- Tombol Edit Profil -->
-        <div class="mb-4">
-            <a href="{{ route('user.profile.edit') }}" class="btn-outline w-full text-sm py-2 text-center inline-block">
-                ✏️ Edit Profil
-            </a>
-        </div>
-
-        <!-- Menu-menu -->
-        <ul class="space-y-2">
-            <li>
-                <a href="{{ route('user.profile.edit') }}" class="flex items-center gap-3 ...">
-                        <svg class="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span class="text-white">Pengaturan Akun</span>
-                </a>
-            </li>
-            <li>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 transition text-left">
-                        <svg class="w-5 h-5 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
-                        <span class="text-white">Logout</span>
-                    </button>
-                </form>
-            </li>
-        </ul>
-    </div>
+    </section>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    function editProfile() {
+        showNotification('✏️ Fitur edit profil akan segera tersedia', 'info');
+    }
+
+    function settings() {
+        showNotification('⚙️ Halaman pengaturan sedang dalam pengembangan', 'info');
+
+    }
+
+    function logout() {
+        if (confirm('Apakah Anda yakin ingin keluar?')) {
+            document.getElementById('logout-form')?.submit();
+        }
+    }
+
+    function showNotification(message, type = 'success') {
+        if (typeof showNotif === 'function') {
+            showNotif(message, type);
+        } else {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.classList.add('show'), 10);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+    }
+
+    // Form logout tersembunyi (gunakan jika belum ada)
+    if (!document.getElementById('logout-form')) {
+        const form = document.createElement('form');
+        form.id = 'logout-form';
+        form.method = 'POST';
+        form.action = '{{ route("logout") }}';
+        form.style.display = 'none';
+        form.innerHTML = '@csrf';
+        document.body.appendChild(form);
+    }
+</script>
+@endpush

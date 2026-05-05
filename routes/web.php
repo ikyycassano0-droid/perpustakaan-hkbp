@@ -1,360 +1,355 @@
-    <?php
-
-    use App\Http\Controllers\AuthController;
-    use Illuminate\Support\Facades\Route;
-    use App\Http\Controllers\HomeController;
-    use App\Http\Controllers\ProfileController;
-    use App\Http\Controllers\MemberController;
-    use App\Http\Controllers\NewsController;
-    use App\Http\Controllers\CollectionController;
-    use App\Http\Controllers\ClassificationController;
-    use App\Http\Controllers\CategoryCollectionController;
-    use App\Http\Controllers\LocationController;
-    use App\Http\Controllers\OrderController;
-    use App\Http\Controllers\NotificationController;
-    use App\Http\Controllers\FinalProjectController;
-    use App\Http\Controllers\ArchiveController;
-    use App\Http\Controllers\ProfileMenuController;
-    use Illuminate\Http\Request;
-    use App\Models\User;
-
-    Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
-
-        $user = User::findOrFail($id);
-
-        // kalau sudah verified
-        if ($user->hasVerifiedEmail()) {
-            return redirect('/login')->with('info', 'Email sudah diverifikasi sebelumnya');
-        }
-
-        // validasi hash email
-        if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
-            abort(403, 'Link tidak valid');
-        }
-
-        // tandai verified
-        $user->markEmailAsVerified();
-
-        return redirect('/login')->with('success', 'Email berhasil diverifikasi! Silakan login');
-
-    })->middleware(['signed'])->name('verification.verify');
-
-    // Login
-    Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('login', [AuthController::class, 'login'])->name('login.submit');
-
-    // Logout
-    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
-
-    // Dashboard admin
-    Route::get('admin/dashboard', function(){
-        return view('admin.page.home');
-    })->name('admin.home');
-
-    Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(function () {
-
-        Route::prefix('members')->name('members.')->group(function () {
-
-            Route::get('/', [MemberController::class, 'index'])->name('index');
-            Route::get('/create', [MemberController::class, 'create'])->name('create');
-            Route::post('/', [MemberController::class, 'store'])->name('store');
-            Route::get('/{id}/edit', [MemberController::class, 'edit'])->name('edit');
-            Route::put('/{id}', [MemberController::class, 'update'])->name('update');
-            Route::delete('/{id}/delete', [MemberController::class, 'destroy'])->name('destroy');
-
-
-            Route::post('/{id}/resend', [MemberController::class, 'resendVerification'])
-                ->name('resend');
-
-        });
-
-        // ================= PROFILE (🔥 SUDAH DINAMIS TYPE) =================
-        Route::prefix('profile')->name('profile.')->group(function () {
-
-            Route::get('/', [ProfileController::class, 'index'])->name('index');
-            Route::post('/', [ProfileController::class, 'store'])->name('store');
-            Route::put('/{id}', [ProfileController::class, 'update'])->name('update');
-            Route::delete('/{id}', [ProfileController::class, 'destroy'])->name('destroy');
-        });
-
-
-        // ================= BERITA =================
-        // ================= BERITA =================
-        Route::prefix('berita')->name('berita.')->group(function () {
-            Route::get('/', [NewsController::class, 'index_admin'])->name('index');
-            Route::post('/store', [NewsController::class, 'store'])->name('store');
-            Route::put('/{news}', [NewsController::class, 'update'])->name('update');
-            Route::delete('/{news}', [NewsController::class, 'destroy'])->name('destroy');
-        });
+        <?php
 
-        // ================= COLLECTION =================
-        Route::prefix('collections')->name('collections.')->group(function () {
-            Route::get('/', [CollectionController::class, 'index_admin'])->name('index');
-            Route::post('/', [CollectionController::class, 'store'])->name('store');
-            Route::get('/{collection}/edit', [CollectionController::class, 'edit'])->name('edit');
-            Route::put('/{collection}', [CollectionController::class, 'update'])->name('update');
-            Route::delete('/{collection}', [CollectionController::class, 'destroy'])->name('destroy');
-            Route::get('/pengelolaan-buku', [CollectionController::class, 'pengelolaanBuku'])->name('pengelolaan_buku');
-        });
+        use App\Http\Controllers\AuthController;
+        use Illuminate\Support\Facades\Route;
+        use App\Http\Controllers\HomeController;
+        use App\Http\Controllers\ProfileController;
+        use App\Http\Controllers\MemberController;
+        use App\Http\Controllers\NewsController;
+        use App\Http\Controllers\CollectionController;
+        use App\Http\Controllers\ClassificationController;
+        use App\Http\Controllers\CategoryCollectionController;
+        use App\Http\Controllers\LocationController;
+        use App\Http\Controllers\OrderController;
+        use App\Http\Controllers\NotificationController;
+        use App\Http\Controllers\FinalProjectController;
+        use App\Http\Controllers\ArchiveController;
+        use App\Http\Controllers\ProfileMenuController;
+        use Illuminate\Http\Request;
+        use App\Models\User;
 
-        // ================= CLASSIFICATION =================
-        Route::prefix('classification')->name('classification.')->group(function () {
-            Route::get('/', [ClassificationController::class, 'index'])->name('index');
-            Route::post('/', [ClassificationController::class, 'store'])->name('store');
-            Route::put('/{classification}', [ClassificationController::class, 'update'])->name('update');
-            Route::delete('/{classification}', [ClassificationController::class, 'destroy'])->name('delete');
+        Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
 
-            // AJAX tambah
-            Route::post('/ajax', [ClassificationController::class, 'storeAjax'])->name('storeAjax');
+            $user = User::findOrFail($id);
 
-            // HAPUS TERAKHIR
-            Route::delete('/delete-last', [ClassificationController::class, 'deleteLast'])->name('deleteLast');
-        });
+            // kalau sudah verified
+            if ($user->hasVerifiedEmail()) {
+                return redirect('/login')->with('info', 'Email sudah diverifikasi sebelumnya');
+            }
 
-        // ================= CATEGORY =================
-        Route::prefix('category')->name('category.')->group(function () {
-            Route::get('/', [CategoryCollectionController::class, 'index'])->name('index');
-            Route::post('/', [CategoryCollectionController::class, 'store'])->name('store');
-            Route::put('/{category}', [CategoryCollectionController::class, 'update'])->name('update');
-            Route::delete('/{category}', [CategoryCollectionController::class, 'destroy'])->name('delete');
+            // validasi hash email
+            if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+                abort(403, 'Link tidak valid');
+            }
 
-            // AJAX tambah
-            Route::post('/ajax', [CategoryCollectionController::class, 'storeAjax'])->name('storeAjax');
+            // tandai verified
+            $user->markEmailAsVerified();
 
-            // HAPUS TERAKHIR
-            Route::delete('/delete-last', [CategoryCollectionController::class, 'deleteLast'])->name('deleteLast');
-        });
+            return redirect('/login')->with('success', 'Email berhasil diverifikasi! Silakan login');
 
-        // ================= LOCATION =================
-        Route::prefix('location')->name('location.')->group(function () {
-            Route::get('/', [LocationController::class, 'index'])->name('index');
-            Route::post('/', [LocationController::class, 'store'])->name('store');
-            Route::put('/{location}', [LocationController::class, 'update'])->name('update');
-            Route::delete('/{location}', [LocationController::class, 'destroy'])->name('delete');
+        })->middleware(['signed'])->name('verification.verify');
 
-            // AJAX tambah
-            Route::post('/ajax', [LocationController::class, 'storeAjax'])->name('storeAjax');
+        // Login
+        Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
+        Route::post('login', [AuthController::class, 'login'])->name('login.submit');
 
-            // HAPUS TERAKHIR
-            Route::delete('/delete-last', [LocationController::class, 'deleteLast'])->name('deleteLast');
-        });
+        // Logout
+        Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
-        Route::prefix('orders')->name('orders.')->group(function () {
+        // Dashboard admin
+        Route::get('admin/dashboard', function(){
+            return view('admin.page.home');
+        })->name('admin.home');
 
-            Route::get('/', [OrderController::class, 'index'])->name('index');
-            Route::post('/{id}/approve', [OrderController::class, 'approve'])->name('approve');
-            Route::post('/{id}/reject', [OrderController::class, 'reject'])->name('reject');
-            Route::post('/{id}/return', [OrderController::class, 'returnBook'])->name('return');
-            Route::post('/{id}/extend', [OrderController::class, 'extend'])->name('extend');
+        Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(function () {
 
-        });
+            Route::prefix('members')->name('members.')->group(function () {
 
-        // ================= KOLEKSI ELEKTRONIK (FINAL PROJECT) =================
-        Route::prefix('koleksi-elektronik')->name('koleksi_elektronik.')->group(function () {
-            Route::get('/', [FinalProjectController::class, 'index_admin'])->name('index');
+                Route::get('/', [MemberController::class, 'index'])->name('index');
+                Route::get('/create', [MemberController::class, 'create'])->name('create');
+                Route::post('/', [MemberController::class, 'store'])->name('store');
+                Route::get('/{id}/edit', [MemberController::class, 'edit'])->name('edit');
+                Route::put('/{id}', [MemberController::class, 'update'])->name('update');
+                Route::delete('/{id}/delete', [MemberController::class, 'destroy'])->name('destroy');
 
-            // STORE / UPDATE ADMIN
-            Route::post('/', [FinalProjectController::class, 'store_admin'])->name('store');
-            Route::put('/{id}', [FinalProjectController::class, 'update_admin'])->name('update');
 
-            // DELETE tetap sama
-            Route::delete('/{id}', [FinalProjectController::class, 'destroy'])->name('delete');
+                Route::post('/{id}/resend', [MemberController::class, 'resendVerification'])
+                    ->name('resend');
 
-        });
+            });
 
-        // ================= KTI ADMIN =================
-        Route::prefix('kti')->name('kti.')->middleware(['auth','admin'])->group(function () {
+            // ================= PROFILE (🔥 SUDAH DINAMIS TYPE) =================
+            Route::prefix('profile')->name('profile.')->group(function () {
 
-            // List semua KTI
-            Route::get('/', [FinalProjectController::class, 'index_kti_admin'])->name('index');
+                Route::get('/', [ProfileController::class, 'index'])->name('index');
+                Route::post('/', [ProfileController::class, 'store'])->name('store');
+                Route::put('/{id}', [ProfileController::class, 'update'])->name('update');
+                Route::delete('/{id}', [ProfileController::class, 'destroy'])->name('destroy');
+            });
 
-            // Menampilkan KTI yang pending approval
-            Route::get('/pending', [FinalProjectController::class, 'pending_admin'])->name('pending');
-
-            // Approve / Reject
-            Route::post('/{id}/approve', [FinalProjectController::class, 'approve'])->name('approve');
-            Route::post('/{id}/reject', [FinalProjectController::class, 'reject'])->name('reject');
-
-            // Delete KTI
-            Route::delete('/{id}', [FinalProjectController::class, 'destroy'])->name('delete');
-        });
-
-        // ================= LAYANAN (ARCHIVE) =================
-        Route::prefix('layanan')->name('layanan.')->group(function () {
-
-            Route::get('/', [ArchiveController::class, 'index'])->name('index');
-
-            Route::get('/{category}', [ArchiveController::class, 'byCategory'])->name('category');
-
-            Route::post('/', [ArchiveController::class, 'store'])->name('store');
-            Route::put('/{id}', [ArchiveController::class, 'update'])->name('update');
-            Route::delete('/{id}', [ArchiveController::class, 'destroy'])->name('delete');
-        });
-
-    });
-
-    // User
-    Route::middleware(['auth'])->prefix('user')->group(function () {
-
-        // Dashboard
-        Route::get('/dashboard', function() {
-            return view('user.page.home');
-        })->name('user.dashboard');
-
-        // ================= PINJAM =================
-        Route::get('/pinjam', [CollectionController::class, 'pinjam'])
-            ->name('user.pinjam');
-
-        // ================= ORDERS =================
-        Route::post('/orders', [OrderController::class, 'store'])
-            ->name('orders.store');
-
-        Route::get('/history', [OrderController::class, 'history'])
-            ->name('user.history');
-
-        // ================= KOLEKSI =================
-        Route::prefix('koleksi')->name('user.koleksi.')->group(function () {
-
-            Route::get('/jurnal', [CollectionController::class, 'showUserMenu'])
-                ->name('jurnal')
-                ->defaults('menu_type', 'jurnal');
-
-            Route::get('/buku-pengayaan', [CollectionController::class, 'showUserMenu'])
-                ->name('buku_pengayaan')
-                ->defaults('menu_type', 'buku_pengayaan');
-
-            Route::get('/buku-referensi', [CollectionController::class, 'showUserMenu'])
-                ->name('buku_referensi')
-                ->defaults('menu_type', 'buku_referensi');
-
-            Route::get('/majalah', [CollectionController::class, 'showUserMenu'])
-                ->name('majalah')
-                ->defaults('menu_type', 'majalah');
-
-            Route::get('/{id}', [CollectionController::class, 'show'])
-                ->name('show');
-
-        });
-
-        // ================= PROFILE =================
-        Route::prefix('profile')->name('user.profile.')->group(function () {
-
-            // Mahasiswa
-            Route::get('/visi-misi', [ProfileController::class, 'showVisiMisiMahasiswa'])
-                ->name('visi_misi');
-
-            Route::get('/tugas-fungsi', [ProfileController::class, 'showTugasFungsiMahasiswa'])
-                ->name('tugas_fungsi');
-
-            Route::get('/struktur', [ProfileController::class, 'showStrukturMahasiswa'])
-                ->name('struktur');
-
-            Route::get('/kerjasama', [ProfileController::class, 'showKerjasamaMahasiswa'])->name('kerjasama');
-
-        });
 
             // ================= BERITA =================
-        Route::prefix('berita')->group(function () {
+            // ================= BERITA =================
+            Route::prefix('berita')->name('berita.')->group(function () {
+                Route::get('/', [NewsController::class, 'index_admin'])->name('index');
+                Route::post('/store', [NewsController::class, 'store'])->name('store');
+                Route::put('/{news}', [NewsController::class, 'update'])->name('update');
+                Route::delete('/{news}', [NewsController::class, 'destroy'])->name('destroy');
+            });
 
-            // LIST BERITA USER
-            Route::get('/', [NewsController::class, 'indexUser'])
-                ->name('user.berita');
+            // ================= COLLECTION =================
+            Route::prefix('collections')->name('collections.')->group(function () {
+                Route::get('/', [CollectionController::class, 'index_admin'])->name('index');
+                Route::post('/', [CollectionController::class, 'store'])->name('store');
+                Route::get('/{collection}/edit', [CollectionController::class, 'edit'])->name('edit');
+                Route::put('/{collection}', [CollectionController::class, 'update'])->name('update');
+                Route::delete('/{collection}', [CollectionController::class, 'destroy'])->name('destroy');
+                Route::get('/pengelolaan-buku', [CollectionController::class, 'pengelolaanBuku'])->name('pengelolaan_buku');
+            });
 
-            // DETAIL BERITA USER
-            Route::get('/{id}', [NewsController::class, 'showUser'])
-                ->name('user.berita.show');
+            // ================= CLASSIFICATION =================
+            Route::prefix('classification')->name('classification.')->group(function () {
+                Route::get('/', [ClassificationController::class, 'index'])->name('index');
+                Route::post('/', [ClassificationController::class, 'store'])->name('store');
+                Route::put('/{classification}', [ClassificationController::class, 'update'])->name('update');
+                Route::delete('/{classification}', [ClassificationController::class, 'destroy'])->name('delete');
+
+                // AJAX tambah
+                Route::post('/ajax', [ClassificationController::class, 'storeAjax'])->name('storeAjax');
+
+                // HAPUS TERAKHIR
+                Route::delete('/delete-last', [ClassificationController::class, 'deleteLast'])->name('deleteLast');
+            });
+
+            // ================= CATEGORY =================
+            Route::prefix('category')->name('category.')->group(function () {
+                Route::get('/', [CategoryCollectionController::class, 'index'])->name('index');
+                Route::post('/', [CategoryCollectionController::class, 'store'])->name('store');
+                Route::put('/{category}', [CategoryCollectionController::class, 'update'])->name('update');
+                Route::delete('/{category}', [CategoryCollectionController::class, 'destroy'])->name('delete');
+
+                // AJAX tambah
+                Route::post('/ajax', [CategoryCollectionController::class, 'storeAjax'])->name('storeAjax');
+
+                // HAPUS TERAKHIR
+                Route::delete('/delete-last', [CategoryCollectionController::class, 'deleteLast'])->name('deleteLast');
+            });
+
+            // ================= LOCATION =================
+            Route::prefix('location')->name('location.')->group(function () {
+                Route::get('/', [LocationController::class, 'index'])->name('index');
+                Route::post('/', [LocationController::class, 'store'])->name('store');
+                Route::put('/{location}', [LocationController::class, 'update'])->name('update');
+                Route::delete('/{location}', [LocationController::class, 'destroy'])->name('delete');
+
+                // AJAX tambah
+                Route::post('/ajax', [LocationController::class, 'storeAjax'])->name('storeAjax');
+
+                // HAPUS TERAKHIR
+                Route::delete('/delete-last', [LocationController::class, 'deleteLast'])->name('deleteLast');
+            });
+
+            Route::prefix('orders')->name('orders.')->group(function () {
+
+                Route::get('/', [OrderController::class, 'index'])->name('index');
+                Route::post('/{id}/approve', [OrderController::class, 'approve'])->name('approve');
+                Route::post('/{id}/reject', [OrderController::class, 'reject'])->name('reject');
+                Route::post('/{id}/return', [OrderController::class, 'returnBook'])->name('return');
+                Route::post('/{id}/extend', [OrderController::class, 'extend'])->name('extend');
+
+            });
+
+            // ================= KOLEKSI ELEKTRONIK (FINAL PROJECT) =================
+            Route::prefix('koleksi-elektronik')->name('koleksi_elektronik.')->group(function () {
+                Route::get('/', [FinalProjectController::class, 'index_admin'])->name('index');
+
+                // STORE / UPDATE ADMIN
+                Route::post('/', [FinalProjectController::class, 'store_admin'])->name('store');
+                Route::put('/{id}', [FinalProjectController::class, 'update_admin'])->name('update');
+
+                // DELETE tetap sama
+                Route::delete('/{id}', [FinalProjectController::class, 'destroy'])->name('delete');
+
+            });
+
+            // ================= KTI ADMIN =================
+            Route::prefix('kti')->name('kti.')->middleware(['auth','admin'])->group(function () {
+
+                // List semua KTI
+                Route::get('/', [FinalProjectController::class, 'index_kti_admin'])->name('index');
+
+                // Menampilkan KTI yang pending approval
+                Route::get('/pending', [FinalProjectController::class, 'pending_admin'])->name('pending');
+
+                // Approve / Reject
+                Route::post('/{id}/approve', [FinalProjectController::class, 'approve'])->name('approve');
+                Route::post('/{id}/reject', [FinalProjectController::class, 'reject'])->name('reject');
+
+                // Delete KTI
+                Route::delete('/{id}', [FinalProjectController::class, 'destroy'])->name('delete');
+            });
+
+            // ================= LAYANAN (ARCHIVE) =================
+            Route::prefix('layanan')->name('layanan.')->group(function () {
+
+                Route::get('/', [ArchiveController::class, 'index'])->name('index');
+
+                Route::get('/{category}', [ArchiveController::class, 'byCategory'])->name('category');
+
+                Route::post('/', [ArchiveController::class, 'store'])->name('store');
+                Route::put('/{id}', [ArchiveController::class, 'update'])->name('update');
+                Route::delete('/{id}', [ArchiveController::class, 'destroy'])->name('delete');
+            });
+
         });
 
-    });
+        // User
+        Route::middleware(['auth'])->prefix('user')->group(function () {
 
+            // Dashboard
+            Route::get('/dashboard', function() {
+                return view('user.page.home');
+            })->name('user.dashboard');
 
-    Route::prefix('final-project')->name('final_project.')->group(function() {
+            // ================= PINJAM =================
+            Route::get('/pinjam', [CollectionController::class, 'pinjam'])
+                ->name('user.pinjam');
 
-    Route::get('/kti', [FinalProjectController::class,'index'])
-        ->name('kti')
-        ->defaults('category','kti');
+            // ================= ORDERS =================
+            Route::post('/orders', [OrderController::class, 'store'])
+                ->name('orders.store');
 
-    Route::middleware('auth')->group(function () {
-        Route::post('/kti/store', [FinalProjectController::class,'store'])->name('kti.store');
-        Route::post('/kti/update/{id}', [FinalProjectController::class,'update'])->name('kti.update');
-        Route::delete('/kti/delete/{id}', [FinalProjectController::class,'destroy'])->name('kti.delete');
-    });
+            Route::get('/history', [OrderController::class, 'history'])
+                ->name('user.history');
 
-    Route::get('/koleksi/{category}', [FinalProjectController::class,'index'])
-        ->name('koleksi')
-        ->where('category','ebook|e-article|cd|video');
+            // ================= KOLEKSI =================
+            Route::prefix('koleksi')->name('user.koleksi.')->group(function () {
+
+                Route::get('/jurnal', [CollectionController::class, 'showUserMenu'])
+                    ->name('jurnal')
+                    ->defaults('menu_type', 'jurnal');
+
+                Route::get('/buku-pengayaan', [CollectionController::class, 'showUserMenu'])
+                    ->name('buku_pengayaan')
+                    ->defaults('menu_type', 'buku_pengayaan');
+
+                Route::get('/buku-referensi', [CollectionController::class, 'showUserMenu'])
+                    ->name('buku_referensi')
+                    ->defaults('menu_type', 'buku_referensi');
+
+                Route::get('/majalah', [CollectionController::class, 'showUserMenu'])
+                    ->name('majalah')
+                    ->defaults('menu_type', 'majalah');
+
+                Route::get('/{id}', [CollectionController::class, 'show'])
+                    ->name('show');
+
+            });
+
+            // ================= PROFILE =================
+            Route::prefix('profile')->name('user.profile.')->group(function () {
+
+                // Mahasiswa
+                Route::get('/visi-misi', [ProfileController::class, 'showVisiMisiMahasiswa'])
+                    ->name('visi_misi');
+
+                Route::get('/tugas-fungsi', [ProfileController::class, 'showTugasFungsiMahasiswa'])
+                    ->name('tugas_fungsi');
+
+                Route::get('/struktur', [ProfileController::class, 'showStrukturMahasiswa'])
+                    ->name('struktur');
+
+                Route::get('/kerjasama', [ProfileController::class, 'showKerjasamaMahasiswa'])->name('kerjasama');
+
+            });
+
+                // ================= BERITA =================
+            Route::prefix('berita')->group(function () {
+
+                // LIST BERITA USER
+                Route::get('/', [NewsController::class, 'indexUser'])
+                    ->name('user.berita');
+
+                // DETAIL BERITA USER
+                Route::get('/{id}', [NewsController::class, 'showUser'])
+                    ->name('user.berita.show');
+            });
+             Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'studentProfile'])->name('profile.menu');
 });
 
-    //Guest
 
-    Route::middleware(['web'])->group(function () {
-        Route::get('/', function () {
-            return view('guest.page.home'); // path Blade tetap: guest.page.home
-        })->name('home');
 
-        Route::get('/collections/{id}', [CollectionController::class, 'show'])
-        ->name('collections.show');
+        Route::prefix('final-project')->name('final_project.')->group(function() {
 
-        Route::get('/visi-misi', [ProfileController::class, 'showVisiMisi'])
-            ->name('guest.page.profile.visi-misi'); // path tetap
-        Route::prefix('profile')->name('guest.profile.')->group(function () {
+        Route::get('/kti', [FinalProjectController::class,'index'])
+            ->name('kti')
+            ->defaults('category','kti');
+
+        Route::middleware('auth')->group(function () {
+            Route::post('/kti/store', [FinalProjectController::class,'store'])->name('kti.store');
+            Route::post('/kti/update/{id}', [FinalProjectController::class,'update'])->name('kti.update');
+            Route::delete('/kti/delete/{id}', [FinalProjectController::class,'destroy'])->name('kti.delete');
+        });
+
+        Route::get('/koleksi/{category}', [FinalProjectController::class,'index'])
+            ->name('koleksi')
+            ->where('category','ebook|e-article|cd|video');
+    });
+
+        //Guest
+
+        Route::middleware(['web'])->group(function () {
+            Route::get('/', function () {
+                return view('guest.page.home'); // path Blade tetap: guest.page.home
+            })->name('home');
+
+            Route::get('/collections/{id}', [CollectionController::class, 'show'])
+            ->name('collections.show');
 
             Route::get('/visi-misi', [ProfileController::class, 'showVisiMisi'])
-                ->name('visi-misi');
+                ->name('guest.page.profile.visi-misi'); // path tetap
+            Route::prefix('profile')->name('guest.profile.')->group(function () {
 
-            Route::get('/tugas-fungsi', [ProfileController::class, 'showTugasFungsi'])
-                ->name('tugas-fungsi');
+                Route::get('/visi-misi', [ProfileController::class, 'showVisiMisi'])
+                    ->name('visi-misi');
 
-            Route::get('/struktur', [ProfileController::class, 'showStruktur'])
-                ->name('struktur');
+                Route::get('/tugas-fungsi', [ProfileController::class, 'showTugasFungsi'])
+                    ->name('tugas-fungsi');
 
-            Route::get('/kerjasama', [ProfileController::class, 'showKerjasama'])
-                ->name('kerjasama');
+                Route::get('/struktur', [ProfileController::class, 'showStruktur'])
+                    ->name('struktur');
+
+                Route::get('/kerjasama', [ProfileController::class, 'showKerjasama'])
+                    ->name('kerjasama');
+
+            });
+
+        // ================= BERITA (FIX FINAL) =================
+            Route::prefix('berita')->name('guest.berita.')->group(function () {
+
+                // LIST
+                Route::get('/', [NewsController::class, 'index'])
+                    ->name('index');
+
+                // DETAIL (slug OR id aman)
+                Route::get('/{identifier}', [NewsController::class, 'show'])
+                    ->where('identifier', '[0-9a-zA-Z\-]+')
+                    ->name('show');
+            });
+
+            Route::get('/koleksi/{category}', [FinalProjectController::class, 'index']);
+
+            Route::get('/layanan/{category}', [ArchiveController::class, 'indexLayananGuest'])
+                ->name('guest.layanan.show');
+        });
+
+        Route::get('/search', [CollectionController::class, 'globalSearch'])
+    ->name('guest.global_search');
+
+        Route::middleware(['auth'])->group(function () {
+
+            Route::get('/inbox', [NotificationController::class, 'index'])
+                ->name('user.inbox');
 
         });
 
-    // ================= BERITA (FIX FINAL) =================
-        Route::prefix('berita')->name('guest.berita.')->group(function () {
-
-            // LIST
-            Route::get('/', [NewsController::class, 'index'])
-                ->name('index');
-
-            // DETAIL (slug OR id aman)
-            Route::get('/{identifier}', [NewsController::class, 'show'])
-                ->where('identifier', '[0-9a-zA-Z\-]+')
-                ->name('show');
+        // routes/web.php
+        Route::prefix('user')->name('user.')->group(function () {
+            Route::get('/search-results', [CollectionController::class, 'globalSearch'])
+                ->name('global_search');
         });
 
-        Route::get('/koleksi/{category}', [FinalProjectController::class, 'index']);
+        Route::prefix('user')->group(function () {
+            Route::get('/live-search', [CollectionController::class, 'liveSearch']);
+        });
 
-        Route::get('/layanan/{category}', [ArchiveController::class, 'indexLayananGuest'])
-            ->name('guest.layanan.show');
-    });
-
-    Route::middleware(['auth'])->group(function () {
-
-        Route::get('/inbox', [NotificationController::class, 'index'])
-            ->name('user.inbox');
-
-    });
-
-    // routes/web.php
-    Route::prefix('user')->name('user.')->group(function () {
-        Route::get('/search-results', [CollectionController::class, 'globalSearch'])
-            ->name('global_search');
-    });
-
-    Route::prefix('user')->group(function () {
-        Route::get('/live-search', [CollectionController::class, 'liveSearch']);
-    });
-
-    // Route untuk menu profil (ikon profil)
-Route::middleware(['auth'])->get('/profile-menu', [ProfileMenuController::class, 'index'])->name('profile.menu');
-
-// Group route profil user
-Route::prefix('user')->name('user.')->middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileMenuController::class, 'show'])->name('profile.show');
-    Route::get('/profile/edit', [ProfileMenuController::class, 'editProfile'])->name('profile.edit');
-    Route::put('/profile/update', [ProfileMenuController::class, 'updateProfile'])->name('profile.update');
-});

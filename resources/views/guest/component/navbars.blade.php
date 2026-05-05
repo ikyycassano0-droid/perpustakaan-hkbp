@@ -44,8 +44,6 @@
                     Layanan <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 <ul class="dropdown-menu-modern">
-                    <li><a href="{{ route('guest.layanan.show', 'pinjam_buku') }}" class="dropdown-item-modern">Pinjam Buku</a></li>
-                    <li><a href="{{ route('guest.layanan.show', 'upload_ta') }}" class="dropdown-item-modern">Upload TA</a></li>
                     <li><a href="{{ route('guest.layanan.show', 'waktu_layanan') }}" class="dropdown-item-modern">Waktu Layanan</a></li>
                 </ul>
             </li>
@@ -58,27 +56,15 @@
                 <ul class="dropdown-menu-modern" style="min-width: 240px;">
                     <li class="submenu-modern">
                         <a href="#" class="dropdown-item-modern flex justify-between items-center">
-                            Koleksi Tercetak <span class="text-indigo-400 text-xs">▶</span>
-                        </a>
-                        <ul class="submenu-menu-modern">
-                            <li><a href="#" class="dropdown-item-modern">Jurnal</a></li>
-                            <li><a href="#" class="dropdown-item-modern">Buku Pengayaan</a></li>
-                            <li><a href="#" class="dropdown-item-modern">Buku Referensi</a></li>
-                            <li><a href="#" class="dropdown-item-modern">Majalah</a></li>
-                            <li><a href="#" class="dropdown-item-modern">Skripsi/Tesis</a></li>
-                        </ul>
-                    </li>
-                    <li class="submenu-modern">
-                        <a href="#" class="dropdown-item-modern flex justify-between items-center">
                             Koleksi Elektronik <span class="text-indigo-400 text-xs">▶</span>
                         </a>
                         <ul class="submenu-menu-modern">
-                            <li><a href="#" class="dropdown-item-modern">E-book</a></li>
-                            <li><a href="#" class="dropdown-item-modern">E-article</a></li>
-                            <li><a href="#" class="dropdown-item-modern">CD/DVD</a></li>
-                            <li><a href="#" class="dropdown-item-modern">Video Edukasi</a></li>
-                            <li><a href="#" class="dropdown-item-modern">KTI Digital</a></li>
-                            <li><a href="#" class="dropdown-item-modern">Jurnal Online</a></li>
+                            <li><a href="{{ url('/koleksi/ebook') }}" class="dropdown-item-modern">E-book</a></li>
+                            <li><a href="{{ url('/koleksi/earticle') }}" class="dropdown-item-modern">E-article</a></li>
+                            <li><a href="{{ url('/koleksi/cd') }}" class="dropdown-item-modern">CD/DVD</a></li>
+                            <li><a href="{{ url('/koleksi/video') }}" class="dropdown-item-modern">Video Edukasi</a></li>
+                            <li><a href="{{ url('/koleksi/kti') }}" class="dropdown-item-modern">KTI Digital</a></li>
+                            <li><a href="{{ url('/koleksi/jurnal') }}" class="dropdown-item-modern">Jurnal Online</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -86,7 +72,7 @@
 
             <!-- BERITA -->
             <li class="nav-item-modern">
-                <a href="{{ route('guest.berita.index') }}" class="px-3 py-2 block">Berita</a>
+                <a href="{{ url('/berita') }}" class="px-3 py-2 block">Berita</a>
             </li>
 
             <!-- INFORMASI DROPDOWN -->
@@ -95,7 +81,7 @@
                     Informasi <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 <ul class="dropdown-menu-modern">
-                    <li><a href="#" class="dropdown-item-modern">Panduan</a></li>
+                    <li><a href="{{ url('/informasi/panduan') }}" class="dropdown-item-modern">Panduan</a></li>
                 </ul>
             </li>
         </ul>

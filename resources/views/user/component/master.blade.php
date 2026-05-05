@@ -568,7 +568,7 @@
 
 <!-- Cursor glow -->
 <div class="cursor-glow" id="cursorGlow"></div>
-@include('guest.component.navbars')
+@include('user.component.navbars')
 
 <!-- LOGIN MODAL -->
 <div id="loginModal"

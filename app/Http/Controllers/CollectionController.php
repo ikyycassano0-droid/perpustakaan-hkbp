@@ -282,7 +282,7 @@ class CollectionController extends Controller
                 $query->where('title', 'LIKE', "%$keyword%")
                     ->orWhere('description', 'LIKE', "%$keyword%")
                     ->orWhere('publisher', 'LIKE', "%$keyword%")
-                    ->orWhereJsonContains('author', $keyword); // ✅ FIX
+                    ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(author, '$')) LIKE ?", ["%$keyword%"]);
             })
             ->get()
             ->map(function ($item) use ($keyword) {
@@ -384,9 +384,5 @@ class CollectionController extends Controller
         return response()->json(
             $collections->merge($finalProjects)
         );
-        return view($view, [
-            'collections' => $collections,
-            'menuType' => $menu_type
-        ]);
     }
 }

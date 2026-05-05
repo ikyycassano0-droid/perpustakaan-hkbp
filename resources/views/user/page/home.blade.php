@@ -166,10 +166,29 @@
     </p>
 
     <div class="mt-10 fade-up">
-        <button class="bg-indigo-500 px-8 py-3 rounded-full glow hover:scale-110 transition">
-            Mulai Jelajah
-        </button>
+    <div class="max-w-3xl mx-auto">
+        <form action="{{ route('user.global_search') }}" method="GET" class="relative">
+            <div class="relative flex items-center">
+                <!-- Input Search -->
+                <input type="text" name="keyword"
+                    class="w-full px-6 py-4 pl-14 pr-32 rounded-full bg-white/10 backdrop-blur-sm border border-indigo-500/30 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/50 text-white placeholder-gray-400 transition-all duration-300"
+                    placeholder="Cari judul buku, penulis, atau kata kunci...">
+
+                <!-- Ikon Search di Kiri -->
+                <div class="absolute left-5 top-1/2 transform -translate-y-1/2 text-indigo-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+
+                <!-- Tombol Cari di Kanan -->
+                <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-1.5 rounded-full text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg">
+                    Cari
+                </button>
+            </div>
+        </form>
     </div>
+</div>
 
     <!-- 3D CARD -->
     <div class="mt-20 flex justify-center">
