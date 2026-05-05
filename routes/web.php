@@ -67,7 +67,7 @@
 
         });
 
-        // ================= PROFILE (🔥 SUDAH DINAMIS TYPE) =================
+        // ================= PROFILE =================
         Route::prefix('profile')->name('profile.')->group(function () {
 
             Route::get('/', [ProfileController::class, 'index'])->name('index');
@@ -76,8 +76,6 @@
             Route::delete('/{id}', [ProfileController::class, 'destroy'])->name('destroy');
         });
 
-
-        // ================= BERITA =================
         // ================= BERITA =================
         Route::prefix('berita')->name('berita.')->group(function () {
             Route::get('/', [NewsController::class, 'index_admin'])->name('index');
@@ -189,6 +187,15 @@
             Route::delete('/{id}', [ArchiveController::class, 'destroy'])->name('delete');
         });
 
+        // ================= PANDUAN (ARCHIVE) =================
+        Route::prefix('panduan')->name('panduan.')->group(function () {
+            Route::get('/', [ArchiveController::class, 'index'])->name('index');
+            Route::post('/', [ArchiveController::class, 'store'])->name('store');
+            Route::put('/{id}', [ArchiveController::class, 'update'])->name('update');
+            Route::delete('/{id}', [ArchiveController::class, 'destroy'])->name('delete');
+
+        });
+
     });
 
     // User
@@ -199,7 +206,36 @@
             return view('user.page.home');
         })->name('user.dashboard');
 
-        // ================= PINJAM =================
+        // ================= Berita =================
+        Route::prefix('berita')->name('user.berita.')->group(function () {
+            Route::get('/', [NewsController::class, 'indexUser'])
+                ->name('index');
+
+            Route::get('/{identifier}', [NewsController::class, 'showUser'])
+                ->name('show');
+        });
+
+             // ================= LAYANAN =================
+        Route::prefix('layanan')->name('user.layanan.')->group(function () {
+
+            Route::get('/{slug}', function ($slug) {
+
+                $map = [
+                    'pinjam_buku'    => 'user.page.Layanan.pinbal',
+                    'upload_ta'      => 'user.page.Layanan.upload_ta',
+                    'waktu_layanan'  => 'user.page.Layanan.waktu_layanan',
+                ];
+
+                if (!array_key_exists($slug, $map)) {
+                    abort(404);
+                }
+
+                return view($map[$slug]);
+
+            })->name('show');
+
+        });
+                // ================= PINJAM =================
         Route::get('/pinjam', [CollectionController::class, 'pinjam'])
             ->name('user.pinjam');
 
@@ -289,6 +325,9 @@
         Route::get('/', function () {
             return view('guest.page.home'); // path Blade tetap: guest.page.home
         })->name('home');
+
+        Route::get('/panduan', [ArchiveController::class, 'indexPanduanGuest'])
+        ->name('panduan');
 
         Route::get('/collections/{id}', [CollectionController::class, 'show'])
         ->name('collections.show');

@@ -43,6 +43,29 @@ class ProfileController extends Controller
         return view('guest.page.profile.visi-misi', compact('visi', 'misi', 'about'));
     }
 
+        public function showVisiMisiMahasiswa()
+    {
+        $visi = Profile::where('type', 'visi_misi')
+            ->where('sub_type', 'visi')
+            ->where('active', true)
+            ->first();
+
+        $misi = Profile::where('type', 'visi_misi')
+            ->where('sub_type', 'misi')
+            ->where('active', true)
+            ->orderBy('order')
+            ->get();
+
+        $about = Profile::where('type', 'visi_misi')
+            ->where('sub_type', 'about')
+            ->where('active', true)
+            ->first();
+
+        return view('user.page.profile.visi-misi', compact('visi', 'misi', 'about'));
+    }
+
+
+
     public function showTugasFungsi()
     {
         $tugas = Profile::where('type', 'tugas_fungsi')
@@ -66,6 +89,29 @@ class ProfileController extends Controller
         return view('guest.page.profile.tugas-fungsi', compact('tugas', 'fungsi', 'tujuan'));
     }
 
+        public function showTugasFungsiMahasiswa()
+    {
+        $tugas = Profile::where('type', 'tugas_fungsi')
+            ->where('sub_type', 'tugas')
+            ->where('active', true)
+            ->orderBy('order')
+            ->get();
+
+        $fungsi = Profile::where('type', 'tugas_fungsi')
+            ->where('sub_type', 'fungsi')
+            ->where('active', true)
+            ->orderBy('order')
+            ->get();
+
+        $tujuan = Profile::where('type', 'tugas_fungsi')
+            ->where('sub_type', 'tujuan')
+            ->where('active', true)
+            ->orderBy('order')
+            ->get();
+
+        return view('user.page.profile.tugas-fungsi', compact('tugas', 'fungsi', 'tujuan'));
+    }
+
     public function showStruktur()
     {
         $struktur = Profile::where('type', 'struktur')
@@ -76,6 +122,17 @@ class ProfileController extends Controller
         return view('guest.page.profile.struktur-pengurus', compact('struktur'));
     }
 
+    public function showStrukturMahasiswa()
+    {
+        $struktur = Profile::where('type', 'struktur')
+            ->where('active', true)
+            ->orderBy('order')
+            ->get();
+
+        return view('user.page.profile.struktur-pengurus', compact('struktur'));
+    }
+
+
     public function showKerjasama()
     {
         $kerjasama = Profile::where('type', 'kerjasama')
@@ -84,6 +141,16 @@ class ProfileController extends Controller
             ->get();
 
         return view('guest.page.profile.kerjasama', compact('kerjasama'));
+    }
+
+    public function showKerjasamaMahasiswa()
+    {
+        $kerjasama = Profile::where('type', 'kerjasama')
+            ->where('active', true)
+            ->orderBy('order')
+            ->get();
+
+        return view('user.page.profile.kerjasama', compact('kerjasama'));
     }
 
     // ================= ADMIN =================
@@ -100,8 +167,6 @@ class ProfileController extends Controller
         $order = (int) $request->order;
 
         if ($order < 1) $order = 1;
-
-        // 🔥 HANDLE NULL SUB TYPE
         $query = Profile::where('type', $request->type);
 
         if ($request->sub_type) {

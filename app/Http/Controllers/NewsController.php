@@ -72,6 +72,22 @@ class NewsController extends Controller
             return view('guest.page.berita_detail', compact('news', 'related'));
     }
 
+    public function showUser($identifier)
+    {
+        $news = News::published()
+            ->where('slug', $identifier)
+            ->orWhere('id', $identifier)
+            ->firstOrFail();
+
+        $related = News::published()
+            ->where('id', '!=', $news->id)
+            ->latest()
+            ->take(3)
+            ->get();
+
+        return view('user.page.berita_detail', compact('news', 'related'));
+    }
+
     // ================= ADMIN =================
     public function index_admin()
     {
@@ -96,8 +112,6 @@ class NewsController extends Controller
 
         News::create([
             'title'       => $request->title,
-
-            // 🔥 FIX: slug unik (biar tidak bentrok)
             'slug'        => Str::slug($request->title) . '-' . time(),
 
             'excerpt'     => $request->excerpt,

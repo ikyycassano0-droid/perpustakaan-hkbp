@@ -1,4 +1,3 @@
-{{-- resources/views/tugas-fungsi.blade.php --}}
 @extends('guest.component.master')
 
 @section('title', 'Tugas & Fungsi - AKPER HKBP Balige')

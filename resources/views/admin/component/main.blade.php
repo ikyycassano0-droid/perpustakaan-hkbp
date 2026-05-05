@@ -260,9 +260,9 @@
                     </a>
 
                     <!-- Projects -->
-                    <a href="#" class="menu-item-minimal flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                    <a href="{{ route('admin.panduan.index') }}" class="menu-item-minimal flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
                         <i class="fas fa-folder w-4 text-sm"></i>
-                        <span>Projects</span>
+                        <span>Panduan</span>
                     </a>
                 </nav>
                 

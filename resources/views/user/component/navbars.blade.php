@@ -5,7 +5,7 @@
         <!-- LOGO SECTION -->
         <div class="flex items-center gap-3">
             <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-400/30">
-                <img src="assets/logo akper.png" 
+                <img src="{{ asset('assets/img/logo akper.png') }}" 
                     alt="Logo AKPER"
                     class="w-7 h-7 object-contain">
             </div>
@@ -20,7 +20,7 @@
             
             <!-- HOME -->
             <li class="nav-item-modern">
-                <a href="{{ route('home') }}" class="px-3 py-2 block">Home</a>
+                <a href="{{ route('user.dashboard') }}" class="px-3 py-2 block">Home</a>
             </li>
 
             <!-- PROFILE DROPDOWN -->
@@ -44,9 +44,9 @@
                     Layanan <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 <ul class="dropdown-menu-modern">
-                    <li><a href="{{ route('guest.layanan.show', 'pinjam_buku') }}" class="dropdown-item-modern">Pinjam Buku</a></li>
-                    <li><a href="{{ route('guest.layanan.show', 'upload_ta') }}" class="dropdown-item-modern">Upload TA</a></li>
-                    <li><a href="{{ route('guest.layanan.show', 'waktu_layanan') }}" class="dropdown-item-modern">Waktu Layanan</a></li>
+                    <li><a href="{{ route('user.layanan.show', 'pinjam_buku') }}" class="dropdown-item-modern">Pinjam Buku</a></li>
+                    <li><a href="{{ route('user.layanan.show', 'upload_ta') }}" class="dropdown-item-modern">Upload TA</a></li>
+                    <li><a href="{{ route('user.layanan.show', 'waktu_layanan') }}" class="dropdown-item-modern">Waktu Layanan</a></li>
                 </ul>
             </li>
 
@@ -91,7 +91,7 @@
 
             <!-- BERITA -->
             <li class="nav-item-modern">
-                <a href="{{ route('guest.berita.index') }}" class="px-3 py-2 block">Berita</a>
+                <a href="{{ route('user.berita') }}" class="px-3 py-2 block">Berita</a>
             </li>
 
             <!-- INFORMASI DROPDOWN -->
