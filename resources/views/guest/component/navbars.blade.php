@@ -1,4 +1,4 @@
-<!-- NAVBAR MODERN FUTURISTIC -->
+x<!-- NAVBAR MODERN FUTURISTIC -->
 <header class="fixed top-0 left-0 w-full z-[999] px-6 py-4">
     <div class="navbar-container flex items-center justify-between">
 
@@ -81,7 +81,7 @@
                     Informasi <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 <ul class="dropdown-menu-modern">
-                    <li><a href="{{ url('/informasi/panduan') }}" class="dropdown-item-modern">Panduan</a></li>
+                    <li><a href="{{ route('panduan') }}" class="dropdown-item-modern">Panduan</a></li>
                 </ul>
             </li>
         </ul>

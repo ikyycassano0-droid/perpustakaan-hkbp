@@ -1,11 +1,11 @@
 @extends('user.component.master')
 
-@section('title', 'Detail Buku Pengayaan - AKPER HKBP Balige')
+@section('title', 'Detail Majalah - AKPER HKBP Balige')
 
 @push('styles')
 <style>
     /* ============================================
-       CSS KHUSUS UNTUK HALAMAN DETAIL BUKU PENGAYAAN
+       CSS KHUSUS UNTUK HALAMAN DETAIL BUKU
        Hanya CSS yang BELUM ADA di master blade
     ============================================ */
     
@@ -73,11 +73,19 @@
         cursor: pointer;
         color: white;
         font-size: 0.9rem;
+        display: inline-block;
+        text-align: center;
     }
     
     .btn-primary:hover {
         transform: scale(1.05);
         box-shadow: 0 0 25px rgba(99, 102, 241, 0.5);
+    }
+    
+    .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
     }
     
     .btn-outline {
@@ -90,6 +98,8 @@
         cursor: pointer;
         color: #c7d2fe;
         font-size: 0.85rem;
+        display: inline-block;
+        text-align: center;
     }
     
     .btn-outline:hover {
@@ -101,6 +111,7 @@
     .btn-outline:disabled {
         opacity: 0.5;
         cursor: not-allowed;
+        transform: none;
     }
     
     .btn-link {
@@ -170,6 +181,42 @@
         transform: translateX(0);
     }
     
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(12px);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        visibility: hidden;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+    
+    .modal-overlay.active {
+        visibility: visible;
+        opacity: 1;
+    }
+    
+    .modal-container {
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(99, 102, 241, 0.5);
+        border-radius: 1.5rem;
+        width: 100%;
+        max-width: 28rem;
+        margin: 1rem;
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+    }
+    
+    .modal-overlay.active .modal-container {
+        transform: scale(1);
+    }
+    
     /* Delay utilities */
     .delay-1 { transition-delay: 0.1s; }
     .delay-2 { transition-delay: 0.2s; }
@@ -231,7 +278,7 @@
                                 class="w-full">
                         </div>
 
-                        <!-- BUTTON SECTION - LOGIKA SAMA DENGAN HALAMAN KOLEKSI -->
+                        <!-- BUTTON SECTION - LOGIC SAMA DENGAN MAJALAH -->
                         <div class="mt-4 flex flex-col gap-3">
 
                             @php
@@ -250,17 +297,17 @@
                             @auth
                                 @if($hasPending)
                                     <button class="btn-primary w-full opacity-50" disabled>
-                                        ⏳ Menunggu Persetujuan
+                                        ⏳ Diproses
                                     </button>
                                     <small class="text-center text-yellow-500 text-xs">Anda sudah meminjam buku ini, menunggu konfirmasi admin</small>
                                 @elseif($collection->available_stock > 0)
-                                    <button onclick="openModal({{ $collection->id }}, '{{ $collection->title }}')"
+                                    <button onclick="openModal({{ $collection->id }}, '{{ addslashes($collection->title) }}')"
                                             class="btn-primary w-full">
                                         📖 Pinjam Buku
                                     </button>
                                 @else
                                     <button class="btn-outline w-full opacity-50" disabled>
-                                        ❌ Stok Habis
+                                        ❌ Habis
                                     </button>
                                 @endif
                             @else
@@ -385,11 +432,9 @@
 
 </div>
 
-{{-- ================= MODAL PINJAM (SAMA DENGAN KOLEKSI) ================= --}}
-<div id="pinjamModal"
-     class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
-
-    <div class="bg-slate-900 w-full max-w-md rounded-2xl border border-indigo-500/30 p-6">
+{{-- ================= MODAL PINJAM (SAMA DENGAN MAJALAH) ================= --}}
+<div id="pinjamModal" class="modal-overlay">
+    <div class="modal-container p-6">
 
         <h2 class="text-xl font-bold text-indigo-300 mb-4">
             Form Peminjaman
@@ -407,7 +452,7 @@
                        readonly>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3">  
                 <label class="text-xs text-gray-400">Tanggal Pinjam</label>
                 <input type="date" name="borrow_date" id="borrow_date"
                        class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700"
@@ -429,6 +474,7 @@
                 </button>
 
                 <button type="submit"
+                        id="submitPinjamBtn"
                         class="w-full py-2 rounded bg-indigo-600 text-white font-semibold">
                     Pinjam
                 </button>
@@ -438,6 +484,7 @@
 
     </div>
 </div>
+
 @endsection
 
 @push('scripts')
@@ -448,7 +495,6 @@ function formatDate(date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-
     return `${year}-${month}-${day}`;
 }
 
@@ -466,24 +512,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ================= OPEN MODAL =================
 function openModal(id, title) {
-
     const modal = document.getElementById('pinjamModal');
-    modal.classList.remove('hidden');
+    modal.classList.add('active');
 
     document.getElementById('collection_id').value = id;
     document.getElementById('book_title').value = title;
 
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
 
     const borrowInput = document.getElementById('borrow_date');
     const returnInput = document.getElementById('return_date');
 
-    // Reset value dulu
+    // Reset value
     borrowInput.value = '';
     returnInput.value = '';
 
-    // Set ulang
+    // Set borrow date = hari ini
     borrowInput.min = formatDate(today);
     borrowInput.value = formatDate(today);
 
@@ -500,28 +545,37 @@ function openModal(id, title) {
 
 // ================= CLOSE MODAL =================
 function closeModal() {
-    document.getElementById('pinjamModal').classList.add('hidden');
+    const modal = document.getElementById('pinjamModal');
+    modal.classList.remove('active');
+    
+    // Reset form
+    document.getElementById('pinjamForm').reset();
+    
+    // Enable submit button
+    const submitBtn = document.getElementById('submitPinjamBtn');
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Pinjam';
+    }
 }
 
-// Klik luar modal
-document.addEventListener('click', function(e){
+// Klik luar modal untuk menutup
+document.addEventListener('click', function(e) {
     const modal = document.getElementById('pinjamModal');
-    if (e.target === modal) closeModal();
+    if (e.target === modal) {
+        closeModal();
+    }
 });
 
 // ================= UPDATE RETURN DINAMIS =================
-document.addEventListener('change', function(e){
-
+document.addEventListener('change', function(e) {
     if (e.target.id === 'borrow_date') {
-
         const borrow = new Date(e.target.value);
-        borrow.setHours(0,0,0,0);
+        borrow.setHours(0, 0, 0, 0);
 
         const returnInput = document.getElementById('return_date');
-
         const minReturn = new Date(borrow);
         minReturn.setDate(minReturn.getDate() + 1);
-
         const maxReturn = new Date(borrow);
         maxReturn.setDate(maxReturn.getDate() + 7);
 
@@ -529,7 +583,6 @@ document.addEventListener('change', function(e){
         returnInput.max = formatDate(maxReturn);
 
         const currentReturn = new Date(returnInput.value);
-
         if (currentReturn < minReturn || currentReturn > maxReturn) {
             returnInput.value = formatDate(minReturn);
         }
@@ -537,15 +590,13 @@ document.addEventListener('change', function(e){
 });
 
 // ================= VALIDASI SUBMIT =================
-document.addEventListener('submit', function(e){
-
+document.addEventListener('submit', function(e) {
     if (e.target.id === 'pinjamForm') {
-
         const borrow = new Date(document.getElementById('borrow_date').value);
         const ret = new Date(document.getElementById('return_date').value);
 
-        borrow.setHours(0,0,0,0);
-        ret.setHours(0,0,0,0);
+        borrow.setHours(0, 0, 0, 0);
+        ret.setHours(0, 0, 0, 0);
 
         const diff = (ret - borrow) / (1000 * 60 * 60 * 24);
 
@@ -561,9 +612,11 @@ document.addEventListener('submit', function(e){
             return;
         }
 
-        const btn = e.target.querySelector('button[type="submit"]');
-        btn.innerText = 'Memproses...';
-        btn.disabled = true;
+        const btn = document.getElementById('submitPinjamBtn');
+        if (btn) {
+            btn.innerText = 'Memproses...';
+            btn.disabled = true;
+        }
     }
 });
 

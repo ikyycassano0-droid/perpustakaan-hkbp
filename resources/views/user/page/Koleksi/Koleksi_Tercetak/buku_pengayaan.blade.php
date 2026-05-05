@@ -310,12 +310,15 @@
         </p>
     </section>
 
-    {{-- GRID (🔥 SEKARANG PAKAI BLADE, BUKAN JS) --}}
+    {{-- GRID --}}
     <section class="max-w-7xl mx-auto px-5 pb-20">
 
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5">
 
             @forelse($collections as $book)
+                @php
+                $hasPending = in_array($book->id, $pendingCollectionIds ?? []);
+                @endphp
 
                 <div class="book-card">
 
@@ -346,11 +349,17 @@
                             </a>
 
                             @auth
-                                @if($book->available_stock > 0)
+                                @if($hasPending)
+                                    <button class="btn-outline flex-1 opacity-50" disabled>
+                                        Diproses
+                                    </button>
+
+                                @elseif($book->available_stock > 0)
                                     <button onclick="openModal({{ $book->id }}, '{{ $book->title }}')"
                                             class="btn-primary flex-1">
                                         Pinjam
                                     </button>
+
                                 @else
                                     <button class="btn-outline flex-1 opacity-50" disabled>
                                         Habis
@@ -441,7 +450,11 @@
 
 // ================= FORMAT DATE =================
 function formatDate(date) {
-    return date.toISOString().split('T')[0];
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
 }
 
 // ================= OPEN MODAL =================
@@ -459,11 +472,14 @@ function openModal(id, title) {
     const borrowInput = document.getElementById('borrow_date');
     const returnInput = document.getElementById('return_date');
 
-    // minimal hari ini
+    // 🔥 RESET VALUE DULU
+    borrowInput.value = '';
+    returnInput.value = '';
+
+    // set ulang
     borrowInput.min = formatDate(today);
     borrowInput.value = formatDate(today);
 
-    // return H+1 sampai H+7
     const minReturn = new Date(today);
     minReturn.setDate(minReturn.getDate() + 1);
 
@@ -473,6 +489,8 @@ function openModal(id, title) {
     returnInput.min = formatDate(minReturn);
     returnInput.max = formatDate(maxReturn);
     returnInput.value = formatDate(minReturn);
+
+    console.log("TODAY:", formatDate(today));
 }
 
 // ================= CLOSE MODAL =================

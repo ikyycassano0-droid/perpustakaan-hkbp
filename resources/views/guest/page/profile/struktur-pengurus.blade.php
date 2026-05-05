@@ -1,4 +1,3 @@
-{{-- resources/views/struktur.blade.php --}}
 @extends('guest.component.master')
 
 @section('title', 'Struktur Pengurus - AKPER HKBP Balige')

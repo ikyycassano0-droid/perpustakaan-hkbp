@@ -5,7 +5,7 @@
 @push('styles')
 <style>
     /* ============================================
-       CSS KHUSUS UNTUK HALAMAN DETAIL BUKU PENGAYAAN
+       CSS KHUSUS UNTUK HALAMAN DETAIL BUKU Referensi
        Hanya CSS yang BELUM ADA di master blade
     ============================================ */
     

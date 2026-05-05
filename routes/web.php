@@ -68,8 +68,8 @@
 
             });
 
-            // ================= PROFILE (🔥 SUDAH DINAMIS TYPE) =================
-            Route::prefix('profile')->name('profile.')->group(function () {
+        // ================= PROFILE (🔥 SUDAH DINAMIS TYPE) =================
+        Route::prefix('profile')->name('profile.')->group(function () {
 
                 Route::get('/', [ProfileController::class, 'index'])->name('index');
                 Route::post('/', [ProfileController::class, 'store'])->name('store');
@@ -78,24 +78,24 @@
             });
 
 
-            // ================= BERITA =================
-            // ================= BERITA =================
-            Route::prefix('berita')->name('berita.')->group(function () {
-                Route::get('/', [NewsController::class, 'index_admin'])->name('index');
-                Route::post('/store', [NewsController::class, 'store'])->name('store');
-                Route::put('/{news}', [NewsController::class, 'update'])->name('update');
-                Route::delete('/{news}', [NewsController::class, 'destroy'])->name('destroy');
-            });
+        // ================= BERITA =================
+        // ================= BERITA =================
+        Route::prefix('berita')->name('berita.')->group(function () {
+            Route::get('/', [NewsController::class, 'index_admin'])->name('index');
+            Route::post('/store', [NewsController::class, 'store'])->name('store');
+            Route::put('/{news}', [NewsController::class, 'update'])->name('update');
+            Route::delete('/{news}', [NewsController::class, 'destroy'])->name('destroy');
+        });
 
-            // ================= COLLECTION =================
-            Route::prefix('collections')->name('collections.')->group(function () {
-                Route::get('/', [CollectionController::class, 'index_admin'])->name('index');
-                Route::post('/', [CollectionController::class, 'store'])->name('store');
-                Route::get('/{collection}/edit', [CollectionController::class, 'edit'])->name('edit');
-                Route::put('/{collection}', [CollectionController::class, 'update'])->name('update');
-                Route::delete('/{collection}', [CollectionController::class, 'destroy'])->name('destroy');
-                Route::get('/pengelolaan-buku', [CollectionController::class, 'pengelolaanBuku'])->name('pengelolaan_buku');
-            });
+        // ================= COLLECTION =================
+        Route::prefix('collections')->name('collections.')->group(function () {
+            Route::get('/', [CollectionController::class, 'index_admin'])->name('index');
+            Route::post('/', [CollectionController::class, 'store'])->name('store');
+            Route::get('/{collection}/edit', [CollectionController::class, 'edit'])->name('edit');
+            Route::put('/{collection}', [CollectionController::class, 'update'])->name('update');
+            Route::delete('/{collection}', [CollectionController::class, 'destroy'])->name('destroy');
+            Route::get('/pengelolaan-buku', [CollectionController::class, 'pengelolaanBuku'])->name('pengelolaan_buku');
+        });
 
             // ================= CLASSIFICATION =================
             Route::prefix('classification')->name('classification.')->group(function () {
@@ -191,7 +191,7 @@
                 Route::delete('/{id}', [ArchiveController::class, 'destroy'])->name('delete');
             });
 
-        });
+    });
 
         // User
         Route::middleware(['auth'])->prefix('user')->group(function () {
@@ -201,9 +201,9 @@
                 return view('user.page.home');
             })->name('user.dashboard');
 
-            // ================= PINJAM =================
-            Route::get('/pinjam', [CollectionController::class, 'pinjam'])
-                ->name('user.pinjam');
+        // ================= PINJAM =================
+        Route::get('/pinjam', [CollectionController::class, 'pinjam'])
+            ->name('user.pinjam');
 
             // ================= ORDERS =================
             Route::post('/orders', [OrderController::class, 'store'])
@@ -288,10 +288,10 @@
 
         //Guest
 
-        Route::middleware(['web'])->group(function () {
-            Route::get('/', function () {
-                return view('guest.page.home'); // path Blade tetap: guest.page.home
-            })->name('home');
+    Route::middleware(['web'])->group(function () {
+        Route::get('/', function () {
+            return view('guest.page.home'); // path Blade tetap: guest.page.home
+        })->name('home');
 
             Route::get('/collections/{id}', [CollectionController::class, 'show'])
             ->name('collections.show');
@@ -342,6 +342,9 @@
                 ->name('user.inbox');
 
         });
+
+        Route::get('/panduan', [ArchiveController::class, 'indexPanduanGuest'])
+        ->name('panduan');
 
         // routes/web.php
         Route::prefix('user')->name('user.')->group(function () {

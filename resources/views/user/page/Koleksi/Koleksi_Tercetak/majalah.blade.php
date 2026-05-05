@@ -86,6 +86,8 @@
         cursor: pointer;
         color: #cbd5e1;
         font-size: 0.85rem;
+        display: block;
+        text-decoration: none;
     }
     
     .sidebar-item:hover {
@@ -200,14 +202,16 @@
     /* Buttons */
     .btn-primary {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        padding: 8px 20px;
+        padding: 6px 14px;
         border-radius: 30px;
         font-weight: 600;
         transition: all 0.3s ease;
         border: none;
         cursor: pointer;
         color: white;
-        font-size: 0.8rem;
+        font-size: 0.7rem;
+        display: inline-block;
+        white-space: nowrap;
     }
     
     .btn-primary:hover {
@@ -215,16 +219,24 @@
         box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
     }
     
+    .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
     .btn-outline {
         background: transparent;
-        padding: 8px 20px;
+        padding: 6px 14px;
         border-radius: 30px;
         font-weight: 500;
         transition: all 0.3s ease;
         border: 1px solid rgba(99, 102, 241, 0.5);
         cursor: pointer;
         color: #c7d2fe;
-        font-size: 0.8rem;
+        font-size: 0.7rem;
+        display: inline-block;
+        white-space: nowrap;
     }
     
     .btn-outline:hover {
@@ -232,17 +244,23 @@
         border-color: #6366f1;
     }
     
+    .btn-outline:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
     .btn-link {
         background: transparent;
         border: none;
         color: #a5b4fc;
         cursor: pointer;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         transition: all 0.3s ease;
     }
     
     .btn-link:hover {
         color: #818cf8;
+        text-decoration: underline;
     }
     
     /* Accreditation Badge */
@@ -253,6 +271,34 @@
         border-radius: 20px;
         font-size: 0.7rem;
         font-weight: 600;
+    }
+    
+    /* Status Badge */
+    .status-tersedia {
+        background: rgba(16, 185, 129, 0.2);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.5);
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-size: 0.65rem;
+    }
+    
+    .status-diproses {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+        border: 1px solid rgba(245, 158, 11, 0.5);
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-size: 0.65rem;
+    }
+    
+    .status-habis {
+        background: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.5);
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-size: 0.65rem;
     }
     
     /* Pagination */
@@ -302,15 +348,62 @@
         transform: translateX(0);
     }
     
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(12px);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        visibility: hidden;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+    
+    .modal-overlay.active {
+        visibility: visible;
+        opacity: 1;
+    }
+    
+    .modal-container {
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(99, 102, 241, 0.5);
+        border-radius: 1.5rem;
+        width: 100%;
+        max-width: 28rem;
+        margin: 1rem;
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+    }
+    
+    .modal-overlay.active .modal-container {
+        transform: scale(1);
+    }
+    
     /* Section spacing */
     .section {
         margin-top: 40px;
+    }
+    
+    /* Action Buttons */
+    .card-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
     }
     
     /* Responsive */
     @media (max-width: 768px) {
         .sidebar-menu {
             margin-bottom: 20px;
+        }
+        .btn-primary, .btn-outline {
+            padding: 4px 10px;
+            font-size: 0.65rem;
         }
     }
 </style>
@@ -362,8 +455,10 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
 
-                            {{-- FIX INI --}}
                             @forelse ($collections as $item)
+                                @php
+                                    $hasPending = in_array($item->id, $pendingCollectionIds ?? []);
+                                @endphp
 
                                 <div class="magazine-card">
 
@@ -387,14 +482,43 @@
                                             {{ $item->title }}
                                         </h3>
 
-                                        <div class="flex justify-between items-center mt-3">
+                                        <div class="flex justify-between items-center mt-2">
                                             <span class="text-xs text-gray-500">
                                                 📚 Stok: {{ $item->stock }}
                                             </span>
 
-                                            <a href="#" class="btn-link text-xs">
+                                            @if($item->stock > 0)
+                                                <span class="status-tersedia">✓ Tersedia</span>
+                                            @else
+                                                <span class="status-habis">✗ Habis</span>
+                                            @endif
+                                        </div>
+
+                                        <div class="card-actions">
+                                            <a href="{{ route('user.koleksi.show', $item->id) }}" class="btn-link text-xs">
                                                 Detail →
                                             </a>
+
+                                            @auth
+                                                @if($hasPending)
+                                                    <button class="btn-outline" disabled style="flex:1; text-align:center;">
+                                                        Diproses
+                                                    </button>
+                                                @elseif($item->stock > 0)
+                                                    <button onclick="openModal({{ $item->id }}, '{{ addslashes($item->title) }}')"
+                                                            class="btn-primary" style="flex:1; text-align:center;">
+                                                        Pinjam
+                                                    </button>
+                                                @else
+                                                    <button class="btn-outline" disabled style="flex:1; text-align:center;">
+                                                        Habis
+                                                    </button>
+                                                @endif
+                                            @else
+                                                <a href="{{ route('login') }}" class="btn-primary" style="flex:1; text-align:center;">
+                                                    Login
+                                                </a>
+                                            @endauth
                                         </div>
 
                                     </div>
@@ -419,12 +543,185 @@
 
 </div>
 
+{{-- ================= MODAL PINJAM ================= --}}
+<div id="pinjamModal" class="modal-overlay">
+    <div class="modal-container p-6">
+
+        <h2 class="text-xl font-bold text-indigo-300 mb-4">
+            Form Peminjaman
+        </h2>
+
+        <form id="pinjamForm" method="POST" action="{{ route('orders.store') }}">
+            @csrf
+
+            <input type="hidden" name="collection_id" id="collection_id">
+
+            <div class="mb-3">
+                <label class="text-xs text-gray-400">Judul Majalah</label>
+                <input type="text" id="book_title"
+                       class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700"
+                       readonly>
+            </div>
+
+            <div class="mb-3">  
+                <label class="text-xs text-gray-400">Tanggal Pinjam</label>
+                <input type="date" name="borrow_date" id="borrow_date"
+                       class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700"
+                       required>
+            </div>
+
+            <div class="mb-3">
+                <label class="text-xs text-gray-400">Tanggal Kembali</label>
+                <input type="date" name="return_date" id="return_date"
+                       class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700"
+                       required>
+            </div>
+
+            <div class="flex gap-2">
+                <button type="button"
+                        onclick="closeModal()"
+                        class="w-full py-2 rounded bg-gray-700 text-white">
+                    Batal
+                </button>
+
+                <button type="submit"
+                        id="submitPinjamBtn"
+                        class="w-full py-2 rounded bg-indigo-600 text-white font-semibold">
+                    Pinjam
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
 @endsection
 
 @push('scripts')
 <script>
-// SIMPLE CLEAN SCRIPT (NO DUPLICATE)
 
+// ================= FORMAT DATE =================
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+// ================= OPEN MODAL =================
+function openModal(id, title) {
+    const modal = document.getElementById('pinjamModal');
+    modal.classList.add('active');
+
+    document.getElementById('collection_id').value = id;
+    document.getElementById('book_title').value = title;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const borrowInput = document.getElementById('borrow_date');
+    const returnInput = document.getElementById('return_date');
+
+    // Reset value
+    borrowInput.value = '';
+    returnInput.value = '';
+
+    // Set borrow date = hari ini
+    borrowInput.min = formatDate(today);
+    borrowInput.value = formatDate(today);
+
+    const minReturn = new Date(today);
+    minReturn.setDate(minReturn.getDate() + 1);
+
+    const maxReturn = new Date(today);
+    maxReturn.setDate(maxReturn.getDate() + 7);
+
+    returnInput.min = formatDate(minReturn);
+    returnInput.max = formatDate(maxReturn);
+    returnInput.value = formatDate(minReturn);
+}
+
+// ================= CLOSE MODAL =================
+function closeModal() {
+    const modal = document.getElementById('pinjamModal');
+    modal.classList.remove('active');
+    
+    // Reset form
+    document.getElementById('pinjamForm').reset();
+    
+    // Enable submit button
+    const submitBtn = document.getElementById('submitPinjamBtn');
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Pinjam';
+    }
+}
+
+// Klik luar modal untuk menutup
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('pinjamModal');
+    if (e.target === modal) {
+        closeModal();
+    }
+});
+
+// ================= UPDATE RETURN DINAMIS =================
+document.addEventListener('change', function(e) {
+    if (e.target.id === 'borrow_date') {
+        const borrow = new Date(e.target.value);
+        borrow.setHours(0, 0, 0, 0);
+
+        const returnInput = document.getElementById('return_date');
+        const minReturn = new Date(borrow);
+        minReturn.setDate(minReturn.getDate() + 1);
+        const maxReturn = new Date(borrow);
+        maxReturn.setDate(maxReturn.getDate() + 7);
+
+        returnInput.min = formatDate(minReturn);
+        returnInput.max = formatDate(maxReturn);
+
+        const currentReturn = new Date(returnInput.value);
+        if (currentReturn < minReturn || currentReturn > maxReturn) {
+            returnInput.value = formatDate(minReturn);
+        }
+    }
+});
+
+// ================= VALIDASI SUBMIT =================
+document.addEventListener('submit', function(e) {
+    if (e.target.id === 'pinjamForm') {
+        const borrow = new Date(document.getElementById('borrow_date').value);
+        const ret = new Date(document.getElementById('return_date').value);
+
+        borrow.setHours(0, 0, 0, 0);
+        ret.setHours(0, 0, 0, 0);
+
+        const diff = (ret - borrow) / (1000 * 60 * 60 * 24);
+
+        if (diff < 1) {
+            alert('Minimal peminjaman 1 hari');
+            e.preventDefault();
+            return;
+        }
+
+        if (diff > 7) {
+            alert('Maksimal peminjaman hanya 7 hari');
+            e.preventDefault();
+            return;
+        }
+
+        const btn = document.getElementById('submitPinjamBtn');
+        if (btn) {
+            btn.innerText = 'Memproses...';
+            btn.disabled = true;
+        }
+    }
+});
+
+// ============================================
+// NOTIFICATION
+// ============================================
 function showNotification(message, type = 'success') {
     const n = document.createElement('div');
     n.className = 'notification show';
@@ -436,6 +733,7 @@ function showNotification(message, type = 'success') {
     }, 2500);
 }
 
-console.log('Majalah page ready');
+console.log('Majalah page ready with pinjam feature');
+
 </script>
 @endpush

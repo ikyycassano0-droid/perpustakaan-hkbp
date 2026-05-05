@@ -4,137 +4,131 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Archive;
+use Illuminate\Support\Facades\Auth;
 
 class ArchiveController extends Controller
 {
-    // 🔥 USER: tampil berdasarkan category
-    public function showByCategory($category)
+    public function indexPanduan()
     {
-        // mapping category → view
-        $viewMap = [
-            'pinjam_buku'   => 'guest.page.Layanan.pinbal',
-            'upload_ta'     => 'guest.page.Layanan.upload_ta',
-            'waktu_layanan' => 'guest.page.Layanan.waktu_layanan',
-        ];
+        $data = Archive::active()
+            ->ordered()
+            ->with('activeFiles')
+            ->get();
 
-        // validasi category
-        if (!array_key_exists($category, $viewMap)) {
-            abort(404);
+        return view('user.page.panduan', compact('data'));
+    }
+
+    public function indexPanduanGuest()
+    {
+        $data = Archive::active()
+            ->ordered()
+            ->with('activeFiles')
+            ->get();
+
+        return view('guest.page.panduan', compact('data'));
+    }
+
+    public function index(Request $request)
+    {
+        $data = Archive::orderBy('category')
+            ->orderBy('sequence')
+            ->get()
+            ->groupBy('category');
+
+        // mode edit (jika ada ?edit=id)
+        $editData = null;
+        if ($request->edit) {
+            $editData = Archive::find($request->edit);
         }
 
-        $data = Archive::where('category', $category)->get();
-
-        return view($viewMap[$category], compact('data', 'category'));
-    }
-
-    
-    public function index()
-    {
-        $data = Archive::orderBy('sequence')->get()->groupBy('category');
-
-        return view('admin.page.layanan', compact('data'));
-    }
-    
-    public function indexLayananGuest($category)
-    {
-        $viewMap = [
-            'pinjam_buku'   => 'guest.page.Layanan.pinbal',
-            'upload_ta'     => 'guest.page.Layanan.upload_ta',
-            'waktu_layanan' => 'guest.page.Layanan.waktu_layanan',
-        ];
-
-        if (!array_key_exists($category, $viewMap)) {
-            abort(404);
-        }
-
-        // 🔥 INI YANG PENTING
-        $data = Archive::where('category', $category)
-                    ->orderBy('sequence') // WAJIB
-                    ->get();
-
-        return view($viewMap[$category], compact('data', 'category'));
-    }
-    public function create()
-    {
-        return view('admin.archive.create');
+        return view('admin.page.panduan', compact('data', 'editData'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required',
-            'category' => 'required',
-            'sequence' => 'required|integer|min:1'
+            'title' => 'required|string',
+            'category' => 'required|string',
+            'sequence' => 'required|integer|min:1',
+            'icon' => 'nullable|string',
+            'description' => 'nullable|string',
         ]);
 
-        // 🔥 geser data lain ke bawah
+        // geser sequence
         Archive::where('category', $request->category)
             ->where('sequence', '>=', $request->sequence)
             ->increment('sequence');
 
-        // simpan data baru
         Archive::create([
             'title' => $request->title,
             'description' => $request->description,
             'category' => $request->category,
+            'icon' => $request->icon,
             'sequence' => $request->sequence,
-            'active' => 1, // 🔥 TAMBAHKAN INI
+            'active' => 1,
+            'created_by' => Auth::id(),
         ]);
 
-        return back()->with('success', 'Data berhasil ditambahkan');
-    }
-
-    public function edit($id)
-    {
-        $data = Archive::findOrFail($id);
-        return view('admin.archive.edit', compact('data'));
+        return redirect()->route('admin.panduan.index')
+        ->with('success', 'Panduan berhasil ditambahkan');
     }
 
     public function update(Request $request, $id)
     {
         $archive = Archive::findOrFail($id);
 
-        $oldSequence = $archive->sequence;
-        $newSequence = $request->sequence;
+        // VALIDASI OPTIONAL
+        $request->validate([
+            'title' => 'nullable|string',
+            'category' => 'nullable|string',
+            'sequence' => 'nullable|integer|min:1',
+            'icon' => 'nullable|string',
+            'description' => 'nullable|string',
+        ]);
 
-        // kalau sequence diubah
-        if ($newSequence && $newSequence != $oldSequence) {
+        if ($request->filled('sequence')) {
 
-            if ($newSequence > $oldSequence) {
-                // geser ke atas (turun)
-                Archive::where('category', $archive->category)
-                    ->whereBetween('sequence', [$oldSequence + 1, $newSequence])
-                    ->decrement('sequence');
-            } else {
-                // geser ke bawah (naik)
-                Archive::where('category', $archive->category)
-                    ->whereBetween('sequence', [$newSequence, $oldSequence - 1])
-                    ->increment('sequence');
+            $oldSequence = $archive->sequence;
+            $newSequence = $request->sequence;
+
+            if ($newSequence != $oldSequence) {
+
+                if ($newSequence > $oldSequence) {
+                    Archive::where('category', $archive->category)
+                        ->whereBetween('sequence', [$oldSequence + 1, $newSequence])
+                        ->decrement('sequence');
+                } else {
+                    Archive::where('category', $archive->category)
+                        ->whereBetween('sequence', [$newSequence, $oldSequence - 1])
+                        ->increment('sequence');
+                }
+
+                $archive->sequence = $newSequence;
             }
-
-            $archive->sequence = $newSequence;
         }
 
-        // update field lain (partial update tetap jalan)
-        $data = array_filter($request->only(['title','description','category']), function($v){
-            return $v !== null && $v !== '';
+        $data = array_filter([
+            'title' => $request->title,
+            'description' => $request->description,
+            'category' => $request->category,
+            'icon' => $request->icon,
+            'sequence' => $archive->sequence,
+            'updated_by' => Auth::id(),
+        ], function ($value) {
+            return !is_null($value) && $value !== '';
         });
 
         $archive->update($data);
 
-        return back()->with('success', 'Data berhasil diupdate');
+        return redirect()->route('archive.index')
+            ->with('success', 'Panduan berhasil diupdate');
     }
 
     public function destroy($id)
     {
         Archive::destroy($id);
-        return back();
-    }
 
-    public function byCategory($category)
-    {
-        $data = Archive::where('category', $category)->get();
-
-        return view('admin.page.layanan', compact('data', 'category'));
+        return redirect()->route('archive.index')
+            ->with('success', 'Data berhasil dihapus');
     }
 }
