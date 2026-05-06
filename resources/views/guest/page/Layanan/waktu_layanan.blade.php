@@ -116,9 +116,42 @@
                     </div>
                 </div>
 
-                <!-- Daftar jadwal -->
+                <!-- Daftar jadwal dari DATABASE -->
                 <div class="space-y-4" id="jadwalContainer">
-                    <!-- JavaScript akan merender jadwal -->
+                    @forelse($schedules as $schedule)
+                    <div class="schedule-row glass-card p-4 rounded-xl flex flex-wrap sm:flex-nowrap justify-between items-center transition-all duration-200 border border-white/5">
+                        <div class="flex items-center gap-4 w-full sm:w-auto">
+                            <div class="bg-indigo-500/30 w-12 h-12 rounded-xl flex items-center justify-center font-bold text-indigo-200 text-xl backdrop-blur-sm">
+                                {{ $schedule->day_short }}
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white text-lg">{{ $schedule->day_name }}</h3>
+                                <div class="flex flex-wrap items-center gap-1 text-xs text-indigo-200/80">
+                                    <span>{{ $schedule->note ?? 'Layanan Reguler' }}</span>
+                                    @if(in_array($schedule->day_name, ['Senin', 'Selasa', 'Rabu', 'Kamis']))
+                                    <span class="ml-2 text-[11px] bg-indigo-600/40 px-2 py-0.5 rounded-full text-indigo-200">📖 diperpanjang hingga 20:00 (Ujian)</span>
+                                    @elseif($schedule->day_name == 'Jumat')
+                                    <span class="ml-2 text-[11px] bg-amber-600/30 px-2 py-0.5 rounded-full">🕌 Jeda ibadah</span>
+                                    @elseif($schedule->day_name == 'Sabtu')
+                                    <span class="ml-2 text-[11px] bg-orange-600/30 px-2 py-0.5 rounded-full">📚 Baca saja</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right mt-3 sm:mt-0">
+                            <p class="text-white font-mono text-base font-medium">{{ $schedule->service_hours }}</p>
+                            <p class="text-sm font-semibold tracking-wide flex items-center justify-end gap-1" style="color: {{ $schedule->status_color }}">
+                                <span class="inline-block w-2 h-2 rounded-full" style="background-color: {{ $schedule->status_color }}"></span>
+                                {{ $schedule->status }}
+                            </p>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="text-center py-8 text-gray-400">
+                        <i class="fas fa-calendar-day text-4xl mb-3 block"></i>
+                        <p>Belum ada data jadwal layanan</p>
+                    </div>
+                    @endforelse
                 </div>
 
                 <!-- Catatan tambahan -->
@@ -137,17 +170,32 @@
         <!-- KOLOM KANAN : INFORMASI TAMBAHAN -->
         <div class="space-y-7 fade-up">
 
-            <!-- Card Ringkasan Layanan Hari Ini -->
+            <!-- Card Ringkasan Layanan Hari Ini - Mengambil data dari database -->
             <div class="glass p-6 rounded-3xl tilt card3d border-l-4 border-indigo-500">
                 <div class="flex items-start gap-3">
                     <div class="text-3xl">🕘</div>
                     <div>
                         <h3 class="text-xl font-bold flex items-center gap-2">Sedang Beroperasi <span class="badge bg-green-500/30 text-green-300">Aktif</span></h3>
                         <div class="mt-3 space-y-2 text-gray-200">
-                            <p class="flex justify-between"><span>📆 Senin - Kamis :</span><span class="font-mono">08:00 – 16:30</span></p>
-                            <p class="flex justify-between"><span>📆 Jumat :</span><span class="font-mono">08:00 – 12:00 & 13:30 – 16:30</span></p>
-                            <p class="flex justify-between"><span>📆 Sabtu :</span><span class="font-mono">09:00 – 13:00 (Ruang Baca)</span></p>
-                            <p class="flex justify-between"><span>📆 Minggu :</span><span class="font-mono text-rose-300">Tutup</span></p>
+                            @php
+                                $weekdays = $schedules->where('is_active', true);
+                                $seninKamis = $weekdays->whereIn('day_name', ['Senin', 'Selasa', 'Rabu', 'Kamis'])->first();
+                                $jumat = $weekdays->where('day_name', 'Jumat')->first();
+                                $sabtu = $weekdays->where('day_name', 'Sabtu')->first();
+                                $minggu = $weekdays->where('day_name', 'Minggu')->first();
+                            @endphp
+                            @if($seninKamis)
+                            <p class="flex justify-between"><span>📆 Senin - Kamis :</span><span class="font-mono">{{ $seninKamis->service_hours }}</span></p>
+                            @endif
+                            @if($jumat)
+                            <p class="flex justify-between"><span>📆 Jumat :</span><span class="font-mono">{{ $jumat->service_hours }}</span></p>
+                            @endif
+                            @if($sabtu)
+                            <p class="flex justify-between"><span>📆 Sabtu :</span><span class="font-mono">{{ $sabtu->service_hours }}</span></p>
+                            @endif
+                            @if($minggu)
+                            <p class="flex justify-between"><span>📆 Minggu :</span><span class="font-mono {{ $minggu->status_color == '#f43f5e' ? 'text-rose-300' : '' }}">{{ $minggu->service_hours }}</span></p>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -156,7 +204,7 @@
                 </div>
             </div>
 
-            <!-- Kontak & Informasi -->
+            <!-- Kontak & Informasi (Data bisa diambil dari database service_infos) -->
             <div class="glass p-6 rounded-3xl tilt card3d">
                 <h3 class="text-xl font-semibold flex items-center gap-2 mb-5"><span>📞</span> Informasi Kontak</h3>
                 <div class="space-y-4">
@@ -178,7 +226,7 @@
                 </div>
             </div>
 
-            <!-- Info operasional tambahan -->
+            <!-- Info operasional tambahan (Data bisa diambil dari database announcements) -->
             <div class="glass p-5 rounded-3xl tilt card3d bg-gradient-to-br from-slate-800/40 to-indigo-900/20">
                 <div class="flex gap-3 items-start">
                     <span class="text-2xl">📢</span>
@@ -208,82 +256,9 @@
 <script>
 // ============================================
 // JAVASCRIPT KHUSUS UNTUK HALAMAN WAKTU LAYANAN
-// Hanya JS yang BELUM ADA di master blade
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    
-    // ==========================
-    // RENDER JADWAL LENGKAP
-    // ==========================
-    const weeklySchedule = [
-        { dayShort: "Sn", dayName: "Senin", serviceHours: "08:00 — 16:30", status: "Layanan Penuh", statusColor: "emerald", note: "Sirkulasi Aktif" },
-        { dayShort: "Sl", dayName: "Selasa", serviceHours: "08:00 — 16:30", status: "Layanan Penuh", statusColor: "emerald", note: "Sirkulasi Aktif" },
-        { dayShort: "Rb", dayName: "Rabu", serviceHours: "08:00 — 16:30", status: "Layanan Penuh", statusColor: "emerald", note: "Sirkulasi Aktif" },
-        { dayShort: "Km", dayName: "Kamis", serviceHours: "08:00 — 16:30", status: "Layanan Penuh", statusColor: "emerald", note: "Sirkulasi Aktif" },
-        { dayShort: "Jm", dayName: "Jumat", serviceHours: "08:00 - 12:00 & 13:30 - 16:30", status: "Istirahat Ibadah (12:00-13:30)", statusColor: "amber", note: "Layanan terbatas" },
-        { dayShort: "Sb", dayName: "Sabtu", serviceHours: "09:00 — 13:00", status: "Hanya Ruang Baca", statusColor: "orange", note: "Tidak ada sirkulasi" },
-        { dayShort: "Mg", dayName: "Minggu", serviceHours: "TUTUP", status: "Perpustakaan Tutup", statusColor: "rose", note: "Libur Mingguan" }
-    ];
-
-    const container = document.getElementById('jadwalContainer');
-    if (container) {
-        container.innerHTML = '';
-        
-        weeklySchedule.forEach((item) => {
-            let extraBadge = '';
-            if (item.dayName === 'Senin' || item.dayName === 'Selasa' || item.dayName === 'Rabu' || item.dayName === 'Kamis') {
-                extraBadge = `<span class="ml-2 text-[11px] bg-indigo-600/40 px-2 py-0.5 rounded-full text-indigo-200">📖 diperpanjang hingga 20:00 (Ujian)</span>`;
-            } else if (item.dayName === 'Jumat') {
-                extraBadge = `<span class="ml-2 text-[11px] bg-amber-600/30 px-2 py-0.5 rounded-full">🕌 Jeda ibadah</span>`;
-            } else if (item.dayName === 'Sabtu') {
-                extraBadge = `<span class="ml-2 text-[11px] bg-orange-600/30 px-2 py-0.5 rounded-full">📚 Baca saja</span>`;
-            }
-            
-            const statusColorMap = {
-                emerald: 'text-emerald-400',
-                amber: 'text-amber-300',
-                orange: 'text-orange-300',
-                rose: 'text-rose-400'
-            };
-            const statusClass = statusColorMap[item.statusColor] || 'text-gray-300';
-            
-            const row = document.createElement('div');
-            row.className = 'schedule-row glass-card p-4 rounded-xl flex flex-wrap sm:flex-nowrap justify-between items-center transition-all duration-200 border border-white/5';
-            row.innerHTML = `
-                <div class="flex items-center gap-4 w-full sm:w-auto">
-                    <div class="bg-indigo-500/30 w-12 h-12 rounded-xl flex items-center justify-center font-bold text-indigo-200 text-xl backdrop-blur-sm">${item.dayShort}</div>
-                    <div>
-                        <h3 class="font-bold text-white text-lg">${item.dayName}</h3>
-                        <div class="flex flex-wrap items-center gap-1 text-xs text-indigo-200/80">
-                            <span>${item.note}</span>
-                            ${extraBadge}
-                        </div>
-                    </div>
-                </div>
-                <div class="text-right mt-3 sm:mt-0">
-                    <p class="text-white font-mono text-base font-medium">${item.serviceHours}</p>
-                    <p class="${statusClass} text-sm font-semibold tracking-wide flex items-center justify-end gap-1">
-                        <span class="inline-block w-2 h-2 rounded-full bg-${item.statusColor === 'emerald' ? 'emerald' : item.statusColor === 'amber' ? 'amber' : item.statusColor === 'orange' ? 'orange' : 'rose'}-400"></span>
-                        ${item.status}
-                    </p>
-                </div>
-            `;
-            container.appendChild(row);
-        });
-        
-        // Info tambahan
-        const infoRow = document.createElement('div');
-        infoRow.className = 'mt-5 bg-indigo-950/30 rounded-xl p-3 flex flex-wrap justify-between items-center text-sm';
-        infoRow.innerHTML = `
-            <div class="flex gap-4 items-center">
-                <span class="font-mono text-indigo-300">🕒 Sirkulasi Aktif:</span>
-                <span class="text-white">08:00 — 16:30 (Sen-Kam & Jumat siang setelah istirahat)</span>
-            </div>
-            <div class="text-indigo-300 text-xs flex items-center gap-1"><span>⏳</span> Sabtu: 09:00-13:00 (Ruang Baca)</div>
-        `;
-        container.appendChild(infoRow);
-    }
     
     // ==========================
     // TILT 3D EFFECT (card3d)
@@ -310,8 +285,21 @@ document.addEventListener('DOMContentLoaded', function() {
     scheduleRows.forEach((row, idx) => {
         row.style.transitionDelay = `${idx * 0.05}s`;
     });
+    
+    // Fade up animation observer
+    const fadeElements = document.querySelectorAll('.fade-up');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('show');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    fadeElements.forEach(el => observer.observe(el));
 });
 
-console.log('Halaman Waktu Layanan & Operasional siap dengan jadwal lengkap dan efek tilt 3D!');
+console.log('Halaman Waktu Layanan & Operasional siap dengan data dari database!');
 </script>
 @endpush

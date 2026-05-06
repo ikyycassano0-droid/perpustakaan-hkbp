@@ -264,6 +264,16 @@
                         <i class="fas fa-folder w-4 text-sm"></i>
                         <span>Panduan</span>
                     </a>
+
+                     <a href="{{ route('admin.waktu_layanan.index') }}" class="menu-item-minimal flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-folder w-4 text-sm"></i>
+                        <span>Waktu Layanan</span>
+                    </a>
+
+                    <a href="{{ route('admin.kti.index') }}" class="menu-item-minimal flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-folder w-4 text-sm"></i>
+                        <span>KTI</span>
+                    </a>
                 </nav>
                 
                 <!-- MANAGEMENT MENU -->
@@ -283,20 +293,6 @@
                         <span>Settings</span>
                     </a>
                 </nav>
-            </div>
-            
-            <!-- Profile Footer -->
-            <div class="absolute bottom-6 left-0 right-0 px-4">
-                <div class="bg-slate-800/50 rounded-xl p-3 border border-slate-800">
-                    <div class="flex items-center gap-3">
-                        <img src="https://ui-avatars.com/api/?background=3b82f6&color=fff&bold=true&size=40&name=AD" class="w-9 h-9 rounded-xl" alt="Avatar">
-                        <div class="flex-1">
-                            <p class="text-white text-sm font-medium">Alex Devara</p>
-                            <p class="text-slate-500 text-[10px]">admin@neptix.com</p>
-                        </div>
-                        <i class="fas fa-sign-out-alt text-slate-500 text-sm cursor-pointer hover:text-white transition"></i>
-                    </div>
-                </div>
             </div>
         </aside>
 

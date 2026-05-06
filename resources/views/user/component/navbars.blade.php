@@ -43,9 +43,9 @@
                     Layanan <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 <ul class="dropdown-menu-modern">
-                    <li><a href="{{ route('guest.layanan.show', 'pinjam_buku') }}" class="dropdown-item-modern">Pinjam Buku</a></li>
-                    <li><a href="{{ route('guest.layanan.show', 'upload_ta') }}" class="dropdown-item-modern">Upload TA</a></li>
-                    <li><a href="{{ route('guest.layanan.show', 'waktu_layanan') }}" class="dropdown-item-modern">Waktu Layanan</a></li>
+                    <li><a href="#" class="dropdown-item-modern">Pinjam Buku</a></li>
+                    <li><a href="#" class="dropdown-item-modern">Upload TA</a></li>
+                    <li><a href="{{ route('user.waktu.layanan') }}" class="dropdown-item-modern">Waktu Layanan</a></li>
                 </ul>
             </li>
 
@@ -79,7 +79,6 @@
                             <li><a href="{{ route('final_project.koleksi', 'cd') }}" class="dropdown-item-modern">CD/DVD</a></li>
                             <li><a href="{{ route('final_project.koleksi', 'video') }}" class="dropdown-item-modern">Video Edukasi</a></li>
                             <li><a href="{{ route('final_project.kti') }}" class="dropdown-item-modern">KTI Digital</a></li>
-                            <li><a href="#" class="dropdown-item-modern">Jurnal Online</a></li>
                         </ul>
                     </li>
                 </ul>

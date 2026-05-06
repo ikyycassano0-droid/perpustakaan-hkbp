@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Archive;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use App\Models\ArchiveFile;
 
 class ArchiveController extends Controller
 {
@@ -50,16 +52,14 @@ class ArchiveController extends Controller
             'title' => 'required|string',
             'category' => 'required|string',
             'sequence' => 'required|integer|min:1',
-            'icon' => 'nullable|string',
-            'description' => 'nullable|string',
+            'files.*' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
         ]);
 
-        // geser sequence
         Archive::where('category', $request->category)
             ->where('sequence', '>=', $request->sequence)
             ->increment('sequence');
 
-        Archive::create([
+        $archive = Archive::create([
             'title' => $request->title,
             'description' => $request->description,
             'category' => $request->category,
@@ -69,66 +69,126 @@ class ArchiveController extends Controller
             'created_by' => Auth::id(),
         ]);
 
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+
+                $path = $file->store('archives', 'public');
+
+                ArchiveFile::create([
+                    'archive_id' => $archive->id,
+                    'file_name' => $file->getClientOriginalName(),
+                    'file_url' => $path,
+                    'file_type' => $file->getClientOriginalExtension(),
+                    'file_size' => round($file->getSize() / 1024),
+                    'published_at' => now(),
+                    'active' => 1,
+                    'created_by' => Auth::id(),
+                ]);
+            }
+        }
+
         return redirect()->route('admin.panduan.index')
-        ->with('success', 'Panduan berhasil ditambahkan');
+            ->with('success', 'Panduan berhasil ditambahkan');
     }
 
+    /* =========================
+    UPDATE (MULTI + REPLACE)
+    ========================= */
     public function update(Request $request, $id)
     {
         $archive = Archive::findOrFail($id);
 
-        // VALIDASI OPTIONAL
         $request->validate([
             'title' => 'nullable|string',
             'category' => 'nullable|string',
             'sequence' => 'nullable|integer|min:1',
-            'icon' => 'nullable|string',
-            'description' => 'nullable|string',
+            'new_files.*' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+            'replace_file_id' => 'nullable|integer',
         ]);
 
-        if ($request->filled('sequence')) {
-
-            $oldSequence = $archive->sequence;
-            $newSequence = $request->sequence;
-
-            if ($newSequence != $oldSequence) {
-
-                if ($newSequence > $oldSequence) {
-                    Archive::where('category', $archive->category)
-                        ->whereBetween('sequence', [$oldSequence + 1, $newSequence])
-                        ->decrement('sequence');
-                } else {
-                    Archive::where('category', $archive->category)
-                        ->whereBetween('sequence', [$newSequence, $oldSequence - 1])
-                        ->increment('sequence');
-                }
-
-                $archive->sequence = $newSequence;
-            }
-        }
-
-        $data = array_filter([
+        // UPDATE DATA
+        $archive->update(array_filter([
             'title' => $request->title,
             'description' => $request->description,
             'category' => $request->category,
             'icon' => $request->icon,
-            'sequence' => $archive->sequence,
             'updated_by' => Auth::id(),
-        ], function ($value) {
-            return !is_null($value) && $value !== '';
-        });
+        ]));
 
-        $archive->update($data);
+        if ($request->replace_file_id && $request->hasFile('replace_file')) {
 
-        return redirect()->route('archive.index')
+            $oldFile = ArchiveFile::findOrFail($request->replace_file_id);
+
+            // hapus file lama dari storage
+            if (Storage::disk('public')->exists($oldFile->file_url)) {
+                Storage::disk('public')->delete($oldFile->file_url);
+            }
+
+            $file = $request->file('replace_file');
+            $path = $file->store('archives', 'public');
+
+            // update record lama (replace, bukan create baru)
+            $oldFile->update([
+                'file_name' => $file->getClientOriginalName(),
+                'file_url' => $path,
+                'file_type' => $file->getClientOriginalExtension(),
+                'file_size' => round($file->getSize() / 1024),
+                'updated_by' => Auth::id(),
+            ]);
+        }
+
+        if ($request->hasFile('new_files')) {
+            foreach ($request->file('new_files') as $file) {
+
+                $path = $file->store('archives', 'public');
+
+                ArchiveFile::create([
+                    'archive_id' => $archive->id,
+                    'file_name' => $file->getClientOriginalName(),
+                    'file_url' => $path,
+                    'file_type' => $file->getClientOriginalExtension(),
+                    'file_size' => round($file->getSize() / 1024),
+                    'published_at' => now(),
+                    'active' => 1,
+                    'created_by' => Auth::id(),
+                ]);
+            }
+        }
+
+        return redirect()->route('admin.panduan.index')
             ->with('success', 'Panduan berhasil diupdate');
     }
 
+    public function deleteFile($id)
+    {
+        $file = ArchiveFile::findOrFail($id);
+
+        if (Storage::disk('public')->exists($file->file_url)) {
+            Storage::disk('public')->delete($file->file_url);
+        }
+
+        $file->delete();
+
+        return back()->with('success', 'File berhasil dihapus');
+    }
+
+    /* =========================
+    DELETE ARCHIVE + FILE
+    ========================= */
     public function destroy($id)
     {
-        Archive::destroy($id);
+        $archive = Archive::with('files')->findOrFail($id);
 
-        return redirect()->route('archive.index')
+        foreach ($archive->files as $file) {
+            if (Storage::disk('public')->exists($file->file_url)) {
+                Storage::disk('public')->delete($file->file_url);
+            }
+        }
+
+        ArchiveFile::where('archive_id', $id)->delete();
+        $archive->delete();
+
+        return redirect()->route('admin.page.panduan')
             ->with('success', 'Data berhasil dihapus');
     }
 }

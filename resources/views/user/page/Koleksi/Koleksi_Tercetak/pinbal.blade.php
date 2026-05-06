@@ -1,4 +1,3 @@
-{{-- resources/views/pinbal.blade.php --}}
 @extends('user.components.master')
 
 @section('title', 'Sistem Pinbal Akademik - AKPER HKBP Balige')

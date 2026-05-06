@@ -28,10 +28,10 @@ class FinalProjectController extends Controller
    if ($category === 'kti') {
 
     $finalProjects = FinalProject::with(['category', 'firstSupervisor', 'secondSupervisor'])
-        ->where('user_id', auth()->id())
-        ->where('status', 'Approved')
-        ->latest()
-        ->get();
+                ->where('user_id', auth()->id())
+                ->latest()
+                ->get();
+
 
     $supervisors = User::whereHas('role', function ($q) {
     $q->where('name', 'Dosen'); 
@@ -39,10 +39,13 @@ class FinalProjectController extends Controller
 
     $categories = CategoryFinalProject::all();
 
+    $activeMenu = request()->get('menu', 'all');
+
     return view('user.page.Koleksi_Elektronik.kti', [
         'ktis' => $finalProjects,
         'supervisors' => $supervisors,
-        'categories' => $categories
+        'categories' => $categories,
+        'activeMenu' => $activeMenu 
     ]);
 }
 
