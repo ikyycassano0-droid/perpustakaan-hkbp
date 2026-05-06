@@ -34,7 +34,7 @@ class FinalProjectController extends Controller
         ->get();
 
     $supervisors = User::whereHas('role', function ($q) {
-    $q->where('name', 'Dosen'); 
+    $q->where('name', 'Dosen');
 })->get();
 
     $categories = CategoryFinalProject::all();
@@ -97,10 +97,10 @@ class FinalProjectController extends Controller
         ->with('success', 'KTI berhasil diupload');
 }
 
-    
+
     public function update(Request $request, $id)
     {
-        $request->validate([    
+        $request->validate([
             'student_name' => 'required|string|max:255',
             'npm' => 'required|string|max:50',
             'study_program' => 'required|string|max:255',
@@ -258,7 +258,7 @@ class FinalProjectController extends Controller
     {
         $kti = FinalProject::findOrFail($id);
 
-        
+
         if ($kti->file_url && Storage::disk('public')->exists($kti->file_url)) {
             Storage::disk('public')->delete($kti->file_url);
         }

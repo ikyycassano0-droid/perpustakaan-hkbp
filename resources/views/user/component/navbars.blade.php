@@ -5,8 +5,11 @@
 
         <!-- LOGO SECTION -->
         <div class="flex items-center gap-3">
-            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-400/30">
-                <img src="{{ asset('assets/img/logo akper.png') }}" alt="Logo AKPER" class="w-7 h-7 object-contain">
+            <div class="flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-400/30">
+                <img src="{{ asset('assets/img/logo akper.png') }}"
+                    alt="Logo AKPER"
+                    class="w-14 h-14 object-contain">
+                    <!-- Ubah w-7 h-7 menjadi w-14 h-14 di atas agar gambar membesar -->
             </div>
             <div>
                 <span class="nav-logo">AKPER HKBP</span>
@@ -79,7 +82,6 @@
                             <li><a href="{{ route('final_project.koleksi', 'cd') }}" class="dropdown-item-modern">CD/DVD</a></li>
                             <li><a href="{{ route('final_project.koleksi', 'video') }}" class="dropdown-item-modern">Video Edukasi</a></li>
                             <li><a href="{{ route('final_project.kti') }}" class="dropdown-item-modern">KTI Digital</a></li>
-                            <li><a href="#" class="dropdown-item-modern">Jurnal Online</a></li>
                         </ul>
                     </li>
                 </ul>

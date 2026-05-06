@@ -182,7 +182,7 @@
                 </div>
 
                 <!-- Tombol Cari di Kanan -->
-                <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-1.5 rounded-full text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg">
+                <button type="submit" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-1.5 rounded-full text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg">
                     Cari
                 </button>
             </div>
@@ -193,7 +193,6 @@
     <!-- 3D CARD -->
     <div class="mt-20 flex justify-center">
         <div class="tilt glass p-8 rounded-3xl shadow-2xl float" id="tiltCard">
-
             <img src="assets/img/gedung.png" alt="Gambar Perpustakaan"
                  class="rounded-2xl w-[600px] max-w-full depth-3">
 
@@ -209,24 +208,27 @@
 <!-- FEATURES -->
 <section class="mt-40 grid md:grid-cols-3 gap-10 px-10 text-center">
 
+    <a href="{{ route('guest.profile.visi-misi') }}" class="block">
     <div class="glass p-6 rounded-2xl fade-up hover:scale-110 transition">
-        <h3 class="text-lg font-semibold mb-2">Real 3D Depth</h3>
+        <h3 class="text-lg font-semibold mb-2">Visi & Misi</h3>
         <p class="text-gray-400 text-sm">
-            Multi-layer perspective and movement.
+            Arah dan tujuan pengembangan perpustakaan.
         </p>
     </div>
 
+    <a href="{{ route('guest.profile.struktur') }}" class="block">
     <div class="glass p-6 rounded-2xl fade-up hover:scale-110 transition">
-        <h3 class="text-lg font-semibold mb-2">Interactive UI</h3>
+        <h3 class="text-lg font-semibold mb-2">Struktur Organisasi</h3>
         <p class="text-gray-400 text-sm">
-            Responds to cursor and scroll.
+            Informasi pengurus dan peran dalam organisasi.
         </p>
     </div>
 
+    <a href="{{ route('guest.berita.index') }}" class="block">
     <div class="glass p-6 rounded-2xl fade-up hover:scale-110 transition">
-        <h3 class="text-lg font-semibold mb-2">Premium Design</h3>
+        <h3 class="text-lg font-semibold mb-2">Berita</h3>
         <p class="text-gray-400 text-sm">
-            Inspired by top modern websites.
+            Update kegiatan dan informasi terbaru.
         </p>
     </div>
 
@@ -234,12 +236,14 @@
 
 <!-- CTA -->
 <section class="mt-40 text-center">
+    <a href="{{ route('final_project.koleksi', 'ebook') }}" class="block">
     <h2 class="text-4xl font-bold fade-up">
-        Build Something Amazing
+        Pusat Literasi dan Referensi Terpercaya
     </h2>
+</a>
 
     <button class="mt-6 bg-indigo-500 px-8 py-3 rounded-full glow hover:scale-110 transition fade-up">
-        Get Started
+        Mulai Membaca
     </button>
 </section>
 
@@ -352,28 +356,32 @@
 <section class="mt-40 grid md:grid-cols-3 gap-10 px-10">
 
     <!-- Card -->
+    <a href="{{ route('user.pinjam') }}" class="block">
     <div class="tilt glass p-6 rounded-2xl card3d">
-        <h3 class="text-lg font-semibold mb-2">Hover Me</h3>
+        <h3 class="text-lg font-semibold mb-2">Layanan Pinjam Buku</h3>
         <p class="text-gray-400 text-sm">
-            Card reacts with depth.
+            Nikmati kemudahan layanan Pinjam Balik secara mandiri melalui sistem informasi kami.
         </p>
     </div>
 
+    <a href="#">
     <div class="tilt glass p-6 rounded-2xl card3d">
-        <h3 class="text-lg font-semibold mb-2">Dynamic UI</h3>
+        <h3 class="text-lg font-semibold mb-2">Waktu Layanan</h3>
         <p class="text-gray-400 text-sm">
-            Smooth and responsive.
+            Cek jadwal operasional perpustakaan dan batas waktu peminjaman buku untuk kenyamanan Anda.
         </p>
     </div>
 
+    <a href="{{ route('panduan') }}" class="block">
     <div class="tilt glass p-6 rounded-2xl card3d">
-        <h3 class="text-lg font-semibold mb-2">Immersive</h3>
+        <h3 class="text-lg font-semibold mb-2">Panduan Pustaka</h3>
         <p class="text-gray-400 text-sm">
-            Feels like a real app.
+            Bingung cara mencari buku atau akses jurnal? Pelajari panduan penggunaan fitur website di sini.
         </p>
     </div>
 
 </section>
+
 <!-- PRODUCT SHOWCASE -->
 <section class="mt-40 px-10">
 

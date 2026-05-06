@@ -231,8 +231,8 @@
                     ->name('majalah')
                     ->defaults('menu_type', 'majalah');
 
-                Route::get('/{id}', [CollectionController::class, 'show'])
-                    ->name('show');
+                Route::get('/detail/{id}', [CollectionController::class, 'show'])
+                    ->name('detail');
 
             });
 
@@ -261,8 +261,8 @@
                     ->name('user.berita');
 
                 // DETAIL BERITA USER
-                Route::get('/{id}', [NewsController::class, 'showUser'])
-                    ->name('user.berita.show');
+                Route::get('/detail/{id}', [NewsController::class, 'showUser'])
+                ->name('user.berita.show');
             });
              Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'studentProfile'])->name('profile.menu');
 });

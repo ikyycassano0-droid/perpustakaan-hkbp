@@ -1,17 +1,18 @@
-x<!-- NAVBAR MODERN FUTURISTIC -->
+<!-- NAVBAR MODERN FUTURISTIC -->
 <header class="fixed top-0 left-0 w-full z-[999] px-6 py-4">
     <div class="navbar-container flex items-center justify-between">
 
         <!-- LOGO SECTION (tidak berubah) -->
         <div class="flex items-center gap-3">
-            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-400/30">
+            <div class="flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-400/30">
                 <img src="{{ asset('assets/img/logo akper.png') }}"
                     alt="Logo AKPER"
-                    class="w-7 h-7 object-contain">
+                    class="w-14 h-14 object-contain">
+                    <!-- Ubah w-7 h-7 menjadi w-14 h-14 di atas agar gambar membesar -->
             </div>
             <div>
                 <span class="nav-logo">AKPER HKBP</span>
-                <div class="text-[10px] text-indigo-300/60 tracking-wider">BALIGE</div>
+                <div class="text-[11px] text-indigo-300/60 tracking-wider">BALIGE</div>
             </div>
         </div>
 
@@ -64,7 +65,6 @@ x<!-- NAVBAR MODERN FUTURISTIC -->
                             <li><a href="{{ url('/koleksi/cd') }}" class="dropdown-item-modern">CD/DVD</a></li>
                             <li><a href="{{ url('/koleksi/video') }}" class="dropdown-item-modern">Video Edukasi</a></li>
                             <li><a href="{{ url('/koleksi/kti') }}" class="dropdown-item-modern">KTI Digital</a></li>
-                            <li><a href="{{ url('/koleksi/jurnal') }}" class="dropdown-item-modern">Jurnal Online</a></li>
                         </ul>
                     </li>
                 </ul>
