@@ -137,9 +137,35 @@
         color: white;
     }
     
-    .rating {
-        color: #fbbf24;
-        font-size: 0.8rem;
+    /* Tooltip styling */
+    .btn-wrapper {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+    }
+    
+    .btn-wrapper .tooltip-text {
+        visibility: hidden;
+        background-color: rgba(0,0,0,0.85);
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 6px 12px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        font-size: 0.7rem;
+        opacity: 0;
+        transition: opacity 0.3s;
+        pointer-events: none;
+    }
+    
+    .btn-wrapper:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
     }
     
     /* Sidebar Menu */
@@ -189,11 +215,18 @@
         cursor: pointer;
         color: white;
         font-size: 0.75rem;
+        width: 100%;
     }
     
-    .btn-primary:hover {
+    .btn-primary:hover:not(:disabled) {
         transform: scale(1.05);
         box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+    }
+    
+    .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
     }
     
     .btn-outline {
@@ -206,9 +239,10 @@
         cursor: pointer;
         color: #c7d2fe;
         font-size: 0.75rem;
+        width: 100%;
     }
     
-    .btn-outline:hover {
+    .btn-outline:hover:not(:disabled) {
         background: rgba(99, 102, 241, 0.2);
         border-color: #6366f1;
     }
@@ -283,7 +317,23 @@
     }
 </style>
 @endpush
+
 @section('content')
+{{-- DEBUG INFO --}}
+@auth
+    <div class="fixed top-20 right-5 z-50 bg-black/80 text-white p-3 rounded-lg text-xs">
+        <div>✅ Login: {{ auth()->user()->name }}</div>
+        <div>📚 Active Borrows: {{ \App\Models\Order::where('user_id', auth()->id())->whereIn('status', ['PENDING', 'APPROVED'])->count() }}/3</div>
+    </div>
+@endauth
+
+@if($errors->any())
+    <div class="fixed top-32 right-5 z-50 bg-red-600 text-white p-3 rounded-lg text-xs">
+        @foreach($errors->all() as $error)
+            <div>❌ {{ $error }}</div>
+        @endforeach
+    </div>
+@endif
 
 <div class="main-content">
 
@@ -317,13 +367,73 @@
 
             @forelse($collections as $book)
                 @php
-                $hasPending = in_array($book->id, $pendingCollectionIds ?? []);
+                    // Ambil status peminjaman untuk buku ini
+                    $borrowStatus = $userBorrowStatus[$book->id] ?? null;
+                    
+                    // Variabel default untuk tombol
+                    $buttonText = 'Pinjam';
+                    $buttonClass = 'btn-primary';
+                    $buttonDisabled = false;
+                    $buttonOnclick = "openModal({$book->id}, '".addslashes($book->title)."')";
+                    $tooltipText = '';
+                    
+                    // Tentukan status tombol berdasarkan status peminjaman
+                    if ($borrowStatus) {
+                        switch ($borrowStatus['status']) {
+                            case 'PENDING':
+                                $buttonText = '⏳ Menunggu Konfirmasi';
+                                $buttonClass = 'btn-outline';
+                                $buttonDisabled = true;
+                                $buttonOnclick = '';
+                                $tooltipText = 'Buku sedang menunggu persetujuan admin';
+                                break;
+                            case 'APPROVED':
+                                $buttonText = '📚 Sedang Dipinjam';
+                                $buttonClass = 'btn-outline';
+                                $buttonDisabled = true;
+                                $buttonOnclick = '';
+                                $tooltipText = 'Buku sedang Anda pinjam';
+                                break;
+                            case 'REJECTED':
+                                // User bisa pinjam ulang jika ditolak
+                                $buttonText = '🔄 Pinjam Lagi';
+                                $buttonClass = 'btn-primary';
+                                $buttonDisabled = false;
+                                $buttonOnclick = "openModal({$book->id}, '".addslashes($book->title)."')";
+                                $tooltipText = 'Pengajuan sebelumnya ditolak, silakan pinjam lagi';
+                                break;
+                        }
+                    }
+                    
+                    // Cek stok buku
+                    if ($buttonText == 'Pinjam' && $book->available_stock < 1) {
+                        $buttonText = '❌ Habis';
+                        $buttonClass = 'btn-outline';
+                        $buttonDisabled = true;
+                        $buttonOnclick = '';
+                        $tooltipText = 'Stok buku sedang kosong';
+                    }
+                    
+                    // Cek batas maksimal peminjaman (3 buku)
+                    if ($buttonText == 'Pinjam' && !$borrowStatus) {
+                        $activeBorrowCount = \App\Models\Order::where('user_id', auth()->id())
+                            ->whereIn('status', ['PENDING', 'APPROVED'])
+                            ->count();
+                        
+                        if ($activeBorrowCount >= 3) {
+                            $buttonText = '⚠️ Maksimal 3 Buku';
+                            $buttonClass = 'btn-outline';
+                            $buttonDisabled = true;
+                            $buttonOnclick = '';
+                            $tooltipText = 'Anda sudah mencapai batas maksimal peminjaman (3 buku)';
+                        }
+                    }
                 @endphp
 
                 <div class="book-card">
 
                     <div class="book-cover"
-                         style="background-image:url('{{ $book->cover_url ?? asset('images/no-image.png') }}')">
+                         style="background-image:url('{{ $book->cover_url }}')"
 
                         <span class="status-badge {{ $book->available_stock > 0 ? 'status-tersedia' : 'status-dipinjam' }}">
                             {{ $book->available_stock > 0 ? 'TERSEDIA' : 'DIPINJAM' }}
@@ -333,33 +443,37 @@
 
                     <div class="p-4">
 
-                        <h3 class="font-semibold text-indigo-200">
+                        <h3 class="font-semibold text-indigo-200 line-clamp-2">
                             {{ $book->title }}
                         </h3>
 
-                        <p class="text-xs text-gray-400">
+                        <p class="text-xs text-gray-400 mt-1">
                             {{ $book->author_string }}
                         </p>
 
                         <div class="flex gap-2 mt-3">
 
-                            <a href="{{ route('user.koleksi.show', $book->id) }}"
-                               class="btn-outline flex-1 text-center">
+                            <a href="{{ route('user.koleksi.detail', $book->id) }}"
+                            class="btn-outline flex-1 text-center">
                                 Detail
                             </a>
 
                             @auth
-                                @if($hasPending)
-                                    <button class="btn-outline flex-1 opacity-50" disabled>
-                                        Diproses
-                                    </button>
-
+                                @if($borrowStatus && in_array($borrowStatus['status'], ['PENDING', 'APPROVED']))
+                                    @if($borrowStatus['status'] == 'PENDING')
+                                        <button class="btn-outline flex-1 opacity-50" disabled>
+                                            Diproses
+                                        </button>
+                                    @elseif($borrowStatus['status'] == 'APPROVED')
+                                        <button class="btn-outline flex-1 opacity-50" disabled>
+                                                    Dipinjam
+                                                </button>
+                                            @endif
                                 @elseif($book->available_stock > 0)
-                                    <button onclick="openModal({{ $book->id }}, '{{ $book->title }}')"
+                                    <button onclick="openModal({{ $book->id }}, '{{ addslashes($book->title) }}')"
                                             class="btn-primary flex-1">
                                         Pinjam
                                     </button>
-
                                 @else
                                     <button class="btn-outline flex-1 opacity-50" disabled>
                                         Habis
@@ -383,6 +497,11 @@
                 </div>
             @endforelse
 
+        </div>
+        
+        {{-- Pagination --}}
+        <div class="mt-8">
+            {{ $collections->links() }}
         </div>
 
     </section>
@@ -472,11 +591,11 @@ function openModal(id, title) {
     const borrowInput = document.getElementById('borrow_date');
     const returnInput = document.getElementById('return_date');
 
-    // 🔥 RESET VALUE DULU
+    // Reset value
     borrowInput.value = '';
     returnInput.value = '';
 
-    // set ulang
+    // Set ulang
     borrowInput.min = formatDate(today);
     borrowInput.value = formatDate(today);
 
@@ -484,13 +603,11 @@ function openModal(id, title) {
     minReturn.setDate(minReturn.getDate() + 1);
 
     const maxReturn = new Date(today);
-    maxReturn.setDate(maxReturn.getDate() + 7);
+    maxReturn.setDate(maxReturn.getDate() + 3);
 
     returnInput.min = formatDate(minReturn);
     returnInput.max = formatDate(maxReturn);
     returnInput.value = formatDate(minReturn);
-
-    console.log("TODAY:", formatDate(today));
 }
 
 // ================= CLOSE MODAL =================
@@ -498,10 +615,49 @@ function closeModal() {
     document.getElementById('pinjamModal').classList.add('hidden');
 }
 
-// klik luar modal
-document.addEventListener('click', function(e){
-    const modal = document.getElementById('pinjamModal');
-    if (e.target === modal) closeModal();
+// ================= VALIDASI & SUBMIT =================
+document.addEventListener('submit', function(e){
+    if (e.target.id === 'pinjamForm') {
+        e.preventDefault();
+        
+        const collectionId = document.getElementById('collection_id').value;
+        const borrowDate = document.getElementById('borrow_date').value;
+        const returnDate = document.getElementById('return_date').value;
+        
+        if (!collectionId) {
+            alert('Collection ID tidak ada!');
+            return;
+        }
+        
+        if (!borrowDate || !returnDate) {
+            alert('Tanggal harus diisi!');
+            return;
+        }
+        
+        const borrow = new Date(borrowDate);
+        const ret = new Date(returnDate);
+        borrow.setHours(0,0,0,0);
+        ret.setHours(0,0,0,0);
+        
+        const diff = (ret - borrow) / (1000 * 60 * 60 * 24);
+        
+        if (diff < 1) {
+            alert('Minimal peminjaman 1 hari');
+            return;
+        }
+        
+        if (diff > 3) {
+            alert('Maksimal peminjaman hanya 3 hari');
+            return;
+        }
+        
+        // Submit form
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.innerText = 'Memproses...';
+        btn.disabled = true;
+        
+        e.target.submit();
+    }
 });
 
 // ================= UPDATE RETURN DINAMIS =================
@@ -518,7 +674,7 @@ document.addEventListener('change', function(e){
         minReturn.setDate(minReturn.getDate() + 1);
 
         const maxReturn = new Date(borrow);
-        maxReturn.setDate(maxReturn.getDate() + 7);
+        maxReturn.setDate(maxReturn.getDate() + 3);
 
         returnInput.min = formatDate(minReturn);
         returnInput.max = formatDate(maxReturn);
@@ -531,36 +687,16 @@ document.addEventListener('change', function(e){
     }
 });
 
-// ================= VALIDASI SUBMIT =================
-document.addEventListener('submit', function(e){
-
-    if (e.target.id === 'pinjamForm') {
-
-        const borrow = new Date(document.getElementById('borrow_date').value);
-        const ret = new Date(document.getElementById('return_date').value);
-
-        borrow.setHours(0,0,0,0);
-        ret.setHours(0,0,0,0);
-
-        const diff = (ret - borrow) / (1000 * 60 * 60 * 24);
-
-        if (diff < 1) {
-            alert('Minimal peminjaman 1 hari');
-            e.preventDefault();
-            return;
-        }
-
-        if (diff > 7) {
-            alert('Maksimal peminjaman hanya 7 hari');
-            e.preventDefault();
-            return;
-        }
-
-        const btn = e.target.querySelector('button[type="submit"]');
-        btn.innerText = 'Memproses...';
-        btn.disabled = true;
+// Auto close notification
+setTimeout(function() {
+    const notif = document.getElementById('notif');
+    if (notif) {
+        notif.classList.add('show');
+        setTimeout(function() {
+            notif.classList.remove('show');
+        }, 3000);
     }
-});
+}, 100);
 
 </script>
 @endpush

@@ -457,37 +457,37 @@
 
                             @forelse ($collections as $item)
                                 @php
-                                    $hasPending = in_array($item->id, $pendingCollectionIds ?? []);
+                                    $borrowStatus = $userBorrowStatus[$item->id] ?? null;
                                 @endphp
 
                                 <div class="magazine-card">
 
                                     <div class="magazine-cover"
-                                         style="background-image: url('{{ asset('storage/'.$item->cover_image) }}')">
+                                         style="background-image: url('{{ $item->cover_url }}')">
                                     </div>
 
                                     <div class="p-4">
 
                                         <div class="flex justify-between mb-2">
                                             <span class="text-xs text-indigo-300">
-                                                {{ $item->category ?? '-' }}
+                                                {{ $item->categories->first()->name ?? 'Majalah' }}
                                             </span>
 
                                             <span class="text-xs text-gray-500">
-                                                {{ $item->created_at->format('d M Y') }}
+                                                {{ $item->publication_year ?? '-' }}
                                             </span>
                                         </div>
 
-                                        <h3 class="font-semibold text-indigo-200 text-sm">
+                                        <h3 class="font-semibold text-indigo-200 text-sm line-clamp-2">
                                             {{ $item->title }}
                                         </h3>
 
                                         <div class="flex justify-between items-center mt-2">
                                             <span class="text-xs text-gray-500">
-                                                📚 Stok: {{ $item->stock }}
+                                                📚 Stok: {{ $item->available_stock }}
                                             </span>
 
-                                            @if($item->stock > 0)
+                                            @if($item->available_stock > 0)
                                                 <span class="status-tersedia">✓ Tersedia</span>
                                             @else
                                                 <span class="status-habis">✗ Habis</span>
@@ -495,16 +495,22 @@
                                         </div>
 
                                         <div class="card-actions">
-                                            <a href="{{ route('user.koleksi.show', $item->id) }}" class="btn-link text-xs">
+                                            <a href="{{ route('user.koleksi.detail', $item->id) }}" class="btn-link text-xs">
                                                 Detail →
                                             </a>
 
                                             @auth
-                                                @if($hasPending)
-                                                    <button class="btn-outline" disabled style="flex:1; text-align:center;">
-                                                        Diproses
-                                                    </button>
-                                                @elseif($item->stock > 0)
+                                                @if($borrowStatus && in_array($borrowStatus['status'], ['PENDING', 'APPROVED']))
+                                                    @if($borrowStatus['status'] == 'PENDING')
+                                                        <button class="btn-outline" disabled style="flex:1; text-align:center;">
+                                                            Diproses
+                                                        </button>
+                                                    @else
+                                                        <button class="btn-outline" disabled style="flex:1; text-align:center;">
+                                                            Dipinjam
+                                                        </button>
+                                                    @endif
+                                                @elseif($item->available_stock > 0)
                                                     <button onclick="openModal({{ $item->id }}, '{{ addslashes($item->title) }}')"
                                                             class="btn-primary" style="flex:1; text-align:center;">
                                                         Pinjam
@@ -531,6 +537,11 @@
                                 </div>
                             @endforelse
 
+                        </div>
+
+                        <!-- PAGINATION -->
+                        <div class="flex justify-center mt-8">
+                            {{ $collections->withQueryString()->links() }}
                         </div>
 
                     </div>
@@ -634,8 +645,9 @@ function openModal(id, title) {
     const minReturn = new Date(today);
     minReturn.setDate(minReturn.getDate() + 1);
 
+    // ✅ MAKSIMAL 3 HARI
     const maxReturn = new Date(today);
-    maxReturn.setDate(maxReturn.getDate() + 7);
+    maxReturn.setDate(maxReturn.getDate() + 3);
 
     returnInput.min = formatDate(minReturn);
     returnInput.max = formatDate(maxReturn);
@@ -675,8 +687,10 @@ document.addEventListener('change', function(e) {
         const returnInput = document.getElementById('return_date');
         const minReturn = new Date(borrow);
         minReturn.setDate(minReturn.getDate() + 1);
+        
+        // ✅ MAKSIMAL 3 HARI
         const maxReturn = new Date(borrow);
-        maxReturn.setDate(maxReturn.getDate() + 7);
+        maxReturn.setDate(maxReturn.getDate() + 3);
 
         returnInput.min = formatDate(minReturn);
         returnInput.max = formatDate(maxReturn);
@@ -705,8 +719,9 @@ document.addEventListener('submit', function(e) {
             return;
         }
 
-        if (diff > 7) {
-            alert('Maksimal peminjaman hanya 7 hari');
+        // ✅ CEK MAKSIMAL 3 HARI
+        if (diff > 3) {
+            alert('Maksimal peminjaman hanya 3 hari');
             e.preventDefault();
             return;
         }
@@ -720,20 +735,19 @@ document.addEventListener('submit', function(e) {
 });
 
 // ============================================
-// NOTIFICATION
+// NOTIFICATION AUTO CLOSE
 // ============================================
-function showNotification(message, type = 'success') {
-    const n = document.createElement('div');
-    n.className = 'notification show';
-    n.innerHTML = message;
-    document.body.appendChild(n);
+setTimeout(function() {
+    const notif = document.getElementById('notif');
+    if (notif) {
+        notif.classList.add('show');
+        setTimeout(function() {
+            notif.style.transform = 'translateX(120%)';
+        }, 4000);
+    }
+}, 100);
 
-    setTimeout(() => {
-        n.remove();
-    }, 2500);
-}
-
-console.log('Majalah page ready with pinjam feature');
+console.log('📚 Majalah page loaded (Maksimal pinjam 3 hari)');
 
 </script>
 @endpush

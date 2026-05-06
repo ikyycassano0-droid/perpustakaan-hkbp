@@ -170,6 +170,7 @@
                 Route::post('/{id}/reject', [OrderController::class, 'reject'])->name('reject');
                 Route::post('/{id}/return', [OrderController::class, 'returnBook'])->name('return');
                 Route::post('/{id}/extend', [OrderController::class, 'extend'])->name('extend');
+                Route::post('/admin/orders/{id}/extend', [OrderController::class, 'extend'])->name('admin.orders.extend');
 
             });
 
@@ -215,6 +216,10 @@
                 return view('user.page.home');
             })->name('user.dashboard');
 
+            // ================= ORDERS =================
+            Route::post('/orders', [OrderController::class, 'store'])
+                ->name('orders.store');
+
         // ================= Waktu Layanan =================
          Route::get('/waktu_layanan', [ServiceScheduleController::class, 'indexGuest'])
         ->name('user.waktu.layanan');
@@ -222,9 +227,6 @@
         Route::get('/pinjam', [CollectionController::class, 'pinjam'])
             ->name('user.pinjam');
 
-            // ================= ORDERS =================
-            Route::post('/orders', [OrderController::class, 'store'])
-                ->name('orders.store');
 
             Route::get('/history', [OrderController::class, 'history'])
                 ->name('user.history');

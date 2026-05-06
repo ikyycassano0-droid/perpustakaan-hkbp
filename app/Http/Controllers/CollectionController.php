@@ -8,6 +8,8 @@ use App\Models\Classification;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Order;        
+use App\Models\OrderDetail;
 
 class CollectionController extends Controller
 {
@@ -53,14 +55,10 @@ class CollectionController extends Controller
         $collection = Collection::create([
             'title' => $request->title,
             'series_title' => $request->series_title,
-
-            // ✅ sudah aman kalau model pakai casts array
             'author' => $request->author,
-
             'responsibility_statement' => $request->responsibility_statement,
             'content_type' => $request->content_type,
             'media_type' => $request->media_type,
-
             'publisher' => $request->publisher,
             'publication_year' => $request->publication_year,
             'language' => $request->language,
@@ -68,10 +66,8 @@ class CollectionController extends Controller
             'edition' => $request->edition,
             'subject' => $request->subject,
             'description' => $request->description,
-
             'carrier_type' => $request->carrier_type,
             'specific_detail_info' => $request->specific_detail_info,
-
             'keywords' => $request->keywords
                 ? array_map('trim', explode(',', $request->keywords))
                 : null,
@@ -234,7 +230,7 @@ class CollectionController extends Controller
                 'publication_year',
                 'edition',
                 'description',
-                'created_at' ,
+                'created_at',
                 'updated_at'
             )
             ->with([
@@ -257,18 +253,26 @@ class CollectionController extends Controller
             ->latest()
             ->paginate(10);
 
-        // ================= PENDING ORDER IDS =================
-        $pendingCollectionIds = [];
+        // ================= USER BORROW STATUS =================
+        $userBorrowStatus = [];
 
         if (auth()->check()) {
-            $pendingCollectionIds = \App\Models\OrderDetail::query()
-                ->whereHas('order', function ($q) {
-                    $q->where('user_id', auth()->id())
-                    ->whereIn('status', ['PENDING', 'DIPROSES']); // 🔥 lebih aman
-                })
-                ->pluck('collection_id')
-                ->unique()
-                ->toArray();
+            // Ambil semua order aktif user (PENDING, APPROVED, REJECTED)
+            $activeOrders = Order::where('user_id', auth()->id())
+                ->whereIn('status', ['PENDING', 'APPROVED', 'REJECTED'])
+                ->with('details')
+                ->get();
+
+            // Buat mapping collection_id => status
+            foreach ($activeOrders as $order) {
+                foreach ($order->details as $detail) {
+                    $userBorrowStatus[$detail->collection_id] = [
+                        'status' => $order->status,
+                        'order_id' => $order->id,
+                        'status_text' => $this->getStatusText($order->status)
+                    ];
+                }
+            }
         }
 
         // ================= VIEW MAP =================
@@ -281,7 +285,18 @@ class CollectionController extends Controller
 
         $view = $viewMap[$menu_type] ?? $viewMap['buku_referensi'];
 
-        return view($view, compact('collections', 'menu_type'));
+        return view($view, compact('collections', 'menu_type', 'userBorrowStatus'));
+    }
+
+    private function getStatusText($status)
+    {
+        return match($status) {
+            'PENDING' => 'Menunggu Konfirmasi',
+            'APPROVED' => 'Sedang Dipinjam',
+            'REJECTED' => 'Ditolak',
+            'RETURNED' => 'Dikembalikan',
+            default => 'Sedang Diproses'
+        };
     }
 
     // ================= GLOBAL SEARCH =================

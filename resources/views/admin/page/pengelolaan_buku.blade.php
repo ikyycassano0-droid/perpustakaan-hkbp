@@ -76,6 +76,11 @@
                                 <div>
                                     <div class="font-semibold text-slate-800 text-sm">{{ $order->user->name ?? 'User tidak ditemukan' }}</div>
                                     <div class="text-slate-400 text-[10px] mt-0.5">ID: #{{ $order->id }}</div>
+                                    @if($order->extension_count > 0)
+                                        <div class="text-[9px] text-amber-600 mt-0.5">
+                                            <i class="fas fa-calendar-plus"></i> Extend: {{ $order->extension_count }}/3
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </td>
@@ -142,10 +147,15 @@
                                 @endphp
                                 <div class="text-[10px] text-slate-400 mt-0.5">
                                     Durasi: {{ $diff }} hari
-                                    @if($diff > 7)
-                                        <span class="text-rose-500 ml-1">(INVALID)</span>
+                                    @if($diff > 3)
+                                        <span class="text-rose-500 ml-1">(MELEBIHI 3 HARI!)</span>
                                     @endif
                                 </div>
+                                @if($order->original_due_date)
+                                    <div class="text-[9px] text-amber-600 mt-1">
+                                        <i class="fas fa-history"></i> Awal: {{ \Carbon\Carbon::parse($order->original_due_date)->format('d-m-Y') }}
+                                    </div>
+                                @endif
                             @else
                                 -
                             @endif
@@ -184,12 +194,14 @@
                                         </button>
                                     </form>
 
-                                    <form action="{{ route('admin.orders.extend', $order->id) }}" method="POST" class="inline-block">
-                                        @csrf
-                                        <button type="submit" class="px-3 py-1.5 text-xs font-medium text-white bg-amber-600 rounded-lg hover:bg-amber-700 transition flex items-center gap-1" title="Extend">
-                                            <i class="fas fa-calendar-plus text-[10px]"></i> Extend
-                                        </button>
-                                    </form>
+                                    <!-- Tombol Extend dengan Modal -->
+                                    <button type="button" 
+                                            onclick="openExtendModal({{ $order->id }})"
+                                            class="px-3 py-1.5 text-xs font-medium text-white bg-amber-600 rounded-lg hover:bg-amber-700 transition flex items-center gap-1"
+                                            {{ $order->extension_count >= 3 || $order->is_late ? 'disabled' : '' }}>
+                                        <i class="fas fa-calendar-plus text-[10px]"></i> 
+                                        Extend
+                                    </button>
 
                                 @else
                                     <span class="text-slate-400 text-xs">Selesai</span>
@@ -212,6 +224,48 @@
                 </tbody>
             </table>
         </div>
+    </div>
+</div>
+
+<!-- Modal Perpanjangan -->
+<div id="extendModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold text-slate-800">Perpanjangan Peminjaman</h3>
+            <button onclick="closeExtendModal()" class="text-slate-400 hover:text-slate-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <form id="extendForm" method="POST">
+            @csrf
+            <input type="hidden" name="order_id" id="extend_order_id">
+            
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-slate-700 mb-2">Pilih Durasi Perpanjangan</label>
+                <select name="extend_days" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                    <option value="1">1 Hari</option>
+                    <option value="2">2 Hari</option>
+                    <option value="3">3 Hari (Maksimal)</option>
+                </select>
+                <p class="text-xs text-slate-500 mt-2">
+                    <i class="fas fa-info-circle text-amber-500"></i> 
+                    Maksimal perpanjangan 3 kali
+                </p>
+            </div>
+            
+            <div class="flex gap-2">
+                <button type="button" 
+                        onclick="closeExtendModal()" 
+                        class="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition">
+                    Batal
+                </button>
+                <button type="submit" 
+                        class="flex-1 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition">
+                    <i class="fas fa-calendar-plus"></i> Perpanjang
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -240,6 +294,41 @@
             });
         });
     });
+
+    // ================= MODAL EXTEND =================
+    function openExtendModal(orderId) {
+        const modal = document.getElementById('extendModal');
+        const form = document.getElementById('extendForm');
+        
+        form.action = `/admin/orders/${orderId}/extend`;
+        document.getElementById('extend_order_id').value = orderId;
+        
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeExtendModal() {
+        const modal = document.getElementById('extendModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    // Klik luar modal
+    document.getElementById('extendModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeExtendModal();
+        }
+    });
+
+    // Auto close notifikasi
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.bg-emerald-50, .bg-rose-50');
+        alerts.forEach(alert => {
+            alert.style.transition = 'opacity 0.5s';
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 500);
+        });
+    }, 3000);
 </script>
 
 @endsection

@@ -357,9 +357,22 @@
             font-size: 0.65rem;
         }
     }
+
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .line-clamp-1 {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
 </style>
 @endpush
-
 
 @section('content')
 <div class="main-content">
@@ -421,6 +434,9 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
 
                             @foreach($collections->take(4) as $item)
+                                @php
+                                    $borrowStatus = $userBorrowStatus[$item->id] ?? null;
+                                @endphp
                                 <div class="featured-card p-4">
 
                                     <div class="flex items-start gap-3">
@@ -432,23 +448,39 @@
                                             </h3>
 
                                             <p class="text-xs text-gray-400">
-                                                {{ is_array($item->author) ? implode(', ', $item->author) : $item->author }}
+                                                {{ $item->author_string }}
                                             </p>
 
                                             <p class="text-xs text-gray-500 mt-1">
-                                                {{ \Illuminate\Support\Str::limit($item->description, 80) }}
+                                                {{ \Illuminate\Support\Str::limit($item->description ?? '', 80) }}
                                             </p>
 
                                             <div class="flex items-center justify-between mt-2">
 
-                                                <span class="status-badge {{ $item->stock > 0 ? 'status-tersedia' : 'status-kosong' }}">
-                                                    {{ $item->stock > 0 ? '✓ TERSEDIA' : '⚡ KOSONG' }}
+                                                <span class="status-badge {{ $item->available_stock > 0 ? 'status-tersedia' : 'status-kosong' }}">
+                                                    {{ $item->available_stock > 0 ? '✓ TERSEDIA' : '⚡ KOSONG' }}
                                                 </span>
 
-                                                <a href="{{ route('user.koleksi.show', $item->id) }}"
-                                                   class="btn-link text-xs">
-                                                    Lihat Detail →
-                                                </a>
+                                                @auth
+                                                    @if($borrowStatus && in_array($borrowStatus['status'], ['PENDING', 'APPROVED']))
+                                                        <button class="btn-outline text-xs" style="padding: 4px 10px;" disabled>
+                                                            {{ $borrowStatus['status'] == 'PENDING' ? 'Diproses' : 'Dipinjam' }}
+                                                        </button>
+                                                    @elseif($item->available_stock > 0)
+                                                        <button onclick="openModal({{ $item->id }}, '{{ addslashes($item->title) }}')"
+                                                                class="btn-primary text-xs" style="padding: 4px 10px;">
+                                                            Pinjam
+                                                        </button>
+                                                    @else
+                                                        <button class="btn-outline text-xs" style="padding: 4px 10px;" disabled>
+                                                            Habis
+                                                        </button>
+                                                    @endif
+                                                @else
+                                                    <a href="{{ route('login') }}" class="btn-primary text-xs" style="padding: 4px 10px;">
+                                                        Login
+                                                    </a>
+                                                @endauth
 
                                             </div>
                                         </div>
@@ -480,86 +512,92 @@
                                     </thead>
 
                                     <tbody>
-                                        @forelse($collections as $item)
-                                            @php
-                                                $hasPending = in_array($item->id, $pendingCollectionIds ?? []);
-                                            @endphp
-                                            <tr>
+                                    @forelse($collections as $item)
+                                        @php
+                                            $borrowStatus = $userBorrowStatus[$item->id] ?? null;
+                                        @endphp
+                                        <tr>
 
-                                                <!-- INFORMASI -->
-                                                <td>
-                                                    <div class="font-semibold text-indigo-200 text-sm">
-                                                        {{ $item->title }}
-                                                    </div>
-                                                    <div class="text-xs text-gray-400">
-                                                        {{ is_array($item->author) ? implode(', ', $item->author) : $item->author }}
-                                                    </div>
-                                                </td>
+                                            <!-- INFORMASI -->
+                                            <td>
+                                                <div class="font-semibold text-indigo-200 text-sm">
+                                                    {{ $item->title }}
+                                                </div>
+                                                <div class="text-xs text-gray-400">
+                                                    {{ $item->author_string }}
+                                                </div>
+                                            </td>
 
-                                                <!-- TAHUN -->
-                                                <td>
-                                                    <div class="text-sm">
-                                                        {{ $item->publication_year ?? '-' }}
-                                                    </div>
-                                                    <div class="text-xs text-gray-500">
-                                                        {{ $item->edition ?? '-' }}
-                                                    </div>
-                                                </td>
+                                            <!-- TAHUN -->
+                                            <td>
+                                                <div class="text-sm">
+                                                    {{ $item->publication_year ?? '-' }}
+                                                </div>
+                                                <div class="text-xs text-gray-500">
+                                                    {{ $item->edition ?? '-' }}
+                                                </div>
+                                            </td>
 
-                                                <!-- KATEGORI -->
-                                                <td>
-                                                    <span class="text-xs text-gray-300">
-                                                        {{ $item->categories->first()->name ?? 'Umum' }}
-                                                    </span>
-                                                </td>
+                                            <!-- KATEGORI -->
+                                            <td>
+                                                <span class="text-xs text-gray-300">
+                                                    {{ $item->categories->first()->name ?? 'Umum' }}
+                                                </span>
+                                            </td>
 
-                                                <!-- STATUS -->
-                                                <td>
-                                                    <span class="status-badge {{ $item->stock > 0 ? 'status-tersedia' : 'status-kosong' }}">
-                                                        {{ $item->stock > 0 ? '✓ TERSEDIA' : '⚡ KOSONG' }}
-                                                    </span>
-                                                </td>
+                                            <!-- STATUS -->
+                                            <td>
+                                                <span class="status-badge {{ $item->available_stock > 0 ? 'status-tersedia' : 'status-kosong' }}">
+                                                    {{ $item->available_stock > 0 ? '✓ TERSEDIA' : '⚡ KOSONG' }}
+                                                </span>
+                                            </td>
 
-                                                <!-- DETAIL -->
-                                                <td>
-                                                    <a href="{{ route('user.koleksi.show', $item->id) }}"
-                                                       class="btn-primary">
-                                                        Detail
-                                                    </a>
-                                                </td>
+                                            <!-- DETAIL -->
+                                            <td>
+                                                <a href="{{ route('user.koleksi.detail', $item->id) }}"
+                                                   class="btn-primary">
+                                                    Detail
+                                                </a>
+                                            </td>
 
-                                                <!-- PINJAM -->
-                                                <td>
-                                                    @auth
-                                                        @if($hasPending)
+                                            <!-- PINJAM -->
+                                            <td>
+                                                @auth
+                                                    @if($borrowStatus && in_array($borrowStatus['status'], ['PENDING', 'APPROVED']))
+                                                        @if($borrowStatus['status'] == 'PENDING')
                                                             <button class="btn-outline" disabled>
                                                                 Diproses
                                                             </button>
-                                                        @elseif($item->stock > 0)
-                                                            <button onclick="openModal({{ $item->id }}, '{{ addslashes($item->title) }}')"
-                                                                    class="btn-primary">
-                                                                Pinjam
-                                                            </button>
                                                         @else
                                                             <button class="btn-outline" disabled>
-                                                                Habis
+                                                                Dipinjam
                                                             </button>
                                                         @endif
+                                                    @elseif($item->available_stock > 0)
+                                                        <button onclick="openModal({{ $item->id }}, '{{ addslashes($item->title) }}')"
+                                                                class="btn-primary">
+                                                            Pinjam
+                                                        </button>
                                                     @else
-                                                        <a href="{{ route('login') }}" class="btn-primary">
-                                                            Login
-                                                        </a>
-                                                    @endauth
-                                                </td>
+                                                        <button class="btn-outline" disabled>
+                                                            Habis
+                                                        </button>
+                                                    @endif
+                                                @else
+                                                    <a href="{{ route('login') }}" class="btn-primary">
+                                                        Login
+                                                    </a>
+                                                @endauth
+                                            </td>
 
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="6" class="text-center py-8 text-gray-400">
-                                                    📭 Data tidak ditemukan
-                                                </td>
-                                            </tr>
-                                        @endforelse
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="text-center py-8 text-gray-400">
+                                                📭 Data tidak ditemukan
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                     </tbody>
 
                                 </table>
@@ -637,7 +675,6 @@
 
 @endsection
 
-
 @push('scripts')
 <script>
 
@@ -674,8 +711,9 @@ function openModal(id, title) {
     const minReturn = new Date(today);
     minReturn.setDate(minReturn.getDate() + 1);
 
+    // ✅ MAKSIMAL 3 HARI
     const maxReturn = new Date(today);
-    maxReturn.setDate(maxReturn.getDate() + 7);
+    maxReturn.setDate(maxReturn.getDate() + 3);
 
     returnInput.min = formatDate(minReturn);
     returnInput.max = formatDate(maxReturn);
@@ -715,8 +753,10 @@ document.addEventListener('change', function(e) {
         const returnInput = document.getElementById('return_date');
         const minReturn = new Date(borrow);
         minReturn.setDate(minReturn.getDate() + 1);
+        
+        // ✅ MAKSIMAL 3 HARI
         const maxReturn = new Date(borrow);
-        maxReturn.setDate(maxReturn.getDate() + 7);
+        maxReturn.setDate(maxReturn.getDate() + 3);
 
         returnInput.min = formatDate(minReturn);
         returnInput.max = formatDate(maxReturn);
@@ -745,8 +785,9 @@ document.addEventListener('submit', function(e) {
             return;
         }
 
-        if (diff > 7) {
-            alert('Maksimal peminjaman hanya 7 hari');
+        // ✅ CEK MAKSIMAL 3 HARI
+        if (diff > 3) {
+            alert('Maksimal peminjaman hanya 3 hari');
             e.preventDefault();
             return;
         }
@@ -772,7 +813,7 @@ setTimeout(function() {
     }
 }, 100);
 
-console.log('📚 Buku Referensi page loaded (Laravel Pagination Mode)');
+console.log('📚 Buku Referensi page loaded (Maksimal pinjam 3 hari)');
 
 </script>
 @endpush
