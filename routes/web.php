@@ -17,6 +17,7 @@
         use App\Http\Controllers\ProfileMenuController;
         use Illuminate\Http\Request;
         use App\Models\User;
+        use App\Http\Controllers\ServiceScheduleController;
 
         Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
 
@@ -51,7 +52,7 @@
             return view('admin.page.home');
         })->name('admin.home');
 
-        Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(function () {
 
             Route::prefix('members')->name('members.')->group(function () {
 
@@ -68,7 +69,18 @@
 
             });
 
-        // ================= PROFILE (🔥 SUDAH DINAMIS TYPE) =================
+        // ================= Panduan =================
+        Route::prefix('panduan')->name('panduan.')->group(function () {
+            Route::get('/', [ArchiveController::class, 'index'])->name('index');
+            Route::post('/', [ArchiveController::class, 'store'])->name('store');
+            Route::get('/{id}/edit', [ArchiveController::class, 'index'])->name('edit');
+            Route::put('/{id}', [ArchiveController::class, 'update'])->name('update');
+            Route::delete('/{id}', [ArchiveController::class, 'destroy'])->name('destroy');
+            Route::delete('/panduan-file/{id}', [ArchiveController::class, 'deleteFile'])
+            ->name('panduan.file.delete');
+        });
+
+        // ================= PROFILE  =================
         Route::prefix('profile')->name('profile.')->group(function () {
 
                 Route::get('/', [ProfileController::class, 'index'])->name('index');
@@ -77,8 +89,20 @@
                 Route::delete('/{id}', [ProfileController::class, 'destroy'])->name('destroy');
             });
 
+        // ================= Waktu =================
+        Route::prefix('waktu_layanan')->name('waktu_layanan.')->group(function () {
+            Route::get('/', [ServiceScheduleController::class, 'index'])
+                ->name('index');
+            Route::post('/', [ServiceScheduleController::class, 'store'])
+                ->name('store');
+            Route::put('/{id}', [ServiceScheduleController::class, 'update'])
+                ->name('update');
+            Route::patch('/{id}/field', [ServiceScheduleController::class, 'updateField'])
+                ->name('updateField');
+            Route::delete('/{id}/delete', [ServiceScheduleController::class, 'destroy'])
+                ->name('destroy');
+        });
 
-        // ================= BERITA =================
         // ================= BERITA =================
         Route::prefix('berita')->name('berita.')->group(function () {
             Route::get('/', [NewsController::class, 'index_admin'])->name('index');
@@ -177,30 +201,23 @@
 
                 // Delete KTI
                 Route::delete('/{id}', [FinalProjectController::class, 'destroy'])->name('delete');
-            });
 
-            // ================= LAYANAN (ARCHIVE) =================
-            Route::prefix('layanan')->name('layanan.')->group(function () {
-
-                Route::get('/', [ArchiveController::class, 'index'])->name('index');
-
-                Route::get('/{category}', [ArchiveController::class, 'byCategory'])->name('category');
-
-                Route::post('/', [ArchiveController::class, 'store'])->name('store');
-                Route::put('/{id}', [ArchiveController::class, 'update'])->name('update');
-                Route::delete('/{id}', [ArchiveController::class, 'destroy'])->name('delete');
+                 Route::get('/download/{id}', [FinalProjectController::class, 'download'])->name('download');
             });
 
     });
 
         // User
-        Route::middleware(['auth'])->prefix('user')->group(function () {
+    Route::middleware(['auth'])->prefix('user')->group(function () {
 
             // Dashboard
             Route::get('/dashboard', function() {
                 return view('user.page.home');
             })->name('user.dashboard');
 
+        // ================= Waktu Layanan =================
+         Route::get('/waktu_layanan', [ServiceScheduleController::class, 'indexGuest'])
+        ->name('user.waktu.layanan');
         // ================= PINJAM =================
         Route::get('/pinjam', [CollectionController::class, 'pinjam'])
             ->name('user.pinjam');
@@ -271,11 +288,12 @@
 
         Route::prefix('final-project')->name('final_project.')->group(function() {
 
+        Route::middleware('auth')->group(function () {
         Route::get('/kti', [FinalProjectController::class,'index'])
             ->name('kti')
             ->defaults('category','kti');
 
-        Route::middleware('auth')->group(function () {
+        
             Route::post('/kti/store', [FinalProjectController::class,'store'])->name('kti.store');
             Route::post('/kti/update/{id}', [FinalProjectController::class,'update'])->name('kti.update');
             Route::delete('/kti/delete/{id}', [FinalProjectController::class,'destroy'])->name('kti.delete');
@@ -314,6 +332,10 @@
 
             });
 
+        // ================= Waktu Layanan =================
+            Route::get('/waktu_layanan', [ServiceScheduleController::class, 'indexGuest'])
+            ->name('waktu.layanan');
+
         // ================= BERITA (FIX FINAL) =================
             Route::prefix('berita')->name('guest.berita.')->group(function () {
 
@@ -328,9 +350,6 @@
             });
 
             Route::get('/koleksi/{category}', [FinalProjectController::class, 'index']);
-
-            Route::get('/layanan/{category}', [ArchiveController::class, 'indexLayananGuest'])
-                ->name('guest.layanan.show');
         });
 
         Route::get('/search', [CollectionController::class, 'globalSearch'])

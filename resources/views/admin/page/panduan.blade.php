@@ -160,7 +160,7 @@
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Upload File (PDF/DOC)</label>
                     <div class="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:border-indigo-300 transition cursor-pointer" onclick="document.getElementById('file_input').click()">
-                        <input type="file" name="file" id="file_input" class="hidden" accept=".pdf,.doc,.docx">
+                        <input type="file" name="files[]" id="file_input" class="hidden" multiple accept=".pdf,.doc,.docx">
                         <i class="fas fa-cloud-upload-alt text-3xl text-slate-400 mb-2"></i>
                         <p class="text-sm text-slate-500">Klik atau drag & drop file disini</p>
                         <p class="text-xs text-slate-400 mt-1">Maksimal 10 MB, format PDF atau DOC</p>
@@ -264,7 +264,7 @@
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Tambah File Baru (Opsional)</label>
                     <div class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:border-indigo-300 transition cursor-pointer" onclick="document.getElementById('edit_file_input').click()">
-                        <input type="file" name="new_file" id="edit_file_input" class="hidden" accept=".pdf,.doc,.docx">
+                        <input type="file" name="new_files[]" id="edit_file_input" class="hidden" multiple accept=".pdf,.doc,.docx">
                         <i class="fas fa-cloud-upload-alt text-2xl text-slate-400 mb-1"></i>
                         <p class="text-xs text-slate-500">Klik untuk upload file baru</p>
                     </div>
@@ -368,10 +368,10 @@
     }
     
     // Delete file function
-    function deleteFile(fileId, archiveId) {
+    function deleteFile(fileId) {
         if (confirm('Hapus file ini? Data akan dihapus secara permanen.')) {
             const form = document.getElementById('deleteFileForm');
-            form.action = "{{ url('admin/panduan-file') }}/" + fileId;
+            form.action = "{{ url('admin/panduan/panduan-file') }}/" + fileId;
             form.submit();
         }
     }

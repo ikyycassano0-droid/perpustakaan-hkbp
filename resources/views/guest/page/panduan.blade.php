@@ -4,205 +4,284 @@
 
 @push('styles')
 <style>
-    /* Glass card */
-    .glass-card {
-        background: rgba(15, 23, 42, 0.55);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 2rem;
-        transition: all 0.3s ease;
-    }
-    
-    /* Title utama */
-    .title-main {
-        font-weight: 800;
-        background: linear-gradient(135deg, #ffffff, #a5b4fc, #6366f1);
-        background-clip: text;
-        -webkit-background-clip: text;
-        color: transparent;
-        text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
-    }
-    
-    /* Neon border */
-    .neon-border {
-        position: relative;
-        border-radius: 28px;
-        background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2));
-        transition: all 0.3s ease;
-    }
-    
-    .neon-border:hover {
-        box-shadow: 0 0 30px rgba(99,102,241,0.3);
-    }
-    
-    .neon-inner {
-        background: rgba(15, 23, 42, 0.7);
-        backdrop-filter: blur(20px);
-        border-radius: 26px;
-        padding: 2rem;
-        border: 1px solid rgba(255,255,255,0.08);
-    }
-    
-    /* Search input */
-    .search-input {
-        width: 100%;
-        padding: 12px 20px;
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(99, 102, 241, 0.3);
-        border-radius: 40px;
-        color: white;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-    }
-    
-    .search-input:focus {
-        outline: none;
-        border-color: #6366f1;
-        box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
-    }
-    
-    .search-input::placeholder {
-        color: #64748b;
-    }
-    
-    /* Filter button */
-    .filter-btn {
-        padding: 8px 20px;
-        border-radius: 30px;
-        font-size: 0.85rem;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(99, 102, 241, 0.3);
-        color: #cbd5e1;
-    }
-    
-    .filter-btn.active {
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        border-color: transparent;
-        color: white;
-    }
-    
-    .filter-btn:hover {
-        border-color: #6366f1;
-        color: white;
-    }
-    
-    /* Guide Card */
-    .guide-card {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(12px);
-        border-radius: 1.5rem;
-        overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-        border: 1px solid rgba(99, 102, 241, 0.3);
-    }
-    
-    .guide-card:hover {
-        transform: translateY(-5px);
-        border-color: rgba(99, 102, 241, 0.7);
-        box-shadow: 0 15px 30px -12px rgba(99, 102, 241, 0.3);
-    }
-    
-    .guide-icon {
-        width: 50px;
-        height: 50px;
-        background: rgba(99, 102, 241, 0.15);
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-    }
-    
-    .guide-title {
-        font-weight: 700;
-        font-size: 1rem;
-        color: #c7d2fe;
-        margin-bottom: 0.25rem;
-    }
-    
-    .guide-meta {
-        font-size: 0.7rem;
-        color: #94a3b8;
-    }
-    
-    .btn-download {
-        background: transparent;
-        border: 1px solid rgba(99, 102, 241, 0.5);
-        padding: 6px 16px;
-        border-radius: 30px;
-        font-size: 0.75rem;
-        font-weight: 500;
-        color: #a5b4fc;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        text-decoration: none;
-    }
-    
-    .btn-download:hover {
-        background: rgba(99, 102, 241, 0.2);
-        border-color: #6366f1;
-        color: white;
-    }
-    
-    .btn-primary {
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        padding: 10px 24px;
-        border-radius: 40px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-        color: white;
-        font-size: 0.85rem;
-    }
-    
-    .btn-primary:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
-    }
-    
-    /* Notification */
-    .notification {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        padding: 12px 24px;
-        background: rgba(15, 23, 42, 0.95);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(99, 102, 241, 0.5);
-        border-radius: 12px;
-        color: white;
-        z-index: 1000;
-        transform: translateX(120%);
-        transition: transform 0.3s ease;
-    }
-    
-    .notification.show {
-        transform: translateX(0);
-    }
-    
-    /* Section spacing */
-    .section {
-        margin-top: 40px;
-    }
-    
-    /* Line clamp */
-    .line-clamp-2 {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
+/* ===== RESET & BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+    position: relative;
+    z-index: 10;
+}
+
+/* ===== SECTION ===== */
+.section {
+    margin-top: 40px;
+}
+
+/* ===== GLASS CARD ===== */
+.glass-card {
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 2rem;
+    transition: all 0.3s ease;
+}
+
+/* ===== TITLE ===== */
+.title-main {
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+}
+
+/* ===== NEON BORDER ===== */
+.neon-border {
+    position: relative;
+    border-radius: 28px;
+    background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2));
+    transition: all 0.3s ease;
+}
+
+.neon-border:hover {
+    box-shadow: 0 0 30px rgba(99,102,241,0.3);
+}
+
+.neon-inner {
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(20px);
+    border-radius: 26px;
+    padding: 2rem;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ===== SEARCH BAR ===== */
+.search-input {
+    width: 100%;
+    padding: 12px 20px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 40px;
+    color: white;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+}
+
+.search-input::placeholder {
+    color: #64748b;
+}
+
+/* ===== FILTER BUTTON ===== */
+.filter-btn {
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    color: #cbd5e1;
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-color: transparent;
+    color: white;
+}
+
+.filter-btn:hover {
+    border-color: #6366f1;
+    color: white;
+}
+
+/* ===== GUIDE CARD ===== */
+.guide-card {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(12px);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.guide-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(99, 102, 241, 0.7);
+    box-shadow: 0 15px 30px -12px rgba(99, 102, 241, 0.3);
+}
+
+.guide-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(99, 102, 241, 0.15);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.guide-title {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #c7d2fe;
+    margin-bottom: 0.25rem;
+}
+
+.guide-meta {
+    font-size: 0.7rem;
+    color: #94a3b8;
+}
+
+.btn-download {
+    background: transparent;
+    border: 1px solid rgba(99, 102, 241, 0.5);
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #a5b4fc;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+}
+
+.btn-download:hover {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: #6366f1;
+    color: white;
+    transform: scale(1.05);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    padding: 10px 24px;
+    border-radius: 40px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-size: 0.85rem;
+}
+
+.btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+}
+
+/* ===== FADE UP ANIMATION ===== */
+.fade-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: 0.9s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+
+.fade-up.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ===== NOTIFICATION ===== */
+.notification {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    padding: 12px 24px;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(99, 102, 241, 0.5);
+    border-radius: 12px;
+    color: white;
+    z-index: 1000;
+    transform: translateX(120%);
+    transition: transform 0.3s ease;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+/* ===== LINE CLAMP ===== */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ===== CUSTOM SCROLLBAR ===== */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+    background: #6366f1;
+    border-radius: 8px;
+}
+
+/* ===== FLOATING ANIMATION ===== */
+@keyframes floatAnim {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+
+.float {
+    animation: floatAnim 6s ease-in-out infinite;
+}
 </style>
 @endpush
 
 @section('content')
+<!-- Particle Canvas -->
+<canvas id="particleCanvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></canvas>
+
+<!-- Background Blobs -->
+<div class="blob blob-1" style="position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, #6366f1, transparent); filter: blur(120px); opacity: 0.6; z-index: -1; top: -200px; left: -150px;"></div>
+<div class="blob blob-2" style="position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, #6366f1, transparent); filter: blur(120px); opacity: 0.6; z-index: -1; bottom: -250px; right: -200px;"></div>
+
+<!-- Cursor Glow -->
+<div class="cursor-glow" id="cursorGlow" style="position: fixed; width: 150px; height: 180px; pointer-events: none; transform: translate(-50%, -50%); z-index: 9999; border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; background: radial-gradient(circle at 30% 30%, rgba(99, 107, 185, 0.6), transparent 60%), radial-gradient(circle at 70% 70%, rgba(99,102,241,0.5), transparent 70%), radial-gradient(circle at 50% 50%, rgba(59,130,246,0.4), transparent 80%); filter: blur(40px); transition: opacity 0.2s; animation: blobMove 8s ease-in-out infinite, pulseGlow 4s ease-in-out infinite;"></div>
+
+<style>
+@keyframes blobMove {
+    0% { border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; }
+    25% { border-radius: 50% 60% 40% 60% / 60% 40% 60% 40%; }
+    50% { border-radius: 70% 30% 60% 40% / 40% 70% 30% 60%; }
+    75% { border-radius: 40% 60% 50% 50% / 60% 30% 70% 40%; }
+    100% { border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; }
+}
+
+@keyframes pulseGlow {
+    0%, 100% { filter: blur(40px) brightness(1); }
+    50% { filter: blur(55px) brightness(1.3); }
+}
+</style>
+
+<!-- Floating Decorative Elements -->
+<div class="fixed top-40 left-10 text-indigo-400 float opacity-30 pointer-events-none z-0 text-2xl">✦</div>
+<div class="fixed top-60 right-20 text-indigo-300 float opacity-30 pointer-events-none z-0 text-2xl">✧</div>
+<div class="fixed bottom-40 left-20 text-indigo-500 float opacity-30 pointer-events-none z-0 text-2xl">✦</div>
+
 <div class="main-content">
 
     <!-- HERO SECTION -->
@@ -231,7 +310,7 @@
                 </div>
 
                 <!-- Filter Tabs -->
-                <div class="flex flex-wrap gap-3 mb-8">
+                <div class="flex flex-wrap gap-3 mb-8" id="filterContainer">
                     <button class="filter-btn active" data-filter="all">Semua</button>
                     @php
                         $uniqueCategories = $data->pluck('category')->unique();
@@ -251,7 +330,10 @@
 
                 <!-- Guides Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="guidesGrid">
-                    <!-- Guide cards will be inserted by JavaScript -->
+                    <div class="col-span-2 text-center py-12">
+                        <div class="text-2xl mb-3">⏳</div>
+                        <p class="text-gray-400">Memuat data...</p>
+                    </div>
                 </div>
 
             </div>
@@ -298,153 +380,117 @@
 @push('scripts')
 <script>
 // ============================================
-// DATA DARI BACKEND (Laravel) - LANGSUNG DARI CONTROLLER
+// DATA DARI BACKEND (Laravel)
 // ============================================
 
 @php
-    $guides = $data->map(function($item){
-        // Map kategori ke filter yang sesuai
-        $categoryFilter = strtolower($item->category);
-        
-        // Mapping filter untuk konsistensi
-        if (strpos($categoryFilter, 'petunjuk') !== false) {
-            $categoryFilter = 'perpustakaan';
-        } elseif (strpos($categoryFilter, 'kebijakan') !== false) {
-            $categoryFilter = 'administrasi';
-        } elseif (strpos($categoryFilter, 'syarat') !== false) {
-            $categoryFilter = 'administrasi';
-        } elseif (strpos($categoryFilter, 'faq') !== false) {
-            $categoryFilter = 'perpustakaan';
-        } else {
-            $categoryFilter = 'laboratorium';
-        }
-        
-        return [
-            'id' => $item->id,
-            'title' => $item->title,
-            'category' => $item->category,
-            'category_filter' => $categoryFilter,
-            'icon' => $item->icon ?? 'fas fa-file-alt',
-            'date' => $item->updated_at ? $item->updated_at->format('d M Y') : date('d M Y'),
-            'description' => $item->description ?? '',
-            'files' => $item->activeFiles->map(function($file){
-                return [
-                    'url' => asset('storage/' . $file->file_url),
-                    'name' => $file->file_name ?? 'File',
-                    'size' => $file->file_size ?? 0
-                ];
-            })->values()
-        ];
-    })->values();
+$guides = $data->map(function($item){
+    // Mapping icon berdasarkan kategori
+    $iconMap = [
+        'Petunjuk Penggunaan' => '📖',
+        'Kebijakan' => '⚖️',
+        'Syarat & Ketentuan' => '📜',
+        'FAQ' => '❓',
+        'Lainnya' => '📌'
+    ];
+    
+    $icon = $iconMap[$item->category] ?? '📄';
+    
+    // Pastikan files diproses dengan benar
+    $files = [];
+    if(isset($item->activeFiles) && $item->activeFiles->count() > 0) {
+        $files = $item->activeFiles->map(function($file){
+            return [
+                'url' => asset('storage/' . $file->file_url),
+                'name' => $file->file_name ?? 'File',
+                'size' => $file->file_size ?? 0,
+                'original_name' => $file->original_name ?? $file->file_name ?? 'download'
+            ];
+        })->values()->toArray();
+    }
+    
+    return [
+        'id' => $item->id,
+        'title' => $item->title ?? 'Tanpa Judul',
+        'category' => $item->category ?? 'Umum',
+        'category_filter' => strtolower(trim($item->category ?? 'umum')),
+        'icon' => $icon,
+        'date' => $item->updated_at ? $item->updated_at->format('d M Y') : date('d M Y'),
+        'description' => $item->description ?? '',
+        'files' => $files,
+        'file_size' => $files && count($files) > 0 ? formatBytes($files[0]['size']) : ''
+    ];
+})->values();
+
+function formatBytes($bytes, $precision = 2) { 
+    if ($bytes == 0) return '0 Bytes';
+    $units = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    $i = floor(log($bytes, 1024));
+    return round($bytes / pow(1024, $i), $precision) . ' ' . $units[$i];
+}
 @endphp
 
 let guidesData = {!! json_encode($guides) !!};
 
 // ============================================
-// FILTER & SEARCH
+// DEBUG: Cek data di console
 // ============================================
+console.log('🔍 Total Data dari Backend:', guidesData.length);
+console.log('📦 Detail Data:', guidesData);
 
+// ============================================
+// VARIABLES
+// ============================================
 let currentFilter = 'all';
 let searchQuery = '';
 
-function renderGuides() {
-    let filteredData = [...guidesData];
-    
-    // SEARCH
-    if (searchQuery) {
-        filteredData = filteredData.filter(item => 
-            item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.description.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    }
-    
-    // FILTER
-    if (currentFilter !== 'all') {
-        filteredData = filteredData.filter(item => 
-            item.category_filter === currentFilter
-        );
-    }
-    
-    const grid = document.getElementById('guidesGrid');
-    if (!grid) return;
-    
-    grid.innerHTML = '';
-    
-    if (filteredData.length === 0) {
-        grid.innerHTML = `
-            <div class="col-span-2 text-center py-12">
-                <div class="text-5xl mb-3">📭</div>
-                <p class="text-gray-400">Tidak ada panduan yang ditemukan</p>
-                <p class="text-sm text-gray-500 mt-1">Coba kata kunci lain atau pilih kategori berbeda</p>
-            </div>
-        `;
-        return;
-    }
-    
-    filteredData.forEach(guide => {
-        let fileButton = '';
-        if (guide.files.length > 0) {
-            fileButton = `
-                <a href="${guide.files[0].url}" target="_blank" class="btn-download" download>
-                    📥 Unduh
-                </a>
-            `;
-        } else {
-            fileButton = `
-                <span class="btn-download" style="opacity:0.5; cursor:not-allowed;">
-                    📄 Tidak ada file
-                </span>
-            `;
-        }
-
-        // Tentukan icon berdasarkan kategori
-        let iconHtml = '';
-        if (guide.icon && guide.icon.includes('fa-')) {
-            iconHtml = `<i class="${guide.icon}"></i>`;
-        } else {
-            // Default icons based on category
-            if (guide.category.toLowerCase().includes('petunjuk')) {
-                iconHtml = '📖';
-            } else if (guide.category.toLowerCase().includes('kebijakan')) {
-                iconHtml = '⚖️';
-            } else if (guide.category.toLowerCase().includes('syarat')) {
-                iconHtml = '📜';
-            } else if (guide.category.toLowerCase().includes('faq')) {
-                iconHtml = '❓';
-            } else {
-                iconHtml = '📄';
-            }
-        }
-
-        const card = document.createElement('div');
-        card.className = 'guide-card fade-up';
-        card.setAttribute('data-id', guide.id);
-        card.innerHTML = `
-            <div class="p-5 flex items-start justify-between gap-4">
-                <div class="flex items-start gap-4 flex-1">
-                    <div class="guide-icon">${iconHtml}</div>
-                    <div class="flex-1">
-                        <h3 class="guide-title">${escapeHtml(guide.title)}</h3>
-                        <p class="text-xs text-gray-500 mt-1 line-clamp-2">
-                            ${guide.description ? escapeHtml(guide.description.substring(0, 100)) + (guide.description.length > 100 ? '...' : '') : '-'}
-                        </p>
-                        <div class="guide-meta mt-3">
-                            <span>🕒 Update: ${guide.date}</span>
-                            ${guide.files.length > 0 ? `
-                                <span class="mx-2">•</span>
-                                <span>📄 ${guide.files.length} file</span>
-                            ` : ''}
-                        </div>
-                    </div>
-                </div>
-                ${fileButton}
-            </div>
-        `;
-        grid.appendChild(card);
-    });
+// ============================================
+// NOTIFICATION SYSTEM
+// ============================================
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.innerHTML = `
+        <div class="flex items-center gap-2">
+            <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
+            <span>${message}</span>
+        </div>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.classList.add('show'), 10);
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
 }
 
-// Helper function to escape HTML
+// ============================================
+// DOWNLOAD FUNCTION (UNTUK FILE DARI CRUD)
+// ============================================
+function downloadAllFiles(files) {
+    if (!files || files.length === 0) {
+        showNotification('❌ Tidak ada file untuk diunduh', 'error');
+        return;
+    }
+
+    files.forEach((file, index) => {
+        setTimeout(() => {
+            const link = document.createElement('a');
+            link.href = file.url;
+            link.download = file.original_name || file.name || 'download';
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }, index * 500); // delay biar tidak bentrok
+    });
+
+    showNotification(`📦 Mengunduh ${files.length} file...`, 'success');
+}
+
+// ============================================
+// ESCAPE HTML
+// ============================================
 function escapeHtml(text) {
     if (!text) return '';
     const div = document.createElement('div');
@@ -453,109 +499,169 @@ function escapeHtml(text) {
 }
 
 // ============================================
-// EVENT HANDLERS
+// RENDER FUNCTION
+// ============================================
+function renderGuides() {
+    console.log('🔄 Rendering guides...');
+    console.log('Current Filter:', currentFilter);
+    console.log('Search Query:', searchQuery);
+    
+    let filteredData = [...guidesData];
+
+    // APPLY SEARCH
+    if (searchQuery && searchQuery.trim() !== '') {
+        filteredData = filteredData.filter(item => {
+            const titleMatch = item.title && item.title.toLowerCase().includes(searchQuery.toLowerCase());
+            const descMatch = item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase());
+            return titleMatch || descMatch;
+        });
+    }
+
+    // APPLY FILTER
+    if (currentFilter !== 'all') {
+        filteredData = filteredData.filter(item => {
+            return item.category_filter === currentFilter.trim();
+        });
+    }
+
+    console.log('📊 Filtered Data Count:', filteredData.length);
+
+    const grid = document.getElementById('guidesGrid');
+    if (!grid) {
+        console.error('❌ Element #guidesGrid tidak ditemukan!');
+        return;
+    }
+
+    // Clear grid
+    grid.innerHTML = '';
+
+    // Show empty state if no data
+    if (filteredData.length === 0) {
+        grid.innerHTML = `
+            <div class="col-span-2 text-center py-12">
+                <div class="text-6xl mb-4">📭</div>
+                <p class="text-gray-400 text-lg">Tidak ada panduan yang ditemukan</p>
+                <p class="text-gray-500 text-sm mt-2">Coba gunakan kata kunci lain atau pilih kategori berbeda</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Render each guide card
+    filteredData.forEach((guide, index) => {
+        // Determine file button
+        let fileButton = '';
+        if (guide.files && guide.files.length > 0 && guide.files[0].url) {
+            const file = guide.files[0];
+            const fileName = file.original_name || file.name || 'download';
+            const fileSize = file.size ? (file.size < 1024 ? file.size + ' B' : (file.size < 1048576 ? (file.size/1024).toFixed(1) + ' KB' : (file.size/1048576).toFixed(1) + ' MB')) : '';
+            
+            fileButton = `
+                <button 
+                    onclick='downloadAllFiles(${JSON.stringify(guide.files)})', '${fileName.replace(/'/g, "\\'")}', '${fileSize}')" 
+                    class="btn-download">
+                    📥 Unduh ${fileSize ? `(${fileSize})` : ''}
+                </button>
+            `;
+        } else {
+            fileButton = `<span class="btn-download" style="opacity:0.5; cursor:not-allowed;">📄 Tidak ada file</span>`;
+        }
+
+        // Create card
+        const card = document.createElement('div');
+        card.className = 'guide-card fade-up';
+        card.style.animationDelay = `${index * 0.05}s`;
+
+        card.innerHTML = `
+            <div class="p-5 flex items-start justify-between gap-4">
+                <div class="flex items-start gap-4 flex-1">
+                    <div class="guide-icon">${guide.icon}</div>
+                    <div class="flex-1">
+                        <h3 class="guide-title">${escapeHtml(guide.title)}</h3>
+                        <p class="text-xs text-gray-500 mt-1 line-clamp-2">${escapeHtml(guide.description.substring(0, 100))}${guide.description.length > 100 ? '...' : ''}</p>
+                        <div class="guide-meta mt-3">
+                            <span>🕒 Update: ${guide.date}</span>
+                            ${guide.file_size ? `<span class="mx-2">•</span><span>📄 PDF (${guide.file_size})</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+                ${fileButton}
+            </div>
+        `;
+
+        grid.appendChild(card);
+    });
+    
+    // Trigger fade-up animation for new cards
+    setTimeout(() => {
+        document.querySelectorAll('.guide-card.fade-up').forEach(el => {
+            el.classList.add('show');
+        });
+    }, 100);
+}
+
+
+// ============================================
+// PARALLAX EFFECT
+// ============================================
+window.addEventListener('scroll', () => {
+    const heroTitle = document.querySelector('.title-main');
+    if (heroTitle) {
+        const scrollY = window.scrollY;
+        heroTitle.style.transform = `translateY(${scrollY * 0.03}px)`;
+    }
+});
+
+// ============================================
+// EVENT LISTENERS
 // ============================================
 
-// FILTER BUTTON
+// Filter buttons
 document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-        const filter = e.currentTarget.getAttribute('data-filter');
-        currentFilter = filter;
+        const filterValue = e.currentTarget.getAttribute('data-filter');
+        console.log('🔘 Filter clicked:', filterValue);
         
+        currentFilter = filterValue;
+        
+        // Update active class
         document.querySelectorAll('.filter-btn').forEach(b => {
             b.classList.remove('active');
         });
         e.currentTarget.classList.add('active');
         
+        // Re-render
         renderGuides();
     });
 });
 
-// SEARCH INPUT
+// Search input
 const searchInput = document.getElementById('searchInput');
 if (searchInput) {
     searchInput.addEventListener('input', (e) => {
         searchQuery = e.target.value;
+        console.log('🔍 Search query:', searchQuery);
         renderGuides();
     });
 }
 
-// HELP BUTTON
+// Help button
 const helpBtn = document.getElementById('helpBtn');
 if (helpBtn) {
     helpBtn.addEventListener('click', () => {
         showNotification('💬 Menghubungkan ke layanan bantuan akademik...', 'info');
-    });
-}
-
-// NOTIFICATION FUNCTION
-function showNotification(message, type = 'info') {
-    // Remove existing notification
-    const existingNotification = document.querySelector('.notification');
-    if (existingNotification) {
-        existingNotification.remove();
-    }
-    
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = 'notification';
-    notification.innerHTML = `
-        <div class="flex items-center gap-2">
-            <span>${message}</span>
-            <button onclick="this.parentElement.parentElement.remove()" style="background:none; border:none; color:#94a3b8; cursor:pointer;">✕</button>
-        </div>
-    `;
-    document.body.appendChild(notification);
-    
-    // Show notification
-    setTimeout(() => {
-        notification.classList.add('show');
-    }, 100);
-    
-    // Auto hide after 3 seconds
-    setTimeout(() => {
-        notification.classList.remove('show');
         setTimeout(() => {
-            notification.remove();
-        }, 300);
-    }, 3000);
-}
-
-// ============================================
-// ANIMATION ON SCROLL (Fade Up)
-// ============================================
-const fadeElements = document.querySelectorAll('.fade-up');
-
-function checkFade() {
-    fadeElements.forEach(el => {
-        const rect = el.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        
-        if (rect.top < windowHeight - 100) {
-            el.style.opacity = '1';
-            el.style.transform = 'translateY(0)';
-        }
+            showNotification('📞 Silakan hubungi (0632) 12345 atau email info@akperhkbp.ac.id', 'info');
+        }, 1500);
     });
 }
-
-// Set initial styles
-fadeElements.forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(20px)';
-    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-});
-
-window.addEventListener('load', () => {
-    checkFade();
-    renderGuides();
-});
-
-window.addEventListener('scroll', checkFade);
 
 // ============================================
 // INITIAL RENDER
 // ============================================
-console.log('✅ Panduan dinamis dari database aktif!');
-console.log(`📊 Total panduan: ${guidesData.length}`);
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 DOM Loaded, initializing...');
+    renderGuides();
+});
 </script>
 @endpush

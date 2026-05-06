@@ -45,7 +45,7 @@
                     Layanan <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 <ul class="dropdown-menu-modern">
-                    <li><a href="{{ route('guest.layanan.show', 'waktu_layanan') }}" class="dropdown-item-modern">Waktu Layanan</a></li>
+                    <li><a href="{{ route('waktu.layanan') }}" class="dropdown-item-modern">Waktu Layanan</a></li>
                 </ul>
             </li>
 
@@ -64,7 +64,11 @@
                             <li><a href="{{ url('/koleksi/earticle') }}" class="dropdown-item-modern">E-article</a></li>
                             <li><a href="{{ url('/koleksi/cd') }}" class="dropdown-item-modern">CD/DVD</a></li>
                             <li><a href="{{ url('/koleksi/video') }}" class="dropdown-item-modern">Video Edukasi</a></li>
-                            <li><a href="{{ url('/koleksi/kti') }}" class="dropdown-item-modern">KTI Digital</a></li>
+                            @auth
+                            <li><a href="{{ route('final_project.kti') }}" class="dropdown-item-modern">KTI Digital</a></li>
+                        @else
+                            <li><a href="#" id="kti-menu" class="dropdown-item-modern">KTI Digital</a></li>
+                        @endauth
                         </ul>
                     </li>
                 </ul>
@@ -117,3 +121,19 @@
         </div>
     </div>
 </header>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const ktiMenu = document.getElementById("kti-menu");
+
+    if (ktiMenu) {
+        ktiMenu.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            if (confirm("Silakan login terlebih dahulu untuk mengakses KTI Digital. Login sekarang?")) {
+                window.location.href = "{{ route('login') }}";
+            }
+        });
+    }
+});
+</script>
