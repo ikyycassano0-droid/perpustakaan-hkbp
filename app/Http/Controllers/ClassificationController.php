@@ -32,22 +32,6 @@ class ClassificationController extends Controller
         return back()->with('success', 'Classification berhasil ditambahkan');
     }
 
-    // ================= STORE AJAX =================
-    public function storeAjax(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|unique:classifications,name'
-        ]);
-
-        $classification = Classification::create([
-            'name' => $request->name
-        ]);
-
-        return response()->json([
-            'id' => $classification->id,
-            'name' => $classification->name
-        ], 200);
-    }
 
     // ================= UPDATE =================
     public function update(Request $request, Classification $classification)
@@ -101,4 +85,21 @@ class ClassificationController extends Controller
             'id' => $id
         ]);
     }
+
+    public function storeAjax(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+    ]);
+
+    $classification = Classification::create([
+        'name' => $request->name,
+        'code' => $request->name, // atau generate otomatis: strtoupper(substr($request->name, 0, 3)) . rand(100, 999)
+    ]);
+
+    return response()->json([
+        'id' => $classification->id,
+        'name' => $classification->name,
+    ]);
+}
 }

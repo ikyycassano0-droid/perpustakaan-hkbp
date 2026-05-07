@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\FinalProject;
 use App\Models\CategoryFinalProject;
 use App\Models\User;
+use App\Models\Classification;
+use App\Models\CategoryCollection;
 
 class FinalProjectController extends Controller
 {
@@ -60,7 +62,7 @@ class FinalProjectController extends Controller
         ]);
     }
 
-        public function updateFromUpload(Request $request, $id)
+    public function updateFromUpload(Request $request, $id)
     {
         $request->validate([
             'student_name' => 'required|string|max:255',
@@ -215,13 +217,13 @@ class FinalProjectController extends Controller
 
         if ($request->hasFile('file_url')) {
 
-    // hapus file lama
-    if ($item->file_url && Storage::disk('public')->exists($item->file_url)) {
-        Storage::disk('public')->delete($item->file_url);
-    }
+            // hapus file lama
+            if ($item->file_url && Storage::disk('public')->exists($item->file_url)) {
+                Storage::disk('public')->delete($item->file_url);
+            }
 
-    $data['file_url'] = $request->file('file_url')->store('final_project_files', 'public');
-}
+            $data['file_url'] = $request->file('file_url')->store('final_project_files', 'public');
+        }
 
         // Status tetap pending saat update
         $data['status'] = 'Pending';
@@ -235,10 +237,27 @@ class FinalProjectController extends Controller
     // List semua Koleksi Elektronik
     public function index_admin()
     {
-        $data = FinalProject::with('category')->latest()->get();
+        $data = FinalProject::with([
+            'category',
+            'classifications',
+            'categoriesMany'
+        ])->latest()->get();
+
         $categories = CategoryFinalProject::all();
 
-        return view('admin.page.koleksi_elektronik', compact('data', 'categories'));
+        $classifications = Classification::all();
+
+        $categoriesCollection = CategoryCollection::all();
+
+        return view(
+            'admin.page.koleksi_elektronik',
+            compact(
+                'data',
+                'categories',
+                'classifications',
+                'categoriesCollection'
+            )
+        );
     }
 
     // List semua KTI untuk admin
@@ -253,76 +272,218 @@ class FinalProjectController extends Controller
 
     // Store & update Koleksi Elektronik admin
     public function store_admin(Request $request)
-{
-    $request->validate([
-        'title' => 'required',
-        'category_final_project_id' => 'required|exists:category_final_projects,id',
-        'file_url' => 'required|file',
-    ]);
+    {
+        $request->validate([
 
-    $data = $request->only([
-        'title', 'abstract', 'category_final_project_id'
+            'title' => 'required|string|max:255',
 
-    ]);
+            'abstract' => 'nullable|string',
 
-    if ($request->hasFile('file_url')) {
-        $data['file_url'] = $request->file('file_url')->store('final_project_files', 'public');
+            'keywords' => 'nullable|string',
+
+            // 🔥 TAMBAHAN ISBN
+            'isbn' => 'nullable|string|max:100',
+
+            'category_final_project_id'
+                => 'required|exists:category_final_projects,id',
+
+            'file_url'
+                => 'required|file|mimes:pdf,docx,mp3,mp4|max:10240',
+
+            'cover_image'
+                => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+
+            'classification_id' => 'nullable|array',
+            'classification_id.*' => 'exists:classifications,id',
+
+            'category_collection_id' => 'nullable|array',
+            'category_collection_id.*'
+                => 'exists:category_collections,id',
+
+        ]);
+
+        $data = $request->only([
+            'title',
+            'abstract',
+            'isbn', // 🔥 TAMBAHAN
+            'category_final_project_id',
+        ]);
+
+        // ================= FILE =================
+        if ($request->hasFile('file_url')) {
+
+            $data['file_url'] = $request->file('file_url')
+                ->store('final_project_files', 'public');
+        }
+
+        // ================= COVER =================
+        if ($request->hasFile('cover_image')) {
+
+            $data['cover_image'] = $request->file('cover_image')
+                ->store('final_project_covers', 'public');
+        }
+
+        // ================= KEYWORDS =================
+        $data['keywords'] = $request->keywords
+            ? array_map('trim', explode(',', $request->keywords))
+            : null;
+
+        // ================= STATUS =================
+        $data['status'] = 'Approved';
+
+        // ================= CREATE =================
+        $item = FinalProject::create($data);
+
+        // ================= SYNC RELATION =================
+        $item->classifications()->sync(
+            $request->classification_id ?? []
+        );
+
+        $item->categoriesMany()->sync(
+            $request->category_collection_id ?? []
+        );
+
+        return back()->with(
+            'success',
+            'Berhasil ditambahkan'
+        );
     }
-
-    // 🔥 WAJIB
-    $data['status'] = 'Approved';
-
-    FinalProject::create($data);
-
-    return back()->with('success','Berhasil ditambahkan');
-}
 
     public function update_admin(Request $request, $id)
     {
         $request->validate([
+
             'title' => 'required|string|max:255',
+
             'abstract' => 'nullable|string',
-            'keywords' => 'nullable|string|max:255',
-            'category_final_project_id' => 'required|exists:category_final_projects,id',
-            'file_url' => 'nullable|file|mimes:pdf,docx,mp3,mp4|max:10240',
-            'active' => 'boolean',
+
+            'keywords' => 'nullable|string',
+
+            // 🔥 TAMBAHAN ISBN
+            'isbn' => 'nullable|string|max:100',
+
+            'category_final_project_id'
+                => 'required|exists:category_final_projects,id',
+
+            'file_url'
+                => 'nullable|file|mimes:pdf,docx,mp3,mp4|max:10240',
+
+            'cover_image'
+                => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+
+            'classification_id' => 'nullable|array',
+            'classification_id.*' => 'exists:classifications,id',
+
+            'category_collection_id' => 'nullable|array',
+            'category_collection_id.*'
+                => 'exists:category_collections,id',
+
         ]);
 
         $item = FinalProject::findOrFail($id);
 
         $data = $request->only([
-            'title', 'abstract', 'keywords', 'category_final_project_id', 'file_url', 'active',
+            'title',
+            'abstract',
+            'isbn', // 🔥 TAMBAHAN
+            'category_final_project_id',
         ]);
 
-        $data['status'] = 'Approved'; // 🔥 TAMBAHKAN INI
+        // ================= KEYWORDS =================
+        $data['keywords'] = $request->keywords
+            ? array_map('trim', explode(',', $request->keywords))
+            : null;
 
+        // ================= STATUS =================
+        $data['status'] = 'Approved';
+
+        // ================= UPDATE FILE =================
         if ($request->hasFile('file_url')) {
 
-    if ($item->file_url && Storage::disk('public')->exists($item->file_url)) {
-        Storage::disk('public')->delete($item->file_url);
-    }
+            if (
+                $item->file_url &&
+                Storage::disk('public')->exists($item->file_url)
+            ) {
 
-    $data['file_url'] = $request->file('file_url')->store('final_project_files', 'public');
-}
+                Storage::disk('public')->delete(
+                    $item->file_url
+                );
+            }
 
+            $data['file_url'] = $request->file('file_url')
+                ->store('final_project_files', 'public');
+        }
+
+        // ================= UPDATE COVER =================
+        if ($request->hasFile('cover_image')) {
+
+            if (
+                $item->cover_image &&
+                Storage::disk('public')->exists($item->cover_image)
+            ) {
+
+                Storage::disk('public')->delete(
+                    $item->cover_image
+                );
+            }
+
+            $data['cover_image'] = $request->file('cover_image')
+                ->store('final_project_covers', 'public');
+        }
+
+        // ================= UPDATE =================
         $item->update($data);
 
-        return back()->with('success', 'Data berhasil diupdate (Admin)');
+        // ================= SYNC =================
+        $item->classifications()->sync(
+            $request->classification_id ?? []
+        );
+
+        $item->categoriesMany()->sync(
+            $request->category_collection_id ?? []
+        );
+
+        return back()->with(
+            'success',
+            'Data berhasil diupdate (Admin)'
+        );
     }
+
+
 
     // Delete
     public function destroy($id)
     {
         $item = FinalProject::findOrFail($id);
 
-        // hapus file jika ada
-        if ($item->file_url && Storage::disk('public')->exists($item->file_url)) {
-            Storage::disk('public')->delete($item->file_url);
+        // hapus file
+        if (
+            $item->file_url &&
+            Storage::disk('public')->exists($item->file_url)
+        ) {
+
+            Storage::disk('public')->delete(
+                $item->file_url
+            );
+        }
+
+        // hapus cover
+        if (
+            $item->cover_image &&
+            Storage::disk('public')->exists($item->cover_image)
+        ) {
+
+            Storage::disk('public')->delete(
+                $item->cover_image
+            );
         }
 
         $item->delete();
 
-        return back()->with('success', 'Data berhasil dihapus');
+        return back()->with(
+            'success',
+            'Data berhasil dihapus'
+        );
     }
 
     // ================= Pending / Approval KTI =================

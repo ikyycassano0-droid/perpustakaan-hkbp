@@ -5,6 +5,30 @@
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<style>
+    .select2-selection__choice__remove {
+        color: red !important;
+        margin-right: 5px;
+    }
+    .select2-selection__choice {
+        background-color: #e9ecef !important;
+        border: 1px solid #ced4da !important;
+        border-radius: 20px !important;
+        padding: 2px 8px !important;
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+        border-right: none !important;
+    }
+    .cover-preview {
+        transition: transform 0.2s ease;
+    }
+    .cover-preview:hover {
+        transform: scale(1.05);
+    }
+</style>
+
 <div class="max-w-7xl mx-auto">
     <!-- Header Section -->
     <div class="flex justify-between items-center mb-6">
@@ -39,8 +63,11 @@
                 <thead>
                     <tr class="bg-slate-50/80 border-b border-slate-100">
                         <th class="text-left px-6 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Judul</th>
+                        <th class="text-center px-6 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">ISBN</th>
+                        <th class="text-center px-6 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Tahun</th>
                         <th class="text-center px-6 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Tanggal Upload</th>
                         <th class="text-center px-6 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Jenis Koleksi</th>
+                        <th class="text-center px-6 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Cover</th>
                         <th class="text-center px-6 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider w-32">Aksi</th>
                     </tr>
                 </thead>
@@ -60,6 +87,16 @@
                                     @endif
                                 </div>
                             </div>
+                        </td>
+
+                        <!-- ISBN -->
+                        <td class="px-6 py-4 text-center text-sm text-slate-600">
+                            {{ $item->isbn ?? '-' }}
+                        </td>
+
+                        <!-- TAHUN -->
+                        <td class="px-6 py-4 text-center text-sm text-slate-600">
+                            {{ $item->year ?? '-' }}
                         </td>
 
                         <!-- TANGGAL UPLOAD -->
@@ -85,6 +122,15 @@
                             </span>
                         </td>
 
+                        <!-- COVER -->
+                        <td class="px-6 py-4 text-center">
+                            @if($item->cover_image)
+                                <img src="{{ asset('storage/' . $item->cover_image) }}" alt="Cover" class="w-10 h-14 object-cover rounded-md mx-auto shadow-sm cover-preview">
+                            @else
+                                <span class="text-slate-400 text-xs">-</span>
+                            @endif
+                        </td>
+
                         <!-- AKSI -->
                         <td class="px-6 py-4">
                             <div class="flex items-center justify-center gap-2">
@@ -93,9 +139,15 @@
                                         data-id="{{ $item->id }}"
                                         data-title="{{ $item->title }}"
                                         data-abstract="{{ $item->abstract }}"
+                                        data-isbn="{{ $item->isbn }}"
+                                        data-year="{{ $item->year }}"
+                                        data-keywords="{{ is_array($item->keywords) ? implode(', ', $item->keywords) : $item->keywords }}"
                                         data-category="{{ $item->category_final_project_id }}"
                                         data-file="{{ $item->file_url }}"
                                         data-file-ext="{{ pathinfo($item->file_url, PATHINFO_EXTENSION) }}"
+                                        data-cover="{{ $item->cover_image }}"
+                                        data-classifications="{{ $item->classifications->pluck('id')->toJson() }}"
+                                        data-categories-many="{{ $item->categoriesMany->pluck('id')->toJson() }}"
                                         title="Edit">
                                     <i class="fas fa-edit text-sm"></i>
                                 </button>
@@ -119,54 +171,132 @@
 </div>
 
 {{-- ========================================= --}}
-{{-- MODAL TAMBAH KOLEKSI --}}
+{{-- MODAL FORM TAMBAH/EDIT KOLEKSI --}}
 {{-- ========================================= --}}
-<div class="modal fade" id="modalTambah" tabindex="-1" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id="modalForm" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content rounded-2xl border-0 shadow-2xl">
-            <form action="{{ route('admin.koleksi_elektronik.store') }}" method="POST" enctype="multipart/form-data">
+            <form id="formCollection" method="POST" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" name="_method" id="methodField">
+
                 <div class="modal-header border-b border-slate-100 px-6 py-4">
                     <div class="flex items-center gap-2">
                         <i class="fas fa-plus-circle text-indigo-500"></i>
-                        <h5 class="font-semibold text-slate-800 text-lg">Tambah Koleksi Elektronik</h5>
+                        <h5 id="modalTitle" class="font-semibold text-slate-800 text-lg">Tambah Koleksi Elektronik</h5>
                     </div>
                     <button type="button" class="text-slate-400 hover:text-slate-600 transition" data-bs-dismiss="modal">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
 
-                <div class="modal-body p-6 space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Judul <span class="text-rose-500">*</span></label>
-                        <input type="text" name="title" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700" placeholder="Judul koleksi" required>
+                <div class="modal-body p-6 max-h-[70vh] overflow-y-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- JUDUL -->
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Judul <span class="text-rose-500">*</span></label>
+                            <input type="text" name="title" id="title" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700" placeholder="Judul koleksi" required>
+                        </div>
+
+                        <!-- ISBN -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">ISBN</label>
+                            <input type="text" name="isbn" id="isbn" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700" placeholder="Nomor ISBN (opsional)">
+                        </div>
+
+                        <!-- TAHUN -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Tahun</label>
+                            <input type="text" name="year" id="year" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700" placeholder="Tahun terbit, contoh: 2024">
+                        </div>
+
+                        <!-- JENIS KOLEKSI -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Jenis Koleksi <span class="text-rose-500">*</span></label>
+                            <select name="category_final_project_id" id="category_final_project_id" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700" required>
+                                <option value="">Pilih Jenis Koleksi</option>
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- KEYWORDS -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Keywords</label>
+                            <input type="text" name="keywords" id="keywords" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700" placeholder="Pisahkan dengan koma, contoh: AI, Machine Learning, Data">
+                            <p class="text-slate-400 text-[11px] mt-1">Pisahkan dengan koma (,)</p>
+                        </div>
                     </div>
 
-                    <div>
+                    <!-- ABSTRACT -->
+                    <div class="mt-4">
                         <label class="block text-sm font-medium text-slate-700 mb-2">Abstract / Ringkasan</label>
-                        <textarea name="abstract" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700" placeholder="Ringkasan singkat tentang koleksi ini"></textarea>
+                        <textarea name="abstract" id="abstract" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700" placeholder="Ringkasan singkat tentang koleksi ini"></textarea>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Jenis Koleksi <span class="text-rose-500">*</span></label>
-                        <select name="category_final_project_id" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700" required>
-                            <option value="">Pilih Jenis Koleksi</option>
-                            @foreach($categories as $cat)
-                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                    <!-- CLASSIFICATION + TOMBOL TAMBAH -->
+                    <div class="mt-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-sm font-medium text-slate-700">Classification</label>
+                            <button type="button" class="btn-add-classification px-3 py-1.5 text-xs font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition flex items-center gap-1">
+                                <i class="fas fa-plus text-[10px]"></i> Tambah Classification
+                            </button>
+                        </div>
+                        <select name="classification_id[]" id="classificationDropdown" class="w-full select2-multi" multiple>
+                            @foreach($classifications as $c)
+                                <option value="{{ $c->id }}">{{ $c->name }}</option>
                             @endforeach
                         </select>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">File Koleksi <span class="text-rose-500">*</span></label>
-                        <input type="file" name="file_url" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 transition text-sm text-slate-700 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100" required>
-                        <p class="text-slate-400 text-[11px] mt-1">Format yang didukung: PDF, MP3, MP4, DOCX</p>
+                    <!-- CATEGORY COLLECTION + TOMBOL TAMBAH -->
+                    <div class="mt-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-sm font-medium text-slate-700">Kategori Koleksi</label>
+                            <button type="button" class="btn-add-category px-3 py-1.5 text-xs font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition flex items-center gap-1">
+                                <i class="fas fa-plus text-[10px]"></i> Tambah Category
+                            </button>
+                        </div>
+                        <select name="category_collection_id[]" id="categoryDropdown" class="w-full select2-multi" multiple>
+                            @foreach($categoriesCollection as $c)
+                                <option value="{{ $c->id }}">{{ $c->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- PREVIEW COVER SAAT INI (Untuk Edit) -->
+                    <div id="coverPreviewContainer" class="mt-4 hidden">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Cover Saat Ini</label>
+                        <div class="flex justify-center">
+                            <img id="coverPreview" src="" alt="Cover" class="w-24 h-32 object-cover rounded-lg shadow-sm cover-preview">
+                        </div>
+                    </div>
+
+                    <!-- PREVIEW FILE SAAT INI (Untuk Edit) -->
+                    <div id="previewContainer" class="mt-4 hidden">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Preview File Saat Ini</label>
+                        <div id="filePreview" class="bg-slate-100 rounded-xl p-3 text-center"></div>
+                    </div>
+
+                    <!-- FILES -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Cover Image</label>
+                            <input type="file" name="cover_image" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 transition text-sm text-slate-700 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100" accept="image/*">
+                            <p class="text-slate-400 text-[11px] mt-1">Format: JPG, JPEG, PNG, WEBP. Maks 2MB</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2" id="labelFile">File Koleksi <span class="text-rose-500">*</span></label>
+                            <input type="file" name="file_url" id="file_url" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 transition text-sm text-slate-700 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100">
+                            <p class="text-slate-400 text-[11px] mt-1">Format: PDF, MP3, MP4, DOCX. Maks 10MB</p>
+                        </div>
                     </div>
                 </div>
 
                 <div class="modal-footer border-t border-slate-100 px-6 py-4 flex justify-end gap-3">
                     <button type="button" class="px-4 py-2 text-sm font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition flex items-center gap-2">
+                    <button type="submit" id="btnSubmit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition flex items-center gap-2">
                         <i class="fas fa-save text-xs"></i> Simpan
                     </button>
                 </div>
@@ -175,142 +305,266 @@
     </div>
 </div>
 
-{{-- ========================================= --}}
-{{-- MODAL EDIT KOLEKSI (Dynamic with JS) --}}
-{{-- ========================================= --}}
-<div class="modal fade" id="modalEdit" tabindex="-1" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+{{-- MODAL TAMBAH CLASSIFICATION --}}
+<div class="modal fade" id="modalAddClassification" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-2xl border-0 shadow-2xl">
-            <form id="editForm" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-                <div class="modal-header border-b border-slate-100 px-6 py-4">
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-edit text-indigo-500"></i>
-                        <h5 class="font-semibold text-slate-800 text-lg">Edit Koleksi Elektronik</h5>
-                    </div>
-                    <button type="button" class="text-slate-400 hover:text-slate-600 transition" data-bs-dismiss="modal">
-                        <i class="fas fa-times"></i>
-                    </button>
+            <div class="modal-header border-b border-slate-100 px-6 py-4">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-tag text-indigo-500"></i>
+                    <h5 class="font-semibold text-slate-800 text-lg">Tambah Classification</h5>
                 </div>
+                <button type="button" class="text-slate-400 hover:text-slate-600 transition" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body p-6">
+                <label class="block text-sm font-medium text-slate-700 mb-2">Nama Classification</label>
+                <input type="text" id="newClassificationName" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 transition text-sm text-slate-700" placeholder="Contoh: 000 - Karya Umum">
+            </div>
+            <div class="modal-footer border-t border-slate-100 px-6 py-4 flex justify-end gap-3">
+                <button type="button" class="px-4 py-2 text-sm font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition" data-bs-dismiss="modal">Batal</button>
+                <button type="button" id="saveClassificationBtn" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition">Simpan</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-                <div class="modal-body p-6 space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Judul <span class="text-rose-500">*</span></label>
-                        <input type="text" name="title" id="edit_title" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700" required>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Abstract / Ringkasan</label>
-                        <textarea name="abstract" id="edit_abstract" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700"></textarea>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Jenis Koleksi <span class="text-rose-500">*</span></label>
-                        <select name="category_final_project_id" id="edit_category" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700" required>
-                            <option value="">Pilih Jenis Koleksi</option>
-                            @foreach($categories as $cat)
-                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Preview File -->
-                    <div id="previewContainer" class="mt-2 hidden">
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Preview File Saat Ini</label>
-                        <div id="filePreview" class="bg-slate-100 rounded-xl p-3 text-center"></div>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Ganti File (Opsional)</label>
-                        <input type="file" name="file_url" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 transition text-sm text-slate-700 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100">
-                        <p class="text-slate-400 text-[11px] mt-1">Kosongkan jika tidak ingin mengubah file. Format: PDF, MP3, MP4, DOCX</p>
-                    </div>
+{{-- MODAL TAMBAH CATEGORY --}}
+<div class="modal fade" id="modalAddCategory" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-2xl border-0 shadow-2xl">
+            <div class="modal-header border-b border-slate-100 px-6 py-4">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-folder text-indigo-500"></i>
+                    <h5 class="font-semibold text-slate-800 text-lg">Tambah Category</h5>
                 </div>
-
-                <div class="modal-footer border-t border-slate-100 px-6 py-4 flex justify-end gap-3">
-                    <button type="button" class="px-4 py-2 text-sm font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition flex items-center gap-2">
-                        <i class="fas fa-save text-xs"></i> Update
-                    </button>
-                </div>
-            </form>
+                <button type="button" class="text-slate-400 hover:text-slate-600 transition" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body p-6">
+                <label class="block text-sm font-medium text-slate-700 mb-2">Nama Category</label>
+                <input type="text" id="newCategoryName" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 transition text-sm text-slate-700" placeholder="Contoh: Fiksi, Non Fiksi, Pendidikan">
+            </div>
+            <div class="modal-footer border-t border-slate-100 px-6 py-4 flex justify-end gap-3">
+                <button type="button" class="px-4 py-2 text-sm font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition" data-bs-dismiss="modal">Batal</button>
+                <button type="button" id="saveCategoryBtn" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition">Simpan</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
     // ========================================
-    // BUKA MODAL TAMBAH - HANYA SAAT TOMBOL DIKLIK
+    // BASE URL
+    // ========================================
+    const baseUrl = "{{ route('admin.koleksi_elektronik.store') }}";
+    const updateUrl = "{{ route('admin.koleksi_elektronik.update', ':id') }}";
+    
+    // ========================================
+    // SELECT2 INIT
     // ========================================
     $(document).ready(function() {
-        // Tombol Tambah - buka modal tambah
-        $('#btnTambah').click(function() {
-            // Reset form
-            $('#modalTambah form')[0].reset();
-            // Buka modal
-            $('#modalTambah').modal('show');
+        $('.select2-multi').select2({
+            placeholder: "Pilih / cari...",
+            width: '100%',
+            dropdownParent: $('#modalForm'),
+            closeOnSelect: false,
+            allowClear: true
         });
+
+        // Set placeholder Indonesia
+        $.fn.select2.amd.require(['select2/selection/search'], function (Search) {
+            var oldRemoveChoice = Search.prototype.searchRemoveChoice;
+            Search.prototype.searchRemoveChoice = function () {
+                oldRemoveChoice.apply(this, arguments);
+                this.$search.attr('placeholder', 'Cari...');
+            };
+        });
+    });
+    
+    // ========================================
+    // TAMBAH DATA - BUKA MODAL KOSONG
+    // ========================================
+    $('#btnTambah').click(function() {
+        $('#modalTitle').text('Tambah Koleksi Elektronik');
+        $('#btnSubmit').html('<i class="fas fa-save text-xs"></i> Simpan');
+        $('#formCollection').attr('action', baseUrl);
+        $('#methodField').val('');
+        $('#formCollection')[0].reset();
+        $('#labelFile').html('File Koleksi <span class="text-rose-500">*</span>');
+        $('#file_url').prop('required', true);
+        $('.select2-multi').val(null).trigger('change');
+        $('#coverPreviewContainer').addClass('hidden');
+        $('#previewContainer').addClass('hidden');
+        $('#modalForm').modal('show');
+    });
+    
+    // ========================================
+    // EDIT DATA - BUKA MODAL DENGAN DATA
+    // ========================================
+    $(document).on('click', '.btn-edit', function() {
+        let id = $(this).data('id');
+        let title = $(this).data('title');
+        let abstract = $(this).data('abstract');
+        let isbn = $(this).data('isbn');
+        let year = $(this).data('year');
+        let keywords = $(this).data('keywords');
+        let categoryId = $(this).data('category');
+        let fileUrl = $(this).data('file');
+        let fileExt = $(this).data('file-ext');
+        let coverImage = $(this).data('cover');
+        let classifications = $(this).data('classifications');
+        let categoriesMany = $(this).data('categories-many');
         
-        // ========================================
-        // EDIT MODAL - HANYA SAAT TOMBOL EDIT DIKLIK
-        // ========================================
-        $('.btn-edit').click(function() {
-            let id = $(this).data('id');
-            let title = $(this).data('title');
-            let abstract = $(this).data('abstract');
-            let categoryId = $(this).data('category');
-            let fileUrl = $(this).data('file');
-            let fileExt = $(this).data('file-ext');
-
-            // Set form action
-            let formAction = "{{ route('admin.koleksi_elektronik.update', ':id') }}";
-            formAction = formAction.replace(':id', id);
-            $('#editForm').attr('action', formAction);
-
-            // Set values
-            $('#edit_title').val(title);
-            $('#edit_abstract').val(abstract);
-            $('#edit_category').val(categoryId);
-
-            // Preview file
-            if (fileUrl) {
-                let assetUrl = "{{ asset('storage') }}/" + fileUrl;
-                let previewHtml = '';
-
-                if (fileExt === 'mp4') {
-                    previewHtml = `<video width="100%" controls class="rounded-xl">
-                                        <source src="${assetUrl}">
-                                        Browser Anda tidak mendukung video.
-                                    </video>`;
-                } else if (fileExt === 'mp3') {
-                    previewHtml = `<audio controls class="w-full">
-                                        <source src="${assetUrl}">
-                                        Browser Anda tidak mendukung audio.
-                                    </audio>`;
-                } else if (fileExt === 'pdf') {
-                    previewHtml = `<iframe src="${assetUrl}" width="100%" height="250" class="rounded-xl"></iframe>`;
-                } else if (fileExt === 'docx' || fileExt === 'doc') {
-                    previewHtml = `<a href="${assetUrl}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition">
-                                        <i class="fas fa-file-word"></i> Lihat File DOCX
-                                    </a>`;
-                } else {
-                    previewHtml = `<a href="${assetUrl}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition">
-                                        <i class="fas fa-download"></i> Lihat File (${fileExt.toUpperCase()})
-                                    </a>`;
-                }
-
-                $('#filePreview').html(previewHtml);
-                $('#previewContainer').removeClass('hidden');
+        $('#modalTitle').text('Edit Koleksi Elektronik');
+        $('#btnSubmit').html('<i class="fas fa-save text-xs"></i> Update');
+        $('#formCollection').attr('action', updateUrl.replace(':id', id));
+        $('#methodField').val('PUT');
+        $('#labelFile').html('Ganti File (Opsional)');
+        
+        $('#title').val(title);
+        $('#abstract').val(abstract);
+        $('#isbn').val(isbn);
+        $('#year').val(year);
+        $('#keywords').val(keywords);
+        $('#category_final_project_id').val(categoryId);
+        
+        // Set classifications
+        if (classifications && classifications.length > 0) {
+            $('#classificationDropdown').val(classifications).trigger('change');
+        } else {
+            $('#classificationDropdown').val(null).trigger('change');
+        }
+        
+        // Set categoriesMany
+        if (categoriesMany && categoriesMany.length > 0) {
+            $('#categoryDropdown').val(categoriesMany).trigger('change');
+        } else {
+            $('#categoryDropdown').val(null).trigger('change');
+        }
+        
+        // Preview cover
+        if (coverImage) {
+            let coverUrl = "{{ asset('storage') }}/" + coverImage;
+            $('#coverPreview').attr('src', coverUrl);
+            $('#coverPreviewContainer').removeClass('hidden');
+        } else {
+            $('#coverPreviewContainer').addClass('hidden');
+        }
+        
+        // Preview file
+        if (fileUrl) {
+            let assetUrl = "{{ asset('storage') }}/" + fileUrl;
+            let previewHtml = '';
+            
+            if (fileExt === 'mp4') {
+                previewHtml = `<video width="100%" controls class="rounded-xl">
+                                    <source src="${assetUrl}">
+                                    Browser Anda tidak mendukung video.
+                                </video>`;
+            } else if (fileExt === 'mp3') {
+                previewHtml = `<audio controls class="w-full">
+                                    <source src="${assetUrl}">
+                                    Browser Anda tidak mendukung audio.
+                                </audio>`;
+            } else if (fileExt === 'pdf') {
+                previewHtml = `<iframe src="${assetUrl}" width="100%" height="250" class="rounded-xl"></iframe>`;
+            } else if (fileExt === 'docx' || fileExt === 'doc') {
+                previewHtml = `<a href="${assetUrl}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition">
+                                    <i class="fas fa-file-word"></i> Lihat File DOCX
+                                </a>`;
             } else {
-                $('#previewContainer').addClass('hidden');
+                previewHtml = `<a href="${assetUrl}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition">
+                                    <i class="fas fa-download"></i> Lihat File (${fileExt.toUpperCase()})
+                                </a>`;
             }
-
-            // Buka modal edit
-            $('#modalEdit').modal('show');
+            
+            $('#filePreview').html(previewHtml);
+            $('#previewContainer').removeClass('hidden');
+        } else {
+            $('#previewContainer').addClass('hidden');
+        }
+        
+        $('#modalForm').modal('show');
+    });
+    
+    // ========================================
+    // TAMBAH CLASSIFICATION (AJAX)
+    // ========================================
+    $('.btn-add-classification').click(function() {
+        $('#newClassificationName').val('');
+        $('#modalAddClassification').modal('show');
+    });
+    
+    $('#saveClassificationBtn').click(function() {
+        let name = $('#newClassificationName').val();
+        
+        if (!name) {
+            alert('Nama classification harus diisi!');
+            return;
+        }
+        
+        $.ajax({
+            url: "{{ route('admin.classification.storeAjax') }}",
+            method: "POST",
+            data: {
+                name: name,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(res) {
+                let newOption = new Option(res.name, res.id, true, true);
+                $('#classificationDropdown').append(newOption).trigger('change');
+                $('#modalAddClassification').modal('hide');
+                $('#newClassificationName').val('');
+                alert('Classification berhasil ditambahkan!');
+            },
+            error: function(xhr) {
+                console.log(xhr.responseText);
+                alert('Gagal: ' + xhr.responseText);
+            }
+        });
+    });
+    
+    // ========================================
+    // TAMBAH CATEGORY (AJAX)
+    // ========================================
+    $('.btn-add-category').click(function() {
+        $('#newCategoryName').val('');
+        $('#modalAddCategory').modal('show');
+    });
+    
+    $('#saveCategoryBtn').click(function() {
+        let name = $('#newCategoryName').val();
+        
+        if (!name) {
+            alert('Nama category harus diisi!');
+            return;
+        }
+        
+        $.ajax({
+            url: "{{ route('admin.category.storeAjax') }}",
+            method: "POST",
+            data: {
+                name: name,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(res) {
+                let newOption = new Option(res.name, res.id, true, true);
+                $('#categoryDropdown').append(newOption).trigger('change');
+                $('#modalAddCategory').modal('hide');
+                $('#newCategoryName').val('');
+                alert('Category berhasil ditambahkan!');
+            },
+            error: function(xhr) {
+                console.log(xhr.responseText);
+                alert('Gagal: ' + xhr.responseText);
+            }
         });
     });
 </script>

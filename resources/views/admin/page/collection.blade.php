@@ -621,6 +621,30 @@ $('#saveClassificationBtn').click(function() {
         }
     });
 });
+
+// ⭐⭐⭐ BUKA MODAL TAMBAH CLASSIFICATION ⭐⭐⭐
+$(document).on('click', '.btn-add-classification', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $('#newClassificationName').val('');
+    $('#modalAddClassification').modal('show');
+});
+
+// ⭐⭐⭐ BUKA MODAL TAMBAH CATEGORY ⭐⭐⭐
+$(document).on('click', '.btn-add-category', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $('#newCategoryName').val('');
+    $('#modalAddCategory').modal('show');
+});
+
+// ⭐⭐⭐ BUKA MODAL TAMBAH LOCATION ⭐⭐⭐
+$(document).on('click', '.btn-add-location', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $('#newLocationName').val('');
+    $('#modalAddLocation').modal('show');
+});
 </script>
 
 @endsection

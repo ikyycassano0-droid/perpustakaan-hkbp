@@ -8,7 +8,7 @@ use App\Models\User; // pastikan ini import
 class FinalProject extends Model
 {
     protected $fillable = [
-    'user_id', // 🔥 WAJIB
+    'user_id',
     'student_name',
     'npm',
     'study_program',
@@ -19,14 +19,25 @@ class FinalProject extends Model
     'category_final_project_id',
     'first_supervisor_id',
     'second_supervisor_id',
-    'status' // 🔥 WAJIB
+    'status',
+    'cover_image',
+    'keywords',
+     'isbn'
 ];
+
+    protected $casts = [
+        'keywords' => 'array',
+    ];
 
     // Relasi ke kategori
     public function category()
     {
-        return $this->belongsTo(CategoryFinalProject::class, 'category_final_project_id');
+        return $this->belongsTo(
+            CategoryFinalProject::class,
+            'category_final_project_id'
+        );
     }
+
 
         public function user()
     {
@@ -43,5 +54,22 @@ class FinalProject extends Model
     public function secondSupervisor()
     {
         return $this->belongsTo(User::class, 'second_supervisor_id');
+    }
+
+    public function classifications()
+    {
+        return $this->belongsToMany(
+            \App\Models\Classification::class,
+            'final_project_classification'
+        );
+    }
+
+    // ================= MULTIPLE CATEGORY COLLECTION =================
+    public function categoriesMany()
+    {
+        return $this->belongsToMany(
+            \App\Models\CategoryCollection::class,
+            'final_project_category_collection'
+        );
     }
 }
