@@ -223,6 +223,18 @@
         // ================= Waktu Layanan =================
          Route::get('/waktu_layanan', [ServiceScheduleController::class, 'indexGuest'])
         ->name('user.waktu.layanan');
+
+        // ================= SISTEM PINBAL AKADEMIK =================
+        Route::prefix('pinbal')->name('user.pinbal.')->group(function () {
+            // Halaman utama pinbal (riwayat peminjaman + form pinjam)
+            Route::get('/', [App\Http\Controllers\CollectionController::class, 'pinbal'])
+                ->name('index');
+            
+            // Submit peminjaman buku
+            Route::post('/store', [App\Http\Controllers\OrderController::class, 'store'])
+                ->name('store');
+        });
+
         // ================= PINJAM =================
         Route::get('/pinjam', [CollectionController::class, 'pinjam'])
             ->name('user.pinjam');
@@ -295,11 +307,21 @@
             ->name('kti')
             ->defaults('category','kti');
 
-        
             Route::post('/kti/store', [FinalProjectController::class,'store'])->name('kti.store');
             Route::post('/kti/update/{id}', [FinalProjectController::class,'update'])->name('kti.update');
             Route::delete('/kti/delete/{id}', [FinalProjectController::class,'destroy'])->name('kti.delete');
         });
+
+            // ================= ROUTE UPLOAD KTI (LAYANAN) =================
+        // Halaman form upload KTI di menu Layanan
+        Route::get('/upload-kti', [FinalProjectController::class, 'uploadForm'])
+            ->name('upload.kti');
+        
+        // Menggunakan route store yang sama (bisa juga pakai alias)
+        Route::post('/upload-kti/store', [FinalProjectController::class, 'store'])
+        ->name('upload.kti.store'); 
+
+        
 
         Route::get('/koleksi/{category}', [FinalProjectController::class,'index'])
             ->name('koleksi')

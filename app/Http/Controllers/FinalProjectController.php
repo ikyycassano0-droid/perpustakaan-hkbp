@@ -11,94 +11,172 @@ use App\Models\User;
 class FinalProjectController extends Controller
 {
     // ================= USER =================
-    // Halaman list final project user berdasarkan kategori
-   public function index(Request $request, $category = 'kti')
-{
-    $viewMap = [
-        'ebook' => 'e_book',
-        'e-article' => 'e_article',
-        'cd' => 'cd',
-        'video' => 'video',
-        'kti' => 'kti',
-    ];
+    public function index(Request $request, $category = 'kti')
+    {
+        if ($category !== 'kti') {
+            return $this->showAdminUpload($request, $category);
+        }
 
-    if (!isset($viewMap[$category])) abort(404);
+        // Ambil SEMUA KTI yang sudah APPROVED untuk ditampilkan di menu "Semua KTI"
+        $allApprovedKtis = FinalProject::with(['category', 'firstSupervisor', 'secondSupervisor', 'user'])
+            ->where('status', 'Approved')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    // ================= KTI =================
-   if ($category === 'kti') {
+        // Ambil KTI milik user yang sedang login (SEMUA STATUS)
+        $myKtis = FinalProject::with(['category', 'firstSupervisor', 'secondSupervisor'])
+            ->where('user_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    $finalProjects = FinalProject::with(['category', 'firstSupervisor', 'secondSupervisor'])
-                ->where('user_id', auth()->id())
-                ->latest()
-                ->get();
+        // Ambil data dosen untuk dropdown (untuk form upload)
+        $supervisors = User::whereHas('role', function ($q) {
+            $q->where('name', 'Dosen');
+        })->get();
 
+        return view('user.page.Koleksi_Elektronik.kti', [
+            'allApprovedKtis' => $allApprovedKtis,  // Untuk menu "Semua KTI"
+            'myKtis' => $myKtis,                    // Untuk menu "KTI Saya"
+            'supervisors' => $supervisors,
+        ]);
+    }
 
-    $supervisors = User::whereHas('role', function ($q) {
-    $q->where('name', 'Dosen');
-})->get();
+    public function uploadForm()
+    {
+        // Ambil data KTI milik user yang sedang login
+        $ktis = FinalProject::with(['category', 'firstSupervisor', 'secondSupervisor'])
+            ->where('user_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    $categories = CategoryFinalProject::all();
+        // Ambil data dosen untuk dropdown
+        $supervisors = User::whereHas('role', function ($q) {
+            $q->where('name', 'Dosen');
+        })->get();
 
-    $activeMenu = request()->get('menu', 'all');
+        return view('user.page.Layanan.upload_ta', [
+            'ktis' => $ktis,
+            'supervisors' => $supervisors,
+        ]);
+    }
 
-    return view('user.page.Koleksi_Elektronik.kti', [
-        'ktis' => $finalProjects,
-        'supervisors' => $supervisors,
-        'categories' => $categories,
-        'activeMenu' => $activeMenu 
-    ]);
-}
+        public function updateFromUpload(Request $request, $id)
+    {
+        $request->validate([
+            'student_name' => 'required|string|max:255',
+            'npm' => 'required|string|max:50',
+            'study_program' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'first_supervisor_id' => 'required|exists:users,id',
+            'second_supervisor_id' => 'nullable|exists:users,id|different:first_supervisor_id',
+            'abstract' => 'nullable|string',
+            'file_url' => 'nullable|file|mimes:pdf,docx|max:10240',
+        ]);
 
-    // ================= NON KTI =================
-    return $this->showAdminUpload($request, $category);
-}
+        $item = FinalProject::findOrFail($id);
+        
+        // Pastikan user hanya bisa update miliknya sendiri
+        if ($item->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $data = $request->only([
+            'student_name',
+            'npm',
+            'study_program',
+            'title',
+            'first_supervisor_id',
+            'second_supervisor_id',
+            'abstract',
+        ]);
+
+        if ($request->hasFile('file_url')) {
+            if ($item->file_url && Storage::disk('public')->exists($item->file_url)) {
+                Storage::disk('public')->delete($item->file_url);
+            }
+            $data['file_url'] = $request->file('file_url')->store('final_project_files', 'public');
+        }
+
+        $data['status'] = 'Pending';
+        $item->update($data);
+
+        return redirect()->route('final_project.upload')
+            ->with('success', 'KTI berhasil diupdate dan akan diverifikasi ulang.');
+    }
+
+        public function destroyFromUpload($id)
+    {
+        $item = FinalProject::findOrFail($id);
+        
+        if ($item->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if ($item->file_url && Storage::disk('public')->exists($item->file_url)) {
+            Storage::disk('public')->delete($item->file_url);
+        }
+
+        $item->delete();
+
+        return redirect()->route('final_project.upload')
+            ->with('success', 'KTI berhasil dihapus.');
+    }
 
     // Store user (upload KTI)
     public function store(Request $request)
-{
-        $request->validate([
-        'student_name' => 'required|string|max:255',
-        'npm' => 'required|string|max:50',
-        'study_program' => 'required|string|max:255',
-        'title' => 'required|string|max:255',
+        {
+            $request->validate([
+                'npm' => 'required|string|max:50',
+                'study_program' => 'required|string|max:255',
+                'title' => 'required|string|max:255',
+                'first_supervisor_id' => 'required|exists:users,id',
+                'second_supervisor_id' => 'nullable|exists:users,id|different:first_supervisor_id',
+                'abstract' => 'nullable|string',
+                'file_url' => 'required|file|mimes:pdf,docx|max:10240',
+            ]);
 
-        'first_supervisor_id' => ['required','exists:users,id'],
-        'second_supervisor_id' => [
-            'nullable',
-            'exists:users,id',
-            'different:first_supervisor_id' // 🔥 INI KUNCINYA
-        ],
+            // Upload file
+            $file = $request->file('file_url');
+            $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
+            $path = $file->storeAs('final_project_files', $filename, 'public');
 
-        'abstract' => 'nullable|string',
-        'file_url' => 'required|file|mimes:pdf,docx|max:10240',
-    ]);
+            // Cari category KTI
+            $category = CategoryFinalProject::where('name', 'kti')->orWhere('slug', 'kti')->first();
+            
+            if (!$category) {
+                // Buat category jika belum ada
+                $category = CategoryFinalProject::create([
+                    'name' => 'kti',
+                    'slug' => 'kti',
+                    'description' => 'Karya Tulis Ilmiah'
+                ]);
+            }
 
-    $data = $request->only([
-        'student_name',
-        'npm',
-        'study_program',
-        'title',
-        'first_supervisor_id',
-        'second_supervisor_id',
-        'abstract',
-    ]);
+            // Simpan data
+            $kti = FinalProject::create([
+                'user_id' => auth()->id(),
+                'student_name' => auth()->user()->name,
+                'npm' => $request->npm,
+                'study_program' => $request->study_program,
+                'title' => $request->title,
+                'abstract' => $request->abstract,
+                'first_supervisor_id' => $request->first_supervisor_id,
+                'second_supervisor_id' => $request->second_supervisor_id,
+                'file_url' => $path,
+                'category_final_project_id' => $category->id,
+                'status' => 'Pending',
+            ]);
 
-    $data['user_id'] = auth()->id();
+            // Redirect sesuai asal request
+            if ($request->has('from') && $request->from === 'layanan') {
+                return redirect()->route('final_project.upload.kti')
+                    ->with('success', 'KTI berhasil diupload! Menunggu persetujuan admin.');
+            }
 
-    $category = CategoryFinalProject::where('name', 'kti')->firstOrFail();
-    $data['category_final_project_id'] = $category->id;
+            return redirect()->route('final_project.kti')
+                ->with('success', 'KTI berhasil diupload! Menunggu persetujuan admin.');
+        }
 
-    if ($request->hasFile('file_url')) {
-        $data['file_url'] = $request->file('file_url')->store('final_project_files', 'public');
-    }
-
-    $data['status'] = 'Pending';
-
-    FinalProject::create($data);
-
-    return redirect()->route('final_project.kti')
-        ->with('success', 'KTI berhasil diupload');
-}
 
 
     public function update(Request $request, $id)

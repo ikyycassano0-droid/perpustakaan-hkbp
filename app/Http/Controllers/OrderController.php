@@ -137,34 +137,32 @@ class OrderController extends Controller
     }
 
     // ================= ADMIN APPROVE =================
-    public function approve($id)
-    {
-        DB::transaction(function () use ($id) {
-            $order = Order::with('details.collection')->findOrFail($id);
-
-            foreach ($order->details as $detail) {
-                if ($detail->collection->available_stock < $detail->qty) {
-                    throw new \Exception('Stok tidak cukup');
-                }
-            }
-
-            foreach ($order->details as $detail) {
-                $detail->collection->decrement('available_stock', $detail->qty);
-
-                $this->sendNotif(
-                    $order->user_id,
-                    'Peminjaman Disetujui',
-                    'Buku "' . $detail->collection->title . '" disetujui. Batas pengembalian: ' . Carbon::parse($order->due_date)->format('d M Y')
-                );
-            }
-
-            $order->update([
-                'status' => 'APPROVED',
-            ]);
-        });
-
-        return back()->with('success', 'Peminjaman disetujui');
+public function approve($id)
+{
+    $order = Order::findOrFail($id);
+    
+    // 🔥 ISI TANGGAL PINJAM DAN JATUH TEMPO jika masih NULL
+    if (!$order->borrow_date) {
+        $order->borrow_date = now();  // tanggal approve = tanggal pinjam
     }
+    
+    if (!$order->due_date) {
+        // Set jatuh tempo 14 hari dari tanggal pinjam
+        $order->due_date = $order->borrow_date->copy()->addDays(14);
+    }
+    
+    $order->status = 'APPROVED';
+    $order->save();
+    
+    // Update stok buku (kurangi available_stock)
+    foreach ($order->details as $detail) {
+        $collection = $detail->collection;
+        $collection->available_stock -= $detail->jumlah;
+        $collection->save();
+    }
+    
+    return redirect()->back()->with('success', 'Peminjaman berhasil disetujui');
+}
 
     // ================= ADMIN REJECT =================
     public function reject($id)

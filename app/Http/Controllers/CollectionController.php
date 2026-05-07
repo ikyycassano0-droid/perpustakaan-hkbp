@@ -212,6 +212,55 @@ class CollectionController extends Controller
         );
     }
 
+
+    public function pinbal()
+{
+    // Ambil riwayat peminjaman dengan relasi yang benar
+    $peminjaman = Order::where('user_id', auth()->id())
+        ->with(['details' => function($query) {
+            $query->with('collection'); // Load collection melalui details
+        }])
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
+    
+    // Ambil daftar buku yang tersedia untuk autocomplete
+    $availableBooks = Collection::where('active', 1)
+        ->where('available_stock', '>', 0)
+        ->select('id', 'title', 'author')
+        ->get();
+    
+    return view('user.page.Layanan.pinbal', compact('peminjaman', 'availableBooks'));
+}
+
+    public function storePeminjaman(Request $request)
+    {
+        $request->validate([
+            'collection_id' => 'required|exists:collections,id',
+            'notes' => 'nullable|string'
+        ]);
+        
+        $collection = Collection::find($request->collection_id);
+        
+        if ($collection->available_stock <= 0) {
+            return back()->with('error', 'Maaf, stok buku sedang kosong.');
+        }
+        
+        $order = Order::create([
+            'user_id' => auth()->id(),
+            'order_number' => 'ORD-' . strtoupper(uniqid()),
+            'status' => 'PENDING',
+            'notes' => $request->notes,
+        ]);
+        
+        OrderDetail::create([
+            'order_id' => $order->id,
+            'collection_id' => $request->collection_id,
+            'jumlah' => 1,
+        ]);
+        
+        return back()->with('success', 'Peminjaman berhasil diajukan! Silakan tunggu konfirmasi dari petugas.');
+    }
+
     // ================= USER MENU =================
     public function showUserMenu(Request $request, $menu_type)
     {

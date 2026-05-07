@@ -28,6 +28,11 @@ class FinalProject extends Model
         return $this->belongsTo(CategoryFinalProject::class, 'category_final_project_id');
     }
 
+        public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     // Supervisor pertama
     public function firstSupervisor()
     {
