@@ -221,7 +221,7 @@
                 ->name('orders.store');
 
         // ================= Waktu Layanan =================
-         Route::get('/waktu_layanan', [ServiceScheduleController::class, 'indexGuest'])
+         Route::get('/waktu_layanan', [ServiceScheduleController::class, 'indexUser'])
         ->name('user.waktu.layanan');
 
         // ================= SISTEM PINBAL AKADEMIK =================

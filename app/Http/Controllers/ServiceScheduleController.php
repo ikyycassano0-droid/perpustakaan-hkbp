@@ -21,7 +21,7 @@ class ServiceScheduleController extends Controller
     {
         $schedules = ServiceSchedule::ordered()->get();
 
-        return view('guest.page.Layanan.waktu_layanan', compact('schedules'));
+        return view('user.page.Layanan.waktu_layanan', compact('schedules'));
     }
 
     // ================================
