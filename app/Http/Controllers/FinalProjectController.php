@@ -550,23 +550,60 @@ class FinalProjectController extends Controller
         );
     }
 
+        public function showAdminUploadGuest(Request $request, $category)
+    {
+        $viewMap = [
+            'ebook' => 'e_book',
+            'e-article' => 'e_article',
+            'cd' => 'cd',
+            'video' => 'video',
+        ];
+
+        $categoryData = CategoryFinalProject::where('slug', $category)->firstOrFail();
+
+        $query = FinalProject::where('category_final_project_id', $categoryData->id)
+            ->where('status', 'Approved');
+
+        // 🔍 SEARCH (INI YANG BUTUH $request)
+        if ($request->search) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                ->orWhere('abstract', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $data = $query->latest()->paginate(6);
+
+        $categories = CategoryFinalProject::all();
+
+        return view(
+            'guest.page.Koleksi_Elektronik.' . $viewMap[$category],
+            [
+                'data' => $data,
+                'ebooks' => $data,
+                'videos' => $data,
+                'categories' => $categories
+            ]
+        );
+    }
+
     public function download($id)
     {
         $file = FinalProject::findOrFail($id);
 
-        // 🔥 CEK STATUS
+       
         if ($file->status !== 'Approved') {
             abort(403, 'File belum tersedia.');
         }
 
-        // 🔥 CEK FILE ADA DI DB
+       
         if (!$file->file_url) {
             abort(404, 'File tidak ditemukan.');
         }
 
         $path = storage_path('app/public/' . $file->file_url);
 
-        // 🔥 CEK FILE FISIK ADA
+        
         if (!file_exists($path)) {
             abort(404, 'File fisik tidak ditemukan.');
         }

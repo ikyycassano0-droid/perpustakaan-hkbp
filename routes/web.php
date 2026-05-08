@@ -356,6 +356,23 @@
 
             });
 
+            Route::prefix('koleksi-elektronik')->name('guest.koleksi_elektronik.')->group(function () {
+                Route::get('/ebook', [FinalProjectController::class, 'showAdminUploadGuest'])
+                    ->defaults('category', 'ebook')
+                    ->name('ebook');
+
+                Route::get('/earticle', [FinalProjectController::class, 'showAdminUploadGuest'])
+                    ->defaults('category', 'e-article')
+                    ->name('earticle');
+
+                Route::get('/cd', [FinalProjectController::class, 'showAdminUploadGuest'])
+                    ->defaults('category', 'cd')
+                    ->name('cd');
+
+                Route::get('/video', [FinalProjectController::class, 'showAdminUploadGuest'])
+                    ->defaults('category', 'video')
+                    ->name('video');
+            });
         // ================= Waktu Layanan =================
             Route::get('/waktu_layanan', [ServiceScheduleController::class, 'indexGuest'])
             ->name('waktu.layanan');

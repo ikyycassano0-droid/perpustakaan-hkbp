@@ -60,10 +60,10 @@
                             Koleksi Elektronik <span class="text-indigo-400 text-xs">▶</span>
                         </a>
                         <ul class="submenu-menu-modern">
-                            <li><a href="{{ url('/koleksi/ebook') }}" class="dropdown-item-modern">E-book</a></li>
-                            <li><a href="{{ url('/koleksi/earticle') }}" class="dropdown-item-modern">E-article</a></li>
-                            <li><a href="{{ url('/koleksi/cd') }}" class="dropdown-item-modern">CD/DVD</a></li>
-                            <li><a href="{{ url('/koleksi/video') }}" class="dropdown-item-modern">Video Edukasi</a></li>
+                            <li><a href="{{ route('guest.koleksi_elektronik.ebook') }}" class="dropdown-item-modern">E-book</a></li>
+                            <li><a href="{{ route('guest.koleksi_elektronik.earticle') }}" class="dropdown-item-modern">E-article</a></li>
+                            <li><a href="{{ route('guest.koleksi_elektronik.cd') }}" class="dropdown-item-modern">CD/DVD</a></li>
+                            <li><a href="{{ route('guest.koleksi_elektronik.video') }}" class="dropdown-item-modern">Video Edukasi</a></li>
                             @auth
                             <li><a href="{{ route('final_project.kti') }}" class="dropdown-item-modern">KTI Digital</a></li>
                         @else

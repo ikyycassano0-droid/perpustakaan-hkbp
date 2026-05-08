@@ -120,6 +120,7 @@
                                 <button type="button" class="btn-edit w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition flex items-center justify-center"
                                         data-id="{{ $item->id }}"
                                         data-title="{{ $item->title }}"
+                                        data-isbn="{{ $item->isbn }}"
                                         data-author="{{ implode(',', $item->author ?? []) }}"
                                         data-stock="{{ $item->stock }}"
                                         data-menu="{{ $item->menu_type }}"
@@ -195,6 +196,14 @@
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-2">Series Title</label>
                             <input type="text" name="series_title" id="series_title" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 transition text-sm text-slate-700">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">ISBN</label>
+                            <input type="text" 
+                                name="isbn" 
+                                id="isbn"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 transition text-sm text-slate-700"
+                                placeholder="Contoh: 9786028519323">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-2">Publisher</label>
@@ -481,6 +490,7 @@
         $('#methodField').val('PUT');
         
         $('#title').val($(this).data('title'));
+        $('#isbn').val($(this).data('isbn'));
         $('#stock').val($(this).data('stock'));
         $('#menu_type').val($(this).data('menu'));
         
@@ -622,7 +632,6 @@ $('#saveClassificationBtn').click(function() {
     });
 });
 
-// ⭐⭐⭐ BUKA MODAL TAMBAH CLASSIFICATION ⭐⭐⭐
 $(document).on('click', '.btn-add-classification', function(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -630,7 +639,6 @@ $(document).on('click', '.btn-add-classification', function(e) {
     $('#modalAddClassification').modal('show');
 });
 
-// ⭐⭐⭐ BUKA MODAL TAMBAH CATEGORY ⭐⭐⭐
 $(document).on('click', '.btn-add-category', function(e) {
     e.preventDefault();
     e.stopPropagation();
