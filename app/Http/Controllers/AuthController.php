@@ -43,8 +43,13 @@ class AuthController extends Controller
         return back()->with('error', 'NPM atau password salah');
     }
 
-    public function logout() {
+    public function logout(Request $request)
+    {
         Auth::logout();
-        return redirect()->route('login');
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('home');
     }
 }

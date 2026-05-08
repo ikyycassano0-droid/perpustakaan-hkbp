@@ -287,10 +287,14 @@
                     <a href="#" class="menu-item-minimal flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
                         <i class="fas fa-tag w-4 text-sm"></i>
                         <span>Products</span>
-                    </a>
-                    <a href="#" class="menu-item-minimal flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
-                        <i class="fas fa-cog w-4 text-sm"></i>
-                        <span>Settings</span>
+                    </a><form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit"
+                            class="menu-item-minimal flex items-center gap-3 px-4 py-2.5 text-sm font-medium w-full text-left">
+                            <i class="fas fa-sign-out-alt w-4 text-sm"></i>
+                            <span>Logout</span>
+                        </button>
+                        </form>
                     </a>
                 </nav>
             </div>

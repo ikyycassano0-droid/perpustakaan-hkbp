@@ -6,10 +6,10 @@
 <style>
     /* ============================================
        CSS KHUSUS UNTUK HALAMAN VISI MISI
-       Hanya CSS yang BELUM ADA di master blade
     ============================================ */
 
     /* Glass card untuk halaman visi misi */
+
     .glass-card {
         background: rgba(30, 41, 59, 0.5);
         backdrop-filter: blur(14px);
@@ -25,6 +25,7 @@
     .depth-2 { transform: translateZ(24px); }
 
     /* Title gradient untuk halaman visi misi */
+
     .title-main {
         font-weight: 800;
         background: linear-gradient(135deg, #ffffff, #a5b4fc, #6366f1);
@@ -35,6 +36,7 @@
     }
 
     /* Neon border effect - khusus visi misi */
+
     .neon-border {
         position: relative;
         border-radius: 28px;
@@ -55,6 +57,7 @@
     }
 
     /* Misi Card - khusus halaman visi misi */
+
     .misi-card-clean {
         background: rgba(255,255,255,0.05);
         border-radius: 20px;
@@ -106,6 +109,7 @@
     }
 
     /* Hero badge khusus */
+
     .hero-badge {
         background: rgba(99,102,241,0.15);
         backdrop-filter: blur(8px);
@@ -118,6 +122,27 @@
     .delay-3 { transition-delay: 0.3s; }
 
     /* Section margin untuk visi misi */
+
+    .fade-up {
+        animation: fadeUp 0.6s ease-out forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+
     .section {
         margin-top: 2rem;
         margin-bottom: 2rem;
@@ -149,7 +174,7 @@
         </p>
     </section>
 
-    <!-- ABOUT (STATIC - TIDAK DIUBAH) -->
+    <!-- ABOUT (TENTANG) -->
     <section class="section max-w-6xl mx-auto px-5">
         <div class="neon-border fade-up">
             <div class="neon-inner">
@@ -159,20 +184,20 @@
                         Tentang AKPER HKBP
                     </h2>
                 </div>
-                @if($about)
+                @if($about && $about->description)
                 <p class="text-gray-300 text-sm md:text-lg leading-relaxed">
                     {{ $about->description }}
                 </p>
                 @else
                 <p class="text-gray-500 italic">
-                    Konten belum tersedia
+                    Konten tentang AKPER HKBP belum tersedia. Silakan hubungi administrator.
                 </p>
                 @endif
             </div>
         </div>
     </section>
 
-    <!-- VISI (DINAMIS) -->
+    <!-- VISI -->
     <section class="section max-w-6xl mx-auto px-5">
         <div class="neon-border fade-up">
             <div class="neon-inner">
@@ -183,14 +208,20 @@
                     </h2>
                 </div>
 
+                @if($visi && $visi->description)
                 <p class="text-gray-300 text-sm md:text-lg leading-relaxed italic border-l-4 border-indigo-500 pl-4 md:pl-5">
-                    "{{ $visi->description ?? 'Visi belum tersedia' }}"
+                    "{{ $visi->description }}"
                 </p>
+                @else
+                <p class="text-gray-500 italic border-l-4 border-indigo-500 pl-4 md:pl-5">
+                    Visi belum tersedia. Silakan hubungi administrator.
+                </p>
+                @endif
             </div>
         </div>
     </section>
 
-    <!-- MISI (DINAMIS LOOP) -->
+    <!-- MISI -->
     <section class="section max-w-6xl mx-auto px-5 mt-8 mb-16">
         <div class="text-center mb-10 md:mb-12">
             <div class="inline-flex items-center gap-2 hero-badge px-4 py-2 rounded-full mb-4 fade-up">
@@ -206,33 +237,33 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
-
-            @forelse($misi as $item)
-            <div class="misi-card-clean fade-up">
-
+            @forelse($misi as $index => $item)
+            <div class="misi-card-clean fade-up" style="animation-delay: {{ $index * 0.1 }}s">
                 <div class="misi-img-wrapper">
                     <img
                         src="{{ $item->image ? asset('storage/'.$item->image) : 'https://placehold.co/600x450/1e293b/6366f1?text=Misi' }}"
                         class="misi-img"
-                        loading="lazy">
+                        alt="{{ $item->title }}"
+                        loading="lazy"
+                        onerror="this.src='https://placehold.co/600x450/1e293b/6366f1?text=Image+Not+Found'">
                 </div>
-
                 <div class="misi-text-area">
-                    <h3>{{ $item->title }}</h3>
-                    <p>{{ $item->description }}</p>
+                    <h3>{{ $item->title ?? 'Misi ' . ($index + 1) }}</h3>
+                    <p>{{ $item->description ?? 'Deskripsi misi belum tersedia' }}</p>
                 </div>
-
             </div>
             @empty
-                <p class="text-center text-gray-400 col-span-4">
-                    Data misi belum tersedia
-                </p>
+            <div class="col-span-full text-center py-12">
+                <div class="text-gray-400">
+                    <i class="fas fa-info-circle text-4xl mb-3"></i>
+                    <p>Data misi belum tersedia. Silakan hubungi administrator.</p>
+                </div>
+            </div>
             @endforelse
-
         </div>
     </section>
 
-    <!-- FOOTER -->
+    <!-- FOOTER QUOTE -->
     <section class="pb-16 md:pb-20 text-center px-5">
         <div class="inline-block px-5 md:px-8 py-4 md:py-5 rounded-full max-w-2xl mx-auto fade-up"
              style="background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.1)); border-left: 3px solid #6366f1;">
@@ -247,11 +278,6 @@
 
 @push('scripts')
 <script>
-// ============================================
-// JAVASCRIPT KHUSUS UNTUK HALAMAN VISI MISI
-// Hanya JS yang BELUM ADA di master blade
-// ============================================
-
 document.addEventListener('DOMContentLoaded', function() {
     // Efek parallax ringan untuk hero section
     const heroSection = document.querySelector('.main-content > section:first-child');
