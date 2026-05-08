@@ -405,6 +405,11 @@
                                             📖 Baca
                                         </a>
 
+                                        <a href="{{ route('final_project.detail', $item->id) }}"
+                                        class="btn-outline flex-2 text-xs py-1 text-center">
+                                            👁️Lihat Detail
+                                        </a>
+
                                         <!-- DOWNLOAD BUTTON -->
                                         <a href="{{ asset('storage/'.$item->file_url) }}"
                                            download

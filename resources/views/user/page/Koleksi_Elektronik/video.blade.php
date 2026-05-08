@@ -479,6 +479,7 @@
                                         <div class="flex gap-3">
                                             <button class="btn-primary"onclick="playVideo('{{ Storage::url($featured->file_url) }}', '{{ addslashes($featured->title) }}')">▶ Putar Sekarang</button>
                                             <button class="btn-outline" onclick="saveVideo({{ $featured->id }})">💾 Simpan</button>
+                                            <button class="btn-outline" onclick="saveVideo({{ $featured->id }})">Lihat detail</button>
                                         </div>
                                     </div>
                                 </div>

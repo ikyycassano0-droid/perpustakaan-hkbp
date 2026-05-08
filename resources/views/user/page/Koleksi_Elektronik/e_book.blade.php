@@ -388,10 +388,6 @@ function renderEbooks() {
             '<span class="ebook-format">📕 ' + escapeHtml(format) + '</span>' +
             '</div>' +
             '<div class="p-4">' +
-            '<div class="flex items-center justify-between mb-2 flex-wrap gap-1">' +
-            '<span class="text-xs text-indigo-300">⭐ ' + rating + '</span>' +
-            '<span class="text-xs text-gray-500">📥 ' + downloads + ' unduhan</span>' +
-            '</div>' +
             '<div class="flex items-center justify-between mb-1">' +
             '<span class="text-xs text-indigo-300/70">' + escapeHtml(category) + '</span>' +
             '<span class="text-xs text-gray-500">📅 ' + year + '</span>' +
@@ -400,8 +396,16 @@ function renderEbooks() {
             '<p class="text-xs text-gray-400 mb-2">' + escapeHtml(author) + '</p>' +
             '<p class="text-xs text-gray-500 mb-3">📄 ' + pages + ' halaman</p>' +
             '<div class="flex items-center gap-2">' +
-            '<button class="btn-primary flex-1 text-xs py-1" onclick="readEbook(' + book.id + ')">📖 Baca</button>' +
-            '<button class="btn-outline text-xs py-1 px-2" onclick="downloadEbook(' + book.id + ')">⬇️</button>' +
+            '<button class="btn-primary flex-1 text-xs py-1" onclick="readEbook(' + book.id + ')">' +
+            '📖 Baca' +
+            '</button>' +
+            '<a href="/final-project/koleksi-elektronik/detail/' + book.id + '"' +
+            'class="btn-outline flex-1 text-xs py-1 text-center">' +
+            '👁️ Detail' +
+            '</a>' +
+            '<button class="btn-outline text-xs py-1 px-3" onclick="downloadEbook(' + book.id + ')">' +
+            '⬇️' +
+            '</button>' +
             '</div>' +
             '</div>';
         grid.appendChild(card);

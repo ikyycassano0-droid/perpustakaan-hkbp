@@ -644,9 +644,28 @@ class FinalProjectController extends Controller
     {
         $supervisors = User::whereHas('role', function ($q) {
     $q->where('name', 'Dosen');
-})->get();
+        })->get();
         $categories = CategoryFinalProject::all();
 
         return view('user.page.Koleksi_Elektronik.create_kti', compact('supervisors', 'categories'));
+    }
+
+    public function detail($id)
+    {
+        $item = FinalProject::with([
+            'category',
+            'classifications',
+            'categoriesMany'
+        ])->findOrFail($id);
+
+        // Cegah akses file yang belum approved
+        if ($item->status !== 'Approved') {
+            abort(403);
+        }
+
+        return view(
+            'user.page.Koleksi_Elektronik.detail',
+            compact('item')
+        );
     }
 }

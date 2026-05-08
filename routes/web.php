@@ -329,6 +329,8 @@
         Route::get('/koleksi/{category}', [FinalProjectController::class,'index'])
             ->name('koleksi')
             ->where('category','ebook|e-article|cd|video');
+        Route::get('/koleksi-elektronik/detail/{id}', [FinalProjectController::class, 'detail'])
+        ->name('detail');
     });
 
         //Guest

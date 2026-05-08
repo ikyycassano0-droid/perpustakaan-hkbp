@@ -371,7 +371,7 @@
                                                     </div>
 
                                                     <div class="flex gap-2">
-                                                        <a href="#"
+                                                        <a href="{{ route('final_project.detail', $item->id) }}"
                                                            class="btn-link text-sm">
                                                             Lihat Detail →
                                                         </a>
