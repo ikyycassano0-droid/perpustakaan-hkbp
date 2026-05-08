@@ -8,16 +8,22 @@
        CSS KHUSUS UNTUK HALAMAN BERITA
        Hanya CSS yang BELUM ADA di master blade
     ============================================ */
-    
+
     /* Glass card */
     .glass-card {
-        background: rgba(15, 23, 42, 0.55);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 2rem;
-        transition: all 0.3s ease;
+        background: rgba(30, 41, 59, 0.5);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(99, 102, 241, 0.25);
     }
-    
+
+    /* Glow text */
+    .glow-text {
+        text-shadow: 0 0 12px rgba(99, 102, 241, 0.7);
+    }
+
+    /* Tambahkan di style Visi Misi */
+    .depth-2 { transform: translateZ(24px); }
+
     /* Title utama */
     .title-main {
         font-weight: 800;
@@ -27,7 +33,7 @@
         color: transparent;
         text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
     }
-    
+
     /* Neon border */
     .neon-border {
         position: relative;
@@ -35,11 +41,11 @@
         background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2));
         transition: all 0.3s ease;
     }
-    
+
     .neon-border:hover {
         box-shadow: 0 0 30px rgba(99,102,241,0.3);
     }
-    
+
     .neon-inner {
         background: rgba(15, 23, 42, 0.7);
         backdrop-filter: blur(20px);
@@ -47,7 +53,7 @@
         padding: 2rem;
         border: 1px solid rgba(255,255,255,0.08);
     }
-    
+
     /* Search input */
     .search-input {
         width: 100%;
@@ -59,17 +65,17 @@
         font-size: 0.9rem;
         transition: all 0.3s ease;
     }
-    
+
     .search-input:focus {
         outline: none;
         border-color: #6366f1;
         box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
     }
-    
+
     .search-input::placeholder {
         color: #64748b;
     }
-    
+
     /* Category Badge */
     .category-badge {
         display: inline-block;
@@ -78,14 +84,14 @@
         font-size: 0.7rem;
         font-weight: 600;
     }
-    
+
     .category-akademik { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.4); }
     .category-pengumuman { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
     .category-kegiatan { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
     .category-riset { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.4); }
     .category-fasilitas { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
     .category-sosial { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
-    
+
     /* News Card */
     .news-card {
         background: rgba(15, 23, 42, 0.6);
@@ -96,29 +102,29 @@
         border: 1px solid rgba(99, 102, 241, 0.3);
         margin-bottom: 1.5rem;
     }
-    
+
     .news-card:hover {
         transform: translateY(-5px);
         border-color: rgba(99, 102, 241, 0.7);
         box-shadow: 0 15px 30px -12px rgba(99, 102, 241, 0.3);
     }
-    
+
     .news-image {
         height: 200px;
         width: 100%;
         object-fit: cover;
         transition: transform 0.5s ease;
     }
-    
+
     .news-card:hover .news-image {
         transform: scale(1.05);
     }
-    
+
     .img-wrapper {
         overflow: hidden;
         position: relative;
     }
-    
+
     /* Buttons */
     .btn-primary {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
@@ -131,12 +137,12 @@
         color: white;
         font-size: 0.8rem;
     }
-    
+
     .btn-primary:hover {
         transform: scale(1.05);
         box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
     }
-    
+
     .btn-outline {
         background: transparent;
         padding: 6px 16px;
@@ -148,12 +154,12 @@
         color: #c7d2fe;
         font-size: 0.75rem;
     }
-    
+
     .btn-outline:hover {
         background: rgba(99, 102, 241, 0.2);
         border-color: #6366f1;
     }
-    
+
     /* Filter button */
     .filter-btn {
         padding: 6px 18px;
@@ -166,18 +172,18 @@
         border: 1px solid rgba(99, 102, 241, 0.3);
         color: #cbd5e1;
     }
-    
+
     .filter-btn.active {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         border-color: transparent;
         color: white;
     }
-    
+
     .filter-btn:hover {
         border-color: #6366f1;
         color: white;
     }
-    
+
     /* Pagination */
     .pagination-btn {
         padding: 8px 14px;
@@ -188,23 +194,23 @@
         cursor: pointer;
         transition: all 0.3s ease;
     }
-    
+
     .pagination-btn:hover:not(:disabled) {
         background: rgba(99, 102, 241, 0.2);
         border-color: #6366f1;
     }
-    
+
     .pagination-btn:disabled {
         opacity: 0.5;
         cursor: not-allowed;
     }
-    
+
     .pagination-btn.active {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         border-color: transparent;
         color: white;
     }
-    
+
     /* Notification */
     .notification {
         position: fixed;
@@ -220,16 +226,16 @@
         transform: translateX(120%);
         transition: transform 0.3s ease;
     }
-    
+
     .notification.show {
         transform: translateX(0);
     }
-    
+
     /* Section spacing */
     .section {
         margin-top: 40px;
     }
-    
+
     /* Responsive */
     @media (max-width: 768px) {
         .news-image {
@@ -249,9 +255,10 @@
             </span>
         </div>
 
-        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight title-main fade-up">
-            Arsip Berita & Pengumuman
-        </h1>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight depth-2 fade-up">
+    Arsip Berita <br>
+    <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent glow-text">& Pengumuman</span>
+</h1>
 
         <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
             Temukan pembaruan terkini mengenai kegiatan kampus, penelitian, dan pengumuman resmi.
@@ -581,7 +588,7 @@ function renderNews() {
                     </div>
 
                     <div class="md:col-span-3 p-5">
-                        
+
                         <div class="flex gap-3 mb-2 flex-wrap">
                             <span class="category-badge ${getCategoryClass(news.category)}">
                                 ${news.categoryName}

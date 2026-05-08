@@ -6,13 +6,19 @@
 @push('styles')
 <style>
     .glass-card {
-        background: rgba(15, 23, 42, 0.55);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 2rem;
-        transition: all 0.3s ease;
+        background: rgba(30, 41, 59, 0.5);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(99, 102, 241, 0.25);
     }
-    
+
+    /* Glow text */
+    .glow-text {
+        text-shadow: 0 0 12px rgba(99, 102, 241, 0.7);
+    }
+
+    /* Tambahkan di style Visi Misi */
+    .depth-2 { transform: translateZ(24px); }
+
     .title-main {
         font-weight: 800;
         background: linear-gradient(135deg, #ffffff, #a5b4fc, #6366f1);
@@ -21,18 +27,18 @@
         color: transparent;
         text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
     }
-    
+
     .neon-border {
         position: relative;
         border-radius: 28px;
         background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2));
         transition: all 0.3s ease;
     }
-    
+
     .neon-border:hover {
         box-shadow: 0 0 30px rgba(99,102,241,0.3);
     }
-    
+
     .neon-inner {
         background: rgba(15, 23, 42, 0.7);
         backdrop-filter: blur(20px);
@@ -40,7 +46,7 @@
         padding: 2rem;
         border: 1px solid rgba(255,255,255,0.08);
     }
-    
+
     .stat-card {
         background: rgba(15, 23, 42, 0.6);
         backdrop-filter: blur(12px);
@@ -50,13 +56,13 @@
         border: 1px solid rgba(99, 102, 241, 0.3);
         transition: all 0.3s ease;
     }
-    
+
     .stat-card:hover {
         transform: translateY(-5px);
         border-color: rgba(99, 102, 241, 0.7);
         box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.3);
     }
-    
+
     .stat-number {
         font-size: 2.5rem;
         font-weight: 800;
@@ -65,7 +71,7 @@
         -webkit-background-clip: text;
         color: transparent;
     }
-    
+
     .search-input {
         width: 100%;
         padding: 12px 20px;
@@ -76,27 +82,27 @@
         font-size: 0.9rem;
         transition: all 0.3s ease;
     }
-    
+
     .search-input:focus {
         outline: none;
         border-color: #6366f1;
         box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
     }
-    
+
     .search-input::placeholder {
         color: #64748b;
     }
-    
+
     .table-container {
         overflow-x: auto;
         border-radius: 1rem;
     }
-    
+
     .data-table {
         width: 100%;
         border-collapse: collapse;
     }
-    
+
     .data-table th {
         text-align: left;
         padding: 1rem 1rem;
@@ -106,7 +112,7 @@
         font-size: 0.85rem;
         border-bottom: 1px solid rgba(99, 102, 241, 0.3);
     }
-    
+
     .data-table td {
         padding: 1rem 1rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -114,11 +120,11 @@
         font-size: 0.9rem;
         vertical-align: middle;
     }
-    
+
     .data-table tr:hover {
         background: rgba(99, 102, 241, 0.08);
     }
-    
+
     .book-image {
         width: 50px;
         height: 65px;
@@ -127,11 +133,11 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         transition: transform 0.3s ease;
     }
-    
+
     .book-image:hover {
         transform: scale(1.1);
     }
-    
+
     .status-badge {
         display: inline-block;
         padding: 4px 12px;
@@ -139,31 +145,31 @@
         font-size: 0.7rem;
         font-weight: 600;
     }
-    
+
     .status-pending {
         background: rgba(245, 158, 11, 0.2);
         color: #fbbf24;
         border: 1px solid rgba(245, 158, 11, 0.5);
     }
-    
+
     .status-approved {
         background: rgba(99, 102, 241, 0.2);
         color: #a5b4fc;
         border: 1px solid rgba(99, 102, 241, 0.5);
     }
-    
+
     .status-rejected {
         background: rgba(239, 68, 68, 0.2);
         color: #f87171;
         border: 1px solid rgba(239, 68, 68, 0.5);
     }
-    
+
     .status-returned {
         background: rgba(16, 185, 129, 0.2);
         color: #34d399;
         border: 1px solid rgba(16, 185, 129, 0.5);
     }
-    
+
     .btn-primary {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         padding: 10px 24px;
@@ -175,12 +181,12 @@
         color: white;
         font-size: 0.85rem;
     }
-    
+
     .btn-primary:hover {
         transform: scale(1.05);
         box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
     }
-    
+
     .btn-outline {
         background: transparent;
         padding: 10px 24px;
@@ -192,12 +198,12 @@
         color: #c7d2fe;
         font-size: 0.85rem;
     }
-    
+
     .btn-outline:hover {
         background: rgba(99, 102, 241, 0.2);
         border-color: #6366f1;
     }
-    
+
     .pagination-btn {
         padding: 8px 14px;
         background: rgba(15, 23, 42, 0.6);
@@ -207,17 +213,17 @@
         cursor: pointer;
         transition: all 0.3s ease;
     }
-    
+
     .pagination-btn:hover:not(:disabled) {
         background: rgba(99, 102, 241, 0.2);
         border-color: #6366f1;
     }
-    
+
     .pagination-btn:disabled {
         opacity: 0.5;
         cursor: not-allowed;
     }
-    
+
     .membership-active {
         background: linear-gradient(135deg, #10b981, #059669);
         padding: 4px 12px;
@@ -226,7 +232,7 @@
         font-weight: 600;
         display: inline-block;
     }
-    
+
     .notification {
         position: fixed;
         bottom: 30px;
@@ -241,11 +247,11 @@
         transform: translateX(120%);
         transition: transform 0.3s ease;
     }
-    
+
     .notification.show {
         transform: translateX(0);
     }
-    
+
     .modal-overlay {
         position: fixed;
         inset: 0;
@@ -258,12 +264,12 @@
         opacity: 0;
         transition: opacity 0.3s ease;
     }
-    
+
     .modal-overlay.show {
         display: flex;
         opacity: 1;
     }
-    
+
     .modal-container {
         width: 90%;
         max-width: 500px;
@@ -276,11 +282,11 @@
         transition: transform 0.3s ease;
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     }
-    
+
     .modal-overlay.show .modal-container {
         transform: scale(1);
     }
-    
+
     .modal-header {
         display: flex;
         justify-content: space-between;
@@ -289,7 +295,7 @@
         padding-bottom: 1rem;
         border-bottom: 1px solid rgba(99, 102, 241, 0.3);
     }
-    
+
     .modal-title {
         font-size: 1.25rem;
         font-weight: 700;
@@ -298,7 +304,7 @@
         -webkit-background-clip: text;
         color: transparent;
     }
-    
+
     .modal-close {
         background: rgba(99, 102, 241, 0.2);
         border: none;
@@ -312,17 +318,17 @@
         transition: all 0.3s ease;
         color: #c7d2fe;
     }
-    
+
     .modal-close:hover {
         background: rgba(99, 102, 241, 0.4);
         transform: scale(1.1);
     }
-    
+
     .form-group {
         margin-bottom: 1.25rem;
         position: relative;
     }
-    
+
     .form-label {
         display: block;
         font-size: 0.75rem;
@@ -332,7 +338,7 @@
         color: #a5b4fc;
         margin-bottom: 0.5rem;
     }
-    
+
     .form-input-modal {
         width: 100%;
         padding: 10px 14px;
@@ -343,23 +349,23 @@
         font-size: 0.85rem;
         transition: all 0.3s ease;
     }
-    
+
     .form-input-modal:focus {
         outline: none;
         border-color: #6366f1;
         box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
     }
-    
+
     .form-input-modal::placeholder {
         color: #64748b;
     }
-    
+
     .form-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
     }
-    
+
     .autocomplete-items {
         position: absolute;
         z-index: 1000;
@@ -372,26 +378,26 @@
         overflow-y: auto;
         margin-top: 4px;
     }
-    
+
     .autocomplete-item {
         padding: 10px 14px;
         cursor: pointer;
         transition: all 0.2s ease;
         border-bottom: 1px solid rgba(99, 102, 241, 0.2);
     }
-    
+
     .autocomplete-item-title {
         font-size: 0.85rem;
         font-weight: 500;
         color: #c7d2fe;
     }
-    
+
     .autocomplete-item-author {
         font-size: 0.7rem;
         color: #94a3b8;
         margin-top: 2px;
     }
-    
+
     .btn-modal {
         width: 100%;
         padding: 12px;
@@ -403,32 +409,32 @@
         border: none;
         margin-top: 0.5rem;
     }
-    
+
     .btn-modal-primary {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         color: white;
     }
-    
+
     .btn-modal-primary:hover {
         transform: scale(1.02);
         box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
     }
-    
+
     .btn-modal-secondary {
         background: rgba(255, 255, 255, 0.1);
         border: 1px solid rgba(99, 102, 241, 0.5);
         color: #c7d2fe;
         margin-top: 0.75rem;
     }
-    
+
     .btn-modal-secondary:hover {
         background: rgba(99, 102, 241, 0.2);
     }
-    
+
     .section {
         margin-top: 40px;
     }
-    
+
     .loading-spinner {
         display: inline-block;
         width: 20px;
@@ -438,7 +444,7 @@
         border-top-color: #6366f1;
         animation: spin 0.8s linear infinite;
     }
-    
+
     @keyframes spin {
         to { transform: rotate(360deg); }
     }
@@ -452,9 +458,10 @@
         <div class="inline-block glass-card px-5 py-2 rounded-full mb-5 fade-up">
             <span class="text-indigo-300 text-sm font-medium tracking-wide">📚 AKPER HKBP BALIGE</span>
         </div>
-        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight title-main fade-up">
-            Sistem Pinbal Akademik
-        </h1>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight depth-2 fade-up">
+    Sistem Pinbal <br>
+    <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent glow-text">Akademik</span>
+</h1>
         <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
             Kelola riwayat peminjaman buku perpustakaan Anda. Pantau batas waktu pengembalian.
         </p>
@@ -490,7 +497,7 @@
     <section class="section max-w-6xl mx-auto px-5">
         <div class="neon-border fade-up">
             <div class="neon-inner">
-                
+
                 <div class="mb-6">
                     <input type="text" id="searchInput" class="search-input" placeholder="🔍 Cari judul buku...">
                 </div>
@@ -515,7 +522,7 @@
                             @csrf
                             <div class="form-group">
                                 <label class="form-label">📚 Pilih Judul Buku</label>
-                                <input type="text" id="judulBukuInput" class="form-input-modal" 
+                                <input type="text" id="judulBukuInput" class="form-input-modal"
                                        placeholder="Ketik judul buku..." autocomplete="off" required>
                                 <input type="hidden" id="collection_id" name="collection_id" required>
                                 <div id="autocompleteList" class="autocomplete-items" style="display: none;"></div>
@@ -534,7 +541,7 @@
 
                             <div class="form-group">
                                 <label class="form-label">📝 Alasan / Keperluan (Opsional)</label>
-                                <textarea id="catatan" name="notes" rows="2" class="form-input-modal" 
+                                <textarea id="catatan" name="notes" rows="2" class="form-input-modal"
                                           placeholder="Contoh: Untuk tugas akhir / penelitian..."></textarea>
                             </div>
 
@@ -694,7 +701,7 @@ function updateStats(data) {
     var aktif = 0;
     var mendekati = 0;
     var total = data.length;
-    
+
     for (var i = 0; i < data.length; i++) {
         if (data[i].status === 'APPROVED') {
             aktif++;
@@ -705,7 +712,7 @@ function updateStats(data) {
             }
         }
     }
-    
+
     document.getElementById('aktifDipinjam').innerHTML = aktif.toString().padStart(2, '0');
     document.getElementById('mendekatiDeadline').innerHTML = mendekati.toString().padStart(2, '0');
     document.getElementById('totalRiwayat').innerHTML = total;
@@ -717,7 +724,7 @@ function renderTable() {
     for (var i = 0; i < loanData.length; i++) {
         filtered.push(loanData[i]);
     }
-    
+
     // Search filter
     if (searchQuery) {
         var temp = [];
@@ -730,7 +737,7 @@ function renderTable() {
         }
         filtered = temp;
     }
-    
+
     // Status filter
     if (currentFilter !== 'all') {
         var temp = [];
@@ -741,10 +748,10 @@ function renderTable() {
         }
         filtered = temp;
     }
-    
+
     // Update stats
     updateStats(filtered);
-    
+
     // Pagination
     var perPage = 5;
     var totalPages = Math.ceil(filtered.length / perPage);
@@ -754,42 +761,42 @@ function renderTable() {
     for (var i = start; i < end && i < filtered.length; i++) {
         currentData.push(filtered[i]);
     }
-    
+
     // Update info
     var paginationInfo = document.getElementById('paginationInfo');
     if (paginationInfo) {
-        paginationInfo.innerHTML = filtered.length > 0 ? 
-            'Menampilkan ' + (start + 1) + ' - ' + Math.min(end, filtered.length) + ' dari ' + filtered.length + ' entri' : 
+        paginationInfo.innerHTML = filtered.length > 0 ?
+            'Menampilkan ' + (start + 1) + ' - ' + Math.min(end, filtered.length) + ' dari ' + filtered.length + ' entri' :
             'Tidak ada data';
     }
-    
+
     // Render table
     var tbody = document.getElementById('tableBody');
     if (!tbody) return;
     tbody.innerHTML = '';
-    
+
     if (currentData.length === 0) {
         tbody.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-gray-400">📚 Belum ada riwayat peminjaman</td></tr>';
         return;
     }
-    
+
     for (var i = 0; i < currentData.length; i++) {
         var item = currentData[i];
         var book = getBookFromOrder(item);
         var status = getStatusBadge(item.status);
-        
+
         var borrowDate = item.borrow_date || item.tanggal_pinjam || item.created_at;
         var dueDate = item.due_date || item.tanggal_kembali;
-        
+
         var remaining = null;
         if (dueDate && item.status === 'APPROVED') {
             remaining = getRemainingDays(dueDate);
         }
-        
+
         var bookTitle = 'Judul tidak tersedia';
         var bookAuthor = 'Penulis tidak diketahui';
         var coverImage = null;
-        
+
         if (book) {
             bookTitle = safeString(book.title) || 'Judul tidak tersedia';
             var authorData = book.author;
@@ -802,9 +809,9 @@ function renderTable() {
             }
             coverImage = book.cover_image ? '/storage/' + safeString(book.cover_image) : null;
         }
-        
+
         var row = tbody.insertRow();
-        
+
         // Kolom Buku
         row.insertCell(0).innerHTML = '<div class="flex items-center gap-3">' +
             '<img src="' + (coverImage || 'https://placehold.co/100x130/1e293b/6366f1?text=📖') + '" class="book-image" onerror="this.src=\'https://placehold.co/100x130/1e293b/6366f1?text=📖\'">' +
@@ -813,10 +820,10 @@ function renderTable() {
                 '<div class="text-xs text-gray-500 mt-1">✍️ ' + escapeHtml(bookAuthor) + '</div>' +
             '</div>' +
         '</div>';
-        
+
         // Kolom Tanggal Pinjam
         row.insertCell(1).innerHTML = formatDate(borrowDate);
-        
+
         // Kolom Batas Kembali
         if (item.status === 'APPROVED' && dueDate) {
             var text = '', cls = '';
@@ -830,11 +837,11 @@ function renderTable() {
         } else {
             row.insertCell(2).innerHTML = formatDate(dueDate) || '<span class="text-xs text-gray-400">Menunggu konfirmasi</span>';
         }
-        
+
         // Kolom Status
         row.insertCell(3).innerHTML = '<span class="status-badge ' + status.class + '">' + status.icon + ' ' + status.text + '</span>';
     }
-    
+
     // Update pagination buttons
     var prevBtn = document.getElementById('prevPage');
     var nextBtn = document.getElementById('nextPage');
@@ -849,7 +856,7 @@ for (var i = 0; i < filterBtns.length; i++) {
         var filter = e.target.getAttribute('data-filter');
         currentFilter = filter;
         currentPage = 1;
-        
+
         var allBtns = document.querySelectorAll('[data-filter]');
         for (var j = 0; j < allBtns.length; j++) {
             if (allBtns[j].getAttribute('data-filter') === filter) {
@@ -885,12 +892,12 @@ var availableBooks = @json($availableBooks ?? []);
 document.getElementById('judulBukuInput').addEventListener('input', function() {
     var query = this.value.trim();
     var list = document.getElementById('autocompleteList');
-    
+
     if (query.length < 2) {
         list.style.display = 'none';
         return;
     }
-    
+
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(function() {
         var filtered = [];
@@ -900,7 +907,7 @@ document.getElementById('judulBukuInput').addEventListener('input', function() {
                 filtered.push(availableBooks[i]);
             }
         }
-        
+
         if (filtered.length > 0) {
             var html = '';
             for (var i = 0; i < filtered.length; i++) {
@@ -941,10 +948,10 @@ document.getElementById('pinjamForm').addEventListener('submit', function(e) {
         showNotification('❌ Silakan pilih buku yang valid dari daftar!', 'error');
         return;
     }
-    
+
     var tglPinjam = document.getElementById('tglPinjam').value;
     var tglKembali = document.getElementById('tglKembali').value;
-    
+
     if (new Date(tglPinjam) > new Date(tglKembali)) {
         e.preventDefault();
         showNotification('❌ Tanggal kembali harus setelah tanggal pinjam!', 'error');
@@ -956,14 +963,14 @@ document.getElementById('pinjamForm').addEventListener('submit', function(e) {
 function openPinjamModal() {
     var modal = document.getElementById('pinjamModal');
     modal.classList.add('show');
-    
+
     var today = new Date().toISOString().split('T')[0];
     document.getElementById('tglPinjam').value = today;
-    
+
     var returnDate = new Date();
     returnDate.setDate(returnDate.getDate() + 14);
     document.getElementById('tglKembali').value = returnDate.toISOString().split('T')[0];
-    
+
     document.getElementById('judulBukuInput').value = '';
     document.getElementById('collection_id').value = '';
     document.getElementById('catatan').value = '';

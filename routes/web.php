@@ -216,6 +216,9 @@
                 return view('user.page.home');
             })->name('user.dashboard');
 
+        Route::get('/panduan', [ArchiveController::class, 'indexPanduan'])
+        ->name('user.panduan');
+
             // ================= ORDERS =================
             Route::post('/orders', [OrderController::class, 'store'])
                 ->name('orders.store');
@@ -229,7 +232,7 @@
             // Halaman utama pinbal (riwayat peminjaman + form pinjam)
             Route::get('/', [App\Http\Controllers\CollectionController::class, 'pinbal'])
                 ->name('index');
-            
+
             // Submit peminjaman buku
             Route::post('/store', [App\Http\Controllers\OrderController::class, 'store'])
                 ->name('store');
@@ -316,12 +319,12 @@
         // Halaman form upload KTI di menu Layanan
         Route::get('/upload-kti', [FinalProjectController::class, 'uploadForm'])
             ->name('upload.kti');
-        
+
         // Menggunakan route store yang sama (bisa juga pakai alias)
         Route::post('/upload-kti/store', [FinalProjectController::class, 'store'])
-        ->name('upload.kti.store'); 
+        ->name('upload.kti.store');
 
-        
+
 
         Route::get('/koleksi/{category}', [FinalProjectController::class,'index'])
             ->name('koleksi')
@@ -400,6 +403,8 @@
 
             Route::get('/inbox', [NotificationController::class, 'index'])
                 ->name('user.inbox');
+
+
 
         });
 

@@ -6,13 +6,19 @@
 <style>
     /* Glass card */
     .glass-card {
-        background: rgba(15, 23, 42, 0.55);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 2rem;
-        transition: all 0.3s ease;
+        background: rgba(30, 41, 59, 0.5);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(99, 102, 241, 0.25);
     }
-    
+
+    /* Glow text */
+    .glow-text {
+        text-shadow: 0 0 12px rgba(99, 102, 241, 0.7);
+    }
+
+    /* Tambahkan di style Visi Misi */
+    .depth-2 { transform: translateZ(24px); }
+
     /* Title utama */
     .title-main {
         font-weight: 800;
@@ -22,7 +28,7 @@
         color: transparent;
         text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
     }
-    
+
     /* Neon border */
     .neon-border {
         position: relative;
@@ -30,11 +36,11 @@
         background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2));
         transition: all 0.3s ease;
     }
-    
+
     .neon-border:hover {
         box-shadow: 0 0 30px rgba(99,102,241,0.3);
     }
-    
+
     .neon-inner {
         background: rgba(15, 23, 42, 0.7);
         backdrop-filter: blur(20px);
@@ -42,7 +48,7 @@
         padding: 2rem;
         border: 1px solid rgba(255,255,255,0.08);
     }
-    
+
     /* Search input */
     .search-input {
         width: 100%;
@@ -54,17 +60,17 @@
         font-size: 0.9rem;
         transition: all 0.3s ease;
     }
-    
+
     .search-input:focus {
         outline: none;
         border-color: #6366f1;
         box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
     }
-    
+
     .search-input::placeholder {
         color: #64748b;
     }
-    
+
     /* Filter button */
     .filter-btn {
         padding: 8px 20px;
@@ -77,18 +83,18 @@
         border: 1px solid rgba(99, 102, 241, 0.3);
         color: #cbd5e1;
     }
-    
+
     .filter-btn.active {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         border-color: transparent;
         color: white;
     }
-    
+
     .filter-btn:hover {
         border-color: #6366f1;
         color: white;
     }
-    
+
     /* Guide Card */
     .guide-card {
         background: rgba(15, 23, 42, 0.6);
@@ -98,13 +104,13 @@
         transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         border: 1px solid rgba(99, 102, 241, 0.3);
     }
-    
+
     .guide-card:hover {
         transform: translateY(-5px);
         border-color: rgba(99, 102, 241, 0.7);
         box-shadow: 0 15px 30px -12px rgba(99, 102, 241, 0.3);
     }
-    
+
     .guide-icon {
         width: 50px;
         height: 50px;
@@ -115,19 +121,19 @@
         justify-content: center;
         font-size: 1.5rem;
     }
-    
+
     .guide-title {
         font-weight: 700;
         font-size: 1rem;
         color: #c7d2fe;
         margin-bottom: 0.25rem;
     }
-    
+
     .guide-meta {
         font-size: 0.7rem;
         color: #94a3b8;
     }
-    
+
     .btn-download {
         background: transparent;
         border: 1px solid rgba(99, 102, 241, 0.5);
@@ -139,13 +145,13 @@
         transition: all 0.3s ease;
         cursor: pointer;
     }
-    
+
     .btn-download:hover {
         background: rgba(99, 102, 241, 0.2);
         border-color: #6366f1;
         color: white;
     }
-    
+
     .btn-primary {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         padding: 10px 24px;
@@ -157,12 +163,12 @@
         color: white;
         font-size: 0.85rem;
     }
-    
+
     .btn-primary:hover {
         transform: scale(1.05);
         box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
     }
-    
+
     /* Notification */
     .notification {
         position: fixed;
@@ -178,16 +184,16 @@
         transform: translateX(120%);
         transition: transform 0.3s ease;
     }
-    
+
     .notification.show {
         transform: translateX(0);
     }
-    
+
     /* Section spacing */
     .section {
         margin-top: 40px;
     }
-    
+
     /* Line clamp */
     .line-clamp-2 {
         display: -webkit-box;
@@ -206,9 +212,10 @@
         <div class="inline-block glass-card px-5 py-2 rounded-full mb-5 fade-up">
             <span class="text-indigo-300 text-sm font-medium tracking-wide">📚 AKPER HKBP BALIGE</span>
         </div>
-        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight title-main fade-up">
-            Panduan & Informasi Akademik
-        </h1>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight depth-2 fade-up">
+    Panduan & <br>
+    <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent glow-text">Informasi Akademik</span>
+</h1>
         <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
             Akses berbagai dokumen panduan resmi, tata tertib, dan prosedur operasional standar Akademi Keperawatan HKBP Balige untuk mendukung kelancaran studi Anda.
         </p>
@@ -218,7 +225,7 @@
     <section class="section max-w-5xl mx-auto px-5">
         <div class="neon-border fade-up">
             <div class="neon-inner">
-                
+
                 <!-- Search Bar -->
                 <div class="mb-6">
                     <div class="relative">
@@ -286,25 +293,7 @@
 // DATA DARI BACKEND (Laravel)
 // ============================================
 
-let guidesData = @json(
-    $data->map(function($item){
-        return [
-            'id' => $item->id,
-            'title' => $item->title,
-            'category' => strtolower($item->category),
-            'icon' => $item->icon ? '<i class="'.$item->icon.'"></i>' : '📄',
-            'date' => $item->updated_at ? $item->updated_at->format('d M Y') : '-',
-            'description' => $item->description ?? '',
-            'files' => $item->files->map(function($file){
-                return [
-                    'url' => $file->file_url,
-                    'name' => $file->file_name ?? 'File',
-                    'size' => $file->file_size ?? 0
-                ];
-            })
-        ];
-    })
-);
+let guidesData = @json($data);
 
 // ============================================
 // FILTER & SEARCH
@@ -315,25 +304,25 @@ let searchQuery = '';
 
 function renderGuides() {
     let filteredData = [...guidesData];
-    
+
     // Search
     if (searchQuery) {
-        filteredData = filteredData.filter(item => 
+        filteredData = filteredData.filter(item =>
             item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             item.description.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }
-    
+
     // Filter
     if (currentFilter !== 'all') {
-        filteredData = filteredData.filter(item => 
+        filteredData = filteredData.filter(item =>
             item.category.toLowerCase().includes(currentFilter)
         );
     }
-    
+
     const grid = document.getElementById('guidesGrid');
     grid.innerHTML = '';
-    
+
     if (filteredData.length === 0) {
         grid.innerHTML = `
             <div class="col-span-2 text-center py-12">
@@ -344,7 +333,7 @@ function renderGuides() {
         `;
         return;
     }
-    
+
     filteredData.forEach(guide => {
 
         let fileButton = '';
@@ -391,12 +380,12 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
         const filter = e.target.getAttribute('data-filter');
         currentFilter = filter;
-        
+
         document.querySelectorAll('.filter-btn').forEach(b => {
             b.classList.remove('active');
         });
         e.target.classList.add('active');
-        
+
         renderGuides();
     });
 });

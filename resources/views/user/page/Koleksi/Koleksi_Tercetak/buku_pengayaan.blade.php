@@ -8,16 +8,22 @@
        CSS KHUSUS UNTUK HALAMAN KOLEKSI BUKU PENGAYAAN
        Hanya CSS yang BELUM ADA di master blade
     ============================================ */
-    
+
     /* Glass card */
     .glass-card {
-        background: rgba(15, 23, 42, 0.55);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 2rem;
-        transition: all 0.3s ease;
+        background: rgba(30, 41, 59, 0.5);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(99, 102, 241, 0.25);
     }
-    
+
+    /* Glow text */
+    .glow-text {
+        text-shadow: 0 0 12px rgba(99, 102, 241, 0.7);
+    }
+
+    /* Tambahkan di style Visi Misi */
+    .depth-2 { transform: translateZ(24px); }
+
     /* Title utama */
     .title-main {
         font-weight: 800;
@@ -27,7 +33,7 @@
         color: transparent;
         text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
     }
-    
+
     /* Neon border */
     .neon-border {
         position: relative;
@@ -35,11 +41,11 @@
         background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2));
         transition: all 0.3s ease;
     }
-    
+
     .neon-border:hover {
         box-shadow: 0 0 30px rgba(99,102,241,0.3);
     }
-    
+
     .neon-inner {
         background: rgba(15, 23, 42, 0.7);
         backdrop-filter: blur(20px);
@@ -47,7 +53,7 @@
         padding: 2rem;
         border: 1px solid rgba(255,255,255,0.08);
     }
-    
+
     /* Search input */
     .search-input {
         width: 100%;
@@ -59,17 +65,17 @@
         font-size: 0.9rem;
         transition: all 0.3s ease;
     }
-    
+
     .search-input:focus {
         outline: none;
         border-color: #6366f1;
         box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
     }
-    
+
     .search-input::placeholder {
         color: #64748b;
     }
-    
+
     /* Filter button */
     .filter-btn {
         padding: 8px 20px;
@@ -82,18 +88,18 @@
         border: 1px solid rgba(99, 102, 241, 0.3);
         color: #cbd5e1;
     }
-    
+
     .filter-btn.active {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         border-color: transparent;
         color: white;
     }
-    
+
     .filter-btn:hover {
         border-color: #6366f1;
         color: white;
     }
-    
+
     /* Book Card */
     .book-card {
         background: rgba(15, 23, 42, 0.6);
@@ -103,20 +109,20 @@
         transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         border: 1px solid rgba(99, 102, 241, 0.3);
     }
-    
+
     .book-card:hover {
         transform: translateY(-5px);
         border-color: rgba(99, 102, 241, 0.7);
         box-shadow: 0 15px 30px -12px rgba(99, 102, 241, 0.3);
     }
-    
+
     .book-cover {
         height: 180px;
         background-size: cover;
         background-position: center;
         position: relative;
     }
-    
+
     .status-badge {
         position: absolute;
         top: 10px;
@@ -126,24 +132,24 @@
         font-size: 0.7rem;
         font-weight: 600;
     }
-    
+
     .status-tersedia {
         background: rgba(16, 185, 129, 0.9);
         color: white;
     }
-    
+
     .status-dipinjam {
         background: rgba(245, 158, 11, 0.9);
         color: white;
     }
-    
+
     /* Tooltip styling */
     .btn-wrapper {
         position: relative;
         display: inline-block;
         width: 100%;
     }
-    
+
     .btn-wrapper .tooltip-text {
         visibility: hidden;
         background-color: rgba(0,0,0,0.85);
@@ -162,12 +168,12 @@
         transition: opacity 0.3s;
         pointer-events: none;
     }
-    
+
     .btn-wrapper:hover .tooltip-text {
         visibility: visible;
         opacity: 1;
     }
-    
+
     /* Sidebar Menu */
     .sidebar-menu {
         background: rgba(15, 23, 42, 0.6);
@@ -176,7 +182,7 @@
         border: 1px solid rgba(99, 102, 241, 0.3);
         overflow: hidden;
     }
-    
+
     .sidebar-item {
         padding: 12px 16px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -184,26 +190,26 @@
         cursor: pointer;
         color: #cbd5e1;
     }
-    
+
     .sidebar-item:hover {
         background: rgba(99, 102, 241, 0.15);
         color: white;
         padding-left: 24px;
     }
-    
+
     .sidebar-item.active {
         background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.1));
         color: #a5b4fc;
         border-left: 3px solid #6366f1;
     }
-    
+
     .sidebar-title {
         font-weight: 700;
         color: #c7d2fe;
         padding: 12px 16px;
         border-bottom: 1px solid rgba(99, 102, 241, 0.3);
     }
-    
+
     /* Buttons */
     .btn-primary {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
@@ -217,18 +223,18 @@
         font-size: 0.75rem;
         width: 100%;
     }
-    
+
     .btn-primary:hover:not(:disabled) {
         transform: scale(1.05);
         box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
     }
-    
+
     .btn-primary:disabled {
         opacity: 0.5;
         cursor: not-allowed;
         transform: none;
     }
-    
+
     .btn-outline {
         background: transparent;
         padding: 8px 16px;
@@ -241,17 +247,17 @@
         font-size: 0.75rem;
         width: 100%;
     }
-    
+
     .btn-outline:hover:not(:disabled) {
         background: rgba(99, 102, 241, 0.2);
         border-color: #6366f1;
     }
-    
+
     .btn-outline:disabled {
         opacity: 0.5;
         cursor: not-allowed;
     }
-    
+
     /* Pagination */
     .pagination-btn {
         padding: 8px 14px;
@@ -262,23 +268,23 @@
         cursor: pointer;
         transition: all 0.3s ease;
     }
-    
+
     .pagination-btn:hover:not(:disabled) {
         background: rgba(99, 102, 241, 0.2);
         border-color: #6366f1;
     }
-    
+
     .pagination-btn:disabled {
         opacity: 0.5;
         cursor: not-allowed;
     }
-    
+
     .pagination-btn.active {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         border-color: transparent;
         color: white;
     }
-    
+
     /* Notification */
     .notification {
         position: fixed;
@@ -294,21 +300,21 @@
         transform: translateX(120%);
         transition: transform 0.3s ease;
     }
-    
+
     .notification.show {
         transform: translateX(0);
     }
-    
+
     /* Section spacing */
     .section {
         margin-top: 40px;
     }
-    
+
     /* Delay utilities */
     .delay-1 { transition-delay: 0.1s; }
     .delay-2 { transition-delay: 0.2s; }
     .delay-3 { transition-delay: 0.3s; }
-    
+
     /* Sidebar responsive */
     @media (max-width: 768px) {
         .sidebar-menu {
@@ -320,12 +326,6 @@
 
 @section('content')
 {{-- DEBUG INFO --}}
-@auth
-    <div class="fixed top-20 right-5 z-50 bg-black/80 text-white p-3 rounded-lg text-xs">
-        <div>✅ Login: {{ auth()->user()->name }}</div>
-        <div>📚 Active Borrows: {{ \App\Models\Order::where('user_id', auth()->id())->whereIn('status', ['PENDING', 'APPROVED'])->count() }}/3</div>
-    </div>
-@endauth
 
 @if($errors->any())
     <div class="fixed top-32 right-5 z-50 bg-red-600 text-white p-3 rounded-lg text-xs">
@@ -352,9 +352,10 @@
 
     {{-- HERO --}}
     <section class="pt-28 pb-8 text-center px-5">
-        <h1 class="text-4xl md:text-5xl font-bold title-main">
-            Koleksi Buku Pengayaan
-        </h1>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight depth-2 fade-up">
+    Koleksi Buku <br>
+    <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent glow-text">Pengayaan</span>
+</h1>
         <p class="text-gray-400 mt-4">
             Eksplorasi wawasan literasi non-klinis
         </p>
@@ -369,14 +370,14 @@
                 @php
                     // Ambil status peminjaman untuk buku ini
                     $borrowStatus = $userBorrowStatus[$book->id] ?? null;
-                    
+
                     // Variabel default untuk tombol
                     $buttonText = 'Pinjam';
                     $buttonClass = 'btn-primary';
                     $buttonDisabled = false;
                     $buttonOnclick = "openModal({$book->id}, '".addslashes($book->title)."')";
                     $tooltipText = '';
-                    
+
                     // Tentukan status tombol berdasarkan status peminjaman
                     if ($borrowStatus) {
                         switch ($borrowStatus['status']) {
@@ -404,7 +405,7 @@
                                 break;
                         }
                     }
-                    
+
                     // Cek stok buku
                     if ($buttonText == 'Pinjam' && $book->available_stock < 1) {
                         $buttonText = '❌ Habis';
@@ -413,13 +414,13 @@
                         $buttonOnclick = '';
                         $tooltipText = 'Stok buku sedang kosong';
                     }
-                    
+
                     // Cek batas maksimal peminjaman (3 buku)
                     if ($buttonText == 'Pinjam' && !$borrowStatus) {
                         $activeBorrowCount = \App\Models\Order::where('user_id', auth()->id())
                             ->whereIn('status', ['PENDING', 'APPROVED'])
                             ->count();
-                        
+
                         if ($activeBorrowCount >= 3) {
                             $buttonText = '⚠️ Maksimal 3 Buku';
                             $buttonClass = 'btn-outline';
@@ -498,7 +499,7 @@
             @endforelse
 
         </div>
-        
+
         {{-- Pagination --}}
         <div class="mt-8">
             {{ $collections->links() }}
@@ -619,43 +620,43 @@ function closeModal() {
 document.addEventListener('submit', function(e){
     if (e.target.id === 'pinjamForm') {
         e.preventDefault();
-        
+
         const collectionId = document.getElementById('collection_id').value;
         const borrowDate = document.getElementById('borrow_date').value;
         const returnDate = document.getElementById('return_date').value;
-        
+
         if (!collectionId) {
             alert('Collection ID tidak ada!');
             return;
         }
-        
+
         if (!borrowDate || !returnDate) {
             alert('Tanggal harus diisi!');
             return;
         }
-        
+
         const borrow = new Date(borrowDate);
         const ret = new Date(returnDate);
         borrow.setHours(0,0,0,0);
         ret.setHours(0,0,0,0);
-        
+
         const diff = (ret - borrow) / (1000 * 60 * 60 * 24);
-        
+
         if (diff < 1) {
             alert('Minimal peminjaman 1 hari');
             return;
         }
-        
+
         if (diff > 3) {
             alert('Maksimal peminjaman hanya 3 hari');
             return;
         }
-        
+
         // Submit form
         const btn = e.target.querySelector('button[type="submit"]');
         btn.innerText = 'Memproses...';
         btn.disabled = true;
-        
+
         e.target.submit();
     }
 });

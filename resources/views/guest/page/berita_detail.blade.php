@@ -8,7 +8,7 @@
        CSS KHUSUS UNTUK HALAMAN DETAIL BERITA
        Hanya CSS yang BELUM ADA di master blade
     ============================================ */
-    
+
     /* Glass card */
     .glass-card {
         background: rgba(15, 23, 42, 0.55);
@@ -17,7 +17,7 @@
         border-radius: 2rem;
         transition: all 0.3s ease;
     }
-    
+
     /* Title utama */
     .title-main {
         font-weight: 800;
@@ -27,7 +27,7 @@
         color: transparent;
         text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
     }
-    
+
     /* Neon border */
     .neon-border {
         position: relative;
@@ -35,11 +35,11 @@
         background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2));
         transition: all 0.3s ease;
     }
-    
+
     .neon-border:hover {
         box-shadow: 0 0 30px rgba(99,102,241,0.3);
     }
-    
+
     .neon-inner {
         background: rgba(15, 23, 42, 0.7);
         backdrop-filter: blur(20px);
@@ -47,7 +47,7 @@
         padding: 2rem;
         border: 1px solid rgba(255,255,255,0.08);
     }
-    
+
     /* Category Badge */
     .category-badge {
         display: inline-block;
@@ -56,14 +56,14 @@
         font-size: 0.7rem;
         font-weight: 600;
     }
-    
+
     .category-akademik { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.4); }
     .category-pengumuman { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
     .category-kegiatan { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
     .category-riset { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.4); }
     .category-fasilitas { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
     .category-sosial { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
-    
+
     /* Buttons */
     .btn-primary {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
@@ -76,12 +76,12 @@
         color: white;
         font-size: 0.85rem;
     }
-    
+
     .btn-primary:hover {
         transform: scale(1.05);
         box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
     }
-    
+
     .btn-outline {
         background: transparent;
         padding: 8px 20px;
@@ -93,12 +93,12 @@
         color: #c7d2fe;
         font-size: 0.8rem;
     }
-    
+
     .btn-outline:hover {
         background: rgba(99, 102, 241, 0.2);
         border-color: #6366f1;
     }
-    
+
     /* Share Button */
     .share-btn {
         background: rgba(15, 23, 42, 0.6);
@@ -110,12 +110,12 @@
         font-size: 0.75rem;
         color: #c7d2fe;
     }
-    
+
     .share-btn:hover {
         background: rgba(99, 102, 241, 0.2);
         border-color: #6366f1;
     }
-    
+
     /* Related News Card */
     .related-card {
         background: rgba(15, 23, 42, 0.6);
@@ -125,19 +125,19 @@
         transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         border: 1px solid rgba(99, 102, 241, 0.3);
     }
-    
+
     .related-card:hover {
         transform: translateY(-5px);
         border-color: rgba(99, 102, 241, 0.7);
         box-shadow: 0 15px 30px -12px rgba(99, 102, 241, 0.3);
     }
-    
+
     .related-img {
         height: 140px;
         width: 100%;
         object-fit: cover;
     }
-    
+
     /* Notification */
     .notification {
         position: fixed;
@@ -153,11 +153,11 @@
         transform: translateX(120%);
         transition: transform 0.3s ease;
     }
-    
+
     .notification.show {
         transform: translateX(0);
     }
-    
+
     /* Line clamp utility */
     .line-clamp-2 {
         display: -webkit-box;
@@ -165,12 +165,12 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
-    
+
     /* Prose styling untuk artikel */
     .prose {
         max-width: 100%;
     }
-    
+
     .prose h3 {
         font-size: 1.25rem;
         font-weight: 600;
@@ -178,23 +178,23 @@
         margin-top: 1.5rem;
         margin-bottom: 0.75rem;
     }
-    
+
     .prose p {
         color: #cbd5e1;
         line-height: 1.6;
         margin-bottom: 1rem;
     }
-    
+
     .prose ul {
         color: #cbd5e1;
         margin-bottom: 1rem;
         padding-left: 1.5rem;
     }
-    
+
     .prose li {
         margin-bottom: 0.25rem;
     }
-    
+
     /* Delay utilities */
     .delay-1 { transition-delay: 0.1s; }
     .delay-2 { transition-delay: 0.2s; }
@@ -394,7 +394,7 @@ function getCategoryClass(category) {
 function renderNewsDetail() {
     // Set title
     document.getElementById('newsTitle').innerHTML = currentNews.title;
-    
+
     // Set meta info
     const metaContainer = document.getElementById('newsMeta');
     metaContainer.innerHTML = `
@@ -403,7 +403,7 @@ function renderNewsDetail() {
         <span class="text-gray-400 text-sm flex items-center gap-1">👤 ${currentNews.author}</span>
         <span class="text-gray-400 text-sm flex items-center gap-1">👁️ ${currentNews.views} dibaca</span>
     `;
-    
+
     // Set featured image
     const imgContainer = document.getElementById('featuredImage');
     imgContainer.innerHTML = `
@@ -414,7 +414,7 @@ function renderNewsDetail() {
 function renderRelatedNews() {
     const container = document.getElementById('relatedNews');
     container.innerHTML = '';
-    
+
     relatedNewsData.forEach(news => {
         const card = document.createElement('div');
         card.className = 'related-card fade-up';
@@ -434,7 +434,7 @@ function renderRelatedNews() {
         `;
         container.appendChild(card);
     });
-    
+
     // Add fade-up class
     setTimeout(() => {
         document.querySelectorAll('.related-card').forEach(el => {
@@ -450,7 +450,7 @@ function readNews(id) {
 function shareArticle(platform) {
     const url = encodeURIComponent(window.location.href);
     const title = encodeURIComponent(currentNews.title);
-    
+
     let shareUrl = '';
     switch(platform) {
         case 'facebook':
@@ -463,7 +463,7 @@ function shareArticle(platform) {
             shareUrl = `https://wa.me/?text=${title}%20${url}`;
             break;
     }
-    
+
     if (shareUrl) {
         window.open(shareUrl, '_blank', 'width=600,height=400');
         showNotification(`📤 Membagikan artikel ke ${platform}`, 'success');

@@ -11,14 +11,41 @@ use App\Models\ArchiveFile;
 class ArchiveController extends Controller
 {
     public function indexPanduan()
-    {
-        $data = Archive::active()
-            ->ordered()
-            ->with('activeFiles')
-            ->get();
+{
+    $data = Archive::active()
+        ->ordered()
+        ->with('activeFiles')
+        ->get()
+        ->map(function ($item) {
 
-        return view('user.page.panduan', compact('data'));
-    }
+            return [
+                'id' => $item->id,
+                'title' => $item->title,
+                'category' => strtolower($item->category),
+                'icon' => $item->icon
+                    ? '<i class="'.$item->icon.'"></i>'
+                    : '📄',
+
+                'date' => $item->updated_at
+                    ? $item->updated_at->format('d M Y')
+                    : '-',
+
+                'description' => $item->description ?? '',
+
+                'files' => $item->files->map(function ($file) {
+
+                    return [
+                        'url' => asset('storage/' . $file->file_url),
+                        'name' => $file->file_name ?? 'File',
+                        'size' => $file->file_size ?? 0,
+                    ];
+
+                })->values(),
+            ];
+        });
+
+    return view('user.page.panduan', compact('data'));
+}
 
     public function indexPanduanGuest()
     {

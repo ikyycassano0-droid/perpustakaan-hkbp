@@ -8,16 +8,22 @@
        CSS KHUSUS UNTUK HALAMAN STRUKTUR
        Hanya CSS yang BELUM ADA di master blade
     ============================================ */
-    
+
     /* Glass card untuk struktur */
     .glass-card {
-        background: rgba(15, 23, 42, 0.55);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 1.5rem;
-        transition: all 0.3s ease;
+        background: rgba(30, 41, 59, 0.5);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(99, 102, 241, 0.25);
     }
-    
+
+    /* Glow text */
+    .glow-text {
+        text-shadow: 0 0 12px rgba(99, 102, 241, 0.7);
+    }
+
+    /* Tambahkan di style Visi Misi */
+    .depth-2 { transform: translateZ(24px); }
+
     /* Title utama */
     .title-main {
         font-weight: 800;
@@ -27,7 +33,7 @@
         color: transparent;
         text-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
     }
-    
+
     /* Neon border efek */
     .neon-border {
         position: relative;
@@ -35,7 +41,7 @@
         transition: all 0.3s ease;
         cursor: pointer;
     }
-    
+
     .neon-border::before {
         content: "";
         position: absolute;
@@ -46,26 +52,26 @@
         transition: 0.3s ease;
         z-index: -1;
     }
-    
+
     .neon-border:hover::before {
         opacity: 0.35;
     }
-    
+
     .neon-border:hover {
         transform: translateY(-3px);
     }
-    
+
     /* Hover card effect */
     .hover-card {
         transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
-    
+
     .hover-card:hover {
         transform: translateY(-5px);
         border-color: rgba(99, 102, 241, 0.5);
         box-shadow: 0 15px 30px -12px rgba(99, 102, 241, 0.25);
     }
-    
+
     /* Line connector */
     .line {
         width: 2px;
@@ -73,7 +79,7 @@
         background: linear-gradient(to bottom, #6366f1, rgba(99,102,241,0.15));
         margin: 0 auto;
     }
-    
+
     /* Statistik card */
     .stat-card {
         background: rgba(15, 23, 42, 0.5);
@@ -82,13 +88,13 @@
         border-radius: 1.25rem;
         transition: all 0.3s ease;
     }
-    
+
     .stat-card:hover {
         transform: translateY(-5px);
         border-color: rgba(99, 102, 241, 0.4);
         box-shadow: 0 10px 25px -10px rgba(99, 102, 241, 0.2);
     }
-    
+
     .stat-number {
         font-size: 2rem;
         font-weight: 800;
@@ -97,7 +103,7 @@
         -webkit-background-clip: text;
         color: transparent;
     }
-    
+
     /* Timeline dot */
     .timeline-dot {
         width: 48px;
@@ -110,7 +116,7 @@
         box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
         z-index: 10;
     }
-    
+
     /* Profile card */
     .profile-card {
         background: rgba(15, 23, 42, 0.6);
@@ -119,18 +125,18 @@
         border: 1px solid rgba(99, 102, 241, 0.25);
         transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
-    
+
     .profile-card:hover {
         transform: translateY(-5px);
         border-color: rgba(99, 102, 241, 0.5);
         box-shadow: 0 20px 30px -12px rgba(99, 102, 241, 0.2);
     }
-    
+
     /* Delay utilities */
     .delay-1 { transition-delay: 0.1s; }
     .delay-2 { transition-delay: 0.2s; }
     .delay-3 { transition-delay: 0.3s; }
-    
+
     /* Avatar placeholder */
     .avatar-placeholder {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
@@ -140,7 +146,7 @@
         font-weight: bold;
         color: white;
     }
-    
+
     /* Responsive timeline */
     @media (max-width: 768px) {
         .timeline-dot {
@@ -161,9 +167,10 @@
     <div class="inline-block glass-card px-5 py-1.5 rounded-full mb-5 fade-up">
         <span class="text-indigo-300 text-sm font-medium tracking-wide">👥 STRUKTUR ORGANISASI</span>
     </div>
-    <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight title-main fade-up">
-        Kepemimpinan & Dedikasi
-    </h1>
+    <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight depth-2 fade-up">
+    Kepemimpinan <br>
+    <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent glow-text">& Dedikasi</span>
+</h1>
     <h2 class="text-2xl md:text-3xl text-indigo-400 font-bold mt-3 fade-up">
         Akademik
     </h2>
@@ -306,7 +313,7 @@
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    
+
     // 1. Tilt 3D effect untuk profile cards
     const tiltCards = document.querySelectorAll('.profile-card');
     tiltCards.forEach(card => {
@@ -320,12 +327,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const rotateY = (x - centerX) / 25;
             card.style.transform = `perspective(1200px) rotateX(${-rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
         });
-        
+
         card.addEventListener('mouseleave', () => {
             card.style.transform = `perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)`;
         });
     });
-    
+
     // 2. Parallax efek untuk hero title
     const heroTitle = document.querySelector('.title-main');
     if (heroTitle) {
@@ -336,18 +343,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     // 3. Counter animasi untuk statistik (opsional)
     const statNumbers = document.querySelectorAll('.stat-number');
     const hasAnimated = new Map();
-    
+
     const counterObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting && !hasAnimated.get(entry.target)) {
                 hasAnimated.set(entry.target, true);
                 const element = entry.target;
                 const targetText = element.innerText;
-                
+
                 if (targetText.includes('K+')) {
                     const number = parseInt(targetText);
                     animateNumber(element, number, 0, 2000, 'K+');
@@ -358,13 +365,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }, { threshold: 0.5 });
-    
+
     statNumbers.forEach(el => counterObserver.observe(el));
-    
+
     function animateNumber(element, target, current, duration, suffix) {
         const increment = target / (duration / 16);
         let start = current;
-        
+
         function updateNumber() {
             start += increment;
             if (start < target) {
@@ -374,10 +381,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 element.innerText = target + suffix;
             }
         }
-        
+
         updateNumber();
     }
-    
+
     // 4. Staggered animation untuk timeline items
     const timelineItems = document.querySelectorAll('.timeline-container > div');
     timelineItems.forEach((item, idx) => {

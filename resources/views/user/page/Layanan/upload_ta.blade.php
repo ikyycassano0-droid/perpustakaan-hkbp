@@ -7,15 +7,21 @@
     /* ============================================
        CSS KHUSUS UNTUK HALAMAN UPLOAD KTI
     ============================================ */
-    
+
     .glass-card {
-        background: rgba(15, 23, 42, 0.55);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 2rem;
-        transition: all 0.3s ease;
+        background: rgba(30, 41, 59, 0.5);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(99, 102, 241, 0.25);
     }
-    
+
+    /* Glow text */
+    .glow-text {
+        text-shadow: 0 0 12px rgba(99, 102, 241, 0.7);
+    }
+
+    /* Tambahkan di style Visi Misi */
+    .depth-2 { transform: translateZ(24px); }
+
     .title-main {
         font-weight: 800;
         background: linear-gradient(135deg, #ffffff, #a5b4fc, #6366f1);
@@ -24,18 +30,18 @@
         color: transparent;
         text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
     }
-    
+
     .neon-border {
         position: relative;
         border-radius: 28px;
         background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2));
         transition: all 0.3s ease;
     }
-    
+
     .neon-border:hover {
         box-shadow: 0 0 30px rgba(99,102,241,0.3);
     }
-    
+
     .neon-inner {
         background: rgba(15, 23, 42, 0.7);
         backdrop-filter: blur(20px);
@@ -43,7 +49,7 @@
         padding: 2rem;
         border: 1px solid rgba(255,255,255,0.08);
     }
-    
+
     .form-input {
         width: 100%;
         padding: 12px 16px;
@@ -54,17 +60,17 @@
         font-size: 0.95rem;
         transition: all 0.3s ease;
     }
-    
+
     .form-input:focus {
         outline: none;
         border-color: #6366f1;
         box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
     }
-    
+
     .form-input::placeholder {
         color: #64748b;
     }
-    
+
     .form-label {
         display: block;
         font-size: 0.85rem;
@@ -72,7 +78,7 @@
         margin-bottom: 6px;
         color: #c7d2fe;
     }
-    
+
     .upload-area {
         border: 2px dashed rgba(99, 102, 241, 0.4);
         border-radius: 16px;
@@ -82,28 +88,28 @@
         transition: all 0.3s ease;
         background: rgba(15, 23, 42, 0.4);
     }
-    
+
     .upload-area.has-error {
         border-color: #ef4444;
         background: rgba(239, 68, 68, 0.1);
     }
-    
+
     .upload-area:hover {
         border-color: #6366f1;
         background: rgba(99, 102, 241, 0.1);
     }
-    
+
     .error-message {
         color: #ef4444;
         font-size: 0.75rem;
         margin-top: 5px;
         display: none;
     }
-    
+
     .error-message.show {
         display: block;
     }
-    
+
     .status-badge {
         display: inline-block;
         padding: 4px 12px;
@@ -113,7 +119,7 @@
         background: linear-gradient(135deg, #10b981, #059669);
         color: white;
     }
-    
+
     .btn-primary {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         padding: 12px 28px;
@@ -124,18 +130,18 @@
         cursor: pointer;
         color: white;
     }
-    
+
     .btn-primary:hover {
         transform: scale(1.05);
         box-shadow: 0 0 25px rgba(99, 102, 241, 0.5);
     }
-    
+
     .btn-primary:disabled {
         opacity: 0.5;
         cursor: not-allowed;
         transform: none;
     }
-    
+
     .btn-secondary {
         background: rgba(255, 255, 255, 0.1);
         padding: 12px 28px;
@@ -146,12 +152,12 @@
         cursor: pointer;
         color: white;
     }
-    
+
     .btn-secondary:hover {
         background: rgba(255, 255, 255, 0.2);
         transform: scale(1.02);
     }
-    
+
     .notification {
         position: fixed;
         bottom: 30px;
@@ -166,15 +172,15 @@
         transform: translateX(120%);
         transition: transform 0.3s ease;
     }
-    
+
     .notification.show {
         transform: translateX(0);
     }
-    
+
     .section {
         margin-top: 40px;
     }
-    
+
     .kti-card {
         background: rgba(15, 23, 42, 0.8);
         border-radius: 1rem;
@@ -183,12 +189,12 @@
         transition: all 0.3s ease;
         padding: 1.25rem;
     }
-    
+
     .kti-card:hover {
         transform: translateY(-3px);
         border-color: #6366f1;
     }
-    
+
     .status-pending {
         background: rgba(245, 158, 11, 0.2);
         color: #fbbf24;
@@ -200,7 +206,7 @@
         font-size: 0.7rem;
         font-weight: 500;
     }
-    
+
     .status-approved {
         background: rgba(16, 185, 129, 0.2);
         color: #10b981;
@@ -212,7 +218,7 @@
         font-size: 0.7rem;
         font-weight: 500;
     }
-    
+
     .status-rejected {
         background: rgba(239, 68, 68, 0.2);
         color: #ef4444;
@@ -224,7 +230,7 @@
         font-size: 0.7rem;
         font-weight: 500;
     }
-    
+
     .delay-1 { transition-delay: 0.1s; }
     .delay-2 { transition-delay: 0.2s; }
     .delay-3 { transition-delay: 0.3s; }
@@ -239,9 +245,10 @@
         <div class="inline-block glass-card px-5 py-2 rounded-full mb-5 fade-up">
             <span class="text-indigo-300 text-sm font-medium tracking-wide">📄 AKPER HKBP BALIGE</span>
         </div>
-        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight title-main fade-up">
-            Upload Karya Tulis Ilmiah
-        </h1>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight depth-2 fade-up">
+    Upload Karya <br>
+    <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent glow-text">Tulis Ilmiah</span>
+</h1>
         <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
             Silakan unggah dokumen akhir Skripsi atau KTI Anda sesuai dengan standar akademik yang telah ditentukan oleh Perpustakaan Akper HKBP Balige.
         </p>
@@ -251,7 +258,7 @@
     <section class="section max-w-5xl mx-auto px-5">
         <div class="neon-border fade-up">
             <div class="neon-inner">
-                
+
                 <!-- Tampilkan error dari server -->
                 @if($errors->any())
                     <div class="bg-red-500/20 border border-red-500 rounded-lg p-3 mb-4">
@@ -276,12 +283,12 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
                             <label class="form-label">👤 Nama Lengkap</label>
-                            <input type="text" name="student_name" value="{{ auth()->user()->name ?? old('student_name') }}" 
+                            <input type="text" name="student_name" value="{{ auth()->user()->name ?? old('student_name') }}"
                                    class="form-input" required>
                         </div>
                         <div>
                             <label class="form-label">📋 NPM</label>
-                            <input type="text" name="npm" value="{{ auth()->user()->npm ?? old('npm') }}" 
+                            <input type="text" name="npm" value="{{ auth()->user()->npm ?? old('npm') }}"
                                    class="form-input" required>
                         </div>
                     </div>
@@ -289,12 +296,12 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
                             <label class="form-label">🎓 Program Studi</label>
-                            <input type="text" name="study_program" value="{{ auth()->user()->study_program ?? old('study_program') }}" 
+                            <input type="text" name="study_program" value="{{ auth()->user()->study_program ?? old('study_program') }}"
                                    class="form-input" required>
                         </div>
                         <div>
                             <label class="form-label">📖 Judul Lengkap KTI</label>
-                            <input type="text" name="title" value="{{ old('title') }}" 
+                            <input type="text" name="title" value="{{ old('title') }}"
                                    class="form-input" placeholder="Masukkan judul lengkap sesuai dokumen..." required>
                         </div>
                     </div>
@@ -403,7 +410,7 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    
+
     // ==========================
     // UPLOAD FILE HANDLER (Drag & Drop)
     // ==========================
@@ -483,7 +490,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ==========================
     function validateForm() {
         let isValid = true;
-        
+
         // Validasi file
         if (!fileInput.files || fileInput.files.length === 0) {
             if (fileError) fileError.classList.add('show');
@@ -494,7 +501,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (fileError) fileError.classList.remove('show');
             if (uploadArea) uploadArea.classList.remove('has-error');
         }
-        
+
         // Validasi judul
         const title = document.querySelector('[name="title"]');
         if (title && !title.value.trim()) {
@@ -502,7 +509,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title.focus();
             isValid = false;
         }
-        
+
         // Validasi pembimbing 1
         const firstSupervisor = document.getElementById('firstSupervisor');
         if (firstSupervisor && !firstSupervisor.value) {
@@ -510,7 +517,7 @@ document.addEventListener('DOMContentLoaded', function() {
             firstSupervisor.focus();
             isValid = false;
         }
-        
+
         return isValid;
     }
 
@@ -520,7 +527,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault(); // Cegah submit default
-            
+
             if (validateForm()) {
                 // Jika valid, submit form
                 showNotification('Mengupload data...', 'info');
@@ -536,8 +543,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const secondSupervisor = document.getElementById('secondSupervisor');
 
     function validateSupervisor() {
-        if (firstSupervisor && secondSupervisor && 
-            firstSupervisor.value && secondSupervisor.value && 
+        if (firstSupervisor && secondSupervisor &&
+            firstSupervisor.value && secondSupervisor.value &&
             firstSupervisor.value === secondSupervisor.value) {
             showNotification('Pembimbing 1 dan Pembimbing 2 tidak boleh sama!', 'error');
             secondSupervisor.value = '';
@@ -551,7 +558,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // CANCEL BUTTON
     // ==========================
     const cancelBtn = document.getElementById('cancelBtn');
-    
+
     if (cancelBtn && form) {
         cancelBtn.addEventListener('click', () => {
             form.reset();
@@ -579,7 +586,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function showNotification(message, type = 'success') {
         const existingNotif = document.querySelector('.notification');
         if (existingNotif) existingNotif.remove();
-        
+
         const notification = document.createElement('div');
         notification.className = 'notification';
         notification.innerHTML = `
@@ -618,7 +625,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!container) return;
 
         const myKtis = ktiData.filter(item => parseInt(item.user_id) === currentUserId);
-        
+
         if (myKtis.length === 0) {
             container.innerHTML = `
                 <div class="text-center py-8">
@@ -634,9 +641,9 @@ document.addEventListener('DOMContentLoaded', function() {
         myKtis.forEach(kti => {
             const card = document.createElement('div');
             card.className = 'kti-card';
-            
+
             let downloadUrl = "{{ url('storage') }}/" + kti.file_url;
-            
+
             card.innerHTML = `
                 <div class="flex justify-between items-start mb-3">
                     <div>
@@ -645,11 +652,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <span class="text-xs text-gray-500">${kti.created_at ? new Date(kti.created_at).toLocaleDateString('id-ID') : '-'}</span>
                 </div>
-                
+
                 <h3 class="font-bold text-white text-lg mb-2">${kti.title || 'Tanpa Judul'}</h3>
-                
+
                 <p class="text-gray-400 text-sm mb-3">${(kti.abstract && kti.abstract.length > 150) ? kti.abstract.substring(0, 150) + '...' : (kti.abstract || 'Tidak ada abstrak')}</p>
-                
+
                 <div class="flex justify-between items-center mt-3 pt-3 border-t border-white/10">
                     <div>
                         <p class="text-sm text-gray-300">✍️ ${kti.student_name || '-'}</p>
@@ -659,7 +666,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ${kti.file_url ? `<a href="${downloadUrl}" target="_blank" class="text-indigo-400 hover:text-indigo-300 text-sm">📥 Download</a>` : ''}
                 </div>
             `;
-            
+
             container.appendChild(card);
         });
     }

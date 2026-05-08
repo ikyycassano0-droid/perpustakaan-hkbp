@@ -8,24 +8,29 @@
        CSS KHUSUS UNTUK HALAMAN VISI MISI
        Hanya CSS yang BELUM ADA di master blade
     ============================================ */
-    
+
     /* Glass card untuk halaman visi misi */
     .glass-card {
-        background: rgba(255,255,255,0.05);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(30, 41, 59, 0.5);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(99, 102, 241, 0.25);
     }
-    
+
+    /* Glow text */
+    .glow-text {
+        text-shadow: 0 0 12px rgba(99, 102, 241, 0.7);
+    }
+
     /* Title gradient untuk halaman visi misi */
     .title-main {
         font-weight: 800;
-        background: linear-gradient(135deg, #ffffff, #a5b4fc, #6366f1);
+        background: linear-gradient(135deg, #ffffff);
         background-clip: text;
         -webkit-background-clip: text;
         color: transparent;
         text-shadow: 0 0 25px rgba(99,102,241,0.5);
     }
-    
+
     /* Neon border effect - khusus visi misi */
     .neon-border {
         position: relative;
@@ -33,11 +38,11 @@
         background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(99,102,241,0.1));
         transition: 0.3s;
     }
-    
+
     .neon-border:hover {
         box-shadow: 0 0 30px rgba(99,102,241,0.4);
     }
-    
+
     .neon-inner {
         background: rgba(15, 23, 42, 0.6);
         backdrop-filter: blur(10px);
@@ -45,7 +50,7 @@
         padding: 2rem;
         border: 1px solid rgba(255,255,255,0.08);
     }
-    
+
     /* Misi Card - khusus halaman visi misi */
     .misi-card-clean {
         background: rgba(255,255,255,0.05);
@@ -54,33 +59,33 @@
         border: 1px solid rgba(99,102,241,0.2);
         transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
-    
+
     .misi-card-clean:hover {
         transform: translateY(-8px) scale(1.03);
         border-color: rgba(99,102,241,0.7);
         box-shadow: 0 0 30px rgba(99,102,241,0.4);
     }
-    
+
     .misi-img-wrapper {
         overflow: hidden;
         height: 200px;
     }
-    
+
     .misi-img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         transition: transform 0.4s ease;
     }
-    
+
     .misi-card-clean:hover .misi-img {
         transform: scale(1.08);
     }
-    
+
     .misi-text-area {
         padding: 1.2rem;
     }
-    
+
     .misi-text-area h3 {
         font-weight: 700;
         font-size: 1.1rem;
@@ -90,31 +95,34 @@
         -webkit-background-clip: text;
         color: transparent;
     }
-    
+
     .misi-text-area p {
         font-size: 0.85rem;
         color: #cbd5e1;
         line-height: 1.5;
     }
-    
+
+    /* Tambahkan di style Visi Misi */
+    .depth-2 { transform: translateZ(24px); }
+
     /* Hero badge khusus */
     .hero-badge {
         background: rgba(99,102,241,0.15);
         backdrop-filter: blur(8px);
         border: 1px solid rgba(99,102,241,0.3);
     }
-    
+
     /* Delay animasi untuk card */
     .delay-1 { transition-delay: 0.1s; }
     .delay-2 { transition-delay: 0.2s; }
     .delay-3 { transition-delay: 0.3s; }
-    
+
     /* Section margin untuk visi misi */
     .section {
         margin-top: 2rem;
         margin-bottom: 2rem;
     }
-    
+
     @media (min-width: 768px) {
         .section {
             margin-top: 3rem;
@@ -132,9 +140,10 @@
         <div class="inline-block hero-badge px-5 py-1.5 rounded-full mb-5 fade-up">
             <span class="text-indigo-300 text-sm font-medium tracking-wide">✨ AKPER HKBP BALIGE</span>
         </div>
-        <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight title-main fade-up">
-            Visi & Misi
-        </h1>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight depth-2 fade-up">
+    Visi
+    <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent glow-text">& Misi</span>
+</h1>
         <p class="text-gray-400 mt-5 max-w-xl mx-auto fade-up text-sm md:text-base">
             Perpustakaan Digital yang Mendukung Pendidikan Keperawatan Unggul
         </p>
@@ -202,7 +211,7 @@
             <div class="misi-card-clean fade-up">
 
                 <div class="misi-img-wrapper">
-                    <img 
+                    <img
                         src="{{ $item->image ? asset('storage/'.$item->image) : 'https://placehold.co/600x450/1e293b/6366f1?text=Misi' }}"
                         class="misi-img"
                         loading="lazy">
@@ -225,7 +234,7 @@
 
     <!-- FOOTER -->
     <section class="pb-16 md:pb-20 text-center px-5">
-        <div class="inline-block px-5 md:px-8 py-4 md:py-5 rounded-full max-w-2xl mx-auto fade-up" 
+        <div class="inline-block px-5 md:px-8 py-4 md:py-5 rounded-full max-w-2xl mx-auto fade-up"
              style="background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.1)); border-left: 3px solid #6366f1;">
             <p class="text-indigo-200 text-xs md:text-base">
                 📌 "Melayani dengan Kasih, Mendidik dengan Presisi Klinis"
@@ -246,7 +255,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Efek parallax ringan untuk hero section
     const heroSection = document.querySelector('.main-content > section:first-child');
-    
+
     if (heroSection) {
         window.addEventListener('scroll', function() {
             const scrolled = window.pageYOffset;
@@ -256,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     // Efek glow dinamis pada card misi saat hover
     const misiCards = document.querySelectorAll('.misi-card-clean');
     misiCards.forEach((card, index) => {
@@ -265,12 +274,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const glowColor = `rgba(99, 102, 241, ${glowIntensity})`;
             this.style.boxShadow = `0 0 35px ${glowColor}`;
         });
-        
+
         card.addEventListener('mouseleave', function() {
             this.style.boxShadow = '';
         });
     });
-    
+
     // Animasi fade-up dengan delay bertingkat untuk misi cards
     const fadeElements = document.querySelectorAll('.misi-card-clean');
     fadeElements.forEach((el, idx) => {

@@ -557,26 +557,27 @@
     </button>
 
         <!-- FINAL CTA -->
-        <section class="mt-32 mb-32 text-center px-6">
+<section class="mt-32 mb-32 text-center px-6">
     <h3 class="text-4xl md:text-5xl font-bold fade-up leading-tight mb-4">
-        Siap Mulai Membaca?
+        Selamat Datang, <br>
+        <span class="bg-gradient-to-r from-indigo-400 to-indigo-300 bg-clip-text text-transparent glow-text">{{ auth()->user()->name }} 👋</span>
     </h3>
     <p class="text-gray-400 mb-8 fade-up">
-        Login untuk akses penuh koleksi digital, pinjam buku, dan upload KTI Anda.
+        Jelajahi koleksi digital, pinjam buku, atau upload Karya Tulis Ilmiah Anda hari ini.
     </p>
     <div class="flex justify-center gap-4 flex-wrap fade-up">
-        <a href="{{ route('login') }}">
-        <button class="magnetic bg-indigo-500 px-8 py-3 rounded-full glow hover:scale-105 transition">
-            Login Sekarang
-        </button>
+        <a href="#">
+            <button class="magnetic bg-indigo-500 px-8 py-3 rounded-full glow hover:scale-105 transition">
+                Jelajahi Koleksi
+            </button>
         </a>
-        <a href="{{ route('panduan') }}">
-        <button class="magnetic bg-white/10 border border-indigo-400 px-8 py-3 rounded-full hover:scale-105 transition">
-            Lihat Panduan
-        </button>
+        <a href="{{ route('final_project.kti') }}">
+            <button class="magnetic bg-white/10 border border-indigo-400 px-8 py-3 rounded-full hover:scale-105 transition">
+                Upload KTI
+            </button>
         </a>
     </div>
-    </section>
+</section>
 @endsection
 
 @push('scripts')
@@ -584,7 +585,23 @@
 // ==========================
 // JAVASCRIPT KHUSUS UNTUK HALAMAN HOME
 // ==========================
+// Scroll to Top
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
 
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            scrollTopBtn.classList.remove('opacity-0', 'pointer-events-none');
+            scrollTopBtn.classList.add('opacity-100');
+        } else {
+            scrollTopBtn.classList.add('opacity-0', 'pointer-events-none');
+            scrollTopBtn.classList.remove('opacity-100');
+        }
+    });
+
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
 // Cart functions
 function toggleCart() {
     const cart = document.getElementById('cart');

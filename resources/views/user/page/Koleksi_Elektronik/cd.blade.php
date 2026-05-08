@@ -11,12 +11,18 @@
 
     /* Glass card */
     .glass-card {
-        background: rgba(15, 23, 42, 0.55);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 2rem;
-        transition: all 0.3s ease;
+        background: rgba(30, 41, 59, 0.5);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(99, 102, 241, 0.25);
     }
+
+    /* Glow text */
+    .glow-text {
+        text-shadow: 0 0 12px rgba(99, 102, 241, 0.7);
+    }
+
+    /* Tambahkan di style Visi Misi */
+    .depth-2 { transform: translateZ(24px); }
 
     /* Title utama */
     .title-main {
@@ -287,9 +293,10 @@
         <div class="inline-block glass-card px-5 py-2 rounded-full mb-5 fade-up">
             <span class="text-indigo-300 text-sm font-medium tracking-wide">💿 AKPER HKBP BALIGE</span>
         </div>
-        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight title-main fade-up">
-            Multimedia Lab
-        </h1>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight depth-2 fade-up">
+    Multimedia
+    <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent glow-text">Lab</span>
+</h1>
         <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
             Akses literatur multimedia untuk mendukung visualisasi prosedur keperawatan, simulasi anatomik, dan tutorial laboratorium klinis tercanggih.
         </p>

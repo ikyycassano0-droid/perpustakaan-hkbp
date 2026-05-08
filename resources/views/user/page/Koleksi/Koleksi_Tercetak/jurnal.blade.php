@@ -8,16 +8,22 @@
        CSS KHUSUS UNTUK HALAMAN JURNAL
        Hanya CSS yang BELUM ADA di master blade
     ============================================ */
-    
+
     /* Glass card untuk jurnal */
     .glass-card {
-        background: rgba(15, 23, 42, 0.55);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 2rem;
-        transition: all 0.3s ease;
+        background: rgba(30, 41, 59, 0.5);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(99, 102, 241, 0.25);
     }
-    
+
+    /* Glow text */
+    .glow-text {
+        text-shadow: 0 0 12px rgba(99, 102, 241, 0.7);
+    }
+
+    /* Tambahkan di style Visi Misi */
+    .depth-2 { transform: translateZ(24px); }
+
     /* Title utama */
     .title-main {
         font-weight: 800;
@@ -27,7 +33,7 @@
         color: transparent;
         text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
     }
-    
+
     /* Neon border */
     .neon-border {
         position: relative;
@@ -35,11 +41,11 @@
         background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2));
         transition: all 0.3s ease;
     }
-    
+
     .neon-border:hover {
         box-shadow: 0 0 30px rgba(99,102,241,0.3);
     }
-    
+
     .neon-inner {
         background: rgba(15, 23, 42, 0.7);
         backdrop-filter: blur(20px);
@@ -47,7 +53,7 @@
         padding: 2rem;
         border: 1px solid rgba(255,255,255,0.08);
     }
-    
+
     /* Search input */
     .search-input {
         width: 100%;
@@ -59,17 +65,17 @@
         font-size: 0.9rem;
         transition: all 0.3s ease;
     }
-    
+
     .search-input:focus {
         outline: none;
         border-color: #6366f1;
         box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
     }
-    
+
     .search-input::placeholder {
         color: #64748b;
     }
-    
+
     /* Journal Card */
     .journal-card {
         background: rgba(15, 23, 42, 0.6);
@@ -80,19 +86,19 @@
         border: 1px solid rgba(99, 102, 241, 0.3);
         height: 100%;
     }
-    
+
     .journal-card:hover {
         transform: translateY(-8px);
         border-color: rgba(99, 102, 241, 0.7);
         box-shadow: 0 20px 35px -12px rgba(99, 102, 241, 0.3);
     }
-    
+
     .journal-header {
         background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.1));
         padding: 1rem 1.25rem;
         border-bottom: 1px solid rgba(99, 102, 241, 0.3);
     }
-    
+
     .journal-title {
         font-weight: 700;
         font-size: 1.1rem;
@@ -100,7 +106,7 @@
         color: #c7d2fe;
         margin-bottom: 0.5rem;
     }
-    
+
     .journal-meta {
         display: flex;
         flex-wrap: wrap;
@@ -108,25 +114,25 @@
         font-size: 0.7rem;
         color: #94a3b8;
     }
-    
+
     .journal-body {
         padding: 1.25rem;
     }
-    
+
     .journal-abstract {
         font-size: 0.85rem;
         color: #cbd5e1;
         line-height: 1.5;
         margin-bottom: 1rem;
     }
-    
+
     .journal-keywords {
         display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
         margin-bottom: 1rem;
     }
-    
+
     .keyword-tag {
         background: rgba(99, 102, 241, 0.15);
         border: 1px solid rgba(99, 102, 241, 0.3);
@@ -135,7 +141,7 @@
         font-size: 0.65rem;
         color: #a5b4fc;
     }
-    
+
     .journal-ref {
         font-size: 0.7rem;
         color: #64748b;
@@ -143,7 +149,7 @@
         padding-top: 0.75rem;
         margin-top: 0.5rem;
     }
-    
+
     /* Buttons */
     .btn-primary {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
@@ -159,18 +165,18 @@
         text-decoration: none;
         text-align: center;
     }
-    
+
     .btn-primary:hover:not(:disabled) {
         transform: scale(1.05);
         box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
     }
-    
+
     .btn-primary:disabled {
         opacity: 0.5;
         cursor: not-allowed;
         transform: none;
     }
-    
+
     .btn-outline {
         background: transparent;
         padding: 8px 16px;
@@ -185,17 +191,17 @@
         text-decoration: none;
         text-align: center;
     }
-    
+
     .btn-outline:hover:not(:disabled) {
         background: rgba(99, 102, 241, 0.2);
         border-color: #6366f1;
     }
-    
+
     .btn-outline:disabled {
         opacity: 0.5;
         cursor: not-allowed;
     }
-    
+
     /* Status Badge */
     .status-tersedia {
         display: inline-block;
@@ -206,7 +212,7 @@
         border-radius: 20px;
         font-size: 0.65rem;
     }
-    
+
     .status-diproses {
         display: inline-block;
         background: rgba(245, 158, 11, 0.2);
@@ -216,7 +222,7 @@
         border-radius: 20px;
         font-size: 0.65rem;
     }
-    
+
     .status-habis {
         display: inline-block;
         background: rgba(239, 68, 68, 0.2);
@@ -226,7 +232,7 @@
         border-radius: 20px;
         font-size: 0.65rem;
     }
-    
+
     /* Action Buttons Row */
     .action-buttons {
         display: flex;
@@ -234,7 +240,7 @@
         margin-top: 15px;
         flex-wrap: wrap;
     }
-    
+
     /* Filter button */
     .filter-btn {
         padding: 6px 16px;
@@ -247,18 +253,18 @@
         border: 1px solid rgba(99, 102, 241, 0.3);
         color: #cbd5e1;
     }
-    
+
     .filter-btn.active {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         border-color: transparent;
         color: white;
     }
-    
+
     .filter-btn:hover {
         border-color: #6366f1;
         color: white;
     }
-    
+
     /* Pagination */
     .pagination-btn {
         padding: 8px 14px;
@@ -269,17 +275,17 @@
         cursor: pointer;
         transition: all 0.3s ease;
     }
-    
+
     .pagination-btn:hover:not(:disabled) {
         background: rgba(99, 102, 241, 0.2);
         border-color: #6366f1;
     }
-    
+
     .pagination-btn:disabled {
         opacity: 0.5;
         cursor: not-allowed;
     }
-    
+
     /* Notification */
     .notification {
         position: fixed;
@@ -295,11 +301,11 @@
         transform: translateX(120%);
         transition: transform 0.3s ease;
     }
-    
+
     .notification.show {
         transform: translateX(0);
     }
-    
+
     /* Modal Styles */
     .modal-overlay {
         position: fixed;
@@ -314,12 +320,12 @@
         opacity: 0;
         transition: all 0.3s ease;
     }
-    
+
     .modal-overlay.active {
         visibility: visible;
         opacity: 1;
     }
-    
+
     .modal-container {
         background: rgba(15, 23, 42, 0.95);
         backdrop-filter: blur(16px);
@@ -331,16 +337,16 @@
         transform: scale(0.9);
         transition: transform 0.3s ease;
     }
-    
+
     .modal-overlay.active .modal-container {
         transform: scale(1);
     }
-    
+
     /* Section spacing */
     .section {
         margin-top: 40px;
     }
-    
+
     /* Line clamp */
     .line-clamp-2 {
         display: -webkit-box;
@@ -348,12 +354,12 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
-    
+
     /* Delay utilities */
     .delay-1 { transition-delay: 0.1s; }
     .delay-2 { transition-delay: 0.2s; }
     .delay-3 { transition-delay: 0.3s; }
-    
+
     /* Responsive */
     @media (max-width: 768px) {
         .action-buttons {
@@ -378,9 +384,10 @@
             </span>
         </div>
 
-        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight title-main fade-up">
-            Jurnal Ilmiah
-        </h1>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight depth-2 fade-up">
+    Jurnal
+    <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent glow-text">Ilmiah</span>
+</h1>
 
         <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
             Kumpulan artikel ilmiah, penelitian keperawatan, dan publikasi akademik.
@@ -531,7 +538,7 @@
                        readonly>
             </div>
 
-            <div class="mb-3">  
+            <div class="mb-3">
                 <label class="text-xs text-gray-400">Tanggal Pinjam</label>
                 <input type="date" name="borrow_date" id="borrow_date"
                        class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700"
@@ -615,10 +622,10 @@ function openModal(id, title) {
 function closeModal() {
     const modal = document.getElementById('pinjamModal');
     modal.classList.remove('active');
-    
+
     // Reset form
     document.getElementById('pinjamForm').reset();
-    
+
     // Enable submit button
     const submitBtn = document.getElementById('submitPinjamBtn');
     if (submitBtn) {
@@ -644,7 +651,7 @@ document.addEventListener('change', function(e) {
         const returnInput = document.getElementById('return_date');
         const minReturn = new Date(borrow);
         minReturn.setDate(minReturn.getDate() + 1);
-        
+
         // ✅ MAKSIMAL 3 HARI
         const maxReturn = new Date(borrow);
         maxReturn.setDate(maxReturn.getDate() + 3);
@@ -663,7 +670,7 @@ document.addEventListener('change', function(e) {
 document.addEventListener('submit', function(e) {
     if (e.target.id === 'pinjamForm') {
         e.preventDefault();
-        
+
         const borrow = new Date(document.getElementById('borrow_date').value);
         const ret = new Date(document.getElementById('return_date').value);
 
@@ -688,7 +695,7 @@ document.addEventListener('submit', function(e) {
             btn.innerText = 'Memproses...';
             btn.disabled = true;
         }
-        
+
         e.target.submit();
     }
 });

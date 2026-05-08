@@ -8,16 +8,22 @@
        CSS KHUSUS UNTUK HALAMAN BUKU REFERENSI
        Hanya CSS yang BELUM ADA di master blade
     ============================================ */
-    
+
     /* Glass card */
     .glass-card {
-        background: rgba(15, 23, 42, 0.55);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 2rem;
-        transition: all 0.3s ease;
+        background: rgba(30, 41, 59, 0.5);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(99, 102, 241, 0.25);
     }
-    
+
+    /* Glow text */
+    .glow-text {
+        text-shadow: 0 0 12px rgba(99, 102, 241, 0.7);
+    }
+
+    /* Tambahkan di style Visi Misi */
+    .depth-2 { transform: translateZ(24px); }
+
     /* Title utama */
     .title-main {
         font-weight: 800;
@@ -27,7 +33,7 @@
         color: transparent;
         text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
     }
-    
+
     /* Neon border */
     .neon-border {
         position: relative;
@@ -35,11 +41,11 @@
         background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2));
         transition: all 0.3s ease;
     }
-    
+
     .neon-border:hover {
         box-shadow: 0 0 30px rgba(99,102,241,0.3);
     }
-    
+
     .neon-inner {
         background: rgba(15, 23, 42, 0.7);
         backdrop-filter: blur(20px);
@@ -47,7 +53,7 @@
         padding: 2rem;
         border: 1px solid rgba(255,255,255,0.08);
     }
-    
+
     /* Search input */
     .search-input {
         width: 100%;
@@ -59,17 +65,17 @@
         font-size: 0.9rem;
         transition: all 0.3s ease;
     }
-    
+
     .search-input:focus {
         outline: none;
         border-color: #6366f1;
         box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
     }
-    
+
     .search-input::placeholder {
         color: #64748b;
     }
-    
+
     /* Sidebar Menu */
     .sidebar-menu {
         background: rgba(15, 23, 42, 0.6);
@@ -78,7 +84,7 @@
         border: 1px solid rgba(99, 102, 241, 0.3);
         overflow: hidden;
     }
-    
+
     .sidebar-item {
         padding: 12px 16px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -87,26 +93,26 @@
         color: #cbd5e1;
         font-size: 0.85rem;
     }
-    
+
     .sidebar-item:hover {
         background: rgba(99, 102, 241, 0.15);
         color: white;
         padding-left: 24px;
     }
-    
+
     .sidebar-item.active {
         background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.1));
         color: #a5b4fc;
         border-left: 3px solid #6366f1;
     }
-    
+
     .sidebar-title {
         font-weight: 700;
         color: #c7d2fe;
         padding: 12px 16px;
         border-bottom: 1px solid rgba(99, 102, 241, 0.3);
     }
-    
+
     /* Featured Book Card */
     .featured-card {
         background: rgba(15, 23, 42, 0.6);
@@ -115,24 +121,24 @@
         border: 1px solid rgba(99, 102, 241, 0.3);
         transition: all 0.3s ease;
     }
-    
+
     .featured-card:hover {
         border-color: rgba(99, 102, 241, 0.7);
         transform: translateY(-3px);
     }
-    
+
     /* Table Styles */
     .table-container {
         overflow-x: auto;
         border-radius: 1rem;
     }
-    
+
     .data-table {
         width: 100%;
         border-collapse: collapse;
         min-width: 800px;
     }
-    
+
     .data-table th {
         text-align: left;
         padding: 1rem 1rem;
@@ -142,7 +148,7 @@
         font-size: 0.8rem;
         border-bottom: 1px solid rgba(99, 102, 241, 0.3);
     }
-    
+
     .data-table td {
         padding: 1rem 1rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -150,11 +156,11 @@
         font-size: 0.85rem;
         vertical-align: middle;
     }
-    
+
     .data-table tr:hover {
         background: rgba(99, 102, 241, 0.08);
     }
-    
+
     /* Status Badges */
     .status-badge {
         display: inline-block;
@@ -163,25 +169,25 @@
         font-size: 0.7rem;
         font-weight: 600;
     }
-    
+
     .status-tersedia {
         background: rgba(16, 185, 129, 0.2);
         color: #34d399;
         border: 1px solid rgba(16, 185, 129, 0.5);
     }
-    
+
     .status-dipinjam {
         background: rgba(245, 158, 11, 0.2);
         color: #fbbf24;
         border: 1px solid rgba(245, 158, 11, 0.5);
     }
-    
+
     .status-kosong {
         background: rgba(239, 68, 68, 0.2);
         color: #f87171;
         border: 1px solid rgba(239, 68, 68, 0.5);
     }
-    
+
     /* Buttons */
     .btn-primary {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
@@ -197,18 +203,18 @@
         white-space: nowrap;
         text-decoration: none;
     }
-    
+
     .btn-primary:hover {
         transform: scale(1.05);
         box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
     }
-    
+
     .btn-primary:disabled {
         opacity: 0.5;
         cursor: not-allowed;
         transform: none;
     }
-    
+
     .btn-outline {
         background: transparent;
         padding: 6px 14px;
@@ -223,17 +229,17 @@
         white-space: nowrap;
         text-decoration: none;
     }
-    
+
     .btn-outline:hover {
         background: rgba(99, 102, 241, 0.2);
         border-color: #6366f1;
     }
-    
+
     .btn-outline:disabled {
         opacity: 0.5;
         cursor: not-allowed;
     }
-    
+
     .btn-link {
         background: transparent;
         border: none;
@@ -242,12 +248,12 @@
         font-size: 0.75rem;
         transition: all 0.3s ease;
     }
-    
+
     .btn-link:hover {
         color: #818cf8;
         text-decoration: underline;
     }
-    
+
     /* Pagination */
     .pagination-btn {
         padding: 8px 14px;
@@ -258,23 +264,23 @@
         cursor: pointer;
         transition: all 0.3s ease;
     }
-    
+
     .pagination-btn:hover:not(:disabled) {
         background: rgba(99, 102, 241, 0.2);
         border-color: #6366f1;
     }
-    
+
     .pagination-btn:disabled {
         opacity: 0.5;
         cursor: not-allowed;
     }
-    
+
     .pagination-btn.active {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         border-color: transparent;
         color: white;
     }
-    
+
     /* Notification */
     .notification {
         position: fixed;
@@ -290,11 +296,11 @@
         transform: translateX(120%);
         transition: transform 0.3s ease;
     }
-    
+
     .notification.show {
         transform: translateX(0);
     }
-    
+
     /* Modal Styles */
     .modal-overlay {
         position: fixed;
@@ -309,12 +315,12 @@
         opacity: 0;
         transition: all 0.3s ease;
     }
-    
+
     .modal-overlay.active {
         visibility: visible;
         opacity: 1;
     }
-    
+
     .modal-container {
         background: rgba(15, 23, 42, 0.95);
         backdrop-filter: blur(16px);
@@ -326,28 +332,28 @@
         transform: scale(0.9);
         transition: transform 0.3s ease;
     }
-    
+
     .modal-overlay.active .modal-container {
         transform: scale(1);
     }
-    
+
     /* Section spacing */
     .section {
         margin-top: 40px;
     }
-    
+
     /* Kolom aksi dibuat tetap tidak pecah */
     .data-table th:last-child,
     .data-table td:last-child {
         white-space: nowrap;
     }
-    
+
     /* Responsive */
     @media (max-width: 768px) {
         .sidebar-menu {
             margin-bottom: 20px;
         }
-        .data-table th, 
+        .data-table th,
         .data-table td {
             padding: 0.75rem;
             font-size: 0.75rem;
@@ -385,9 +391,10 @@
             </span>
         </div>
 
-        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight title-main fade-up">
-            Koleksi Buku Referensi
-        </h1>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight depth-2 fade-up">
+    Koleksi Buku <br>
+    <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent glow-text">Referensi</span>
+</h1>
 
         <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
             Akses ke sumber daya medis otoritatif untuk menunjang pembelajaran akademik.
@@ -640,7 +647,7 @@
                        readonly>
             </div>
 
-            <div class="mb-3">  
+            <div class="mb-3">
                 <label class="text-xs text-gray-400">Tanggal Pinjam</label>
                 <input type="date" name="borrow_date" id="borrow_date"
                        class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700"
@@ -724,10 +731,10 @@ function openModal(id, title) {
 function closeModal() {
     const modal = document.getElementById('pinjamModal');
     modal.classList.remove('active');
-    
+
     // Reset form
     document.getElementById('pinjamForm').reset();
-    
+
     // Enable submit button
     const submitBtn = document.getElementById('submitPinjamBtn');
     if (submitBtn) {
@@ -753,7 +760,7 @@ document.addEventListener('change', function(e) {
         const returnInput = document.getElementById('return_date');
         const minReturn = new Date(borrow);
         minReturn.setDate(minReturn.getDate() + 1);
-        
+
         // ✅ MAKSIMAL 3 HARI
         const maxReturn = new Date(borrow);
         maxReturn.setDate(maxReturn.getDate() + 3);

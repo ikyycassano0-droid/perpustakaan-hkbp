@@ -24,12 +24,18 @@
 
 /* ===== GLASS CARD ===== */
 .glass-card {
-    background: rgba(15, 23, 42, 0.55);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 2rem;
-    transition: all 0.3s ease;
-}
+        background: rgba(30, 41, 59, 0.5);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(99, 102, 241, 0.25);
+    }
+
+    /* Glow text */
+    .glow-text {
+        text-shadow: 0 0 12px rgba(99, 102, 241, 0.7);
+    }
+
+    /* Tambahkan di style Visi Misi */
+    .depth-2 { transform: translateZ(24px); }
 
 /* ===== TITLE ===== */
 .title-main {
@@ -289,9 +295,10 @@
         <div class="inline-block glass-card px-5 py-2 rounded-full mb-5 fade-up">
             <span class="text-indigo-300 text-sm font-medium tracking-wide">📚 AKPER HKBP BALIGE</span>
         </div>
-        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight title-main fade-up">
-            Panduan & Informasi Akademik
-        </h1>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight depth-2 fade-up">
+        Panduan & <br>
+        <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent glow-text">Informasi Akademik</span>
+    </h1>
         <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
             Akses berbagai dokumen panduan resmi, tata tertib, dan prosedur operasional standar Akademi Keperawatan HKBP Balige untuk mendukung kelancaran studi Anda.
         </p>
@@ -301,7 +308,7 @@
     <section class="section max-w-5xl mx-auto px-5">
         <div class="neon-border fade-up">
             <div class="neon-inner">
-                
+
                 <!-- Search Bar -->
                 <div class="mb-6">
                     <div class="relative">
@@ -317,11 +324,11 @@
                     @endphp
                     @foreach($uniqueCategories as $category)
                     <button class="filter-btn" data-filter="{{ strtolower($category) }}">
-                        @if($category == 'Petunjuk Penggunaan') 📖 
-                        @elseif($category == 'Kebijakan') ⚖️ 
-                        @elseif($category == 'Syarat & Ketentuan') 📜 
-                        @elseif($category == 'FAQ') ❓ 
-                        @else 📌 
+                        @if($category == 'Petunjuk Penggunaan') 📖
+                        @elseif($category == 'Kebijakan') ⚖️
+                        @elseif($category == 'Syarat & Ketentuan') 📜
+                        @elseif($category == 'FAQ') ❓
+                        @else 📌
                         @endif
                         {{ $category }}
                     </button>
@@ -393,9 +400,9 @@ $guides = $data->map(function($item){
         'FAQ' => '❓',
         'Lainnya' => '📌'
     ];
-    
+
     $icon = $iconMap[$item->category] ?? '📄';
-    
+
     // Pastikan files diproses dengan benar
     $files = [];
     if(isset($item->activeFiles) && $item->activeFiles->count() > 0) {
@@ -408,7 +415,7 @@ $guides = $data->map(function($item){
             ];
         })->values()->toArray();
     }
-    
+
     return [
         'id' => $item->id,
         'title' => $item->title ?? 'Tanpa Judul',
@@ -422,7 +429,7 @@ $guides = $data->map(function($item){
     ];
 })->values();
 
-function formatBytes($bytes, $precision = 2) { 
+function formatBytes($bytes, $precision = 2) {
     if ($bytes == 0) return '0 Bytes';
     $units = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
     $i = floor(log($bytes, 1024));
@@ -505,7 +512,7 @@ function renderGuides() {
     console.log('🔄 Rendering guides...');
     console.log('Current Filter:', currentFilter);
     console.log('Search Query:', searchQuery);
-    
+
     let filteredData = [...guidesData];
 
     // APPLY SEARCH
@@ -555,10 +562,10 @@ function renderGuides() {
             const file = guide.files[0];
             const fileName = file.original_name || file.name || 'download';
             const fileSize = file.size ? (file.size < 1024 ? file.size + ' B' : (file.size < 1048576 ? (file.size/1024).toFixed(1) + ' KB' : (file.size/1048576).toFixed(1) + ' MB')) : '';
-            
+
             fileButton = `
-                <button 
-                    onclick='downloadAllFiles(${JSON.stringify(guide.files)})', '${fileName.replace(/'/g, "\\'")}', '${fileSize}')" 
+                <button
+                    onclick='downloadAllFiles(${JSON.stringify(guide.files)})', '${fileName.replace(/'/g, "\\'")}', '${fileSize}')"
                     class="btn-download">
                     📥 Unduh ${fileSize ? `(${fileSize})` : ''}
                 </button>
@@ -591,7 +598,7 @@ function renderGuides() {
 
         grid.appendChild(card);
     });
-    
+
     // Trigger fade-up animation for new cards
     setTimeout(() => {
         document.querySelectorAll('.guide-card.fade-up').forEach(el => {
@@ -621,15 +628,15 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
         const filterValue = e.currentTarget.getAttribute('data-filter');
         console.log('🔘 Filter clicked:', filterValue);
-        
+
         currentFilter = filterValue;
-        
+
         // Update active class
         document.querySelectorAll('.filter-btn').forEach(b => {
             b.classList.remove('active');
         });
         e.currentTarget.classList.add('active');
-        
+
         // Re-render
         renderGuides();
     });

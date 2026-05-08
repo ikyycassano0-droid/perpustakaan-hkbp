@@ -8,16 +8,22 @@
        CSS KHUSUS UNTUK HALAMAN TUGAS & FUNGSI
        Hanya CSS yang BELUM ADA di master blade
     ============================================ */
-    
-    /* Glass card untuk tugas fungsi */
-    .glass-card {
-        background: rgba(15, 23, 42, 0.55);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 1.5rem;
-        transition: all 0.3s ease;
-    }
-    
+
+    /* Glass card untuk halaman visi misi */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+        }
+
+        /* Glow text */
+        .glow-text {
+            text-shadow: 0 0 12px rgba(99, 102, 241, 0.7);
+        }
+
+        /* Tambahkan di style Visi Misi */
+        .depth-2 { transform: translateZ(24px); }
+
     /* Title utama */
     .title-main {
         font-weight: 800;
@@ -27,7 +33,7 @@
         color: transparent;
         text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
     }
-    
+
     /* Line decoration */
     .line {
         width: 80px;
@@ -36,7 +42,7 @@
         margin: 16px auto 32px;
         border-radius: 10px;
     }
-    
+
     /* Card Rectangle untuk Tugas Pokok */
     .card-rectangle {
         display: flex;
@@ -53,7 +59,7 @@
         border: 1px solid rgba(255, 255, 255, 0.1);
         transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
-    
+
     .card-rectangle::before {
         content: "";
         position: absolute;
@@ -64,7 +70,7 @@
         background: linear-gradient(to bottom, #6366f1, #8b5cf6);
         border-radius: 4px;
     }
-    
+
     .card-rectangle::after {
         content: "";
         position: absolute;
@@ -79,17 +85,17 @@
         z-index: -1;
         pointer-events: none;
     }
-    
+
     .card-rectangle:hover {
         transform: translateY(-6px);
         border-color: rgba(99, 102, 241, 0.4);
         box-shadow: 0 20px 40px -12px rgba(99, 102, 241, 0.3);
     }
-    
+
     .card-rectangle:hover::after {
         opacity: 1;
     }
-    
+
     .card-rectangle .icon {
         width: 55px;
         height: 55px;
@@ -102,12 +108,12 @@
         transition: 0.3s;
         border: 1px solid rgba(99,102,241,0.3);
     }
-    
+
     .card-rectangle:hover .icon {
         transform: rotate(5deg) scale(1.1);
         background: linear-gradient(135deg, rgba(99,102,241,0.5), rgba(139,92,246,0.4));
     }
-    
+
     /* Misi Card untuk Fungsi Strategis */
     .misi-card-new {
         background: rgba(15, 23, 42, 0.5);
@@ -120,7 +126,7 @@
         position: relative;
         overflow: hidden;
     }
-    
+
     .misi-card-new::before {
         content: "";
         position: absolute;
@@ -131,17 +137,17 @@
         transition: 0.4s;
         z-index: -1;
     }
-    
+
     .misi-card-new:hover::before {
         opacity: 0.15;
     }
-    
+
     .misi-card-new:hover {
         transform: translateY(-8px);
         border-color: rgba(99, 102, 241, 0.4);
         box-shadow: 0 20px 35px -12px rgba(99, 102, 241, 0.3);
     }
-    
+
     .misi-card-new .icon {
         width: 50px;
         height: 50px;
@@ -154,12 +160,12 @@
         font-size: 24px;
         transition: 0.3s;
     }
-    
+
     .misi-card-new:hover .icon {
         transform: scale(1.1);
         background: linear-gradient(135deg, rgba(99,102,241,0.4), rgba(139,92,246,0.3));
     }
-    
+
     /* Button custom */
     .btn {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
@@ -171,31 +177,31 @@
         box-shadow: 0 0 20px rgba(99,102,241,0.3);
         cursor: pointer;
     }
-    
+
     .btn:hover {
         transform: scale(1.05);
         box-shadow: 0 0 30px rgba(99,102,241,0.5);
     }
-    
+
     /* Image hover effect */
     .img-hover {
         overflow: hidden;
         border-radius: 1.5rem;
     }
-    
+
     .img-hover img {
         transition: transform 0.5s ease;
     }
-    
+
     .img-hover:hover img {
         transform: scale(1.08);
     }
-    
+
     /* Soft shadow */
     .soft-shadow {
         box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4);
     }
-    
+
     /* Number badge */
     .number-badge {
         font-size: 1.5rem;
@@ -206,12 +212,12 @@
         color: transparent;
         min-width: 48px;
     }
-    
+
     /* Delay utilities */
     .delay-1 { transition-delay: 0.1s; }
     .delay-2 { transition-delay: 0.2s; }
     .delay-3 { transition-delay: 0.3s; }
-    
+
     /* Tilt card effect class */
     .tilt-card {
         transform-style: preserve-3d;
@@ -232,9 +238,10 @@
         <div class="inline-block glass-card px-5 py-1.5 rounded-full mb-5 fade-up">
             <span class="text-indigo-300 text-sm font-medium tracking-wide">📋 TUGAS & FUNGSI</span>
         </div>
-        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight title-main fade-up">
-            Tugas Pokok
-        </h1>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight depth-2 fade-up">
+    Tugas
+    <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent glow-text">Pokok</span>
+</h1>
         <div class="line"></div>
     </div>
 
@@ -309,7 +316,7 @@
                 @if($img && $img->image)
                     <img src="{{ asset('storage/'.$img->image) }}" class="rounded-xl w-full">
                 @else
-                    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&h=450&fit=crop" 
+                    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&h=450&fit=crop"
                          class="rounded-xl w-full">
                 @endif
             </div>
@@ -378,7 +385,7 @@
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    
+
     // 1. Tilt 3D effect untuk cards dengan class tilt-card
     const tiltCards = document.querySelectorAll('.tilt-card');
     tiltCards.forEach(card => {
@@ -392,12 +399,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const rotateY = (x - centerX) / 20;
             card.style.transform = `perspective(1200px) rotateX(${-rotateX}deg) rotateY(${rotateY}deg) scale(1.01)`;
         });
-        
+
         card.addEventListener('mouseleave', () => {
             card.style.transform = `perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)`;
         });
     });
-    
+
     // 2. Card Rectangle glow follow cursor
     const rectCards = document.querySelectorAll('.card-rectangle');
     rectCards.forEach(card => {
@@ -409,7 +416,7 @@ document.addEventListener('DOMContentLoaded', function() {
             card.style.setProperty('--y', y + 'px');
         });
     });
-    
+
     // 3. Parallax effect untuk hero title
     const heroTitle = document.querySelector('.title-main');
     if (heroTitle) {
@@ -420,13 +427,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     // 4. Staggered animation untuk card rectangle
     const rectCardsAnimate = document.querySelectorAll('.card-rectangle');
     rectCardsAnimate.forEach((card, idx) => {
         card.style.transitionDelay = `${idx * 0.1}s`;
     });
-    
+
     // 5. Misi card staggered animation
     const misiCards = document.querySelectorAll('.misi-card-new');
     misiCards.forEach((card, idx) => {
