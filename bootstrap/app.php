@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'role' => \App\Http\Middleware\CheckRole::class, // Masukkan path class middleware tadi
         ]);
+
+        $middleware->append(\App\Http\Middleware\NoCache::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
