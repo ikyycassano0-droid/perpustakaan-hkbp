@@ -202,6 +202,7 @@
             Arah dan tujuan pengembangan perpustakaan.
         </p>
     </div>
+    </a>
 
     <a href="{{ route('user.profile.struktur') }}" class="block">
     <div class="glass p-6 rounded-2xl fade-up hover:scale-110 transition">
@@ -210,6 +211,7 @@
             Informasi pengurus dan peran dalam organisasi.
         </p>
     </div>
+    </a>
 
     <a href="{{ route('user.berita') }}" class="block">
     <div class="glass p-6 rounded-2xl fade-up hover:scale-110 transition">
@@ -218,20 +220,20 @@
             Update kegiatan dan informasi terbaru.
         </p>
     </div>
-
+    </a>
 </section>
 
 <!-- CTA -->
 <section class="mt-40 text-center">
-    <a href="{{ route('final_project.koleksi', 'ebook') }}" class="block">
     <h2 class="text-4xl font-bold fade-up">
         Pusat Literasi dan Referensi Terpercaya
     </h2>
-</a>
 
+    <a href="{{ route('user.koleksi.buku_referensi') }}" class="block">
     <button class="mt-6 bg-indigo-500 px-8 py-3 rounded-full glow hover:scale-110 transition fade-up">
         Mulai Membaca
     </button>
+    </a>
 </section>
 
 <!-- PARALLAX SECTION -->
@@ -349,6 +351,7 @@
             Nikmati kemudahan layanan Pinjam Balik secara mandiri melalui sistem informasi kami.
         </p>
     </div>
+    </a>
 
     <a href="#">
     <div class="tilt glass p-6 rounded-2xl card3d">
@@ -357,6 +360,7 @@
             Cek jadwal operasional perpustakaan dan batas waktu peminjaman buku untuk kenyamanan Anda.
         </p>
     </div>
+    </a>
 
     <a href="{{ route('panduan') }}" class="block">
     <div class="tilt glass p-6 rounded-2xl card3d">
@@ -365,258 +369,214 @@
             Bingung cara mencari buku atau akses jurnal? Pelajari panduan penggunaan fitur website di sini.
         </p>
     </div>
-
+    </a>
 </section>
 
-<!-- PRODUCT SHOWCASE -->
-<section class="mt-40 px-10">
+ <!-- PRODUCT SHOWCASE -->
+        <section class="mt-40 px-10">
+            <h2 class="text-4xl font-bold text-center mb-16 fade-up">
+            Layanan Unggulan
+            </h2>
 
-    <h2 class="text-4xl font-bold text-center mb-16 fade-up">
-        Featured Product
-    </h2>
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <!-- TEXT -->
+                <div class="fade-up">
+                    <h3 class="text-3xl font-semibold mb-4">
+                        Repository KTI & Digital Library
+                    </h3>
+                    <p class="text-gray-400 mb-6">
+                        Akses khusus bagi civitas akademika AKPER HKBP Balige untuk mengeksplorasi Karya Tulis Ilmiah (KTI) alumni, hingga jurnal kesehatan dalam satu platform terintegrasi.
+                    </p>
 
-    <div class="grid md:grid-cols-2 gap-16 items-center">
+                    <ul class="space-y-3 text-gray-300">
+                        <li>✔ Akses Full-Text KTI Alumni</li>
+                        <li>✔ Koleksi Video Prosedur Keperawatan</li>
+                        <li>✔ Unggah Mandiri Tugas Akhir (Upload KTI)</li>
+                    </ul>
+                    <a href="{{ route('final_project.kti') }}" class="block">
+                        <button class="magnetic mt-8 bg-indigo-500 px-6 py-3 rounded-full glow">
+                            Lihat Repository
+                        </button>
+                    </a>
+                </div>
 
-        <!-- TEXT -->
-        <div class="fade-up">
-            <h3 class="text-3xl font-semibold mb-4">
-                Ultra Smart Device
-            </h3>
+                <!-- IMAGE -->
+                <div class="tilt glass p-6 rounded-3xl shadow-2xl float">
+                    <img src="{{ asset('assets/img/KTII.png') }}" alt="Gambar Repository"
+                        class="rounded-2xl depth-3 w-full">
+                </div>
+            </div>
+        </section>
 
-            <p class="text-gray-400 mb-6">
-                Designed with cutting-edge technology and futuristic aesthetics.
-                Built to deliver performance, style, and innovation.
-            </p>
-
-            <ul class="space-y-3 text-gray-300">
-                <li>✔ AI Powered</li>
-                <li>✔ Ultra Fast Processing</li>
-                <li>✔ Premium Material</li>
-            </ul>
-
-            <button class="magnetic mt-8 bg-indigo-500 px-6 py-3 rounded-full glow">
-                Buy Now
-            </button>
-        </div>
-
-        <!-- IMAGE -->
-        <div class="tilt glass p-6 rounded-3xl shadow-2xl float">
-            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8"
-                 class="rounded-2xl depth-3 w-full">
-        </div>
-
-    </div>
-
-</section>
-
-<!-- PRODUCT GRID -->
-<section class="mt-40 px-10">
-
-    <h2 class="text-3xl font-bold text-center mb-12 fade-up">
-        Our Products
-    </h2>
-
+        <!-- PRODUCT GRID -->
+        <section class="mt-40 px-10">
+    <h2 class="text-3xl font-bold text-center mb-12 fade-up">Jelajahi Koleksi</h2>
     <div class="grid md:grid-cols-3 gap-8">
 
-        <!-- CARD -->
-        <div class="card3d glass p-6 rounded-2xl text-center fade-up">
-            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475"
-                 class="rounded-xl mb-4">
-            <h3 class="font-semibold">Product One</h3>
-            <p class="text-gray-400 text-sm mb-4">Minimal & powerful</p>
-            <button class="magnetic bg-indigo-500 px-4 py-2 rounded-full">
-                Buy
-            </button>
-        </div>
+        <a href="{{ route('final_project.koleksi', 'ebook') }}  " class="block">
+        <div class="card3d glass p-6 rounded-2xl text-center fade-up hover:scale-105 transition">
+        <div class="text-5xl mb-4">📖</div>
+        <h3 class="font-semibold text-lg">E-Book</h3>
+        <p class="text-gray-400 text-sm mt-2">Buku digital keperawatan siap dibaca kapan saja</p>
+        </div></a>
 
-        <div class="card3d glass p-6 rounded-2xl text-center fade-up">
-            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8"
-                 class="rounded-xl mb-4">
-            <h3 class="font-semibold">Product Two</h3>
-            <p class="text-gray-400 text-sm mb-4">Elegant design</p>
-            <button class="magnetic bg-indigo-500 px-4 py-2 rounded-full">
-                Buy
-            </button>
-        </div>
+        <a href="{{ route('final_project.koleksi', 'video') }}" class="block">
+        <div class="card3d glass p-6 rounded-2xl text-center fade-up hover:scale-105 transition">
+        <div class="text-5xl mb-4">🎬</div>
+        <h3 class="font-semibold text-lg">Video Prosedur</h3>
+        <p class="text-gray-400 text-sm mt-2">Tutorial prosedur keperawatan dalam format video</p>
+        </div></a>
 
-        <div class="card3d glass p-6 rounded-2xl text-center fade-up">
-            <img src="https://images.unsplash.com/photo-1492724441997-5dc865305da7"
-                 class="rounded-xl mb-4">
-            <h3 class="font-semibold">Product Three</h3>
-            <p class="text-gray-400 text-sm mb-4">Future ready</p>
-            <button class="magnetic bg-indigo-500 px-4 py-2 rounded-full">
-                Buy
-            </button>
-        </div>
+        <a href="{{ route('final_project.koleksi', 'e_article') }}" class="block">
+        <div class="card3d glass p-6 rounded-2xl text-center fade-up hover:scale-105 transition">
+        <div class="text-5xl mb-4">📄</div>
+        <h3 class="font-semibold text-lg">Jurnal</h3>
+        <p class="text-gray-400 text-sm mt-2">Artikel ilmiah dan jurnal kesehatan terkini</p>
+        </div></a>
 
     </div>
+    </section>
+        <!-- TESTIMONIAL -->
+        <section class="mt-40 px-10 text-center">
 
-</section>
-<!-- TESTIMONIAL -->
-<section class="mt-40 px-10 text-center">
+            <h2 class="text-3xl font-bold mb-12 fade-up">
+                Kesan & Pesan Pemustaka
+            </h2>
 
-    <h2 class="text-3xl font-bold mb-12 fade-up">
-        What People Say
-    </h2>
+            <div class="grid md:grid-cols-3 gap-8">
 
+                <div class="glass p-6 rounded-2xl fade-up">
+                    <p class="text-gray-400 mb-4">
+                        “Sangat membantu untuk mencari buku pengayaan dan referensi tugas akhir. Detail jurnal dan majalahnya juga sangat lengkap untuk riset saya.”
+                    </p>
+                    <h4 class="font-semibold">Alex, Mahasiswa IT</h4>
+                </div>
+
+                <div class="glass p-6 rounded-2xl fade-up">
+                    <p class="text-gray-400 mb-4">
+                        “Akses ke E-Book dan video tutorialnya sangat cepat. Belajar jadi lebih fleksibel karena bisa diakses kapan saja dan di mana saja.”
+                    </p>
+                    <h4 class="font-semibold">Kairi, Pengguna Digital</h4>
+                </div>
+
+                <div class="glass p-6 rounded-2xl fade-up">
+                    <p class="text-gray-400 mb-4">
+                        “Proses upload Tugas Akhir (TA) di sini sangat sistematis dan mudah diikuti. Fitur riwayat peminjaman juga membantu saya memantau pinjaman buku.”
+                    </p>
+                    <h4 class="font-semibold">John, Alumni</h4>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- PRICING -->
+        <section class="mt-40 px-10 text-center">
+
+            <h2 class="text-3xl font-bold mb-12 fade-up">Perpustakaan dalam Angka</h2>
     <div class="grid md:grid-cols-3 gap-8">
-
-        <div class="glass p-6 rounded-2xl fade-up">
-            <p class="text-gray-400 mb-4">
-                “This product changed my workflow completely.”
-            </p>
-            <h4 class="font-semibold">Alex</h4>
-        </div>
-
-        <div class="glass p-6 rounded-2xl fade-up">
-            <p class="text-gray-400 mb-4">
-                “Feels like using something from the future.”
-            </p>
-            <h4 class="font-semibold">Sarah</h4>
-        </div>
-
-        <div class="glass p-6 rounded-2xl fade-up">
-            <p class="text-gray-400 mb-4">
-                “Premium quality and amazing performance.”
-            </p>
-            <h4 class="font-semibold">John</h4>
-        </div>
-
-    </div>
-
-</section>
-<!-- PRICING -->
-<section class="mt-40 px-10 text-center">
-
-    <h2 class="text-3xl font-bold mb-12 fade-up">
-        Pricing Plan
-    </h2>
-
-    <div class="grid md:grid-cols-3 gap-8">
-
         <div class="glass p-8 rounded-2xl fade-up">
-            <h3 class="text-xl mb-4">Basic</h3>
-            <p class="text-4xl font-bold mb-4">$29</p>
-            <button class="magnetic bg-indigo-500 px-6 py-2 rounded-full">
-                Choose
-            </button>
+        <h3 class="text-5xl font-bold text-indigo-400">1.200+</h3>
+        <p class="mt-3 text-gray-300">Koleksi Buku Fisik</p>
         </div>
-
         <div class="glass p-8 rounded-2xl glow fade-up">
-            <h3 class="text-xl mb-4">Pro</h3>
-            <p class="text-4xl font-bold mb-4">$59</p>
-            <button class="magnetic bg-indigo-500 px-6 py-2 rounded-full">
-                Choose
-            </button>
+        <h3 class="text-5xl font-bold text-indigo-400">350+</h3>
+        <p class="mt-3 text-gray-300">E-Book</p>
         </div>
-
         <div class="glass p-8 rounded-2xl fade-up">
-            <h3 class="text-xl mb-4">Enterprise</h3>
-            <p class="text-4xl font-bold mb-4">$99</p>
-            <button class="magnetic bg-indigo-500 px-6 py-2 rounded-full">
-                Choose
+        <h3 class="text-5xl font-bold text-indigo-400">500+</h3>
+        <p class="mt-3 text-gray-300">KTI Alumni Tersedia</p>
+        </div>
+    </div>
+            <br>
+            <br>
+            <br>
+        <!-- PRODUCT MODAL -->
+        <div id="productModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-[9999]">
+
+            <div class="glass p-8 rounded-3xl max-w-lg w-full relative">
+
+                <button onclick="closeModal()" class="absolute top-4 right-4 text-white text-xl">
+                    ✕
+                </button>
+
+                <img id="modalImg" class="rounded-xl mb-4">
+
+                <h3 id="modalTitle" class="text-xl font-semibold mb-2"></h3>
+                <p id="modalDesc" class="text-gray-400 mb-4"></p>
+
+                <button class="magnetic bg-indigo-500 px-6 py-2 rounded-full w-full">
+                    Add to Cart
+                </button>
+
+            </div>
+
+        </div>
+        <!-- UPDATE PRODUCT CARD -->
+        <div class="glass p-10 rounded-2xl text-center fade-up">
+
+            <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085"
+                class="rounded-xl mb-4 cursor-pointer"
+                onclick="openModal(this)">
+
+            <!-- JUDUL DIBESARKAN -->
+        <h2 class="font-semibold text-2xl tracking-wide"></h2>
+            <!-- DESKRIPSI DIBESARKAN -->
+            <h3 class="font-semibold text-lg mb-15 leading-relaxed">Gedung Perpustakaan AKPER HKBP Balige</h3>
+            <p class="text-gray-400 text-sm mt-2 mb-4">
+            Fasilitas modern yang mendukung kegiatan belajar dan riset civitas akademika.
+            </p>
+            <div class="flex justify-center gap-3">
+        <a href="{{ route('guest.profile.tugas-fungsi') }}">
+            <button class="magnetic bg-indigo-500 px-5 py-2 rounded-full text-sm">
+                Tentang Kami
             </button>
+        </a>
+        <a href="{{ route('guest.profile.struktur') }}">
+            <button class="magnetic bg-white/10 border border-indigo-400 px-5 py-2 rounded-full text-sm">
+                Struktur Organisasi
+            </button>
+        </a>
+    </div>
         </div>
 
-    </div>
-    <br>
-    <br>
-    <br>
-<!-- PRODUCT MODAL -->
-<div id="productModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-[9999]">
-
-    <div class="glass p-8 rounded-3xl max-w-lg w-full relative">
-
-        <button onclick="closeModal()" class="absolute top-4 right-4 text-white text-xl">
-            ✕
-        </button>
-
-        <img id="modalImg" class="rounded-xl mb-4">
-
-        <h3 id="modalTitle" class="text-xl font-semibold mb-2"></h3>
-        <p id="modalDesc" class="text-gray-400 mb-4"></p>
-
-        <button class="magnetic bg-indigo-500 px-6 py-2 rounded-full w-full">
-            Add to Cart
-        </button>
-
-    </div>
-
-</div>
-<!-- UPDATE PRODUCT CARD -->
-<div class="card3d glass p-10 rounded-2xl text-center fade-up">
-
-    <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085"
-         class="rounded-xl mb-4 cursor-pointer"
-         onclick="openModal(this)">
-
-    <!-- JUDUL DIBESARKAN -->
-<h2 class="font-semibold text-2xl tracking-wide"></h2>
-    <!-- DESKRIPSI DIBESARKAN -->
-     <h3 class="font-semibold text-lg mb-15 leading-relaxed">Minimal & powerful</h3>
-    <div class="flex justify-center gap-3">
-
-        <!-- TEKS BUTTON DIBESARKAN -->
-        <button class="magnetic bg-indigo-500 px-4 py-2 rounded-full text-base">
-            Buy
-        </button>
-
-        <button onclick="toggleWishlist(this)" class="text-xl">
-            🤍
-        </button>
-
-    </div>
-</div>
-
-<!-- FILTER -->
-<div class="flex justify-center gap-4 mt-10">
-
-    <button onclick="filterProducts('all')" class="magnetic px-4 py-2 glass rounded-full">
-        All
+    <!-- SCROLL TO TOP BUTTON -->
+    <button id="scrollTopBtn" onclick="scrollToTop()"
+        class="fixed bottom-6 right-6 opacity-0 pointer-events-none transition-all duration-300 z-[9999] group">
+        <div class="relative flex items-center justify-center w-12 h-12">
+            <!-- Ring animasi -->
+            <span class="absolute inset-0 rounded-full bg-indigo-500/20 animate-ping"></span>
+            <span class="absolute inset-0 rounded-full border border-indigo-400/40"></span>
+            <!-- Tombol utama -->
+            <span class="relative flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 shadow-lg shadow-indigo-500/40 group-hover:shadow-indigo-500/70 group-hover:scale-110 transition-all duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white group-hover:-translate-y-0.5 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/>
+                </svg>
+            </span>
+        </div>
     </button>
 
-    <button onclick="filterProducts('tech')" class="magnetic px-4 py-2 glass rounded-full">
-        Tech
-    </button>
-
-    <button onclick="filterProducts('design')" class="magnetic px-4 py-2 glass rounded-full">
-        Design
-    </button>
-
-</div>
-<!-- CART -->
-<div id="cart" class="fixed top-0 right-0 w-80 h-full bg-black/90 p-6 hidden z-[9999]">
-
-    <h2 class="text-xl mb-4">Cart</h2>
-
-    <div id="cartItems" class="space-y-3"></div>
-
-    <div class="mt-6">
-        <button class="bg-indigo-500 w-full py-2 rounded-full">
-            Checkout
-        </button>
-    </div>
-
-</div>
-
-<button onclick="toggleCart()" class="fixed bottom-6 right-6 bg-indigo-500 p-4 rounded-full glow">
-    🛒
-</button>
-</section>
-
-<!-- FINAL CTA -->
-<section class="mt-32 mb-32 text-center px-6">
-
-    <h3 class="text-4xl md:text-5xl font-bold fade-up leading-tight mb-8">
-        Ready to Experience the Future?
+        <!-- FINAL CTA -->
+        <section class="mt-32 mb-32 text-center px-6">
+    <h3 class="text-4xl md:text-5xl font-bold fade-up leading-tight mb-4">
+        Siap Mulai Membaca?
     </h3>
-
-    <button onclick="openStartForm()"
-        class="magnetic bg-indigo-500 px-8 py-3 rounded-full glow hover:scale-105 transition">
-        Get Started
-    </button>
-
-</section>
+    <p class="text-gray-400 mb-8 fade-up">
+        Login untuk akses penuh koleksi digital, pinjam buku, dan upload KTI Anda.
+    </p>
+    <div class="flex justify-center gap-4 flex-wrap fade-up">
+        <a href="{{ route('login') }}">
+        <button class="magnetic bg-indigo-500 px-8 py-3 rounded-full glow hover:scale-105 transition">
+            Login Sekarang
+        </button>
+        </a>
+        <a href="{{ route('panduan') }}">
+        <button class="magnetic bg-white/10 border border-indigo-400 px-8 py-3 rounded-full hover:scale-105 transition">
+            Lihat Panduan
+        </button>
+        </a>
+    </div>
+    </section>
 @endsection
 
 @push('scripts')
