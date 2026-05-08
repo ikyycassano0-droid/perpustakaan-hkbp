@@ -1,6 +1,6 @@
 @extends('admin.component.main')
 
-@section('title', 'Dashboard')
+@section('title', 'Dashboard - Admin AKPER HKBP Balige')
 @section('content')
 
 <div class="space-y-6">
@@ -8,46 +8,46 @@
     <div class="flex justify-between items-center mb-2">
         <div>
             <h1 class="text-2xl font-bold text-slate-800">Dashboard</h1>
-            <p class="text-slate-500 text-sm mt-0.5">Welcome back, Alex. Here's your business overview.</p>
+            <p class="text-slate-500 text-sm mt-0.5">Selamat datang, {{ auth()->user()->name ?? 'Admin' }}. Berikut ringkasan data perpustakaan.</p>
         </div>
         <div class="flex gap-2">
-            <button class="px-4 py-2 text-sm border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition flex items-center gap-2">
-                <i class="fas fa-download text-xs"></i> Export
+            <button class="px-4 py-2 text-sm border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition flex items-center gap-2" onclick="window.print()">
+                <i class="fas fa-print text-xs"></i> Cetak Laporan
             </button>
-            <button class="px-4 py-2 text-sm bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition flex items-center gap-2">
-                <i class="fas fa-calendar-alt text-xs"></i> {{ date('M d, Y') }}
-            </button>
+            <div class="px-4 py-2 text-sm bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition flex items-center gap-2">
+                <i class="fas fa-calendar-alt text-xs"></i> {{ date('d M Y') }}
+            </div>
         </div>
     </div>
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- Total Koleksi -->
         <div class="card-modern p-5">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-slate-400 text-xs font-medium uppercase tracking-wide">Revenue</p>
-                    <p class="text-2xl font-bold text-slate-800 mt-1">$48,293</p>
+                    <p class="text-slate-400 text-xs font-medium uppercase tracking-wide">Total Koleksi</p>
+                    <p class="text-2xl font-bold text-slate-800 mt-1">{{ $totalCollections ?? 0 }}</p>
                     <div class="flex items-center gap-1 mt-2">
-                        <i class="fas fa-arrow-up text-emerald-500 text-[10px]"></i>
-                        <span class="text-emerald-600 text-xs font-medium">+12.5%</span>
-                        <span class="text-slate-400 text-xs ml-1">vs last month</span>
+                        <i class="fas fa-book text-indigo-500 text-[10px]"></i>
+                        <span class="text-indigo-600 text-xs font-medium">Buku, Jurnal, Majalah</span>
                     </div>
                 </div>
                 <div class="stat-icon bg-indigo-50">
-                    <i class="fas fa-dollar-sign text-indigo-500 text-xl"></i>
+                    <i class="fas fa-book text-indigo-500 text-xl"></i>
                 </div>
             </div>
         </div>
 
+        <!-- Anggota Aktif -->
         <div class="card-modern p-5">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-slate-400 text-xs font-medium uppercase tracking-wide">Users</p>
-                    <p class="text-2xl font-bold text-slate-800 mt-1">12,482</p>
+                    <p class="text-slate-400 text-xs font-medium uppercase tracking-wide">Anggota Aktif</p>
+                    <p class="text-2xl font-bold text-slate-800 mt-1">{{ $activeMembers ?? 0 }}</p>
                     <div class="flex items-center gap-1 mt-2">
-                        <i class="fas fa-arrow-up text-emerald-500 text-[10px]"></i>
-                        <span class="text-emerald-600 text-xs font-medium">+8.2%</span>
-                        <span class="text-slate-400 text-xs ml-1">this week</span>
+                        <i class="fas fa-user-plus text-emerald-500 text-[10px]"></i>
+                        <span class="text-emerald-600 text-xs font-medium">+{{ $newMembersThisMonth ?? 0 }} bulan ini</span>
                     </div>
                 </div>
                 <div class="stat-icon bg-emerald-50">
@@ -56,32 +56,32 @@
             </div>
         </div>
 
+        <!-- Peminjaman Aktif -->
         <div class="card-modern p-5">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-slate-400 text-xs font-medium uppercase tracking-wide">Orders</p>
-                    <p class="text-2xl font-bold text-slate-800 mt-1">3,892</p>
+                    <p class="text-slate-400 text-xs font-medium uppercase tracking-wide">Peminjaman Aktif</p>
+                    <p class="text-2xl font-bold text-slate-800 mt-1">{{ $activeLoans ?? 0 }}</p>
                     <div class="flex items-center gap-1 mt-2">
-                        <i class="fas fa-arrow-down text-rose-500 text-[10px]"></i>
-                        <span class="text-rose-600 text-xs font-medium">-3.1%</span>
-                        <span class="text-slate-400 text-xs ml-1">vs last week</span>
+                        <i class="fas fa-hourglass-half text-amber-500 text-[10px]"></i>
+                        <span class="text-amber-600 text-xs font-medium">{{ $pendingApprovals ?? 0 }} menunggu persetujuan</span>
                     </div>
                 </div>
                 <div class="stat-icon bg-amber-50">
-                    <i class="fas fa-shopping-cart text-amber-500 text-xl"></i>
+                    <i class="fas fa-hand-holding-heart text-amber-500 text-xl"></i>
                 </div>
             </div>
         </div>
 
+        <!-- Total Pengunjung -->
         <div class="card-modern p-5">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-slate-400 text-xs font-medium uppercase tracking-wide">Conversion</p>
-                    <p class="text-2xl font-bold text-slate-800 mt-1">24.8%</p>
+                    <p class="text-slate-400 text-xs font-medium uppercase tracking-wide">Pengunjung (Bulan Ini)</p>
+                    <p class="text-2xl font-bold text-slate-800 mt-1">{{ $monthlyVisitors ?? 0 }}</p>
                     <div class="flex items-center gap-1 mt-2">
-                        <i class="fas fa-arrow-up text-emerald-500 text-[10px]"></i>
-                        <span class="text-emerald-600 text-xs font-medium">+5.4%</span>
-                        <span class="text-slate-400 text-xs ml-1">improved</span>
+                        <i class="fas fa-chart-line text-purple-500 text-[10px]"></i>
+                        <span class="text-purple-600 text-xs font-medium">+{{ $visitorGrowth ?? 0 }}% dari bulan lalu</span>
                     </div>
                 </div>
                 <div class="stat-icon bg-purple-50">
@@ -93,128 +93,163 @@
 
     <!-- Charts Row 1 -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <!-- Revenue Chart -->
+        <!-- Peminjaman Bulanan Chart -->
         <div class="card-modern p-5">
             <div class="flex justify-between items-center mb-4">
                 <div>
-                    <h3 class="font-semibold text-slate-800">Revenue Overview</h3>
-                    <p class="text-slate-400 text-xs mt-0.5">Monthly performance</p>
+                    <h3 class="font-semibold text-slate-800">Statistik Peminjaman</h3>
+                    <p class="text-slate-400 text-xs mt-0.5">Jumlah peminjaman per bulan</p>
                 </div>
-                <select class="text-xs border border-slate-200 rounded-lg px-3 py-1.5 bg-white text-slate-600 focus:outline-none focus:border-indigo-300">
-                    <option>2025</option>
-                    <option>2024</option>
+                <select id="yearSelect" class="text-xs border border-slate-200 rounded-lg px-3 py-1.5 bg-white text-slate-600 focus:outline-none focus:border-indigo-300">
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
                 </select>
             </div>
-            <div id="revenueChart"></div>
+            <div id="loanChart"></div>
         </div>
 
-        <!-- Traffic Chart -->
+        <!-- Kategori Koleksi Chart -->
         <div class="card-modern p-5">
             <div class="flex justify-between items-center mb-4">
                 <div>
-                    <h3 class="font-semibold text-slate-800">Traffic Overview</h3>
-                    <p class="text-slate-400 text-xs mt-0.5">Last 7 days</p>
-                </div>
-                <div class="flex gap-1">
-                    <span class="text-xs text-indigo-600 bg-indigo-50 px-2 py-1 rounded-lg font-medium">Daily</span>
-                    <span class="text-xs text-slate-500 px-2 py-1 rounded-lg cursor-pointer hover:bg-slate-100">Weekly</span>
+                    <h3 class="font-semibold text-slate-800">Distribusi Koleksi</h3>
+                    <p class="text-slate-400 text-xs mt-0.5">Berdasarkan jenis koleksi</p>
                 </div>
             </div>
-            <div id="trafficChart"></div>
+            <div id="collectionChart"></div>
         </div>
     </div>
 
     <!-- Charts Row 2 -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <!-- Devices Distribution -->
+        <!-- Status Peminjaman -->
         <div class="card-modern p-5">
-            <h3 class="font-semibold text-slate-800 mb-4">Device Distribution</h3>
-            <div id="donutChart"></div>
+            <h3 class="font-semibold text-slate-800 mb-4">Status Peminjaman</h3>
+            <div id="statusDonutChart"></div>
             <div class="flex justify-center gap-5 mt-3">
                 <div class="flex items-center gap-2">
                     <div class="w-2.5 h-2.5 rounded-full bg-indigo-500"></div>
-                    <span class="text-xs text-slate-600">Mobile (45%)</span>
+                    <span class="text-xs text-slate-600">Dipinjam ({{ $borrowedCount ?? 0 }})</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
-                    <span class="text-xs text-slate-600">Desktop (35%)</span>
+                    <span class="text-xs text-slate-600">Dikembalikan ({{ $returnedCount ?? 0 }})</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <div class="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
-                    <span class="text-xs text-slate-600">Tablet (20%)</span>
+                    <span class="text-xs text-slate-600">Menunggu ({{ $pendingCount ?? 0 }})</span>
                 </div>
             </div>
         </div>
 
-        <!-- Top Products -->
+        <!-- Buku Terpopuler -->
         <div class="card-modern p-5">
             <div class="flex justify-between items-center mb-4">
                 <div>
-                    <h3 class="font-semibold text-slate-800">Top Products</h3>
-                    <p class="text-slate-400 text-xs mt-0.5">Best selling items</p>
+                    <h3 class="font-semibold text-slate-800">Buku Terpopuler</h3>
+                    <p class="text-slate-400 text-xs mt-0.5">Berdasarkan jumlah peminjaman</p>
                 </div>
                 <i class="fas fa-ellipsis-h text-slate-400 cursor-pointer hover:text-slate-600"></i>
             </div>
-            <div id="barChart"></div>
+            <div id="popularBooksChart"></div>
         </div>
     </div>
 
-    <!-- Recent Transactions -->
+    <!-- Peminjaman Terbaru -->
     <div class="card-modern overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
             <div>
-                <h3 class="font-semibold text-slate-800">Recent Transactions</h3>
-                <p class="text-slate-400 text-xs mt-0.5">Latest 5 orders</p>
+                <h3 class="font-semibold text-slate-800">Peminjaman Terbaru</h3>
+                <p class="text-slate-400 text-xs mt-0.5">5 peminjaman terakhir</p>
             </div>
-            <button class="text-indigo-600 text-xs font-medium hover:text-indigo-700">View all <i class="fas fa-arrow-right ml-1 text-[10px]"></i></button>
+            <a href="{{ route('admin.orders.index') }}" class="text-indigo-600 text-xs font-medium hover:text-indigo-700">
+                Lihat semua <i class="fas fa-arrow-right ml-1 text-[10px]"></i>
+            </a>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead>
                     <tr class="bg-slate-50/50">
-                        <th class="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Invoice</th>
-                        <th class="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Customer</th>
-                        <th class="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Amount</th>
+                        <th class="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">No. Peminjaman</th>
+                        <th class="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Peminjam</th>
+                        <th class="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Judul Buku</th>
                         <th class="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Status</th>
-                        <th class="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Date</th>
+                        <th class="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Tanggal Pinjam</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @forelse($recentLoans ?? [] as $loan)
                     <tr class="border-b border-slate-50 hover:bg-slate-50/30 transition">
-                        <td class="px-5 py-3 text-sm font-medium text-slate-700">#INV-001234</td>
-                        <td class="px-5 py-3 text-sm text-slate-600">John Doe</td>
-                        <td class="px-5 py-3 text-sm font-semibold text-slate-800">$299.00</td>
-                        <td class="px-5 py-3"><span class="badge-success">Completed</span></td>
-                        <td class="px-5 py-3 text-sm text-slate-400">Jan 15, 2025</td>
+                        <td class="px-5 py-3 text-sm font-medium text-slate-700">#{{ $loan->order_number ?? $loan->id }}</td>
+                        <td class="px-5 py-3 text-sm text-slate-600">{{ $loan->user->name ?? '-' }}</td>
+                        <td class="px-5 py-3 text-sm text-slate-600">{{ $loan->details->first()->collection->title ?? '-' }}</td>
+                        <td class="px-5 py-3">
+                            @if($loan->status == 'PENDING')
+                                <span class="badge-warning">Menunggu</span>
+                            @elseif($loan->status == 'APPROVED')
+                                <span class="badge-success">Dipinjam</span>
+                            @elseif($loan->status == 'REJECTED')
+                                <span class="badge-danger">Ditolak</span>
+                            @elseif($loan->status == 'RETURNED')
+                                <span class="badge-info">Dikembalikan</span>
+                            @else
+                                <span class="badge-secondary">{{ $loan->status }}</span>
+                            @endif
+                        </td>
+                        <td class="px-5 py-3 text-sm text-slate-400">{{ $loan->created_at ? $loan->created_at->format('d-m-Y') : '-' }}</td>
                     </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="px-5 py-8 text-center text-slate-400">Belum ada data peminjaman</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Anggota Terbaru -->
+    <div class="card-modern overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
+            <div>
+                <h3 class="font-semibold text-slate-800">Anggota Terbaru</h3>
+                <p class="text-slate-400 text-xs mt-0.5">5 anggota yang baru bergabung</p>
+            </div>
+            <!-- HAPUS LINK YANG BELUM ADA -->
+            <span class="text-indigo-600 text-xs font-medium">Anggota Perpustakaan</span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-slate-50/50">
+                        <th class="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Nama</th>
+                        <th class="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">NPM/NIDN</th>
+                        <th class="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Program Studi</th>
+                        <th class="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                        <th class="text-left px-5 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Bergabung</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($recentUsers ?? [] as $user)
                     <tr class="border-b border-slate-50 hover:bg-slate-50/30 transition">
-                        <td class="px-5 py-3 text-sm font-medium text-slate-700">#INV-001235</td>
-                        <td class="px-5 py-3 text-sm text-slate-600">Sarah Johnson</td>
-                        <td class="px-5 py-3 text-sm font-semibold text-slate-800">$149.00</td>
-                        <td class="px-5 py-3"><span class="badge-warning">Pending</span></td>
-                        <td class="px-5 py-3 text-sm text-slate-400">Jan 14, 2025</td>
+                        <td class="px-5 py-3 text-sm font-medium text-slate-700">{{ $user->name ?? '-' }}</td>
+                        <td class="px-5 py-3 text-sm text-slate-600">{{ $user->npm ?? $user->nidn ?? '-' }}</td>
+                        <td class="px-5 py-3 text-sm text-slate-600">{{ $user->study_program ?? '-' }}</td>
+                        <td class="px-5 py-3">
+                            @if(($user->is_active ?? 1) == 1)
+                                <span class="badge-success">Aktif</span>
+                            @else
+                                <span class="badge-danger">Nonaktif</span>
+                            @endif
+                        </td>
+                        <td class="px-5 py-3 text-sm text-slate-400">{{ $user->created_at ? $user->created_at->format('d-m-Y') : '-' }}</td>
                     </tr>
-                    <tr class="border-b border-slate-50 hover:bg-slate-50/30 transition">
-                        <td class="px-5 py-3 text-sm font-medium text-slate-700">#INV-001236</td>
-                        <td class="px-5 py-3 text-sm text-slate-600">Mike Chen</td>
-                        <td class="px-5 py-3 text-sm font-semibold text-slate-800">$599.00</td>
-                        <td class="px-5 py-3"><span class="badge-success">Completed</span></td>
-                        <td class="px-5 py-3 text-sm text-slate-400">Jan 14, 2025</td>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="px-5 py-8 text-center text-slate-400">Belum ada data anggota</td>
                     </tr>
-                    <tr class="border-b border-slate-50 hover:bg-slate-50/30 transition">
-                        <td class="px-5 py-3 text-sm font-medium text-slate-700">#INV-001237</td>
-                        <td class="px-5 py-3 text-sm text-slate-600">Emma Watson</td>
-                        <td class="px-5 py-3 text-sm font-semibold text-slate-800">$89.00</td>
-                        <td class="px-5 py-3"><span class="badge-danger">Cancelled</span></td>
-                        <td class="px-5 py-3 text-sm text-slate-400">Jan 13, 2025</td>
-                    </tr>
-                    <tr class="hover:bg-slate-50/30 transition">
-                        <td class="px-5 py-3 text-sm font-medium text-slate-700">#INV-001238</td>
-                        <td class="px-5 py-3 text-sm text-slate-600">David Kim</td>
-                        <td class="px-5 py-3 text-sm font-semibold text-slate-800">$1,299.00</td>
-                        <td class="px-5 py-3"><span class="badge-success">Completed</span></td>
-                        <td class="px-5 py-3 text-sm text-slate-400">Jan 12, 2025</td>
-                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -226,100 +261,148 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Revenue Chart - Area
-        var revenueOptions = {
+        // Data dari server
+        var loanData = @json($monthlyLoans ?? []);
+        var collectionData = @json($categoryCollection ?? []);
+        var popularBooks = @json($popularBooks ?? []);
+        
+        // Loan Chart - Bar
+        var loanOptions = {
             series: [{
-                name: 'Revenue',
-                data: [31, 40, 28, 51, 42, 59, 68, 74, 82, 91, 105, 120]
+                name: 'Peminjaman',
+                data: loanData.length ? loanData : [12, 19, 15, 25, 22, 30, 35, 42, 38, 45, 50, 48]
             }],
             chart: {
-                type: 'area',
+                type: 'bar',
                 height: 300,
                 toolbar: { show: false },
                 zoom: { enabled: false },
                 fontFamily: 'Inter, sans-serif'
             },
-            dataLabels: { enabled: false },
-            stroke: { curve: 'smooth', width: 2, colors: ['#6366f1'] },
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    shadeIntensity: 1,
-                    opacityFrom: 0.3,
-                    opacityTo: 0.05,
-                    colorStops: [
-                        { offset: 0, color: '#6366f1', opacity: 0.3 },
-                        { offset: 100, color: '#6366f1', opacity: 0.05 }
-                    ]
+            plotOptions: {
+                bar: {
+                    borderRadius: 8,
+                    columnWidth: '60%',
+                    colors: {
+                        ranges: [{
+                            from: 0,
+                            to: 100,
+                            color: '#6366f1'
+                        }]
+                    }
                 }
             },
+            dataLabels: { enabled: false },
+            stroke: { show: false },
             xaxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'],
                 labels: { style: { colors: '#94a3b8', fontSize: '10px' } },
                 axisBorder: { show: false },
                 axisTicks: { show: false }
             },
             yaxis: {
-                labels: { formatter: (val) => '$' + val + 'k', style: { colors: '#94a3b8', fontSize: '10px' } },
-                show: true
+                labels: { style: { colors: '#94a3b8', fontSize: '10px' } },
+                title: { text: 'Jumlah Peminjaman', style: { fontSize: '10px', color: '#94a3b8' } }
             },
             grid: { borderColor: '#f1f5f9', strokeDashArray: 4, show: true },
-            tooltip: { y: { formatter: (val) => '$' + val + 'k' } },
-            colors: ['#6366f1']
+            colors: ['#6366f1'],
+            tooltip: { y: { formatter: (val) => val + ' peminjaman' } }
         };
-        var revenueChart = new ApexCharts(document.querySelector("#revenueChart"), revenueOptions);
-        revenueChart.render();
+        var loanChart = new ApexCharts(document.querySelector("#loanChart"), loanOptions);
+        loanChart.render();
 
-        // Traffic Chart - Line
-        var trafficOptions = {
-            series: [
-                { name: 'Visitors', data: [1250, 1320, 1480, 1620, 1890, 2150, 2430], color: '#6366f1' },
-                { name: 'Page Views', data: [3200, 3500, 3900, 4300, 4900, 5600, 6200], color: '#f59e0b' }
-            ],
-            chart: { type: 'line', height: 300, toolbar: { show: false }, zoom: { enabled: false }, fontFamily: 'Inter, sans-serif' },
-            stroke: { curve: 'smooth', width: 2 },
-            markers: { size: 3, colors: ['#6366f1', '#f59e0b'], strokeColors: '#fff', strokeWidth: 2 },
-            xaxis: { categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], labels: { style: { colors: '#94a3b8', fontSize: '10px' } }, axisBorder: { show: false } },
-            yaxis: { labels: { style: { colors: '#94a3b8', fontSize: '10px' } } },
-            grid: { borderColor: '#f1f5f9', strokeDashArray: 4 },
-            legend: { position: 'top', horizontalAlign: 'right', labels: { colors: '#475569', useSeriesColors: false } },
-            tooltip: { shared: true }
+        // Collection Pie Chart
+        var collectionOptions = {
+            series: collectionData.length ? collectionData.map(function(c) { return c.total; }) : [45, 25, 15, 10, 5],
+            chart: { type: 'donut', height: 280, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
+            labels: collectionData.length ? collectionData.map(function(c) { return c.name; }) : ['Buku Pengayaan', 'Buku Referensi', 'Jurnal', 'Majalah', 'E-Book'],
+            colors: ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+            legend: { position: 'bottom', labels: { colors: '#475569', useSeriesColors: false } },
+            dataLabels: { enabled: false },
+            plotOptions: {
+                pie: {
+                    donut: { 
+                        size: '65%',
+                        labels: { 
+                            show: true, 
+                            total: { 
+                                show: true, 
+                                label: 'Total', 
+                                fontSize: '11px', 
+                                color: '#64748b', 
+                                formatter: function(w) {
+                                    var total = 0;
+                                    for (var i = 0; i < w.config.series.length; i++) {
+                                        total += w.config.series[i];
+                                    }
+                                    return total;
+                                }
+                            } 
+                        } 
+                    }
+                }
+            },
+            stroke: { show: false },
+            tooltip: { y: { formatter: function(val) { return val + ' koleksi'; } } }
         };
-        var trafficChart = new ApexCharts(document.querySelector("#trafficChart"), trafficOptions);
-        trafficChart.render();
+        var collectionChart = new ApexCharts(document.querySelector("#collectionChart"), collectionOptions);
+        collectionChart.render();
 
-        // Donut Chart
-        var donutOptions = {
-            series: [45, 35, 20],
+        // Status Donut Chart
+        var statusOptions = {
+            series: [{{ $borrowedCount ?? 35 }}, {{ $returnedCount ?? 45 }}, {{ $pendingCount ?? 20 }}],
             chart: { type: 'donut', height: 240, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
-            labels: ['Mobile', 'Desktop', 'Tablet'],
+            labels: ['Dipinjam', 'Dikembalikan', 'Menunggu'],
             colors: ['#6366f1', '#10b981', '#f59e0b'],
             legend: { show: false },
             dataLabels: { enabled: false },
             plotOptions: {
                 pie: {
-                    donut: { size: '70%', labels: { show: true, total: { show: true, label: 'Total', fontSize: '11px', color: '#64748b', formatter: () => '100%' } } }
+                    donut: { 
+                        size: '70%',
+                        labels: { 
+                            show: true, 
+                            total: { 
+                                show: true, 
+                                label: 'Total', 
+                                fontSize: '11px', 
+                                color: '#64748b',
+                                formatter: function(w) {
+                                    var total = 0;
+                                    for (var i = 0; i < w.config.series.length; i++) {
+                                        total += w.config.series[i];
+                                    }
+                                    return total;
+                                }
+                            } 
+                        }
+                    }
                 }
             },
             stroke: { show: false },
-            tooltip: { y: { formatter: (val) => val + '%' } }
+            tooltip: { y: { formatter: function(val) { return val + ' peminjaman'; } } }
         };
-        var donutChart = new ApexCharts(document.querySelector("#donutChart"), donutOptions);
-        donutChart.render();
+        var statusChart = new ApexCharts(document.querySelector("#statusDonutChart"), statusOptions);
+        statusChart.render();
 
-        // Horizontal Bar Chart
+        // Popular Books Horizontal Bar Chart
+        var bookTitles = popularBooks.length ? popularBooks.map(function(b) { 
+            return b.title.length > 20 ? b.title.substring(0, 20) + '...' : b.title; 
+        }) : ['Prinsip Dasar Keperawatan', 'Anatomi Manusia', 'Farmakologi Dasar', 'Etika Keperawatan', 'Keperawatan Anak'];
+        var bookCounts = popularBooks.length ? popularBooks.map(function(b) { return b.total_borrowed; }) : [45, 38, 32, 28, 25];
+        
         var barOptions = {
-            series: [{ data: [340, 280, 190, 120, 85] }],
-            chart: { type: 'bar', height: 260, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
+            series: [{ data: bookCounts }],
+            chart: { type: 'bar', height: 280, toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
             plotOptions: { bar: { borderRadius: 8, horizontal: true, barHeight: '35%', dataLabels: { position: 'top' } } },
-            dataLabels: { enabled: true, formatter: (val) => val + ' sold', offsetX: 10, style: { fontSize: '10px', colors: ['#475569'], fontWeight: '500' } },
-            xaxis: { categories: ['Smartphone Pro', 'Laptop Ultra', 'Headphone X', 'Smartwatch', 'Tablet Air'], labels: { style: { fontSize: '11px', colors: '#475569' } }, axisBorder: { show: false }, axisTicks: { show: false } },
+            dataLabels: { enabled: true, formatter: function(val) { return val + ' kali'; }, offsetX: 10, style: { fontSize: '10px', colors: ['#475569'], fontWeight: '500' } },
+            xaxis: { categories: bookTitles, labels: { style: { fontSize: '11px', colors: '#475569' } }, axisBorder: { show: false }, axisTicks: { show: false } },
             yaxis: { labels: { style: { fontSize: '11px', fontWeight: 500 } } },
             colors: ['#6366f1'],
             grid: { borderColor: '#f1f5f9', strokeDashArray: 4, xaxis: { lines: { show: true } } },
-            tooltip: { y: { formatter: (val) => val + ' units' } }
+            tooltip: { y: { formatter: function(val) { return val + ' kali dipinjam'; } } }
         };
-        var barChart = new ApexCharts(document.querySelector("#barChart"), barOptions);
+        var barChart = new ApexCharts(document.querySelector("#popularBooksChart"), barOptions);
         barChart.render();
     });
 </script>

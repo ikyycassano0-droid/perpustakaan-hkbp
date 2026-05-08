@@ -155,81 +155,107 @@ class ProfileController extends Controller
 
     // ================= ADMIN =================
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'type' => 'required',
-            'sub_type' => 'nullable',
-            'title' => 'required',
-            'order' => 'required|integer|min:1',
-        ]);
+public function store(Request $request)
+{
+    $request->validate([
+        'type' => 'required',
+        'sub_type' => 'nullable',
+        'title' => 'required',
+        'order' => 'required|integer|min:1',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+    ]);
 
-        $order = (int) $request->order;
+    $order = (int) $request->order;
+    if ($order < 1) $order = 1;
+    
+    $query = Profile::where('type', $request->type);
+    if ($request->sub_type) {
+        $query->where('sub_type', $request->sub_type);
+    } else {
+        $query->whereNull('sub_type');
+    }
+    $query->where('order', '>=', $order)->increment('order');
 
-        if ($order < 1) $order = 1;
-        $query = Profile::where('type', $request->type);
+    // Upload gambar
+    $imagePath = null;
+    if ($request->hasFile('image')) {
+        $image = $request->file('image');
+        $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9.]/', '_', $image->getClientOriginalName());
+        $imagePath = $image->storeAs('profiles', $filename, 'public');
+        
+        // Tambahkan debugging
+        \Log::info('Image uploaded: ' . $imagePath);
+    }
 
-        if ($request->sub_type) {
-            $query->where('sub_type', $request->sub_type);
+    Profile::create([
+        'type'        => $request->type,
+        'sub_type'    => $request->sub_type,
+        'title'       => $request->title,
+        'description' => $request->description,
+        'jabatan'     => $request->jabatan,
+        'icon'        => $request->icon,
+        'image'       => $imagePath,
+        'order'       => $order,
+        'active'      => $request->has('active') ? true : true,
+        'created_by'  => session('user_id'),
+    ]);
+
+    return back()->with('success', 'Data berhasil ditambahkan');
+}
+
+public function update(Request $request, $id)
+{
+    $item = Profile::findOrFail($id);
+
+    $request->validate([
+        'order' => 'required|integer|min:1',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+    ]);
+
+    $newOrder = (int) $request->order;
+    $oldOrder = $item->order;
+
+    if ($newOrder != $oldOrder) {
+        if ($newOrder < $oldOrder) {
+            Profile::where('type', $item->type)
+                ->where('sub_type', $item->sub_type)
+                ->whereBetween('order', [$newOrder, $oldOrder - 1])
+                ->increment('order');
         } else {
-            $query->whereNull('sub_type');
+            Profile::where('type', $item->type)
+                ->where('sub_type', $item->sub_type)
+                ->whereBetween('order', [$oldOrder + 1, $newOrder])
+                ->decrement('order');
         }
-
-        // SHIFT
-        $query->where('order', '>=', $order)->increment('order');
-
-        Profile::create([
-            'type'        => $request->type,
-            'sub_type'    => $request->sub_type,
-            'title'       => $request->title,
-            'description' => $request->description,
-            'jabatan'     => $request->jabatan,
-            'icon'        => $request->icon,
-            'order'       => $order,
-            'active'      => true,
-            'created_by'  => session('user_id'),
-        ]);
-
-        return back()->with('success', 'Data berhasil ditambahkan');
     }
 
-    public function update(Request $request, $id)
-    {
-        $item = Profile::findOrFail($id);
-
-        $request->validate([
-            'order' => 'required|integer|min:1',
-        ]);
-
-        $newOrder = (int) $request->order;
-        $oldOrder = $item->order;
-
-        if ($newOrder < 1) $newOrder = 1;
-
-        if ($newOrder != $oldOrder) {
-
-            if ($newOrder < $oldOrder) {
-                // NAIK → geser ke bawah
-                Profile::where('type', $item->type)
-                    ->where('sub_type', $item->sub_type)
-                    ->whereBetween('order', [$newOrder, $oldOrder - 1])
-                    ->increment('order');
-            } else {
-                // TURUN → geser ke atas
-                Profile::where('type', $item->type)
-                    ->where('sub_type', $item->sub_type)
-                    ->whereBetween('order', [$oldOrder + 1, $newOrder])
-                    ->decrement('order');
-            }
+    // Upload gambar baru
+    $imagePath = $item->image;
+    if ($request->hasFile('image')) {
+        // Hapus gambar lama
+        if ($item->image && Storage::disk('public')->exists($item->image)) {
+            Storage::disk('public')->delete($item->image);
         }
-
-        $item->update([
-            'title' => $request->title,
-            'order' => $newOrder,
-        ]);
-
-        return back()->with('success', 'Data berhasil diupdate');
+        
+        $image = $request->file('image');
+        $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9.]/', '_', $image->getClientOriginalName());
+        $imagePath = $image->storeAs('profiles', $filename, 'public');
+        
+        \Log::info('Image updated: ' . $imagePath);
     }
+
+    $item->update([
+        'title'       => $request->title,
+        'description' => $request->description,
+        'jabatan'     => $request->jabatan,
+        'icon'        => $request->icon,
+        'image'       => $imagePath,
+        'order'       => $newOrder,
+        'active'      => $request->has('active') ? true : false,
+    ]);
+
+    return back()->with('success', 'Data berhasil diupdate');
+}
 
     public function destroy($id)
     {

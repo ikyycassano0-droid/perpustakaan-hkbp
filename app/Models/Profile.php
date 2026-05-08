@@ -28,4 +28,12 @@ class Profile extends Model
     protected $casts = [
         'active' => 'boolean'
     ];
+
+        public function getImageUrlAttribute()
+    {
+        if ($this->image) {
+            return asset('storage/' . $this->image);
+        }
+        return null;
+    }
 }

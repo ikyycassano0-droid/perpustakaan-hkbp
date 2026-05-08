@@ -1,4 +1,4 @@
-@extends('user.component.main')
+@extends('user.component.master')
 
 @section('title','Inbox')
 
