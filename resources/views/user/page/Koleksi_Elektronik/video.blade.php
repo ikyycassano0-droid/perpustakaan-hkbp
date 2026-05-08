@@ -156,6 +156,9 @@
     .video-thumbnail {
         position: relative;
         cursor: pointer;
+        min-height: 280px;
+        background-size: cover;
+        background-position: center;
     }
 
     .play-button {
@@ -197,17 +200,63 @@
         overflow: hidden;
         transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         border: 1px solid rgba(99, 102, 241, 0.3);
+        margin-bottom: 1rem;
     }
 
     .video-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-3px);
         border-color: rgba(99, 102, 241, 0.7);
         box-shadow: 0 15px 30px -12px rgba(99, 102, 241, 0.3);
     }
 
     .thumbnail-small {
         position: relative;
-        height: 140px;
+        height: 160px;
+        background-size: cover;
+        background-position: center;
+        cursor: pointer;
+    }
+
+    .play-button-small {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 45px;
+        height: 45px;
+        background: rgba(99, 102, 241, 0.85);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .play-button-small:hover {
+        transform: translate(-50%, -50%) scale(1.1);
+        background: #6366f1;
+    }
+
+    /* Video Card Special */
+    .video-card-special {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.05));
+        border: 1px solid rgba(99, 102, 241, 0.4);
+        border-radius: 1.5rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+    }
+
+    .video-card-special:hover {
+        transform: translateY(-5px);
+        border-color: rgba(99, 102, 241, 0.7);
+        box-shadow: 0 20px 35px -12px rgba(99, 102, 241, 0.3);
+    }
+
+    .thumbnail-special {
+        position: relative;
+        height: 200px;
         background-size: cover;
         background-position: center;
         cursor: pointer;
@@ -246,31 +295,39 @@
     /* Buttons */
     .btn-primary {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        padding: 10px 24px;
+        padding: 8px 18px;
         border-radius: 40px;
         font-weight: 600;
         transition: all 0.3s ease;
         border: none;
         cursor: pointer;
         color: white;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
     }
 
     .btn-primary:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+        transform: scale(1.02);
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
     }
 
     .btn-outline {
         background: transparent;
-        padding: 8px 20px;
+        padding: 7px 16px;
         border-radius: 30px;
         font-weight: 500;
         transition: all 0.3s ease;
         border: 1px solid rgba(99, 102, 241, 0.5);
         cursor: pointer;
         color: #c7d2fe;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
     }
 
     .btn-outline:hover {
@@ -283,8 +340,11 @@
         border: none;
         color: #a5b4fc;
         cursor: pointer;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
     }
 
     .btn-link:hover {
@@ -311,6 +371,35 @@
         transform: translateX(0);
     }
 
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 2rem;
+    }
+
+    .pagination a, .pagination span {
+        padding: 8px 14px;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        border-radius: 8px;
+        color: #c7d2fe;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .pagination a:hover {
+        background: rgba(99, 102, 241, 0.2);
+        border-color: #6366f1;
+    }
+
+    .pagination .active span {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        border-color: transparent;
+        color: white;
+    }
+
     /* Section spacing */
     .section {
         margin-top: 40px;
@@ -324,82 +413,43 @@
         .thumbnail-small {
             height: 180px;
         }
+        .btn-primary, .btn-outline {
+            padding: 5px 12px;
+            font-size: 0.7rem;
+        }
     }
 
-    /* ============================================
-       CSS KHUSUS UNTUK HALAMAN TUTORIAL & SIMULASI KLINIS
-    ============================================ */
-
-    /* Style untuk special card (video pertama di list) */
-    .video-card-special {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.05));
-        border: 1px solid rgba(99, 102, 241, 0.4);
-        border-radius: 1.5rem;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        margin-bottom: 1rem;
+    /* Fade Up Animation */
+    .fade-up {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
     }
 
-    .video-card-special:hover {
-        transform: translateY(-5px);
-        border-color: rgba(99, 102, 241, 0.7);
-        box-shadow: 0 20px 35px -12px rgba(99, 102, 241, 0.3);
+    .fade-up.show {
+        opacity: 1;
+        transform: translateY(0);
     }
-
-    .thumbnail-special {
-        position: relative;
-        height: 200px;
-        background-size: cover;
-        background-position: center;
-        cursor: pointer;
-    }
-
-    /* Style untuk card biasa (tidak berubah) */
-    .video-card {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(12px);
-        border-radius: 1.25rem;
-        overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-        border: 1px solid rgba(99, 102, 241, 0.3);
-        margin-bottom: 1rem;
-    }
-
-    .video-card:hover {
-        transform: translateY(-5px);
-        border-color: rgba(99, 102, 241, 0.7);
-        box-shadow: 0 15px 30px -12px rgba(99, 102, 241, 0.3);
-    }
-
-    .thumbnail-small {
-        position: relative;
-        height: 140px;
-        background-size: cover;
-        background-position: center;
-        cursor: pointer;
-    }
-
-    /* (kode lainnya tetap sama seperti yang sudah Anda punya) */
 </style>
 @endpush
 
 @section('content')
 <div class="main-content">
-    <!-- HERO SECTION (tidak berubah) -->
+    <!-- HERO SECTION -->
     <section class="pt-28 pb-8 text-center px-5">
         <div class="inline-block glass-card px-5 py-2 rounded-full mb-5 fade-up">
             <span class="text-indigo-300 text-sm font-medium tracking-wide">🎥 AKPER HKBP BALIGE</span>
         </div>
         <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight depth-2 fade-up">
-    Tutorial & <br>
-    <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent glow-text">Simulasi Klinis</span>
-</h1>
+            Tutorial & <br>
+            <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent glow-text">Simulasi Klinis</span>
+        </h1>
         <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
             Pusat pembelajaran visual untuk penggunaan prosedur keperawatan berstandar medis tinggi. Pelajari teknik terbaik dari praktisi ahli.
         </p>
     </section>
 
-    <!-- STATISTICS SECTION (tidak berubah) -->
+    <!-- STATISTICS SECTION -->
     <section class="section max-w-6xl mx-auto px-5">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 fade-up">
             <div class="stat-card">
@@ -431,7 +481,7 @@
             <div class="neon-inner">
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
-                    <!-- SIDEBAR (tidak berubah) -->
+                    <!-- SIDEBAR -->
                     <div class="lg:col-span-1">
                         <div class="sidebar-menu">
                             <div class="sidebar-title">📂 Kategori Video</div>
@@ -439,12 +489,6 @@
                             @foreach($categories as $cat)
                                 <div class="sidebar-item" data-category="{{ $cat->id }}">{{ $cat->name }}</div>
                             @endforeach
-                        </div>
-                        <div class="sidebar-menu mt-6">
-                            <div class="sidebar-title">📅 Tahun Rilis</div>
-                            <div class="sidebar-item" data-year="2024">2024</div>
-                            <div class="sidebar-item" data-year="2023">2023</div>
-                            <div class="sidebar-item" data-year="2022">2022</div>
                         </div>
                     </div>
 
@@ -456,19 +500,20 @@
                             <input type="text" id="searchInput" class="search-input" placeholder="🔍 Cari prosedur atau topik simulasi...">
                         </div>
 
-                        <!-- FEATURED VIDEO (tidak berubah) -->
+                        <!-- FEATURED VIDEO -->
                         @php $featured = $videos->where('is_featured', true)->first(); @endphp
                         @if($featured)
                         <div class="mb-8">
                             <div class="featured-video">
                                 <div class="grid md:grid-cols-2 gap-0">
-                                    <div class="video-thumbnail relative">
-                                        <img src="{{ $featured->thumbnail ? Storage::url($featured->thumbnail) : '/images/default.jpg' }}">
-                                        <div class="play-button" onclick="playVideo('{{ $featured->video_url }}', '{{ addslashes($featured->title) }}')">▶</div>
+                                    <div class="video-thumbnail" style="background-image: url('{{ $featured->thumbnail ? asset('storage/'.$featured->thumbnail) : '/images/default-video.jpg' }}'); min-height: 280px;">
+                                        <div class="play-button" onclick="playVideo('{{ $featured->video_url }}', '{{ addslashes($featured->title) }}')">
+                                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                        </div>
                                         <div class="duration-badge">{{ $featured->duration ?? '00:00' }}</div>
                                     </div>
                                     <div class="p-6 flex flex-col justify-center">
-                                        <div class="flex items-center gap-2 mb-3">
+                                        <div class="flex items-center gap-2 mb-3 flex-wrap">
                                             <span class="cat-badge cat-dasar">{{ $featured->category->name ?? 'Prosedur Dasar' }}</span>
                                             <span class="text-xs text-gray-500">👁️ {{ number_format($featured->views ?? 0) }} tontonan</span>
                                             <span class="text-xs text-gray-500">📅 {{ $featured->created_at->diffForHumans() }}</span>
@@ -476,10 +521,16 @@
                                         <h2 class="text-xl font-bold text-indigo-200 mb-2">{{ $featured->title }}</h2>
                                         <p class="text-gray-400 text-sm mb-3">{{ Str::limit($featured->description, 120) }}</p>
                                         <p class="text-xs text-indigo-300 mb-4">👨‍⚕️ Narasumber: {{ $featured->expert ?? 'Tim AKPER HKBP' }}</p>
-                                        <div class="flex gap-3">
-                                            <button class="btn-primary"onclick="playVideo('{{ Storage::url($featured->file_url) }}', '{{ addslashes($featured->title) }}')">▶ Putar Sekarang</button>
-                                            <button class="btn-outline" onclick="saveVideo({{ $featured->id }})">💾 Simpan</button>
-                                            <button class="btn-outline" onclick="saveVideo({{ $featured->id }})">Lihat detail</button>
+                                        <div class="flex gap-3 flex-wrap">
+                                            <button class="btn-primary" onclick="playVideo('{{ $featured->video_url }}', '{{ addslashes($featured->title) }}')">
+                                                ▶ Putar Sekarang
+                                            </button>
+                                            <a href="{{ route('final_project.detail', $item->id) }}" class="btn-outline">
+                                                📄 Lihat Detail
+                                            </a>
+                                            <button class="btn-outline" onclick="saveVideo({{ $featured->id }}, '{{ addslashes($featured->title) }}')">
+                                                💾 Simpan
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -489,52 +540,21 @@
 
                         <!-- VIDEO LIST -->
                         <h3 class="text-indigo-200 font-semibold mb-3">📋 Semua Video Tutorial</h3>
-                        <div class="space-y-4" id="videoList">
+                        <div id="videoList">
                             @php
-                                $regularVideos = $videos->where('is_featured', false)->values();
-                                $firstSpecial = $regularVideos->isNotEmpty() ? $regularVideos->shift() : null;
+                                $regularVideos = $videos->where('is_featured', false);
                             @endphp
 
-                            <!-- CARD PERTAMA (SPECIAL) -->
-                            @if($firstSpecial)
-                            <div class="video-card-special fade-up"
-                                 data-category="{{ $firstSpecial->category_id }}"
-                                 data-year="{{ $firstSpecial->created_at->format('Y') }}"
-                                 data-title="{{ strtolower($firstSpecial->title) }}"
-                                 data-description="{{ strtolower($firstSpecial->description) }}">
-                                <div class="grid md:grid-cols-3 gap-0">
-                                    <div class="thumbnail-special md:col-span-1" style="background-image: url('{{ asset('storage/'.$firstSpecial->thumbnail) }}');">
-                                        <div class="play-button-small" style="position: absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:50px; height:50px; background:rgba(99,102,241,0.8); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="playVideo('{{ $firstSpecial->video_url }}', '{{ addslashes($firstSpecial->title) }}')">▶</div>
-                                        <div class="duration-badge">{{ $firstSpecial->duration ?? '00:00' }}</div>
-                                    </div>
-                                    <div class="md:col-span-2 p-5">
-                                        <div class="flex items-center gap-2 flex-wrap mb-2">
-                                            <span class="cat-badge cat-dasar">{{ $firstSpecial->category->name ?? 'Prosedur Dasar' }}</span>
-                                            <span class="text-xs text-gray-500">👁️ {{ number_format($firstSpecial->views ?? 0) }} tontonan</span>
-                                            <span class="text-xs text-gray-500">📅 {{ $firstSpecial->created_at->diffForHumans() }}</span>
-                                            @if($firstSpecial->has_quiz)<span class="text-xs text-green-400">📝 Ada Kuis</span>@endif
-                                        </div>
-                                        <h3 class="font-bold text-indigo-200 text-lg mb-2">{{ $firstSpecial->title }}</h3>
-                                        <p class="text-gray-400 text-sm mb-3">{{ Str::limit($firstSpecial->description, 150) }}</p>
-                                        <div class="flex gap-3">
-                                            <button class="btn-primary text-sm py-1.5 px-4" onclick="playVideo('{{ $firstSpecial->video_url }}', '{{ addslashes($firstSpecial->title) }}')">▶ Putar Sekarang</button>
-                                            <button class="btn-outline text-sm py-1.5 px-4" onclick="saveVideo({{ $firstSpecial->id }})">💾 Simpan</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            @endif
-
-                            <!-- CARD BIASA (SISA VIDEO) -->
                             @forelse($regularVideos as $item)
                             <div class="video-card fade-up"
                                  data-category="{{ $item->category_id }}"
-                                 data-year="{{ $item->created_at->format('Y') }}"
                                  data-title="{{ strtolower($item->title) }}"
                                  data-description="{{ strtolower($item->description) }}">
                                 <div class="flex flex-col md:flex-row">
-                                    <div class="thumbnail-small md:w-64" style="background-image: url('{{ asset('storage/'.$item->thumbnail) }}');">
-                                        <div class="play-button-small" onclick="playVideo('{{ $item->video_url }}', '{{ addslashes($item->title) }}')">▶</div>
+                                    <div class="thumbnail-small md:w-64" style="background-image: url('{{ $item->thumbnail ? asset('storage/'.$item->thumbnail) : '/images/default-video.jpg' }}');">
+                                        <div class="play-button-small" onclick="playVideo('{{ $item->video_url }}', '{{ addslashes($item->title) }}')">
+                                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                        </div>
                                         <div class="duration-badge">{{ $item->duration ?? '00:00' }}</div>
                                     </div>
                                     <div class="flex-1 p-4">
@@ -545,16 +565,23 @@
                                             @if($item->has_quiz)<span class="text-xs text-green-400">📝 Ada Kuis</span>@endif
                                         </div>
                                         <h3 class="font-semibold text-indigo-200 mb-1">{{ $item->title }}</h3>
-                                        <p class="text-gray-400 text-sm mb-3">{{ Str::limit($item->description, 100) }}</p>
-                                        <div class="flex gap-2">
-                                            <button class="btn-link text-sm" onclick="playVideo('{{ $item->video_url }}', '{{ addslashes($item->title) }}')">▶ Putar →</button>
-                                            <button class="btn-link text-sm" onclick="saveVideo({{ $item->id }})">💾 Simpan</button>
+                                        <p class="text-gray-400 text-sm mb-3 line-clamp-2">{{ Str::limit($item->description ?? '', 100) }}</p>
+                                        <div class="flex gap-3 flex-wrap">
+                                            <a href="{{ route('final_project.detail', $item->id) }}" class="btn-link">
+                                                📄 Lihat Detail →
+                                            </a>
+                                            <button class="btn-link" onclick="playVideo('{{ $item->video_url }}', '{{ addslashes($item->title) }}')">
+                                                ▶ Putar
+                                            </button>
+                                            <button class="btn-link" onclick="saveVideo({{ $item->id }}, '{{ addslashes($item->title) }}')">
+                                                💾 Simpan
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             @empty
-                                @if(!$firstSpecial)
+                                @if(!$featured)
                                 <div class="text-center py-12">
                                     <div class="text-5xl mb-3">🎬</div>
                                     <p class="text-gray-400">Tidak ada video yang ditemukan</p>
@@ -594,358 +621,155 @@
 
 @push('scripts')
 <script>
-    // Render functions
-    let currentLimit = 5;
-    let currentCategory = 'all';
-    let searchQuery = '';
-
-    function getCategoryClass(category) {
-        const classes = {
-            'dasar': 'cat-dasar',
-            'gawat': 'cat-gawat',
-            'bedah': 'cat-bedah',
-            'etika': 'cat-etika',
-            'simulasi': 'cat-dasar'
-        };
-        return classes[category] || 'cat-dasar';
-    }
-
-    function renderFeaturedVideo() {
-        const featured = videosData.find(v => v.isFeatured === true);
-        const container = document.getElementById('featuredVideo');
-        if (featured) {
-            container.innerHTML = `
-                <div class="featured-video">
-                    <div class="grid md:grid-cols-2 gap-0">
-                        <div class="video-thumbnail">
-                            <img src="${featured.thumbnail}" alt="${featured.title}" class="w-full h-full object-cover" style="min-height: 280px;">
-                            <div class="play-button" onclick="playVideo(${featured.id})">
-                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                            </div>
-                            <div class="duration-badge">${featured.duration}</div>
-                        </div>
-                        <div class="p-6 flex flex-col justify-center">
-                            <div class="flex items-center gap-2 mb-3">
-                                <span class="cat-badge ${getCategoryClass(featured.category)}">${featured.categoryName}</span>
-                                <span class="text-xs text-gray-500">👁️ ${featured.views.toLocaleString()} tontonan</span>
-                                <span class="text-xs text-gray-500">📅 ${featured.date}</span>
-                            </div>
-                            <h2 class="text-xl font-bold text-indigo-200 mb-2">${featured.title}</h2>
-                            <p class="text-gray-400 text-sm mb-3">${featured.description}</p>
-                            <p class="text-xs text-indigo-300 mb-4">👨‍⚕️ Narasumber: ${featured.expert}</p>
-                            <div class="flex gap-3">
-                                <button class="btn-primary" onclick="playVideo(${featured.id})">
-                                    ▶ Putar Sekarang
-                                </button>
-                                <button class="btn-outline" onclick="saveVideo(${featured.id})">
-                                    💾 Simpan
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-    }
-
-    function renderVideoList() {
-        let filteredData = [...videosData];
-
-        // Filter by search
-        if (searchQuery) {
-            filteredData = filteredData.filter(item =>
-                item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                item.description.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-        }
-
-        // Filter by category
-        if (currentCategory !== 'all') {
-            filteredData = filteredData.filter(item => item.category === currentCategory);
-        }
-
-        // Exclude featured video from list
-        filteredData = filteredData.filter(v => v.isFeatured !== true);
-
-        // Limit items
-        const limitedData = filteredData.slice(0, currentLimit);
-
-        // Generate video list
-        const container = document.getElementById('videoList');
-        container.innerHTML = '';
-
-        if (limitedData.length === 0) {
-            container.innerHTML = `
-                <div class="text-center py-12">
-                    <div class="text-5xl mb-3">🎬</div>
-                    <p class="text-gray-400">Tidak ada video yang ditemukan</p>
-                </div>
-            `;
-        } else {
-            limitedData.forEach(video => {
-                const card = document.createElement('div');
-                card.className = 'video-card fade-up';
-                card.innerHTML = `
-                    <div class="flex flex-col md:flex-row">
-                        <div class="thumbnail-small md:w-64" style="background-image: url('${video.thumbnail}');">
-                            <div class="play-button-small" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: rgba(99,102,241,0.8); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="playVideo(${video.id})">
-                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                            </div>
-                            <div class="duration-badge">${video.duration}</div>
-                        </div>
-                        <div class="flex-1 p-4">
-                            <div class="flex items-center gap-2 flex-wrap mb-2">
-                                <span class="cat-badge ${getCategoryClass(video.category)}">${video.categoryName}</span>
-                                <span class="text-xs text-gray-500">👁️ ${video.views.toLocaleString()} tontonan</span>
-                                <span class="text-xs text-gray-500">📅 ${video.date}</span>
-                                ${video.isNew ? '<span class="text-xs text-yellow-400">🆕 Baru</span>' : ''}
-                                ${video.isPopular ? '<span class="text-xs text-orange-400">⭐ Populer</span>' : ''}
-                                ${video.hasQuiz ? '<span class="text-xs text-green-400">📝 Ada Kuis</span>' : ''}
-                            </div>
-                            <h3 class="font-semibold text-indigo-200 mb-1">${video.title}</h3>
-                            <p class="text-gray-400 text-sm mb-3">${video.description.substring(0, 100)}...</p>
-                            <div class="flex gap-2">
-                                <button class="btn-link text-sm" onclick="playVideo(${video.id})">▶ Putar →</button>
-                                <button class="btn-link text-sm" onclick="saveVideo(${video.id})">💾 Simpan</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        // Hide load more button if no more items
-        const loadMoreContainer = document.getElementById('loadMoreContainer');
-        if (filteredData.length <= currentLimit) {
-            loadMoreContainer.style.display = 'none';
-        } else {
-            loadMoreContainer.style.display = 'flex';
-        }
-
-        // Add fade-up observer
-        document.querySelectorAll('.video-card').forEach(el => {
-            if (!el.classList.contains('show')) {
-                setTimeout(() => el.classList.add('show'), 50);
-            }
-        });
-    }
-
-    function loadMore() {
-        currentLimit += 3;
-        renderVideoList();
-    }
-
-    function playVideo(url, title) {
-    if (url.includes('youtube.com/watch')) {
+// ================= PLAY VIDEO =================
+function playVideo(url, title) {
+    let videoUrl = url;
+    
+    // Handle YouTube URL
+    if (url && url.includes('youtube.com/watch')) {
         const videoId = url.split('v=')[1];
-        url = `https://www.youtube.com/embed/${videoId}`;
+        videoUrl = `https://www.youtube.com/embed/${videoId}`;
     }
-
+    
+    // Create modal
     let modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+    `;
+    modal.onclick = function(e) {
+        if (e.target === modal) modal.remove();
+    };
+    
     modal.innerHTML = `
-        <div style="
-            position:fixed;
-            top:0; left:0;
-            width:100%; height:100%;
-            background:rgba(0,0,0,0.8);
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            z-index:9999;
-        " onclick="this.remove()">
-            <div style="width:80%; max-width:800px;" onclick="event.stopPropagation()">
-                <iframe width="100%" height="450"
-                    src="${url}"
-                    frameborder="0"
-                    allow="autoplay; encrypted-media"
-                    allowfullscreen>
-                </iframe>
+        <div style="width: 90%; max-width: 1000px; position: relative;">
+            <button onclick="this.closest('div').parentElement.remove()" style="
+                position: absolute;
+                top: -40px;
+                right: 0;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 28px;
+                cursor: pointer;
+            ">✕</button>
+            <video width="100%" controls autoplay style="border-radius: 16px;">
+                <source src="${videoUrl}" type="video/mp4">
+                Browser Anda tidak mendukung video.
+            </video>
+            <div style="margin-top: 16px; color: white; text-align: center;">
+                <h3>${title}</h3>
             </div>
         </div>
     `;
+    
     document.body.appendChild(modal);
 }
 
-    function saveVideo(id) {
-        const video = videosData.find(v => v.id === id);
-        if (video) {
-            showNotification(`💾 "${video.title}" telah disimpan ke playlist Anda.`, 'success');
-        }
+// ================= SAVE VIDEO =================
+function saveVideo(id, title) {
+    let savedVideos = JSON.parse(localStorage.getItem('savedVideos') || '[]');
+    
+    if (!savedVideos.includes(id)) {
+        savedVideos.push(id);
+        localStorage.setItem('savedVideos', JSON.stringify(savedVideos));
+        showNotification(`✅ "${title}" telah disimpan ke playlist Anda.`, 'success');
+    } else {
+        showNotification(`ℹ️ "${title}" sudah ada di playlist Anda.`, 'info');
     }
+}
 
-    function setReminder() {
-        showNotification(`🔔 Pengingat untuk siaran langsung Bedah Klinis telah disetel.`, 'success');
-    }
+// ================= SET REMINDER =================
+function setReminder() {
+    showNotification(`🔔 Pengingat untuk siaran langsung Bedah Klinis telah disetel.`, 'success');
+}
 
-    // Filter event listeners
-    document.querySelectorAll('.sidebar-item[data-category]').forEach(item => {
-        item.addEventListener('click', (e) => {
-            const category = e.target.getAttribute('data-category');
-            currentCategory = category;
-            currentLimit = 5;
-
-            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-            e.target.classList.add('active');
-
-            renderVideoList();
-        });
-    });
-
-    // Search event
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-        searchQuery = e.target.value;
-        currentLimit = 5;
-        renderVideoList();
-    });
-
-    // Notification system
-    function showNotification(message, type = 'success') {
-        const notification = document.createElement('div');
-        notification.className = 'notification';
-        notification.innerHTML = `
-            <div class="flex items-center gap-2">
-                <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
-                <span>${message}</span>
-            </div>
-        `;
-        document.body.appendChild(notification);
-        setTimeout(() => notification.classList.add('show'), 10);
-        setTimeout(() => {
-            notification.classList.remove('show');
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
-    }
-
-    // ==========================
-    // PARTICLE ENGINE
-    // ==========================
-    const canvas = document.getElementById('particleCanvas');
-    let ctx = canvas.getContext('2d');
-    let particles = [];
-    let animationId = null;
-
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-
-    function initParticles() {
-        const particleCount = 80;
-        particles = [];
-        for (let i = 0; i < particleCount; i++) {
-            particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                dx: (Math.random() - 0.5) * 0.6,
-                dy: (Math.random() - 0.5) * 0.6,
-                r: Math.random() * 2.5 + 1,
-                opacity: Math.random() * 0.5 + 0.2
-            });
-        }
-    }
-
-    function drawParticles() {
-        if (!ctx) return;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        particles.forEach(p => {
-            p.x += p.dx;
-            p.y += p.dy;
-
-            if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-            if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(99, 102, 241, ${p.opacity})`;
-            ctx.fill();
-        });
-
-        animationId = requestAnimationFrame(drawParticles);
-    }
-
-    function startParticles() {
-        if (animationId) cancelAnimationFrame(animationId);
-        resizeCanvas();
-        initParticles();
-        drawParticles();
-    }
-
-    window.addEventListener('resize', () => {
-        resizeCanvas();
-        initParticles();
-    });
-
-    startParticles();
-
-    // ==========================
-    // CURSOR GLOW
-    // ==========================
-    const cursorGlow = document.getElementById('cursorGlow');
-    if (cursorGlow) {
-        document.addEventListener('mousemove', (e) => {
-            cursorGlow.style.left = e.clientX + 'px';
-            cursorGlow.style.top = e.clientY + 'px';
-        });
-        document.addEventListener('mouseleave', () => {
-            cursorGlow.style.opacity = '0';
-        });
-        document.addEventListener('mouseenter', () => {
-            cursorGlow.style.opacity = '1';
-        });
-    }
-
-    // ==========================
-    // FADE-UP INTERSECTION OBSERVER
-    // ==========================
-    const fadeElements = document.querySelectorAll('.fade-up');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('show');
-                observer.unobserve(entry.target);
+// ================= FILTER & SEARCH =================
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const sidebarItems = document.querySelectorAll('.sidebar-item[data-category]');
+    const videoCards = document.querySelectorAll('.video-card');
+    
+    function filterVideos() {
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+        const activeCategory = document.querySelector('.sidebar-item.active[data-category]');
+        const categoryId = activeCategory ? activeCategory.getAttribute('data-category') : 'all';
+        
+        videoCards.forEach(card => {
+            const cardCategory = card.getAttribute('data-category');
+            const cardTitle = card.getAttribute('data-title') || '';
+            const cardDesc = card.getAttribute('data-description') || '';
+            
+            const matchCategory = categoryId === 'all' || cardCategory === categoryId;
+            const matchSearch = searchTerm === '' || cardTitle.includes(searchTerm) || cardDesc.includes(searchTerm);
+            
+            if (matchCategory && matchSearch) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
             }
         });
-    }, { threshold: 0.1 });
-    fadeElements.forEach(el => observer.observe(el));
-
-    // ==========================
-    // 3D TILT EFFECT
-    // ==========================
-    const tiltCards = document.querySelectorAll('.tilt-card');
-    tiltCards.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            const rotateX = (y - centerY) / 20;
-            const rotateY = (x - centerX) / 20;
-            card.style.transform = `perspective(1200px) rotateX(${-rotateX}deg) rotateY(${rotateY}deg) scale(1.01)`;
-        });
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = `perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)`;
+    }
+    
+    // Search event
+    if (searchInput) {
+        searchInput.addEventListener('input', filterVideos);
+    }
+    
+    // Category filter
+    sidebarItems.forEach(item => {
+        item.addEventListener('click', function() {
+            sidebarItems.forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            filterVideos();
         });
     });
+});
 
-    // ==========================
-    // PARALLAX EFFECT
-    // ==========================
-    window.addEventListener('scroll', () => {
-        const heroTitle = document.querySelector('.title-main');
-        if (heroTitle) {
-            const scrollY = window.scrollY;
-            heroTitle.style.transform = `translateY(${scrollY * 0.03}px)`;
+// ================= NOTIFICATION =================
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+    notification.innerHTML = `${icon} ${message}`;
+    
+    if (type === 'error') {
+        notification.style.borderColor = '#ef4444';
+    }
+    
+    document.body.appendChild(notification);
+    setTimeout(() => notification.classList.add('show'), 10);
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// ================= FADE UP ANIMATION =================
+const fadeElements = document.querySelectorAll('.fade-up');
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('show');
+            observer.unobserve(entry.target);
         }
     });
+}, { threshold: 0.1 });
 
-    // Make functions global
-    window.playVideo = playVideo;
-    window.saveVideo = saveVideo;
-    window.setReminder = setReminder;
-    window.loadMore = loadMore;
+fadeElements.forEach(el => observer.observe(el));
 
+// ================= GLOBAL FUNCTIONS =================
+window.playVideo = playVideo;
+window.saveVideo = saveVideo;
+window.setReminder = setReminder;
+window.showNotification = showNotification;
 </script>
 @endpush
