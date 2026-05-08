@@ -369,7 +369,7 @@
 
 <div class="main-content">
 
-```
+
 <!-- HERO SECTION -->
 <section class="pt-28 pb-12 text-center px-5">
     <div class="inline-block glass-card px-5 py-1.5 rounded-full mb-5 fade-up">
