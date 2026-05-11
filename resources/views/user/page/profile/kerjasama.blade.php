@@ -282,16 +282,11 @@
                         <h2 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-300 to-purple-300 bg-clip-text text-transparent mb-3">
                             Jaringan Mitra Strategis
                         </h2>
-
-                        {{-- AMBIL DARI DATABASE --}}
-                        @php
-                            $desc = $kerjasama->first();
-                        @endphp
-
                         <p class="text-gray-300 leading-relaxed">
-                            {{ $desc->description ?? 'Belum ada deskripsi kerjasama' }}
+                            Melalui kerjasama yang berkelanjutan, Perpustakaan AKPER HKBP Balige berkomitmen untuk meningkatkan
+                            akses informasi, sumber daya digital, dan program pengembangan koleksi bersama institusi pendidikan
+                            tinggi, asosiasi profesi, dan lembaga kesehatan nasional maupun internasional.
                         </p>
-
                     </div>
                 </div>
             </div>

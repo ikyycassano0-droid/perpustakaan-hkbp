@@ -8,13 +8,13 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
+
     <!-- ApexCharts -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    
+
     <!-- Google Fonts: Inter Only -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
 
@@ -22,23 +22,23 @@
         * {
             font-family: 'Inter', sans-serif;
         }
-        
+
         body {
             background: #0f172a;
         }
-        
+
         /* Sidebar - Solid Dark Elegant */
         .sidebar-dark {
             background: #0f172a;
             border-right: 1px solid #1e293b;
         }
-        
+
         /* Navbar Clean */
         .navbar-clean {
             background: #ffffff;
             border-bottom: 1px solid #e2e8f0;
         }
-        
+
         /* Card Modern */
         .card-modern {
             background: #ffffff;
@@ -47,100 +47,100 @@
             transition: all 0.2s ease;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        
+
         .card-modern:hover {
             box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08);
             border-color: #e2e8f0;
         }
-        
+
         /* Menu Item Minimal */
         .menu-item-minimal {
             transition: all 0.2s ease;
             border-radius: 12px;
             color: #94a3b8;
         }
-        
+
         .menu-item-minimal:hover {
             background: #1e293b;
             color: #ffffff;
         }
-        
+
         .menu-item-minimal.active {
             background: #1e293b;
             color: #ffffff;
         }
-        
+
         .menu-item-minimal.active i {
             color: #3b82f6;
         }
-        
+
         /* Submenu styling */
         .submenu {
             margin-left: 28px;
             padding-left: 12px;
             border-left: 1px solid #1e293b;
         }
-        
+
         .submenu-item {
             transition: all 0.2s ease;
             border-radius: 10px;
             color: #94a3b8;
             font-size: 0.8rem;
         }
-        
+
         .submenu-item:hover {
             background: #1e293b;
             color: #ffffff;
         }
-        
+
         .submenu-item.active {
             background: #1e293b;
             color: #ffffff;
         }
-        
+
         .submenu-item.active i {
             color: #3b82f6;
         }
-        
+
         /* Dropdown arrow rotation */
         .dropdown-toggle .dropdown-arrow {
             transition: transform 0.2s ease;
         }
-        
+
         .dropdown-toggle.open .dropdown-arrow {
             transform: rotate(90deg);
         }
-        
+
         /* Scrollbar Minimal */
         ::-webkit-scrollbar {
             width: 4px;
             height: 4px;
         }
-        
+
         ::-webkit-scrollbar-track {
             background: #f1f5f9;
             border-radius: 10px;
         }
-        
+
         ::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 10px;
         }
-        
+
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
-        
+
         /* Animasi Halus */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         .animate-fadeIn {
             animation: fadeIn 0.4s ease-out;
         }
-        
+
         /* Badge Minimal */
         .badge-success {
             background: #dcfce7;
@@ -150,7 +150,7 @@
             font-size: 11px;
             font-weight: 500;
         }
-        
+
         .badge-warning {
             background: #fef9c3;
             color: #854d0e;
@@ -159,7 +159,7 @@
             font-size: 11px;
             font-weight: 500;
         }
-        
+
         .badge-danger {
             background: #fee2e2;
             color: #991b1b;
@@ -168,7 +168,7 @@
             font-size: 11px;
             font-weight: 500;
         }
-        
+
         .stat-icon {
             width: 48px;
             height: 48px;
@@ -178,7 +178,7 @@
             justify-content: center;
         }
     </style>
-    
+
     @stack('styles')
 </head>
 <body class="overflow-hidden bg-slate-50">
@@ -197,7 +197,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="px-4 py-6">
                 <!-- MAIN MENU -->
                 <p class="text-slate-500 text-[10px] uppercase tracking-wider font-semibold mb-3 px-3">Main</p>
@@ -276,14 +276,6 @@
                     </a>
                 </nav>
                 
-                <!-- MANAGEMENT MENU -->
-                <p class="text-slate-500 text-[10px] uppercase tracking-wider font-semibold mt-6 mb-3 px-3">Management</p>
-                <nav class="space-y-1">
-                    <a href="#" class="menu-item-minimal flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
-                        <i class="fas fa-shopping-cart w-4 text-sm"></i>
-                        <span>Orders</span>
-                        <span class="ml-auto bg-slate-800 text-slate-300 text-[10px] px-2 py-0.5 rounded-full">12</span>
-                    </a>
                     <a href="#" class="menu-item-minimal flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
                         <i class="fas fa-tag w-4 text-sm"></i>
                         <span>Products</span>

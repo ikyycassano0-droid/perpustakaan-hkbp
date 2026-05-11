@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Profile;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class ProfileController extends Controller
 {
@@ -43,7 +45,7 @@ class ProfileController extends Controller
         return view('guest.page.profile.visi-misi', compact('visi', 'misi', 'about'));
     }
 
-        public function showVisiMisiMahasiswa()
+    public function showVisiMisiMahasiswa()
     {
         $visi = Profile::where('type', 'visi_misi')
             ->where('sub_type', 'visi')
@@ -63,8 +65,6 @@ class ProfileController extends Controller
 
         return view('user.page.profile.visi-misi', compact('visi', 'misi', 'about'));
     }
-
-
 
     public function showTugasFungsi()
     {
@@ -89,7 +89,7 @@ class ProfileController extends Controller
         return view('guest.page.profile.tugas-fungsi', compact('tugas', 'fungsi', 'tujuan'));
     }
 
-        public function showTugasFungsiMahasiswa()
+    public function showTugasFungsiMahasiswa()
     {
         $tugas = Profile::where('type', 'tugas_fungsi')
             ->where('sub_type', 'tugas')
@@ -132,11 +132,12 @@ class ProfileController extends Controller
         return view('user.page.profile.struktur-pengurus', compact('struktur'));
     }
 
-
     public function showKerjasama()
     {
-        $kerjasama = Profile::where('type', 'kerjasama')
+        // Ambil semua data dengan type kerjasama dan kolaborasi
+        $kerjasama = Profile::whereIn('type', ['kerjasama', 'kolaborasi'])
             ->where('active', true)
+            ->orderBy('type')
             ->orderBy('order')
             ->get();
 
@@ -145,150 +146,172 @@ class ProfileController extends Controller
 
     public function showKerjasamaMahasiswa()
     {
-        $kerjasama = Profile::where('type', 'kerjasama')
+        // Ambil semua data dengan type kerjasama dan kolaborasi
+        $kerjasama = Profile::whereIn('type', ['kerjasama', 'kolaborasi'])
             ->where('active', true)
+            ->orderBy('type')
             ->orderBy('order')
             ->get();
 
         return view('user.page.profile.kerjasama', compact('kerjasama'));
     }
 
-    // ================= ADMIN =================
+    // ================= ADMIN CRUD =================
 
-public function store(Request $request)
-{
-    $request->validate([
-        'type' => 'required',
-        'sub_type' => 'nullable',
-        'title' => 'required',
-        'order' => 'required|integer|min:1',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'type' => 'required|in:visi_misi,tugas_fungsi,struktur,kerjasama,kolaborasi',
+            'sub_type' => 'nullable|string',
+            'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'jabatan' => 'nullable|string|max:255',
+            'icon' => 'nullable|string|max:100',
+            'order' => 'required|integer|min:1',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
+        ]);
 
-    $order = (int) $request->order;
-    if ($order < 1) $order = 1;
-    
-    $query = Profile::where('type', $request->type);
-    if ($request->sub_type) {
-        $query->where('sub_type', $request->sub_type);
-    } else {
-        $query->whereNull('sub_type');
-    }
-    $query->where('order', '>=', $order)->increment('order');
+        $order = (int) $request->order;
+        if ($order < 1) $order = 1;
 
-    // Upload gambar
-    $imagePath = null;
-    if ($request->hasFile('image')) {
-        $image = $request->file('image');
-        $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9.]/', '_', $image->getClientOriginalName());
-        $imagePath = $image->storeAs('profiles', $filename, 'public');
-        
-        // Tambahkan debugging
-        \Log::info('Image uploaded: ' . $imagePath);
-    }
-
-    Profile::create([
-        'type'        => $request->type,
-        'sub_type'    => $request->sub_type,
-        'title'       => $request->title,
-        'description' => $request->description,
-        'jabatan'     => $request->jabatan,
-        'icon'        => $request->icon,
-        'image'       => $imagePath,
-        'order'       => $order,
-        'active'      => $request->has('active') ? true : true,
-        'created_by'  => session('user_id'),
-    ]);
-
-    return back()->with('success', 'Data berhasil ditambahkan');
-}
-
-public function update(Request $request, $id)
-{
-    $item = Profile::findOrFail($id);
-
-    $request->validate([
-        'order' => 'required|integer|min:1',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
-    ]);
-
-    $newOrder = (int) $request->order;
-    $oldOrder = $item->order;
-
-    if ($newOrder != $oldOrder) {
-        if ($newOrder < $oldOrder) {
-            Profile::where('type', $item->type)
-                ->where('sub_type', $item->sub_type)
-                ->whereBetween('order', [$newOrder, $oldOrder - 1])
-                ->increment('order');
+        // Update order untuk data yang lebih besar atau sama
+        $query = Profile::where('type', $request->type);
+        if ($request->sub_type) {
+            $query->where('sub_type', $request->sub_type);
         } else {
-            Profile::where('type', $item->type)
-                ->where('sub_type', $item->sub_type)
-                ->whereBetween('order', [$oldOrder + 1, $newOrder])
-                ->decrement('order');
+            $query->whereNull('sub_type');
         }
+        $query->where('order', '>=', $order)->increment('order');
+
+        // Upload gambar
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9.]/', '_', $image->getClientOriginalName());
+            $imagePath = $image->storeAs('profiles', $filename, 'public');
+            Log::info('Image uploaded: ' . $imagePath);
+        }
+
+        Profile::create([
+            'type'        => $request->type,
+            'sub_type'    => $request->sub_type,
+            'title'       => $request->title,
+            'description' => $request->description,
+            'jabatan'     => $request->jabatan,
+            'icon'        => $request->icon,
+            'image'       => $imagePath,
+            'order'       => $order,
+            'active'      => $request->has('active') ? true : false,
+        ]);
+
+        return back()->with('success', 'Data berhasil ditambahkan');
     }
 
-    // Upload gambar baru
-    $imagePath = $item->image;
-    if ($request->hasFile('image')) {
-        // Hapus gambar lama
-        if ($item->image && Storage::disk('public')->exists($item->image)) {
-            Storage::disk('public')->delete($item->image);
+    public function update(Request $request, $id)
+    {
+        $item = Profile::findOrFail($id);
+
+        $request->validate([
+            'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'jabatan' => 'nullable|string|max:255',
+            'icon' => 'nullable|string|max:100',
+            'order' => 'required|integer|min:1',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
+        ]);
+
+        $newOrder = (int) $request->order;
+        $oldOrder = $item->order;
+
+        if ($newOrder != $oldOrder) {
+            if ($newOrder < $oldOrder) {
+                Profile::where('type', $item->type)
+                    ->where(function($q) use ($item) {
+                        if ($item->sub_type) {
+                            $q->where('sub_type', $item->sub_type);
+                        } else {
+                            $q->whereNull('sub_type');
+                        }
+                    })
+                    ->whereBetween('order', [$newOrder, $oldOrder - 1])
+                    ->increment('order');
+            } else {
+                Profile::where('type', $item->type)
+                    ->where(function($q) use ($item) {
+                        if ($item->sub_type) {
+                            $q->where('sub_type', $item->sub_type);
+                        } else {
+                            $q->whereNull('sub_type');
+                        }
+                    })
+                    ->whereBetween('order', [$oldOrder + 1, $newOrder])
+                    ->decrement('order');
+            }
         }
-        
-        $image = $request->file('image');
-        $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9.]/', '_', $image->getClientOriginalName());
-        $imagePath = $image->storeAs('profiles', $filename, 'public');
-        
-        \Log::info('Image updated: ' . $imagePath);
+
+        // Upload gambar baru
+        $imagePath = $item->image;
+        if ($request->hasFile('image')) {
+            // Hapus gambar lama
+            if ($item->image && Storage::disk('public')->exists($item->image)) {
+                Storage::disk('public')->delete($item->image);
+            }
+
+            $image = $request->file('image');
+            $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9.]/', '_', $image->getClientOriginalName());
+            $imagePath = $image->storeAs('profiles', $filename, 'public');
+
+            Log::info('Image updated: ' . $imagePath);
+        }
+
+        $item->update([
+            'title'       => $request->title,
+            'description' => $request->description,
+            'jabatan'     => $request->jabatan,
+            'icon'        => $request->icon,
+            'image'       => $imagePath,
+            'order'       => $newOrder,
+            'active'      => $request->has('active') ? true : false,
+        ]);
+
+        return back()->with('success', 'Data berhasil diupdate');
     }
-
-    $item->update([
-        'title'       => $request->title,
-        'description' => $request->description,
-        'jabatan'     => $request->jabatan,
-        'icon'        => $request->icon,
-        'image'       => $imagePath,
-        'order'       => $newOrder,
-        'active'      => $request->has('active') ? true : false,
-    ]);
-
-    return back()->with('success', 'Data berhasil diupdate');
-}
 
     public function destroy($id)
     {
-        Profile::destroy($id);
+        $item = Profile::findOrFail($id);
+
+        // Hapus gambar jika ada
+        if ($item->image && Storage::disk('public')->exists($item->image)) {
+            Storage::disk('public')->delete($item->image);
+        }
+
+        $item->delete();
         return back()->with('success', 'Data berhasil dihapus');
     }
 
-// ================= USER (MAHASISWA) =================
-public function studentProfile()
-{
-    $user = auth()->user();
+    // ================= USER (MAHASISWA) =================
+    public function studentProfile()
+    {
+        $user = auth()->user();
 
-    // Hitung total peminjaman (misal dari model Order)
-    $totalPinjam = \App\Models\Order::where('user_id', $user->id)->count();
-    $aktifPinjam = \App\Models\Order::where('user_id', $user->id)
-                    ->where('status', 'dipinjam')
+        $totalPinjam = \App\Models\Order::where('user_id', $user->id)->count();
+        $aktifPinjam = \App\Models\Order::where('user_id', $user->id)
+                        ->where('status', 'dipinjam')
+                        ->count();
+
+        $totalKti = \App\Models\FinalProject::where('user_id', $user->id)
+                    ->where('status', 'Approved')
                     ->count();
 
-    // Hitung total KTI yang approved
-    $totalKti = \App\Models\FinalProject::where('user_id', $user->id)
-                ->where('status', 'Approved')
-                ->count();
+        $unreadNotif = \App\Models\Notification::where('user_id', $user->id)
+                       ->where('is_read', false)
+                       ->count();
 
-    // Hitung notifikasi belum dibaca
-    $unreadNotif = \App\Models\Notification::where('user_id', $user->id)
-                   ->where('is_read', false)
-                   ->count();
+        $point = 0;
 
-    // Poin aktivitas (opsional, bisa 0 jika belum ada sistem)
-    $point = 0;
-
-    return view('profileAkun.menu', compact(
-    'totalPinjam', 'aktifPinjam', 'totalKti', 'unreadNotif', 'point'
-));
-}
+        return view('profileAkun.menu', compact(
+            'totalPinjam', 'aktifPinjam', 'totalKti', 'unreadNotif', 'point'
+        ));
+    }
 }
