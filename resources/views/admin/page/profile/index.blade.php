@@ -13,11 +13,18 @@
         </div>
     </div>
 
-    {{-- ALERT SUCCESS --}}
+    {{-- ALERT SUCCESS & ERROR --}}
     @if(session('success'))
     <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-3">
         <i class="fas fa-check-circle text-emerald-500"></i>
         <p class="text-emerald-700 text-sm">{{ session('success') }}</p>
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div class="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-3">
+        <i class="fas fa-exclamation-circle text-rose-500"></i>
+        <p class="text-rose-700 text-sm">{{ session('error') }}</p>
     </div>
     @endif
 
@@ -72,14 +79,14 @@
                     {{-- TITLE --}}
                     <div id="fieldTitle">
                         <label class="block text-sm font-medium text-slate-700 mb-2" id="labelTitle">Judul</label>
-                        <input type="text" name="title"
+                        <input type="text" name="title" id="title_input"
                             class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30">
                     </div>
 
                     {{-- JABATAN --}}
                     <div id="fieldJabatan" class="hidden">
                         <label class="block text-sm font-medium text-slate-700 mb-2" id="labelJabatan">Jabatan / Peran</label>
-                        <input type="text" name="jabatan" placeholder="Contoh: Direktur / Institusi Mitra"
+                        <input type="text" name="jabatan" id="jabatan_input" placeholder="Contoh: Direktur / Institusi Mitra"
                             class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30">
                     </div>
 
@@ -93,7 +100,7 @@
                     {{-- ICON --}}
                     <div id="fieldIcon">
                         <label class="block text-sm font-medium text-slate-700 mb-2">Icon</label>
-                        <input type="text" name="icon" placeholder="fas fa-building"
+                        <input type="text" name="icon" id="icon_input" placeholder="fas fa-building"
                             class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30">
                         <p class="text-slate-400 text-xs mt-1">Contoh: fas fa-building, fas fa-handshake</p>
                     </div>
@@ -109,7 +116,7 @@
                     {{-- ORDER --}}
                     <div id="fieldOrder">
                         <label class="block text-sm font-medium text-slate-700 mb-2">Urutan</label>
-                        <input type="number" name="order" value="1" min="1"
+                        <input type="number" name="order" id="order_input" value="1" min="1"
                             class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30">
                     </div>
 
@@ -196,8 +203,7 @@
                         <td class="px-6 py-4">
                             <div class="flex items-center justify-center gap-2">
                                 <button type="button"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#editModal{{ $item->id }}"
+                                        onclick="openEditModal({{ $item->id }})"
                                         class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition flex items-center justify-center">
                                     <i class="fas fa-edit text-sm"></i>
                                 </button>
@@ -219,165 +225,121 @@
         </div>
     </div>
 
-    {{-- MODAL EDIT --}}
-    @foreach($profiles as $item)
-    @php
-        $typeLabels = [
-            'visi_misi'    => 'Visi & Misi',
-            'tugas_fungsi' => 'Tugas & Fungsi',
-            'struktur'     => 'Struktur',
-            'kerjasama'    => 'Kerjasama',
-        ];
-        $isKolaborasi = ($item->type === 'kerjasama' && $item->sub_type === 'kolaborasi');
-        $isStruktur   = ($item->type === 'struktur');
-    @endphp
-    <div class="modal fade hidden" id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-2xl border-0 shadow-2xl">
-                <form action="{{ route('admin.profile.update', $item->id) }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
+</div>
 
-                    <div class="modal-header border-b border-slate-100 px-6 py-4">
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-edit text-indigo-500"></i>
-                            <h5 class="font-semibold text-slate-800 text-lg">Edit Data Profile</h5>
-                        </div>
-                        <button type="button" class="text-slate-400 hover:text-slate-600 transition" data-bs-dismiss="modal">
-                            <i class="fas fa-times"></i>
-                        </button>
+{{-- MODAL EDIT (Single Modal) --}}
+<div id="editModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="fixed inset-0 bg-slate-900 bg-opacity-50 transition-opacity" onclick="closeEditModal()"></div>
+        
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-auto transform transition-all">
+            <form id="editForm" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+
+                <div class="modal-header border-b border-slate-100 px-6 py-4">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-edit text-indigo-500"></i>
+                        <h5 class="font-semibold text-slate-800 text-lg">Edit Data Profile</h5>
+                    </div>
+                    <button type="button" onclick="closeEditModal()" class="absolute right-6 top-4 text-slate-400 hover:text-slate-600 transition">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body p-6 space-y-4">
+                    <input type="hidden" id="edit_id" name="id">
+                    
+                    {{-- Type (readonly) --}}
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Type</label>
+                        <input type="text" id="edit_type_display" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-100" readonly>
+                        <input type="hidden" id="edit_type" name="type">
                     </div>
 
-                    <div class="modal-body p-6 space-y-4">
-
-                        {{-- Type (readonly) --}}
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Type</label>
-                            <input type="text" value="{{ $typeLabels[$item->type] ?? $item->type }}"
-                                   class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-100" readonly>
-                        </div>
-
-                        {{-- Sub Type (readonly) --}}
-                        @if($item->sub_type)
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Sub Type</label>
-                            <input type="text" value="{{ $item->sub_type }}"
-                                   class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-100" readonly>
-                        </div>
-                        @endif
-
-                        @if($isKolaborasi)
-                            {{-- KOLABORASI: hanya gambar --}}
-                            @if($item->image)
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-2">Gambar Saat Ini</label>
-                                <div class="flex justify-center">
-                                    <img src="{{ asset('storage/'.$item->image) }}"
-                                         class="w-24 h-24 object-cover rounded-lg shadow-sm">
-                                </div>
-                            </div>
-                            @endif
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-2">Ganti Gambar</label>
-                                <input type="file" name="image" accept="image/*"
-                                       class="w-full px-4 py-2.5 rounded-xl border border-slate-200">
-                                <p class="text-slate-400 text-xs mt-1">Format: JPG, PNG, GIF, WEBP. Maks 2MB</p>
-                            </div>
-
-                        @else
-                            {{-- NON-KOLABORASI: semua field --}}
-
-                            {{-- Judul --}}
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-2">
-                                    {{ $isStruktur ? 'Nama Lengkap' : 'Judul' }}
-                                </label>
-                                <input type="text" name="title" value="{{ $item->title }}"
-                                       class="w-full px-4 py-2.5 rounded-xl border border-slate-200">
-                            </div>
-
-                            {{-- Jabatan (hanya struktur) --}}
-                            @if($isStruktur)
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-2">Jabatan</label>
-                                <input type="text" name="jabatan" value="{{ $item->jabatan }}"
-                                       class="w-full px-4 py-2.5 rounded-xl border border-slate-200">
-                            </div>
-                            @endif
-
-                            {{-- Deskripsi --}}
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-2">Deskripsi</label>
-                                <textarea name="description" rows="3"
-                                          class="w-full px-4 py-2.5 rounded-xl border border-slate-200">{{ $item->description }}</textarea>
-                            </div>
-
-                            {{-- Icon (sembunyikan untuk struktur) --}}
-                            @if(!$isStruktur)
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-2">Icon</label>
-                                <input type="text" name="icon" value="{{ $item->icon }}"
-                                       class="w-full px-4 py-2.5 rounded-xl border border-slate-200">
-                                <p class="text-slate-400 text-xs mt-1">Contoh: fas fa-building, fas fa-handshake</p>
-                            </div>
-                            @endif
-
-                            {{-- Gambar --}}
-                            @if($item->image)
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-2">Gambar Saat Ini</label>
-                                <div class="flex justify-center">
-                                    <img src="{{ asset('storage/'.$item->image) }}"
-                                         class="w-24 h-24 object-cover rounded-lg shadow-sm">
-                                </div>
-                            </div>
-                            @endif
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-2">Ganti Gambar (Opsional)</label>
-                                <input type="file" name="image" accept="image/*"
-                                       class="w-full px-4 py-2.5 rounded-xl border border-slate-200">
-                                <p class="text-slate-400 text-xs mt-1">Format: JPG, PNG, GIF, WEBP. Maks 2MB</p>
-                            </div>
-
-                            {{-- Urutan --}}
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-2">Urutan</label>
-                                <input type="number" name="order" value="{{ $item->order }}" min="1"
-                                       class="w-full px-4 py-2.5 rounded-xl border border-slate-200">
-                            </div>
-
-                        @endif
-
-                        {{-- Status (selalu tampil) --}}
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Status</label>
-                            <label class="flex items-center gap-2">
-                                <input type="checkbox" name="active" value="1" {{ $item->active ? 'checked' : '' }}>
-                                <span class="text-sm text-slate-600">Aktifkan data ini</span>
-                            </label>
-                        </div>
-
+                    {{-- Sub Type Container --}}
+                    <div id="edit_subtype_container">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Sub Type</label>
+                        <input type="text" id="edit_subtype_display" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-100" readonly>
+                        <input type="hidden" id="edit_sub_type" name="sub_type">
                     </div>
 
-                    <div class="modal-footer border-t border-slate-100 px-6 py-4 flex justify-end gap-3">
-                        <button type="button" data-bs-dismiss="modal"
-                            class="px-4 py-2 text-sm font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition">
-                            Batal
-                        </button>
-                        <button type="submit"
-                            class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition">
-                            Simpan
-                        </button>
+                    {{-- Judul --}}
+                    <div id="edit_title_container">
+                        <label class="block text-sm font-medium text-slate-700 mb-2" id="edit_label_title">Judul</label>
+                        <input type="text" id="edit_title" name="title" class="w-full px-4 py-2.5 rounded-xl border border-slate-200">
                     </div>
-                </form>
-            </div>
+
+                    {{-- Jabatan --}}
+                    <div id="edit_jabatan_container" class="hidden">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Jabatan</label>
+                        <input type="text" id="edit_jabatan" name="jabatan" class="w-full px-4 py-2.5 rounded-xl border border-slate-200">
+                    </div>
+
+                    {{-- Deskripsi --}}
+                    <div id="edit_desc_container">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Deskripsi</label>
+                        <textarea id="edit_description" name="description" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-200"></textarea>
+                    </div>
+
+                    {{-- Icon --}}
+                    <div id="edit_icon_container">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Icon</label>
+                        <input type="text" id="edit_icon" name="icon" class="w-full px-4 py-2.5 rounded-xl border border-slate-200">
+                        <p class="text-slate-400 text-xs mt-1">Contoh: fas fa-building, fas fa-handshake</p>
+                    </div>
+
+                    {{-- Gambar Saat Ini --}}
+                    <div id="edit_current_image_container" class="hidden">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Gambar Saat Ini</label>
+                        <div class="flex justify-center">
+                            <img id="edit_current_image" src="" class="w-24 h-24 object-cover rounded-lg shadow-sm">
+                        </div>
+                    </div>
+
+                    {{-- Upload Gambar Baru --}}
+                    <div id="edit_image_container">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Ganti Gambar (Opsional)</label>
+                        <input type="file" id="edit_image" name="image" accept="image/*" class="w-full px-4 py-2.5 rounded-xl border border-slate-200">
+                        <p class="text-slate-400 text-xs mt-1">Format: JPG, PNG, GIF, WEBP. Maks 2MB</p>
+                    </div>
+
+                    {{-- Urutan --}}
+                    <div id="edit_order_container">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Urutan</label>
+                        <input type="number" id="edit_order" name="order" min="1" class="w-full px-4 py-2.5 rounded-xl border border-slate-200">
+                    </div>
+
+                    {{-- Status --}}
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Status</label>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="edit_active" name="active" value="1">
+                            <span class="text-sm text-slate-600">Aktifkan data ini</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-t border-slate-100 px-6 py-4 flex justify-end gap-3">
+                    <button type="button" onclick="closeEditModal()"
+                        class="px-4 py-2 text-sm font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition">
+                        Batal
+                    </button>
+                    <button type="submit"
+                        class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition">
+                        Simpan Perubahan
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-    @endforeach
-
 </div>
 
 <script>
+// Data dari server untuk validasi
+const existingVisi = {{ \App\Models\Profile::where('type', 'visi_misi')->where('sub_type', 'visi')->where('active', true)->exists() ? 'true' : 'false' }};
+const existingAbout = {{ \App\Models\Profile::where('type', 'visi_misi')->where('sub_type', 'about')->where('active', true)->exists() ? 'true' : 'false' }};
+
 function toggleTambahForm() {
     document.getElementById('tambahForm').classList.toggle('hidden');
 }
@@ -407,10 +369,15 @@ function ubahForm() {
     labelTitle.innerText = 'Judul';
 
     if (type === 'visi_misi') {
-        subType.innerHTML += `
-            <option value="visi">Visi</option>
-            <option value="misi">Misi</option>
-            <option value="about">About</option>`;
+        // Hanya tampilkan visi jika belum ada
+        if (!existingVisi) {
+            subType.innerHTML += `<option value="visi">Visi</option>`;
+        }
+        subType.innerHTML += `<option value="misi">Misi</option>`;
+        // Hanya tampilkan about jika belum ada
+        if (!existingAbout) {
+            subType.innerHTML += `<option value="about">About</option>`;
+        }
         descTA.placeholder = 'Masukkan deskripsi Visi/Misi/About';
     }
     else if (type === 'tugas_fungsi') {
@@ -434,7 +401,6 @@ function ubahForm() {
             <option value="bentuk">Bentuk Kerjasama</option>
             <option value="kolaborasi">Kolaborasi</option>`;
         descTA.placeholder = 'Masukkan deskripsi kerjasama';
-        // Pantau perubahan sub_type untuk kolaborasi
         subType.onchange = ubahSubType;
     }
     else {
@@ -450,6 +416,7 @@ function ubahSubType() {
     const fieldDesc   = document.getElementById('fieldDesc');
     const fieldIcon   = document.getElementById('fieldIcon');
     const fieldOrder  = document.getElementById('fieldOrder');
+    const fieldGambar = document.getElementById('fieldGambar');
 
     if (type === 'kerjasama' && subVal === 'kolaborasi') {
         // Kolaborasi: hanya gambar yang tampil
@@ -464,15 +431,157 @@ function ubahSubType() {
         fieldDesc.classList.remove('hidden');
         fieldIcon.classList.remove('hidden');
         fieldOrder.classList.remove('hidden');
+        fieldGambar.classList.remove('hidden');
     }
 }
+
+// Data profiles dari server untuk edit modal
+const profilesData = @json($profiles);
+
+function openEditModal(id) {
+    const profile = profilesData.find(p => p.id == id);
+    if (!profile) return;
+
+    const editModal = document.getElementById('editModal');
+    const editForm = document.getElementById('editForm');
+    const actionUrl = `/admin/profile/${profile.id}`;
+    editForm.action = actionUrl;
+
+    // Set values
+    document.getElementById('edit_id').value = profile.id;
+    document.getElementById('edit_type_display').value = getTypeLabel(profile.type);
+    document.getElementById('edit_type').value = profile.type;
+    
+    // Handle sub type
+    const subtypeContainer = document.getElementById('edit_subtype_container');
+    if (profile.sub_type) {
+        subtypeContainer.classList.remove('hidden');
+        document.getElementById('edit_subtype_display').value = profile.sub_type;
+        document.getElementById('edit_sub_type').value = profile.sub_type;
+    } else {
+        subtypeContainer.classList.add('hidden');
+    }
+
+    const isKolaborasi = (profile.type === 'kerjasama' && profile.sub_type === 'kolaborasi');
+    const isStruktur = (profile.type === 'struktur');
+
+    if (isKolaborasi) {
+        // Kolaborasi: hanya gambar
+        document.getElementById('edit_title_container').classList.add('hidden');
+        document.getElementById('edit_jabatan_container').classList.add('hidden');
+        document.getElementById('edit_desc_container').classList.add('hidden');
+        document.getElementById('edit_icon_container').classList.add('hidden');
+        document.getElementById('edit_order_container').classList.add('hidden');
+    } else {
+        document.getElementById('edit_title_container').classList.remove('hidden');
+        document.getElementById('edit_desc_container').classList.remove('hidden');
+        document.getElementById('edit_icon_container').classList.remove('hidden');
+        document.getElementById('edit_order_container').classList.remove('hidden');
+        
+        // Handle title label
+        const labelTitle = document.getElementById('edit_label_title');
+        labelTitle.innerText = isStruktur ? 'Nama Lengkap' : 'Judul';
+        
+        // Set title
+        document.getElementById('edit_title').value = profile.title || '';
+        
+        // Handle jabatan (only for struktur)
+        if (isStruktur) {
+            document.getElementById('edit_jabatan_container').classList.remove('hidden');
+            document.getElementById('edit_jabatan').value = profile.jabatan || '';
+        } else {
+            document.getElementById('edit_jabatan_container').classList.add('hidden');
+        }
+        
+        // Set description
+        document.getElementById('edit_description').value = profile.description || '';
+        
+        // Handle icon (hidden for struktur)
+        if (isStruktur) {
+            document.getElementById('edit_icon_container').classList.add('hidden');
+        } else {
+            document.getElementById('edit_icon_container').classList.remove('hidden');
+            document.getElementById('edit_icon').value = profile.icon || '';
+        }
+        
+        // Set order
+        document.getElementById('edit_order').value = profile.order || 1;
+    }
+
+    // Handle current image
+    const currentImageContainer = document.getElementById('edit_current_image_container');
+    if (profile.image) {
+        currentImageContainer.classList.remove('hidden');
+        document.getElementById('edit_current_image').src = `/storage/${profile.image}`;
+    } else {
+        currentImageContainer.classList.add('hidden');
+    }
+
+    // Handle active status
+    document.getElementById('edit_active').checked = profile.active == 1;
+
+    // Show modal
+    editModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeEditModal() {
+    const editModal = document.getElementById('editModal');
+    editModal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+// Close modal with ESC key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeEditModal();
+    }
+});
 
 document.addEventListener('DOMContentLoaded', function () {
     const typeSelect = document.getElementById('type');
     if (typeSelect && typeSelect.value) ubahForm();
 });
+
+function getTypeLabel(type) {
+    const labels = {
+        'visi_misi': 'Visi & Misi',
+        'tugas_fungsi': 'Tugas & Fungsi',
+        'struktur': 'Struktur',
+        'kerjasama': 'Kerjasama'
+    };
+    return labels[type] || type;
+}
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+/* Modal styles */
+.fixed {
+    position: fixed;
+}
+.inset-0 {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+.z-50 {
+    z-index: 50;
+}
+.overflow-y-auto {
+    overflow-y: auto;
+}
+.bg-opacity-50 {
+    --tw-bg-opacity: 0.5;
+}
+.transition-opacity {
+    transition-property: opacity;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+.hidden {
+    display: none;
+}
+</style>
 
 @endsection

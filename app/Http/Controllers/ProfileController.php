@@ -134,26 +134,78 @@ class ProfileController extends Controller
 
     public function showKerjasama()
     {
-        // Ambil semua data dengan type kerjasama dan kolaborasi
-        $kerjasama = Profile::whereIn('type', ['kerjasama', 'kolaborasi'])
+        // Ambil data mitra (sub_type = 'mitra')
+        $mitra = Profile::where('type', 'kerjasama')
+            ->where('sub_type', 'mitra')
             ->where('active', true)
-            ->orderBy('type')
             ->orderBy('order')
             ->get();
+        
+        // Ambil data bentuk kerjasama (sub_type = 'bentuk')
+        $bentukKerjasama = Profile::where('type', 'kerjasama')
+            ->where('sub_type', 'bentuk')
+            ->where('active', true)
+            ->orderBy('order')
+            ->get();
+        
+        // Ambil data kolaborasi (sub_type = 'kolaborasi')
+        $kolaborasi = Profile::where('type', 'kerjasama')
+            ->where('sub_type', 'kolaborasi')
+            ->where('active', true)
+            ->orderBy('order')
+            ->get();
+        
+        // Ambil deskripsi umum kerjasama (bisa dari sub_type null atau yang memiliki description)
+        $deskripsiKerjasama = Profile::where('type', 'kerjasama')
+            ->whereNull('sub_type')
+            ->where('active', true)
+            ->first();
+        
+        // Jika tidak ada deskripsi khusus, ambil dari data pertama yang memiliki description
+        if (!$deskripsiKerjasama) {
+            $deskripsiKerjasama = Profile::where('type', 'kerjasama')
+                ->where('active', true)
+                ->whereNotNull('description')
+                ->first();
+        }
 
-        return view('guest.page.profile.kerjasama', compact('kerjasama'));
+        return view('guest.page.profile.kerjasama', compact('mitra', 'bentukKerjasama', 'kolaborasi', 'deskripsiKerjasama'));
     }
 
     public function showKerjasamaMahasiswa()
     {
-        // Ambil semua data dengan type kerjasama dan kolaborasi
-        $kerjasama = Profile::whereIn('type', ['kerjasama', 'kolaborasi'])
+        // Sama seperti di atas untuk user/mahasiswa
+        $mitra = Profile::where('type', 'kerjasama')
+            ->where('sub_type', 'mitra')
             ->where('active', true)
-            ->orderBy('type')
             ->orderBy('order')
             ->get();
+        
+        $bentukKerjasama = Profile::where('type', 'kerjasama')
+            ->where('sub_type', 'bentuk')
+            ->where('active', true)
+            ->orderBy('order')
+            ->get();
+        
+        $kolaborasi = Profile::where('type', 'kerjasama')
+            ->where('sub_type', 'kolaborasi')
+            ->where('active', true)
+            ->orderBy('order')
+            ->get();
+        
+        $deskripsiKerjasama = Profile::where('type', 'kerjasama')
+            ->whereNull('sub_type')
+            ->where('active', true)
+            ->first();
+        
+        if (!$deskripsiKerjasama) {
+            $deskripsiKerjasama = Profile::where('type', 'kerjasama')
+                ->where('active', true)
+                ->whereNotNull('description')
+                ->first();
+        }
 
-        return view('user.page.profile.kerjasama', compact('kerjasama'));
+        return view('user.page.profile.kerjasama', compact('mitra', 'bentukKerjasama', 'kolaborasi', 'deskripsiKerjasama'));
     }
 
     // ================= ADMIN CRUD =================
@@ -170,6 +222,18 @@ class ProfileController extends Controller
             'order' => 'required|integer|min:1',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
         ]);
+
+        // CEK DUPLIKAT UNTUK VISI DAN ABOUT
+        if ($request->type == 'visi_misi' && in_array($request->sub_type, ['visi', 'about'])) {
+            $existing = Profile::where('type', $request->type)
+                ->where('sub_type', $request->sub_type)
+                ->where('active', true)
+                ->exists();
+            
+            if ($existing) {
+                return back()->with('error', ucfirst($request->sub_type) . ' sudah ada. Tidak dapat menambahkan ' . $request->sub_type . ' baru. Silakan edit yang sudah ada.')->withInput();
+            }
+        }
 
         $order = (int) $request->order;
         if ($order < 1) $order = 1;
@@ -219,6 +283,19 @@ class ProfileController extends Controller
             'order' => 'required|integer|min:1',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
         ]);
+
+        // CEK JIKA MENGUBAH KE VISI/ABOUT YANG SUDAH ADA
+        if ($request->has('sub_type') && $item->type == 'visi_misi' && in_array($request->sub_type, ['visi', 'about'])) {
+            $existing = Profile::where('type', $item->type)
+                ->where('sub_type', $request->sub_type)
+                ->where('active', true)
+                ->where('id', '!=', $id)
+                ->exists();
+            
+            if ($existing) {
+                return back()->with('error', ucfirst($request->sub_type) . ' sudah ada. Tidak dapat mengubah data ini menjadi ' . $request->sub_type . '.')->withInput();
+            }
+        }
 
         $newOrder = (int) $request->order;
         $oldOrder = $item->order;

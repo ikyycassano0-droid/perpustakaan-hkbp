@@ -36,4 +36,23 @@ class Profile extends Model
         }
         return null;
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($model) {
+            if ($model->type == 'visi_misi' && in_array($model->sub_type, ['visi', 'about'])) {
+                $exists = static::where('type', $model->type)
+                    ->where('sub_type', $model->sub_type)
+                    ->where('active', true)
+                    ->exists();
+                
+                if ($exists) {
+                    throw new \Exception(ucfirst($model->sub_type) . ' sudah ada, tidak bisa membuat baru.');
+                }
+            }
+        });
+    }
+
 }

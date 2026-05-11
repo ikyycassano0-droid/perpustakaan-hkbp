@@ -310,14 +310,18 @@
             <!-- IMAGE -->
             <div class="glass-card p-3 rounded-2xl img-hover soft-shadow fade-up">
                 @php
-                    $img = $tujuan->firstWhere('image', '!=', null);
+                    // Cari gambar dari data tujuan yang memiliki image
+                    $tujuanImage = $tujuan->firstWhere('image', '!=', null);
                 @endphp
 
-                @if($img && $img->image)
-                    <img src="{{ asset('storage/'.$img->image) }}" class="rounded-xl w-full">
+                @if($tujuanImage && $tujuanImage->image)
+                    <img src="{{ asset('storage/'.$tujuanImage->image) }}" 
+                         class="rounded-xl w-full" 
+                         alt="{{ $tujuanImage->title ?? 'Tujuan Kami' }}">
                 @else
                     <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&h=450&fit=crop"
-                         class="rounded-xl w-full">
+                         class="rounded-xl w-full"
+                         alt="Default Image">
                 @endif
             </div>
 
@@ -333,7 +337,6 @@
                 </h2>
 
                 <div class="space-y-6">
-
                     @forelse($tujuan as $index => $item)
                     <div class="flex gap-4 items-start">
                         <span class="number-badge">
@@ -341,17 +344,16 @@
                         </span>
                         <div>
                             <h3 class="font-semibold text-white mb-1">
-                                {{ $item->title }}
+                                {{ $item->title ?? 'Tujuan ' . ($index+1) }}
                             </h3>
                             <p class="text-gray-400 text-sm">
-                                {{ $item->description }}
+                                {{ $item->description ?? 'Deskripsi belum tersedia' }}
                             </p>
                         </div>
                     </div>
                     @empty
                     <p class="text-gray-400">Belum ada data tujuan.</p>
                     @endforelse
-
                 </div>
 
                 <button class="btn mt-8" onclick="showNotif('Jelajahi koleksi kami di perpustakaan digital!', 'success')">
@@ -367,7 +369,7 @@
 <section class="pb-24 text-center px-5">
     <div class="glass-card inline-block px-8 py-5 rounded-full max-w-2xl mx-auto fade-up">
         <p class="text-indigo-200 text-sm md:text-base">
-            📌 "{{ $tujuan->last()->description ?? 'Melayani dengan Kasih, Mendidik dengan Presisi Klinis' }}"
+            📌 "Melayani dengan Kasih, Mendidik dengan Presisi Klinis"
         </p>
     </div>
 </section>
