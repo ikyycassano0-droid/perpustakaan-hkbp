@@ -6,7 +6,6 @@
 <style>
     /* ============================================
        CSS KHUSUS UNTUK HALAMAN KERJASAMA
-       Hanya CSS yang BELUM ADA di master blade
     ============================================ */
 
     /* Glass card */
@@ -20,9 +19,6 @@
     .glow-text {
         text-shadow: 0 0 12px rgba(99, 102, 241, 0.7);
     }
-
-    /* Tambahkan di style Visi Misi */
-    .depth-2 { transform: translateZ(24px); }
 
     /* Title utama */
     .title-main {
@@ -54,28 +50,25 @@
         border: 1px solid rgba(255,255,255,0.08);
     }
 
-    /* Slider Infinite */
+    /* Slider Infinite - Smooth (No Jump) */
     .slider {
         perspective: 1200px;
         overflow: hidden;
         position: relative;
         width: 100%;
+        mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+        -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
     }
 
     .slide-track {
         display: flex;
         gap: 40px;
         width: max-content;
-        animation: scrollLoop 25s linear infinite;
-    }
-
-    @keyframes scrollLoop {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
+        will-change: transform;
     }
 
     .slider:hover .slide-track {
-        animation-play-state: paused;
+        animation-play-state: paused !important;
     }
 
     /* Logo Card */
@@ -236,12 +229,17 @@
         cursor: pointer;
         color: white;
         font-weight: 600;
+        padding: 12px 32px;
+        border-radius: 9999px;
     }
 
     .glow-btn:hover {
         transform: scale(1.05);
         box-shadow: 0 0 35px rgba(99,102,241,0.8);
     }
+
+    /* Depth effect */
+    .depth-2 { transform: translateZ(24px); }
 
     /* CTA Card */
     .cta-card {
@@ -253,9 +251,28 @@
     .delay-1 { transition-delay: 0.1s; }
     .delay-2 { transition-delay: 0.2s; }
     .delay-3 { transition-delay: 0.3s; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .logo-card {
+            width: 160px;
+            height: 100px;
+        }
+
+        .slide-track {
+            gap: 20px;
+        }
+
+        .partner-card h4, .info-card h4 {
+            font-size: 1rem;
+        }
+
+        .partner-card p, .info-card p {
+            font-size: 0.75rem;
+        }
+    }
 </style>
 @endpush
-
 
 @section('content')
 <div class="main-content">
@@ -266,8 +283,8 @@
             <span class="text-indigo-300 text-sm font-medium tracking-wide">KOLABORASI STRATEGIS</span>
         </div>
         <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight depth-2 fade-up">
-    Kerja<span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent glow-text">sama</span>
-</h1>
+            Kerja<span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent glow-text">sama</span>
+        </h1>
         <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
             Perpustakaan AKPER HKBP Balige menjalin kemitraan dengan berbagai institusi terkemuka
         </p>
@@ -283,9 +300,7 @@
                             Jaringan Mitra Strategis
                         </h2>
                         <p class="text-gray-300 leading-relaxed">
-                            Melalui kerjasama yang berkelanjutan, Perpustakaan AKPER HKBP Balige berkomitmen untuk meningkatkan
-                            akses informasi, sumber daya digital, dan program pengembangan koleksi bersama institusi pendidikan
-                            tinggi, asosiasi profesi, dan lembaga kesehatan nasional maupun internasional.
+                            {{ $deskripsiKerjasama->description ?? 'Menjalin kerjasama dengan berbagai institusi dan mitra strategis untuk meningkatkan kualitas pendidikan dan pelayanan perpustakaan.' }}
                         </p>
                     </div>
                 </div>
@@ -306,68 +321,82 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-
-            {{-- LOOP DATA ADMIN --}}
-            @foreach($kerjasama as $item)
+            @forelse($mitra as $item)
             <div class="partner-card fade-up tilt-card">
-                <div class="partner-icon">🏢</div>
-
-                <h4>{{ $item->title }}</h4>
-
-                <p>{{ $item->description }}</p>
+                <div class="partner-icon">
+                    @if($item->icon)
+                        <i class="{{ $item->icon }}"></i>
+                    @else
+                        🏢
+                    @endif
+                </div>
+                <h4>{{ $item->title ?? 'Mitra' }}</h4>
+                <p>{{ $item->description ?? 'Deskripsi belum tersedia' }}</p>
             </div>
-            @endforeach
-
+            @empty
+            <div class="col-span-full text-center text-gray-400 py-8">
+                <p>Belum ada data mitra strategis.</p>
+            </div>
+            @endforelse
         </div>
     </section>
 
-    <!-- LOGO SLIDER -->
+    <!-- LOGO SLIDER - KOLABORASI (SMOOTH INFINITE SCROLL) -->
     <section class="mt-12 mb-16 px-5">
         <div class="text-center mb-10">
             <h3 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent fade-up">
                 Rekan Kolaborasi
             </h3>
+            <p class="text-gray-400 mt-2">Bergabung bersama kami dalam meningkatkan layanan perpustakaan</p>
         </div>
 
-        <div class="slider fade-up">
-            <div class="slide-track">
-
-                {{-- LOOP GAMBAR --}}
-                @foreach($kerjasama as $item)
+        @if(isset($kolaborasi) && $kolaborasi->count() > 0)
+        <div class="slider fade-up" id="infiniteSlider">
+            <div class="slide-track" id="slideTrack">
+                {{-- LOOP GAMBAR KOLABORASI (HANYA SEKALI) --}}
+                @foreach($kolaborasi as $item)
                     @if($item->image)
                         <div class="logo-card">
-                            <img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->title }}">
+                            <img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->title ?? 'Logo Kolaborasi' }}">
                         </div>
                     @endif
                 @endforeach
-
-                {{-- DUPLIKASI UNTUK INFINITE --}}
-                @foreach($kerjasama as $item)
-                    @if($item->image)
-                        <div class="logo-card">
-                            <img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->title }}">
-                        </div>
-                    @endif
-                @endforeach
-
             </div>
         </div>
+        @else
+        <div class="text-center text-gray-400 py-8">
+            <p>Belum ada data rekan kolaborasi.</p>
+        </div>
+        @endif
     </section>
 
     <!-- BENTUK KERJASAMA -->
     <section class="max-w-6xl mx-auto px-5 mt-20 mb-16">
+        <div class="text-center mb-12">
+            <h3 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent fade-up">
+                Bentuk Kerjasama
+            </h3>
+            <p class="text-gray-400 mt-2">Berbagai skema kerjasama yang dapat dijalin</p>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-            @foreach($kerjasama as $item)
-                @if($item->sequence >= 1 && $item->sequence <= 3)
-                <div class="info-card fade-up tilt-card">
-                    <div class="info-icon">📌</div>
-                    <h4>{{ $item->title }}</h4>
-                    <p>{{ $item->description }}</p>
+            @forelse($bentukKerjasama as $item)
+            <div class="info-card fade-up tilt-card">
+                <div class="info-icon">
+                    @if($item->icon)
+                        <i class="{{ $item->icon }}"></i>
+                    @else
+                        📌
+                    @endif
                 </div>
-                @endif
-            @endforeach
-
+                <h4>{{ $item->title ?? 'Bentuk Kerjasama' }}</h4>
+                <p>{{ $item->description ?? 'Deskripsi belum tersedia' }}</p>
+            </div>
+            @empty
+            <div class="col-span-full text-center text-gray-400 py-8">
+                <p>Belum ada data bentuk kerjasama.</p>
+            </div>
+            @endforelse
         </div>
     </section>
 
@@ -378,8 +407,8 @@
             <h3 class="text-2xl md:text-3xl font-bold mb-3 bg-gradient-to-r from-indigo-200 to-purple-200 bg-clip-text text-transparent">
                 Ajukan Kerjasama
             </h3>
-
-            <button class="glow-btn px-8 py-3 rounded-full">
+            <p class="text-gray-300 mb-6">Tertarik untuk berkolaborasi dengan kami? Hubungi tim kami untuk informasi lebih lanjut.</p>
+            <button class="glow-btn" onclick="window.location.href='/contact'">
                 Hubungi Kami →
             </button>
         </div>
@@ -391,13 +420,151 @@
 @push('scripts')
 <script>
 // ============================================
-// JAVASCRIPT KHUSUS UNTUK HALAMAN KERJASAMA
-// Hanya JS yang BELUM ADA di master blade
+// SMOOTH INFINITE SCROLL - TANPA JEDA/LOMPAT
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    // 1. Tilt 3D effect untuk cards
+    // ============================================
+    // 1. SMOOTH INFINITE SLIDER (JavaScript Native)
+    // ============================================
+    let animationId = null;
+    let isPaused = false;
+    let currentPosition = 0;
+    let scrollSpeed = 0.8;
+    let oneSetWidth = 0;
+    let slideTrack = null;
+    let sliderContainer = null;
+
+    function initSmoothSlider() {
+        slideTrack = document.getElementById('slideTrack');
+        if (!slideTrack) return;
+
+        sliderContainer = document.querySelector('.slider');
+        const originalItems = Array.from(slideTrack.children);
+        const itemCount = originalItems.length;
+
+        if (itemCount === 0) return;
+
+        // Stop animasi yang sedang berjalan
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+        }
+
+        // Bersihkan track
+        slideTrack.innerHTML = '';
+
+        // Duplikasi 3x untuk infinite scroll yang sempurna
+        // Set 1, 2, 3 (total 3x lipat)
+        for (let i = 0; i < 3; i++) {
+            originalItems.forEach(item => {
+                const clone = item.cloneNode(true);
+                clone.style.transform = '';
+                clone.style.animation = '';
+                slideTrack.appendChild(clone);
+            });
+        }
+
+        // Hitung lebar satu set (original items)
+        const totalItems = slideTrack.children.length;
+        const oneSetCount = totalItems / 3;
+        oneSetWidth = 0;
+        for (let i = 0; i < oneSetCount; i++) {
+            const item = slideTrack.children[i];
+            if (item) {
+                oneSetWidth += item.offsetWidth + 40; // +40px gap
+            }
+        }
+
+        // Set posisi awal di tengah set pertama
+        currentPosition = -oneSetWidth;
+        slideTrack.style.transform = `translateX(${currentPosition}px)`;
+
+        // Mulai animasi
+        startAnimation();
+    }
+
+    function startAnimation() {
+        if (animationId) return;
+
+        function animate() {
+            if (!isPaused && slideTrack) {
+                currentPosition -= scrollSpeed;
+
+                // Reset posisi dengan mulus (tanpa jeda/lompat)
+                if (currentPosition <= -oneSetWidth * 2) {
+                    currentPosition += oneSetWidth;
+                    // Langsung set tanpa animasi untuk mencegah lompatan
+                    slideTrack.style.transform = `translateX(${currentPosition}px)`;
+                }
+
+                slideTrack.style.transform = `translateX(${currentPosition}px)`;
+            }
+
+            animationId = requestAnimationFrame(animate);
+        }
+
+        animate();
+    }
+
+    function stopAnimation() {
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+        }
+    }
+
+    // Hover pause
+    if (document.querySelector('.slider')) {
+        document.querySelector('.slider').addEventListener('mouseenter', () => {
+            isPaused = true;
+        });
+
+        document.querySelector('.slider').addEventListener('mouseleave', () => {
+            isPaused = false;
+        });
+    }
+
+    // Update width on window resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            if (slideTrack && oneSetWidth > 0) {
+                // Recalculate one set width
+                const totalItems = slideTrack.children.length;
+                const oneSetCount = totalItems / 3;
+                let newWidth = 0;
+                for (let i = 0; i < oneSetCount; i++) {
+                    const item = slideTrack.children[i];
+                    if (item) {
+                        newWidth += item.offsetWidth + 40;
+                    }
+                }
+
+                if (newWidth > 0) {
+                    const widthDifference = newWidth - oneSetWidth;
+                    oneSetWidth = newWidth;
+                    currentPosition -= widthDifference;
+                    slideTrack.style.transform = `translateX(${currentPosition}px)`;
+                }
+            }
+        }, 200);
+    });
+
+    // Initialize slider after images loaded
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSmoothSlider);
+        window.addEventListener('load', initSmoothSlider);
+    } else {
+        initSmoothSlider();
+        window.addEventListener('load', initSmoothSlider);
+    }
+
+    // ============================================
+    // 2. Tilt 3D effect untuk cards
+    // ============================================
     const tiltCards = document.querySelectorAll('.tilt-card');
     tiltCards.forEach(card => {
         card.addEventListener('mousemove', (e) => {
@@ -415,26 +582,51 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 2. Handle image error untuk logo cards
-    const allImages = document.querySelectorAll('.logo-card img');
-    allImages.forEach(img => {
-        img.addEventListener('error', function() {
-            const text = this.alt || 'Mitra';
-            const firstLetter = text.charAt(0);
-            this.style.objectFit = 'cover';
-            this.style.padding = '0';
-            this.style.backgroundColor = '#1e293b';
-            if (this.parentElement) {
-                const fallbackDiv = document.createElement('div');
-                fallbackDiv.className = 'w-full h-full flex items-center justify-center text-indigo-300 font-bold text-xl bg-slate-800';
-                fallbackDiv.innerText = firstLetter || '?';
+    // ============================================
+    // 3. Handle image error untuk logo cards
+    // ============================================
+    function handleImageErrors() {
+        const allImages = document.querySelectorAll('.logo-card img');
+        allImages.forEach(img => {
+            if (img.dataset.errorHandled) return;
+            img.dataset.errorHandled = 'true';
+
+            img.addEventListener('error', function() {
+                const text = this.alt || 'Mitra';
+                const firstLetter = text.charAt(0);
                 this.style.display = 'none';
-                this.parentElement.appendChild(fallbackDiv);
+
+                if (this.parentElement && !this.parentElement.querySelector('.fallback-text')) {
+                    const fallbackDiv = document.createElement('div');
+                    fallbackDiv.className = 'fallback-text w-full h-full flex items-center justify-center text-indigo-300 font-bold text-2xl bg-gradient-to-br from-indigo-900/50 to-purple-900/50';
+                    fallbackDiv.innerText = firstLetter || '?';
+                    this.parentElement.appendChild(fallbackDiv);
+                }
+            });
+
+            if (!img.complete && img.naturalWidth === 0) {
+                img.dispatchEvent(new Event('error'));
+            }
+        });
+    }
+
+    handleImageErrors();
+
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes.length) {
+                handleImageErrors();
             }
         });
     });
 
-    // 3. Stagger animation untuk cards
+    if (slideTrack) {
+        observer.observe(slideTrack, { childList: true, subtree: true });
+    }
+
+    // ============================================
+    // 4. Stagger animation untuk cards
+    // ============================================
     const partnerCards = document.querySelectorAll('.partner-card');
     partnerCards.forEach((card, idx) => {
         card.style.transitionDelay = `${idx * 0.1}s`;
@@ -444,8 +636,48 @@ document.addEventListener('DOMContentLoaded', function() {
     infoCards.forEach((card, idx) => {
         card.style.transitionDelay = `${idx * 0.1}s`;
     });
+
+    // ============================================
+    // 5. Fade up animation on scroll
+    // ============================================
+    const fadeElements = document.querySelectorAll('.fade-up');
+
+    function checkFade() {
+        fadeElements.forEach(element => {
+            const elementTop = element.getBoundingClientRect().top;
+            const windowHeight = window.innerHeight;
+
+            if (elementTop < windowHeight - 100) {
+                element.classList.add('visible');
+            }
+        });
+    }
+
+    const style = document.createElement('style');
+    style.textContent = `
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    `;
+    document.head.appendChild(style);
+
+    checkFade();
+    window.addEventListener('scroll', checkFade);
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', function() {
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+        }
+    });
 });
 
-console.log('Halaman Kerjasama siap dengan infinite slider dan efek tilt 3D!');
+console.log('Halaman Kerjasama siap dengan SMOOTH INFINITE SCROLL (tanpa jeda/lompat), fade-up animation, dan efek tilt 3D!');
 </script>
 @endpush

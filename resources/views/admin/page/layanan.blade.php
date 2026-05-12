@@ -69,7 +69,7 @@
         <div class="card-header bg-dark text-white">Data Layanan</div>
 
         <div class="card-body table-responsive">
-            
+
 
             <table class="table table-bordered table-hover align-middle">
                 <thead class="table-light">
@@ -112,8 +112,8 @@
 
                         <td class="d-flex gap-1">
 
-                            <button class="btn btn-warning btn-sm" 
-                                    data-bs-toggle="modal" 
+                            <button class="btn btn-warning btn-sm"
+                                    data-bs-toggle="modal"
                                     data-bs-target="#editModal{{ $item->id }}">
                                 Edit
                             </button>
