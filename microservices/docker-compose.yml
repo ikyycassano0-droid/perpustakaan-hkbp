@@ -69,7 +69,7 @@ services:
       MAIL_HOST: smtp-relay.brevo.com
       MAIL_PORT: 587
       MAIL_USERNAME: a8be27001@smtp-brevo.com
-      MAIL_PASSWORD: xsmtpsib-d91e9fff04df989dc8a82db9d79fc056fe65a4b95d909c07512a44dd59354d1b-QKhIq1OVDw3LOmsL
+      MAIL_PASSWORD: ###
       MAIL_ENCRYPTION: tls
       MAIL_FROM_ADDRESS: christoferkevin560@gmail.com
       MAIL_FROM_NAME: "Perpustakaan HKBP"
