@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Order;
 use App\Models\FinalProject;
+use App\Models\User;
 
 class ProfileMenuController extends Controller
 {
@@ -23,7 +23,7 @@ class ProfileMenuController extends Controller
      */
     public function editProfile()
     {
-        $user = Auth::user();
+        $user = User::find(session('user_id'));
         return view('user.profile.edit', compact('user'));
     }
 
@@ -32,7 +32,7 @@ class ProfileMenuController extends Controller
      */
     public function updateProfile(Request $request)
     {
-        $user = Auth::user();
+        $user = User::find(session('user_id'));
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -65,7 +65,7 @@ class ProfileMenuController extends Controller
      */
     public function show()
     {
-        $user = Auth::user();
+        $user = User::find(session('user_id'));
         $unreadNotif = $user->unreadNotifications->count();
         $totalPinjam = Order::where('user_id', $user->id)->count();
         $aktifPinjam = Order::where('user_id', $user->id)

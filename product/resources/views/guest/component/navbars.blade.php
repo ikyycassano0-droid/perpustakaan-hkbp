@@ -97,7 +97,7 @@
                     </svg>
                     <!-- Nama User -->
                     <span class="text-sm font-medium text-indigo-200 truncate max-w-[120px]">
-                        {{ Auth::user()->name }}
+                        {{ session('user')['name'] ?? '' }}
                     </span>
                 </a>
             @else

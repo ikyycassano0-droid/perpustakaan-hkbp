@@ -560,7 +560,7 @@
 <section class="mt-32 mb-32 text-center px-6">
     <h3 class="text-4xl md:text-5xl font-bold fade-up leading-tight mb-4">
         Selamat Datang, <br>
-        <span class="bg-gradient-to-r from-indigo-400 to-indigo-300 bg-clip-text text-transparent glow-text">{{ auth()->user()->name }} 👋</span>
+        <span class="bg-gradient-to-r from-indigo-400 to-indigo-300 bg-clip-text text-transparent glow-text">{{ session('user')['name'] ?? 'Mahasiswa' }} 👋</span>
     </h3>
     <p class="text-gray-400 mb-8 fade-up">
         Jelajahi koleksi digital, pinjam buku, atau upload Karya Tulis Ilmiah Anda hari ini.

@@ -40,7 +40,7 @@ public function index(Request $request, $category = 'kti')
         ->get();
 
     $myKtis = FinalProject::with(['category', 'firstSupervisor', 'secondSupervisor'])
-        ->where('user_id', auth()->id())
+        ->where('user_id', user_id())
         ->where('category_final_project_id', $ktiCategory->id)
         ->orderBy('created_at', 'desc')
         ->get();
@@ -89,8 +89,8 @@ public function index(Request $request, $category = 'kti')
 
             // Simpan data
             $kti = FinalProject::create([
-                'user_id' => auth()->id(),
-                'student_name' => auth()->user()->name,
+                'user_id' => user_id(),
+                'student_name' => current_user()->name,
                 'npm' => $request->npm,
                 'study_program' => $request->study_program,
                 'title' => $request->title,

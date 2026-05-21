@@ -66,7 +66,7 @@ class ArchiveController extends Controller
             'icon' => $request->icon,
             'sequence' => $request->sequence,
             'active' => 1,
-            'created_by' => Auth::id(),
+            'created_by' => user_id(),
         ]);
 
         if ($request->hasFile('files')) {
@@ -82,7 +82,7 @@ class ArchiveController extends Controller
                     'file_size' => round($file->getSize() / 1024),
                     'published_at' => now(),
                     'active' => 1,
-                    'created_by' => Auth::id(),
+                    'created_by' => user_id(),
                 ]);
             }
         }
@@ -112,7 +112,7 @@ class ArchiveController extends Controller
             'description' => $request->description,
             'category' => $request->category,
             'icon' => $request->icon,
-            'updated_by' => Auth::id(),
+            'updated_by' => user_id(),
         ]));
 
         if ($request->replace_file_id && $request->hasFile('replace_file')) {
@@ -133,7 +133,7 @@ class ArchiveController extends Controller
                 'file_url' => $path,
                 'file_type' => $file->getClientOriginalExtension(),
                 'file_size' => round($file->getSize() / 1024),
-                'updated_by' => Auth::id(),
+                'updated_by' => user_id(),
             ]);
         }
 
@@ -150,7 +150,7 @@ class ArchiveController extends Controller
                     'file_size' => round($file->getSize() / 1024),
                     'published_at' => now(),
                     'active' => 1,
-                    'created_by' => Auth::id(),
+                    'created_by' => user_id(),
                 ]);
             }
         }

@@ -8,7 +8,7 @@
     <div class="flex justify-between items-center mb-2">
         <div>
             <h1 class="text-2xl font-bold text-slate-800">Dashboard</h1>
-            <p class="text-slate-500 text-sm mt-0.5">Selamat datang, {{ auth()->user()->name ?? 'Admin' }}. Berikut ringkasan data perpustakaan.</p>
+            <p class="text-slate-500 text-sm mt-0.5">Selamat datang, {{ session('user')['name'] ?? 'Admin' }}. Berikut ringkasan data perpustakaan.</p>
         </div>
         <div class="flex gap-2">
             <button class="px-4 py-2 text-sm border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition flex items-center gap-2" onclick="window.print()">

@@ -216,7 +216,7 @@ class CollectionController extends Controller
     public function pinbal()
 {
     // Ambil riwayat peminjaman dengan relasi yang benar
-    $peminjaman = Order::where('user_id', auth()->id())
+    $peminjaman = Order::where('user_id', user_id())
         ->with(['details' => function($query) {
             $query->with('collection'); // Load collection melalui details
         }])
@@ -246,7 +246,7 @@ class CollectionController extends Controller
         }
         
         $order = Order::create([
-            'user_id' => auth()->id(),
+            'user_id' => user_id(),
             'order_number' => 'ORD-' . strtoupper(uniqid()),
             'status' => 'PENDING',
             'notes' => $request->notes,
@@ -305,9 +305,9 @@ class CollectionController extends Controller
         // ================= USER BORROW STATUS =================
         $userBorrowStatus = [];
 
-        if (auth()->check()) {
+        if (is_logged_in())  {
             // Ambil semua order aktif user (PENDING, APPROVED, REJECTED)
-            $activeOrders = Order::where('user_id', auth()->id())
+            $activeOrders = Order::where('user_id', user_id())
                 ->whereIn('status', ['PENDING', 'APPROVED', 'REJECTED'])
                 ->with('details')
                 ->get();

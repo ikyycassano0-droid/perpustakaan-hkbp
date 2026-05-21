@@ -749,7 +749,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Data dari server
     var allApprovedKtis = @json($allApprovedKtis ?? []);  // Semua KTI yang sudah approved dari semua user
     var myKtis = @json($myKtis ?? []);                    // KTI milik user yang login
-    var currentUserId = {{ auth()->id() ?? 0 }};
+    var currentUserId = {{ user_id() ?? 0 }};
 
     var currentMenu = 'all';     // Menu aktif: 'all', 'my-approved', 'my-pending', 'my-rejected'
     var currentPage = 1;

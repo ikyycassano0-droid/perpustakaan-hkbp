@@ -639,9 +639,9 @@
                     $tooltipText = '';
 
                     // Jika user sudah login, tentukan status tombol secara detail
-                    if (auth()->check()) {
+                    if (is_logged_in()) {
                         // Hitung jumlah peminjaman aktif (PENDING/APPROVED) untuk user ini
-                        $activeBorrowCount = \App\Models\Order::where('user_id', auth()->id())
+                        $activeBorrowCount = \App\Models\Order::where('user_id', user_id())
                             ->whereIn('status', ['PENDING', 'APPROVED'])
                             ->count();
 

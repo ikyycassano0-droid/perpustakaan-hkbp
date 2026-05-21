@@ -731,7 +731,7 @@
                                                     {{ $item->available_stock > 0 ? '✓ TERSEDIA' : '⚡ KOSONG' }}
                                                 </span>
 
-                                                @auth
+                                                @if(session()->has('user'))
                                                     @if($borrowStatus && in_array($borrowStatus['status'], ['PENDING', 'APPROVED']))
                                                         <button class="btn-outline text-xs" style="padding: 4px 10px;" disabled>
                                                             {{ $borrowStatus['status'] == 'PENDING' ? 'Diproses' : 'Dipinjam' }}
@@ -750,7 +750,7 @@
                                                     <a href="{{ route('login') }}" class="btn-primary text-xs" style="padding: 4px 10px;">
                                                         Login
                                                     </a>
-                                                @endauth
+                                                @endif
 
                                             </div>
                                         </div>
@@ -832,7 +832,7 @@
 
                                             <!-- PINJAM -->
                                             <td>
-                                                @auth
+                                                @if(session()->has('user'))
                                                     @if($borrowStatus && in_array($borrowStatus['status'], ['PENDING', 'APPROVED']))
                                                         @if($borrowStatus['status'] == 'PENDING')
                                                             <button class="btn-outline" disabled>
@@ -857,7 +857,7 @@
                                                     <a href="{{ route('login') }}" class="btn-primary">
                                                         Login
                                                     </a>
-                                                @endauth
+                                                @endif
                                             </td>
 
                                         </tr>

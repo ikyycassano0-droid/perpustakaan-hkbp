@@ -1,4 +1,4 @@
-@extends(auth()->check() ? 'user.component.master' : 'guest.component.master')
+@extends(is_logged_in() ? 'user.component.master' : 'guest.component.master')
 
 @section('title', 'Hasil Pencarian - AKPER HKBP Balige')
 

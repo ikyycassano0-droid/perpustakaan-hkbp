@@ -83,7 +83,7 @@ class HomeController extends Controller
         }
 
         Gallery::create([
-            'user_id' => Auth::id(), // <-- Tambahkan ID pengguna yang sedang login
+            'user_id' => user_id(),
             'judul_galeri' => $validated['judul_galeri'],
             'gambar_galeri' => $path
         ]);

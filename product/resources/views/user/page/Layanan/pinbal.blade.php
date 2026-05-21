@@ -733,7 +733,7 @@
             <div class="stat-card fade-up">
                 <div class="text-2xl mb-1">🎓</div>
                 <div class="membership-active mx-auto" style="width: fit-content;">
-                    {{ auth()->check() ? 'AKTIF' : 'GUEST' }}
+                    {{ is_logged_in() ? 'AKTIF' : 'GUEST' }}
                 </div>
                 <div class="text-xs text-gray-400 mt-2">Status Keanggotaan</div>
             </div>

@@ -234,7 +234,7 @@
         <button class="user-name btn btn-link text-warning text-decoration-none"
             data-bs-toggle="offcanvas" data-bs-target="#sidebarUser">
             <i class="fas fa-user-circle"></i>
-            {{ auth()->user()->name }}
+            {{ session('user')['name'] ?? '' }}
         </button>
         @endauth
     </div>
@@ -253,7 +253,7 @@
         <div class="mb-3">
             <strong>
                 <i class="fas fa-user"></i>
-                {{ auth()->user()->name ?? 'Mahasiswa AKPER' }}
+                {{ session('user')['name'] ?? 'Mahasiswa AKPER' }}
             </strong>
         </div>
 

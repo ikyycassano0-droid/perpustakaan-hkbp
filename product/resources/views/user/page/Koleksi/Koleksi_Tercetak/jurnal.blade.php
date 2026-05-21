@@ -1,5 +1,6 @@
 @extends('user.component.master')
 
+
 @section('title', 'Jurnal Ilmiah - AKPER HKBP Balige')
 
 @push('styles')
@@ -620,6 +621,7 @@
 @endpush
 
 @section('content')
+
 <div class="main-content">
 
     <!-- HERO SECTION -->
@@ -709,7 +711,7 @@
                                         </a>
                                     @endif
 
-                                    @auth
+                                    @if(session()->has('user'))
                                         @if($borrowStatus && in_array($borrowStatus['status'], ['PENDING', 'APPROVED']))
                                             @if($borrowStatus['status'] == 'PENDING')
                                                 <button class="btn-outline flex-1 text-center" disabled>
@@ -734,7 +736,7 @@
                                         <a href="{{ route('login') }}" class="btn-primary flex-1 text-center">
                                             🔑 Login
                                         </a>
-                                    @endauth
+                                    @endif
 
                                 </div>
 

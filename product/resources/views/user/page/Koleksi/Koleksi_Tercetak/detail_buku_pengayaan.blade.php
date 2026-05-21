@@ -293,8 +293,8 @@
                         <div class="mt-4 flex flex-col gap-3">
                             @php
                                 $hasPending = false;
-                                if(auth()->check()) {
-                                    $hasPending = \App\Models\Order::where('user_id', auth()->id())
+                                if(is_logged_in()) {
+                                    $hasPending = \App\Models\Order::where('user_id', user_id())
                                         ->where('status', 'PENDING')
                                         ->whereHas('details', function($q) use ($collection) {
                                             $q->where('collection_id', $collection->id);
@@ -303,7 +303,7 @@
                                 }
                             @endphp
 
-                            @auth
+                            @if(session()->has('user'))
                                 @if($hasPending)
                                     <button class="btn-primary w-full opacity-50" disabled>
                                         ⏳ Menunggu Persetujuan
@@ -325,7 +325,7 @@
                                 <a href="{{ route('login') }}" class="btn-primary w-full text-center">
                                     <i class="fas fa-lock mr-2"></i> Login untuk Pinjam
                                 </a>
-                            @endauth
+                            @endif
 
                             @if($collection->file_url)
                                 <a href="{{ asset('storage/'.$collection->file_url) }}"

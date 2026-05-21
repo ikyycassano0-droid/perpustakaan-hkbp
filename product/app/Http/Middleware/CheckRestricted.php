@@ -14,14 +14,14 @@ class CheckRestricted
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle($request, Closure $next)
-{
-    $collection = Collection::find($request->route('id'));
+    {
+        $collection = \App\Models\Collection::find($request->route('id'));
 
-    if ($collection && $collection->is_restricted && !auth()->check()) {
-        return redirect()->route('login')
-            ->with('error', 'Harus login!');
+        if ($collection && $collection->is_restricted && !session()->has('user')) {
+            return redirect()->route('login')
+                ->with('error', 'Harus login!');
+        }
+
+        return $next($request);
     }
-
-    return $next($request);
-}
 }

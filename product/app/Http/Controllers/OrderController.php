@@ -38,103 +38,94 @@ class OrderController extends Controller
     }
 
     // ================= USER PINJAM =================
-    public function store(Request $request)
-    {
-        Log::info('=== ORDER STORE START ===');
-        Log::info('Request data:', $request->all());
-        
-        try {
-            $collectionId = $request->input('collection_id');
-            $borrowDate = $request->input('borrow_date');
-            $returnDate = $request->input('return_date');
-            
-            // Validasi collection
-            $collection = Collection::find($collectionId);
-            if (!$collection) {
-                return redirect()->back()->with('error', 'Buku tidak ditemukan!');
-            }
-            
-            if ($collection->available_stock < 1) {
-                return redirect()->back()->with('error', 'Stok buku habis!');
-            }
-            
-            if (!auth()->check()) {
-                return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu');
-            }
-            
-            // Cek maksimal pinjam (PENDING + APPROVED) - DARI SEMUA JENIS BUKU
-            $activeCount = Order::where('user_id', auth()->id())
-                ->whereIn('status', ['PENDING', 'APPROVED'])
-                ->count();
-            
-            if ($activeCount >= self::MAX_BORROW_COUNT) {
-                return redirect()->back()->with('error', "Anda sudah meminjam {$activeCount} buku. Maksimal " . self::MAX_BORROW_COUNT . " buku!");
-            }
-            
-            // Cek duplikat (buku yang sama, status PENDING atau APPROVED)
-            $existingOrder = Order::where('user_id', auth()->id())
-                ->whereIn('status', ['PENDING', 'APPROVED'])
-                ->whereHas('details', function ($q) use ($collection) {
-                    $q->where('collection_id', $collection->id);
-                })
-                ->exists();
-            
-            if ($existingOrder) {
-                return redirect()->back()->with('error', 'Buku sudah Anda pinjam atau sedang dalam proses konfirmasi!');
-            }
-            
-            // Validasi durasi pinjam (MAX 3 HARI)
-            $borrow = Carbon::parse($borrowDate);
-            $due = Carbon::parse($returnDate);
-            $daysDiff = $borrow->diffInDays($due);
-            
-            if ($daysDiff < 1) {
-                return redirect()->back()->with('error', 'Minimal peminjaman 1 hari!');
-            }
-            
-            if ($daysDiff > self::MAX_BORROW_DAYS) {
-                return redirect()->back()->with('error', 'Maksimal peminjaman ' . self::MAX_BORROW_DAYS . ' hari!');
-            }
-            
-            DB::beginTransaction();
-            
-            // Buat order
-            $order = Order::create([
-                'user_id'            => auth()->id(),
-                'order_date'         => Carbon::now()->format('Y-m-d'),
-                'borrow_date'        => $borrow->format('Y-m-d'),
-                'due_date'           => $due->format('Y-m-d'),
-                'actual_return_date' => null,
-                'fine'               => 0,
-                'is_extended'        => 0,
-                'extended_until'     => null,
-                'extend_days'        => 0,
-                'original_due_date'  => null,
-                'status'             => 'PENDING',
-            ]);
-            
-            Log::info("Order created with ID: {$order->id}");
-            
-            // Buat order detail
-            $detail = $order->details()->create([
-                'collection_id' => $collection->id,
-                'qty' => 1
-            ]);
-            
-            Log::info("Order detail created with ID: {$detail->id}");
-            
-            DB::commit();
-            
-            return redirect()->back()->with('success', 'Peminjaman berhasil diajukan! Menunggu persetujuan admin.');
-            
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error("Order store error: " . $e->getMessage());
-            Log::error($e->getTraceAsString());
-            
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
-        }
+public function store(Request $request)
+{
+    Log::info('=== ORDER STORE START ===');
+    Log::info('Request data:', $request->all());
+    
+    $collectionId = $request->input('collection_id');
+    $borrowDate = $request->input('borrow_date');
+    $returnDate = $request->input('return_date');
+    
+    // Validasi collection
+    $collection = Collection::find($collectionId);
+    if (!$collection) {
+        return redirect()->back()->with('error', 'Buku tidak ditemukan!');
     }
+    
+    if ($collection->available_stock < 1) {
+        return redirect()->back()->with('error', 'Stok buku habis!');
+    }
+    
+    if (!is_logged_in()) {
+        return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu');
+    }
+    
+    // Cek maksimal pinjam (PENDING + APPROVED)
+    $activeCount = Order::where('user_id', user_id())
+        ->whereIn('status', ['PENDING', 'APPROVED'])
+        ->count();
+    
+    if ($activeCount >= self::MAX_BORROW_COUNT) {
+        return redirect()->back()->with('error', "Anda sudah meminjam {$activeCount} buku. Maksimal " . self::MAX_BORROW_COUNT . " buku!");
+    }
+    
+    // Cek duplikat
+    $existingOrder = Order::where('user_id', user_id())
+        ->whereIn('status', ['PENDING', 'APPROVED'])
+        ->whereHas('details', function ($q) use ($collection) {
+            $q->where('collection_id', $collection->id);
+        })
+        ->exists();
+    
+    if ($existingOrder) {
+        return redirect()->back()->with('error', 'Buku sudah Anda pinjam atau sedang dalam proses konfirmasi!');
+    }
+    
+    // Validasi durasi pinjam
+    $borrow = Carbon::parse($borrowDate);
+    $due = Carbon::parse($returnDate);
+    $daysDiff = $borrow->diffInDays($due);
+    
+    if ($daysDiff < 1) {
+        return redirect()->back()->with('error', 'Minimal peminjaman 1 hari!');
+    }
+    
+    if ($daysDiff > self::MAX_BORROW_DAYS) {
+        return redirect()->back()->with('error', 'Maksimal peminjaman ' . self::MAX_BORROW_DAYS . ' hari!');
+    }
+    
+    DB::beginTransaction();
+    
+    // Buat order
+    $order = Order::create([
+        'user_id'            => user_id(),
+        'order_date'         => Carbon::now()->format('Y-m-d'),
+        'borrow_date'        => $borrow->format('Y-m-d'),
+        'due_date'           => $due->format('Y-m-d'),
+        'actual_return_date' => null,
+        'fine'               => 0,
+        'is_extended'        => 0,
+        'extended_until'     => null,
+        'extend_days'        => 0,
+        'original_due_date'  => null,
+        'status'             => 'PENDING',
+    ]);
+    
+    Log::info("Order created with ID: {$order->id}");
+    
+    // Buat order detail
+    $detail = $order->details()->create([
+        'collection_id' => $collection->id,
+        'qty' => 1
+    ]);
+    
+    Log::info("Order detail created with ID: {$detail->id}");
+    
+    DB::commit();
+    
+    return redirect()->back()->with('success', 'Peminjaman berhasil diajukan! Menunggu persetujuan admin.');
+}
 
     // ================= ADMIN APPROVE =================
 public function approve($id)
@@ -302,7 +293,7 @@ public function approve($id)
     public function history()
     {
         $orders = Order::with('details.collection')
-            ->where('user_id', auth()->id())
+            ->where('user_id', user_id())
             ->latest()
             ->get();
 

@@ -180,8 +180,8 @@
                 <div class="sidebar-user-footer">
                     <img src="{{ asset('admin/assets/images/user/avatar-1.jpg') }}" class="img-radius wid-40 mr-3" alt="User">
                     <div class="mr-auto">
-                        <h6 class="mb-0 f-13">{{ Auth::user()->name }}</h6>
-                        <small class="text-muted">{{ strtoupper(Auth::user()->role) }}</small>
+                        <h6 class="mb-0 f-13">{{ session('user')['name'] ?? 'Admin' }}</h6>
+                        <small class="text-muted">{{ strtoupper(session('user')['role']['name'] ?? 'User') }}</small>
                     </div>
                     <!-- Logout Trigger Icon -->
                     <i class="feather icon-log-out text-muted logout-trigger" title="Logout"
@@ -227,7 +227,7 @@
                 <div class="col-xl-6">
                     <div class="card greeting-card p-4">
                         <h6 class="text-white-50">Good day,</h6>
-                        <h2 class="font-weight-bold text-white">{{ Auth::user()->name }}!</h2>
+                        <h2 class="font-weight-bold text-white">{{ session('user')['name'] ?? 'Admin' }}!</h2>
                         <div class="mt-5 text-white-50 f-12">
                             <i class="feather icon-calendar mr-2"></i> {{ date('M d, Y') }} &nbsp;
                             <i class="feather icon-clock mr-2"></i> <span id="real-time"></span>

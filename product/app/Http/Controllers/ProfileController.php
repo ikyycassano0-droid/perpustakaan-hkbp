@@ -497,20 +497,26 @@ class ProfileController extends Controller
     // ================= USER (MAHASISWA) =================
     public function studentProfile()
     {
-        $user = auth()->user();
+        $userData = session('user');
 
-        $totalPinjam = \App\Models\Order::where('user_id', $user->id)->count();
-        $aktifPinjam = \App\Models\Order::where('user_id', $user->id)
+        if (!$userData) {
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu');
+        }
+
+        $userId = $userData['id'];
+
+        $totalPinjam = \App\Models\Order::where('user_id', $userId)->count();
+        $aktifPinjam = \App\Models\Order::where('user_id', $userId)
                         ->where('status', 'dipinjam')
                         ->count();
 
-        $totalKti = \App\Models\FinalProject::where('user_id', $user->id)
+        $totalKti = \App\Models\FinalProject::where('user_id', $userId)
                     ->where('status', 'Approved')
                     ->count();
 
-        $unreadNotif = \App\Models\Notification::where('user_id', $user->id)
-                       ->where('is_read', false)
-                       ->count();
+        $unreadNotif = \App\Models\Notification::where('user_id', $userId)
+                    ->where('is_read', false)
+                    ->count();
 
         $point = 0;
 

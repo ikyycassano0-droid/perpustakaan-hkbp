@@ -144,29 +144,29 @@
                     <div class="profile-avatar">
                         👨‍🎓
                     </div>
-                    <h2 class="text-center text-xl font-bold text-indigo-200 mt-4">{{ auth()->user()->name }}</h2>
-                    <p class="text-center text-xs text-indigo-300/70">{{ auth()->user()->role ?? 'Mahasiswa' }}</p>
+                    <h2 class="text-center text-xl font-bold text-indigo-200 mt-4">{{ session('user')['name'] ?? ''}}</h2>
+                    <p class="text-center text-xs text-indigo-300/70">{{ session('user')['role']['name'] ?? 'Mahasiswa'}}</p>
 
                     <div class="mt-6 space-y-2">
                         <div class="profile-info-item">
                             <span class="profile-label">📧 Email</span>
-                            <span class="profile-value">{{ auth()->user()->email }}</span>
+                            <span class="profile-value">{{ session('user')['email'] ?? '' }}</span>
                         </div>
                         <div class="profile-info-item">
                             <span class="profile-label">🆔 NPM / NIDN</span>
-                            <span class="profile-value">{{ auth()->user()->npm ?? '-' }}</span>
+                            <span class="profile-value">{{ session('user')['npm'] ?? '-' }}</span>
                         </div>
                         <div class="profile-info-item">
                             <span class="profile-label">🎓 Program Studi</span>
-                            <span class="profile-value">{{ auth()->user()->study_program ?? 'D3 Keperawatan' }}</span>
+                            <span class="profile-value">{{ session('user')['study_program'] ?? 'D3 Keperawatan' }}</span>
                         </div>
                         <div class="profile-info-item">
                             <span class="profile-label">📅 Angkatan</span>
-                            <span class="profile-value">{{ auth()->user()->angkatan ?? '-' }}</span>
+                            <span class="profile-value">{{ session('user')['angkatan'] ?? '-'}}</span>
                         </div>
                         <div class="profile-info-item">
                             <span class="profile-label">📱 No. Telepon</span>
-                            <span class="profile-value">{{ auth()->user()->phone ?? '-' }}</span>
+                            <span class="profile-value">{{session('user')['phone'] ?? '-'}}</span>
                         </div>
                     </div>
 

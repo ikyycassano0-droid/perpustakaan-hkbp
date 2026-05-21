@@ -52,7 +52,7 @@
             return view('admin.page.home');
         })->name('admin.home');
 
-    Route::prefix('admin')->name('admin.')->middleware(['auth','admin'])->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware(['admin'])->group(function () {
 
             Route::prefix('members')->name('members.')->group(function () {
 
@@ -188,7 +188,7 @@
             });
 
             // ================= KTI ADMIN =================
-            Route::prefix('kti')->name('kti.')->middleware(['auth','admin'])->group(function () {
+            Route::prefix('kti')->name('kti.')->middleware(['admin'])->group(function () {
 
                 // List semua KTI
                 Route::get('/', [FinalProjectController::class, 'index_kti_admin'])->name('index');
@@ -209,7 +209,7 @@
     });
 
         // User
-    Route::middleware(['auth'])->prefix('user')->group(function () {
+    Route::prefix('user')->group(function () {
 
             // Dashboard
             Route::get('/dashboard', function() {
@@ -305,7 +305,7 @@
 
         Route::prefix('final-project')->name('final_project.')->group(function() {
 
-        Route::middleware('auth')->group(function () {
+        Route::middleware([])->group(function () {
         Route::get('/kti', [FinalProjectController::class,'index'])
             ->name('kti')
             ->defaults('category','kti');
@@ -401,7 +401,7 @@
         Route::get('/search', [CollectionController::class, 'globalSearch'])
     ->name('guest.global_search');
 
-        Route::middleware(['auth'])->group(function () {
+        Route::middleware([])->group(function () {
 
             Route::get('/inbox', [NotificationController::class, 'index'])
                 ->name('user.inbox');

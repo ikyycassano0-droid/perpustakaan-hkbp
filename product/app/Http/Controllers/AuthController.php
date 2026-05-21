@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -20,70 +18,60 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function login(Request $request) {
-        $request->validate([
-            'npm' => 'required|string',
-            'password' => 'required|string'
-        ]);
+public function login(Request $request) {
+    $request->validate([
+        'npm' => 'required|string',
+        'password' => 'required|string'
+    ]);
 
-        // 🔥 PANGGIL AUTH SERVICE
-        try {
-            $response = Http::timeout(5)
-                ->post("{$this->authServiceUrl}/auth/login", [
-                    'npm' => $request->npm,
-                    'password' => $request->password
-                ]);
+    try {
+        $response = Http::timeout(5)
+            ->post("{$this->authServiceUrl}/auth/login", [
+                'npm' => $request->npm,
+                'password' => $request->password
+            ]);
 
-            $data = $response->json();
+        $data = $response->json();
 
-            if ($response->successful() && ($data['success'] ?? false)) {
-                // Simpan token & user dari Auth Service
-                session([
-                    'auth_token' => $data['data']['token'],
-                    'user' => $data['data']['user']
-                ]);
+        if ($response->successful() && ($data['success'] ?? false)) {
+            session([
+                'auth_token' => $data['data']['token'],
+                'user' => $data['data']['user'],
+                'user_id' => $data['data']['user']['id']
+            ]);
 
-                // 🔀 REDIRECT SESUAI ROLE
-                if ($data['data']['user']['role_id'] == 1) {
-                    return redirect()->route('admin.home');
-                } else {
-                    return redirect()->route('user.dashboard');
-                }
+            // ✅ Sinkronkan user ke database lokal
+            $localUser = \App\Models\User::firstOrCreate(
+                ['email' => $data['data']['user']['email']],
+                [
+                    'role_id' => $data['data']['user']['role_id'],
+                    'name' => $data['data']['user']['name'],
+                    'npm' => $data['data']['user']['npm'],
+                    'password' => bcrypt($request->password),
+                    'active' => 1,
+                ]
+            );
+
+            session(['user_id' => $localUser->id]);
+
+            if ($data['data']['user']['role_id'] == 1) {
+                return redirect()->route('admin.home');
+            } else {
+                return redirect()->route('user.dashboard');
             }
-
-            // Email belum verifikasi (dari Auth Service)
-            if (($data['needs_verification'] ?? false) === true) {
-                return back()->with('error', $data['message']);
-            }
-
-            // Gagal dari Auth Service
-            return back()->with('error', $data['message'] ?? 'NPM atau password salah');
-
-        } catch (\Exception $e) {
-            Log::error('Auth Service tidak tersedia: ' . $e->getMessage());
-            return back()->with('error', 'Layanan autentikasi sedang tidak tersedia. Silakan coba lagi nanti.');
         }
+
+        return back()->with('error', $data['message'] ?? 'NPM atau password salah');
+
+    } catch (\Exception $e) {
+        return back()->with('error', 'Layanan autentikasi sedang tidak tersedia.');
     }
+}
 
     public function logout(Request $request)
     {
-        // Logout dari Auth Service
-        try {
-            $token = session('auth_token');
-            if ($token) {
-                Http::withToken($token)
-                    ->timeout(3)
-                    ->post("{$this->authServiceUrl}/auth/logout");
-            }
-        } catch (\Exception $e) {
-            // Silent
-        }
-
-        Auth::logout();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
         return redirect()->route('home');
     }
 }

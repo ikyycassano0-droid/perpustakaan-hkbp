@@ -10,12 +10,12 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        $notifications = Notification::where('user_id', auth()->id())
+        $notifications = Notification::where('user_id', user_id())
             ->latest()
             ->get();
 
-        // 🔥 AUTO JADI TERBACA
-        Notification::where('user_id', auth()->id())
+        
+        Notification::where('user_id',user_id())
             ->where('is_read', false)
             ->update(['is_read' => true]);
 

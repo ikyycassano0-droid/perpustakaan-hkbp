@@ -752,7 +752,7 @@
                                                 Detail →
                                             </a>
 
-                                            @auth
+                                            @if(session()->has('user'))
                                                 @if($borrowStatus && in_array($borrowStatus['status'], ['PENDING', 'APPROVED']))
                                                     @if($borrowStatus['status'] == 'PENDING')
                                                         <button class="btn-outline" disabled style="flex:1; text-align:center;">
@@ -777,7 +777,7 @@
                                                 <a href="{{ route('login') }}" class="btn-primary" style="flex:1; text-align:center;">
                                                     Login
                                                 </a>
-                                            @endauth
+                                            @endif
                                         </div>
 
                                     </div>

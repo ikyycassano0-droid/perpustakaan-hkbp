@@ -8,6 +8,7 @@ use App\Models\Role;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use App\Jobs\SendVerificationEmailJob;
+use Illuminate\Support\Facades\Http;
 
 class MemberController extends Controller
 {
@@ -46,6 +47,19 @@ class MemberController extends Controller
             'phone' => $request->phone,
             'password' => $request->password, // auto hash dari model
         ]);
+
+        try {
+            Http::timeout(5)
+                ->post(env('AUTH_SERVICE_URL', 'http://localhost:8001/api/v1') . '/auth/register', [
+                    'role_id' => $request->role_id,
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'npm' => $request->npm,
+                    'password' => $request->password,
+                ]);
+        } catch (\Exception $e) {
+            \Log::error('Gagal sinkron ke Auth Service: ' . $e->getMessage());
+        }
 
         // kirim email verifikasi Laravel
         event(new Registered($user));

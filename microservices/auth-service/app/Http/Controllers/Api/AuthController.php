@@ -13,85 +13,66 @@ class AuthController extends Controller
 {
     /**
      * LOGIN
-     * 
-     * @param Request $request
-     * @return JsonResponse
      */
-    public function login(Request $request): JsonResponse
-    {
-        // Validasi input
-        $validator = Validator::make($request->all(), [
-            'npm' => 'required|string',
-            'password' => 'required|string',
-        ]);
+public function login(Request $request): JsonResponse
+{
+    $validator = Validator::make($request->all(), [
+        'npm' => 'required|string',
+        'password' => 'required|string',
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validasi gagal',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        // Cari user berdasarkan NPM dan status active
-        $user = User::where('npm', $request->npm)
-                    ->where('active', true)
-                    ->first();
-
-        // Cek password
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'NPM atau password salah'
-            ], 401);
-        }
-
-        // Cek verifikasi email untuk non-admin
-        if (!$user->isAdmin() && !$user->hasVerifiedEmail()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Email belum diverifikasi. Silakan cek Gmail Anda.',
-                'needs_verification' => true,
-                'user_id' => $user->id
-            ], 403);
-        }
-
-        // Generate token Sanctum
-        $token = $user->createToken('auth-token')->plainTextToken;
-
+    if ($validator->fails()) {
         return response()->json([
-            'success' => true,
-            'message' => 'Login berhasil',
-            'data' => [
-                'user' => [
-                    'id' => $user->id,
-                    'role_id' => $user->role_id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'npm' => $user->npm,
-                    'nidn' => $user->nidn,
-                    'role' => [
-                        'id' => $user->role_id,
-                        'name' => $user->role?->name
-                    ],
-                    'is_admin' => $user->isAdmin(),
-                    'email_verified' => $user->hasVerifiedEmail()
-                ],
-                'token' => $token,
-                'token_type' => 'Bearer'
-            ]
-        ], 200);
+            'success' => false,
+            'message' => 'Validasi gagal',
+            'errors' => $validator->errors()
+        ], 422);
     }
+
+    $user = User::where('npm', $request->npm)
+                ->where('active', true)
+                ->first();
+
+    if (!$user || !Hash::check($request->password, $user->password)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'NPM atau password salah'
+        ], 401);
+    }
+
+    // ✅ TIDAK ADA PENGECEKAN VERIFIKASI EMAIL LAGI
+
+    $token = $user->createToken('auth-token')->plainTextToken;
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Login berhasil',
+        'data' => [
+            'user' => [
+                'id' => $user->id,
+                'role_id' => $user->role_id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'npm' => $user->npm,
+                'nidn' => $user->nidn,
+                'role' => [
+                    'id' => $user->role_id,
+                    'name' => $user->role?->name
+                ],
+                'is_admin' => $user->isAdmin(),
+                'email_verified' => $user->hasVerifiedEmail()
+            ],
+            'token' => $token,
+            'token_type' => 'Bearer'
+        ]
+    ], 200);
+}
 
     /**
      * LOGOUT
-     * 
-     * @param Request $request
-     * @return JsonResponse
      */
     public function logout(Request $request): JsonResponse
     {
-        // Revoke token yang sedang digunakan
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
@@ -102,10 +83,6 @@ class AuthController extends Controller
 
     /**
      * VALIDATE TOKEN
-     * Digunakan oleh service lain untuk verifikasi token
-     * 
-     * @param Request $request
-     * @return JsonResponse
      */
     public function validateToken(Request $request): JsonResponse
     {
@@ -143,9 +120,6 @@ class AuthController extends Controller
 
     /**
      * GET USER PROFILE
-     * 
-     * @param Request $request
-     * @return JsonResponse
      */
     public function profile(Request $request): JsonResponse
     {
@@ -182,9 +156,6 @@ class AuthController extends Controller
 
     /**
      * RESEND VERIFICATION EMAIL
-     * 
-     * @param Request $request
-     * @return JsonResponse
      */
     public function resendVerification(Request $request): JsonResponse
     {
@@ -215,5 +186,35 @@ class AuthController extends Controller
             'success' => true,
             'message' => 'Link verifikasi telah dikirim ke email Anda'
         ], 200);
+    }
+
+    /**
+     * REGISTER - User baru langsung verified
+     */
+    public function register(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'role_id' => 'required|integer',
+            'name' => 'required|string',
+            'email' => 'required|email|unique:users',
+            'npm' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+
+        $user = User::create([
+            'role_id' => $request->role_id,
+            'name' => $request->name,
+            'email' => $request->email,
+            'npm' => $request->npm,
+            'password' => $request->password,
+            'active' => true,
+            'email_verified_at' => now(),  
+        ]);
+
+        return response()->json(['success' => true, 'user_id' => $user->id], 201);
     }
 }

@@ -102,29 +102,30 @@
         </ul>
 
         <!-- AREA LOGIN / PROFIL + MOBILE MENU BUTTON -->
-        <div class="flex items-center gap-3">
-            @auth
-                <a href="{{ route('profile.menu') }}"
-                   class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 group">
-                    <svg class="w-5 h-5 text-indigo-300 group-hover:text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    <span class="text-sm font-medium text-indigo-200 truncate max-w-[120px]">
-                        {{ Auth::user()->name }}
-                    </span>
-                </a>
-            @else
-                <button onclick="window.location.href='{{ route('login') }}'" class="btn-login-modern">
-                    <span class="hidden sm:inline">Login</span>
-                </button>
-            @endauth
+<!-- AREA LOGIN / PROFIL + MOBILE MENU BUTTON -->
+<div class="flex items-center gap-3">
+    @if(session()->has('user'))
+        <a href="{{ route('profile.menu') }}"
+           class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 group">
+            <svg class="w-5 h-5 text-indigo-300 group-hover:text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <span class="text-sm font-medium text-indigo-200 truncate max-w-[120px]">
+                {{ session('user')['name'] ?? 'User' }}
+            </span>
+        </a>
+    @else
+        <button onclick="window.location.href='{{ route('login') }}'" class="btn-login-modern">
+            <span class="hidden sm:inline">Login</span>
+        </button>
+    @endif
 
-            <div class="mobile-menu-btn" id="mobileMenuBtn">
-                <svg class="w-6 h-6 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-            </div>
-        </div>
+    <div class="mobile-menu-btn" id="mobileMenuBtn">
+        <svg class="w-6 h-6 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </div>
+</div>
     </div>
 </header>
 
