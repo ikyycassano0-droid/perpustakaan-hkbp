@@ -15,6 +15,7 @@ class FinalProjectController extends Controller
     // ================= USER =================
 public function index(Request $request, $category = 'kti')
 {
+    
     if ($category !== 'kti') {
         return $this->showAdminUpload($request, $category);
     }
@@ -56,6 +57,15 @@ public function index(Request $request, $category = 'kti')
         'supervisors' => $supervisors,
     ]);
 }
+
+    public function uploadForm()
+    {
+        $supervisors = User::whereHas('role', function ($q) {
+            $q->where('name', 'Dosen');
+        })->get();
+
+        return view('user.page.Koleksi_Elektronik.kti', compact('supervisors'));
+    }
 
     // Store user (upload KTI)
     public function store(Request $request)
