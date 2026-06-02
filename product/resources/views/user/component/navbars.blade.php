@@ -1,3 +1,14 @@
+<style>
+    .animate-pulse {
+    animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+</style>
+
 
 <!-- NAVBAR MODERN FUTURISTIC (SEMUA RUTE SUDAH DIPERBAIKI) -->
 <header class="fixed top-0 left-0 w-full z-[999] px-6 py-4">
@@ -21,7 +32,7 @@
         <ul class="desktop-menu flex items-center gap-1 lg:gap-2">
             <!-- HOME -->
             <li class="nav-item-modern">
-                <a href="{{ route('home') }}" class="px-3 py-2 block">Home</a>
+                <a href="{{ route('user.dashboard') }}" class="px-3 py-2 block">Home</a>
             </li>
 
             <!-- PROFILE DROPDOWN -->
@@ -104,21 +115,40 @@
         <!-- AREA LOGIN / PROFIL + MOBILE MENU BUTTON -->
 <!-- AREA LOGIN / PROFIL + MOBILE MENU BUTTON -->
 <div class="flex items-center gap-3">
-    @if(session()->has('user'))
-        <a href="{{ route('profile.menu') }}"
-           class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 group">
-            <svg class="w-5 h-5 text-indigo-300 group-hover:text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-            <span class="text-sm font-medium text-indigo-200 truncate max-w-[120px]">
-                {{ session('user')['name'] ?? 'User' }}
+@if(session()->has('user'))
+    {{-- NOTIFIKASI --}}
+    @php
+        $unreadNotif = \App\Models\Notification::where('user_id', session('user_id'))
+            ->where('is_read', false)
+            ->count();
+    @endphp
+    
+    <a href="{{ route('user.inbox') }}" 
+       class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300">
+        <svg class="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg>
+        @if($unreadNotif > 0)
+            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                {{ $unreadNotif > 9 ? '9+' : $unreadNotif }}
             </span>
-        </a>
-    @else
-        <button onclick="window.location.href='{{ route('login') }}'" class="btn-login-modern">
-            <span class="hidden sm:inline">Login</span>
-        </button>
-    @endif
+        @endif
+    </a>
+    
+    <a href="{{ route('profile.menu') }}"
+       class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 group">
+        <svg class="w-5 h-5 text-indigo-300 group-hover:text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+        <span class="text-sm font-medium text-indigo-200 truncate max-w-[120px]">
+            {{ session('user')['name'] ?? 'User' }}
+        </span>
+    </a>
+@else
+    <button onclick="window.location.href='{{ route('login') }}'" class="btn-login-modern">
+        <span class="hidden sm:inline">Login</span>
+    </button>
+@endif
 
     <div class="mobile-menu-btn" id="mobileMenuBtn">
         <svg class="w-6 h-6 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -205,3 +235,7 @@
     };
 </script>
 @endpush
+
+
+
+

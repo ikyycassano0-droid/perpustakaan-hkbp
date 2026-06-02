@@ -737,6 +737,13 @@ if (select1 && select2) {
     });
 });
 
-
+window.selectBook = function(id, title) {
+    document.getElementById('judulBukuInput').value = title;
+    document.getElementById('collection_id').value = id;
+    document.getElementById('autocompleteList').style.display = 'none';
+};
 </script>
 @endpush
+
+
+

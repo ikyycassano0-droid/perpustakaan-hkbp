@@ -526,3 +526,7 @@ window.goBack = goBack;
 console.log('Halaman Detail Berita siap!');
 </script>
 @endpush
+
+
+
+

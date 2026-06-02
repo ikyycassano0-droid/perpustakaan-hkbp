@@ -253,42 +253,42 @@ public function approve($id)
     }
 
     // ================= RETURN BOOK =================
-    public function returnBook($id)
-    {
-        DB::transaction(function () use ($id) {
-            $order = Order::with('details.collection')->findOrFail($id);
-
-            $today = Carbon::now();
-            $fine = $this->calculateFine($order->due_date, $today);
-
-            foreach ($order->details as $detail) {
-                $detail->collection->increment('available_stock', $detail->qty);
-            }
-
-            $order->update([
-                'actual_return_date' => $today,
-                'fine' => $fine,
-                'status' => 'RETURNED'
-            ]);
-
-            if ($fine > 0) {
-                $this->sendNotif(
-                    $order->user_id,
-                    'Denda Keterlambatan',
-                    'Denda Rp ' . number_format($fine, 0, ',', '.')
-                );
-            }
-            
-            $this->sendNotif(
-                $order->user_id,
-                'Pengembalian Buku',
-                'Buku berhasil dikembalikan. Terima kasih.'
-            );
-        });
-
-        return back()->with('success', 'Buku berhasil dikembalikan');
+public function returnBook($id)
+{
+    $order = Order::with('details.collection')->findOrFail($id);
+    $today = Carbon::now();
+    
+    // Hitung denda otomatis
+    $dueDate = Carbon::parse($order->due_date)->startOfDay();
+    $returnDate = $today->startOfDay();
+    $lateDays = $dueDate->diffInDays($returnDate, false);
+    
+    $fine = 0;
+    if ($lateDays > 0) {
+        for ($i = 1; $i <= $lateDays; $i++) {
+            $fine += ($i <= 3) ? 2000 : 5000;
+        }
     }
 
+    // Update stok
+    foreach ($order->details as $detail) {
+        $detail->collection->increment('available_stock', $detail->qty);
+    }
+
+    // Update order
+    $order->update([
+        'actual_return_date' => $today,
+        'fine' => $fine,
+        'status' => 'RETURNED'
+    ]);
+
+    $message = 'Buku berhasil dikembalikan.';
+    if ($fine > 0) {
+        $message .= ' Denda: Rp ' . number_format($fine, 0, ',', '.');
+    }
+
+    return back()->with('success', $message);
+}
     // ================= HISTORY USER =================
     public function history()
     {
@@ -304,8 +304,20 @@ public function approve($id)
     // Denda: 3 hari pertama @2000, hari berikutnya @5000
     private function calculateFine($due, $return)
     {
-        $lateDays = Carbon::parse($due)->diffInDays($return, false);
-        if ($lateDays <= 0) return 0;
+        $dueDate = Carbon::parse($due)->startOfDay();
+        $returnDate = Carbon::parse($return)->startOfDay();
+        $lateDays = $dueDate->diffInDays($returnDate, false);
+
+        // DEBUG
+        \Log::info('CalculateFine', [
+            'due' => $dueDate->toDateString(),
+            'return' => $returnDate->toDateString(),
+            'lateDays' => $lateDays
+        ]);
+
+        if ($lateDays <= 0) {
+            return 0;
+        }
 
         $fine = 0;
         for ($i = 1; $i <= $lateDays; $i++) {
@@ -313,7 +325,6 @@ public function approve($id)
         }
         return $fine;
     }
-
     // ================= NOTIF =================
     private function sendNotif($userId, $title, $message)
     {

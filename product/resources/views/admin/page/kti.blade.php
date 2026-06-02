@@ -10,13 +10,35 @@
             <h2 class="text-2xl font-bold text-slate-800 tracking-tight">📚 Manajemen Karya Tulis Ilmiah</h2>
             <p class="text-slate-500 text-sm mt-1">Kelola, approve, dan reject KTI yang diupload oleh mahasiswa</p>
         </div>
-        <div class="flex gap-3">
-            <a href="{{ route('admin.kti.index') }}" class="px-4 py-2 rounded-xl text-sm font-medium transition {{ request()->routeIs('admin.kti.index') ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
-                Semua KTI
+            <div class="flex gap-3 flex-wrap items-center">
+            {{-- Filter Status Dropdown --}}
+            <select id="statusFilter" class="px-4 py-2 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:border-indigo-300 cursor-pointer" onchange="filterStatus(this.value)">
+                <option value="all" {{ !request('status') ? 'selected' : '' }}>📋 Semua Status</option>
+                <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>⏳ Pending</option>
+                <option value="Approved" {{ request('status') == 'Approved' ? 'selected' : '' }}>✅ Disetujui</option>
+                <option value="Rejected" {{ request('status') == 'Rejected' ? 'selected' : '' }}>❌ Ditolak</option>
+            </select>
+            
+            {{-- Filter Periode --}}
+            <a href="?{{ request('status') ? 'status='.request('status').'&' : '' }}period=today" class="px-4 py-2 rounded-xl text-sm font-medium transition {{ request('period') == 'today' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                📅 Hari Ini
             </a>
-            <a href="{{ route('admin.kti.pending') }}" class="px-4 py-2 rounded-xl text-sm font-medium transition {{ request()->routeIs('admin.kti.pending') ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
-                ⏳ Pending Approval
+            <a href="?{{ request('status') ? 'status='.request('status').'&' : '' }}period=week" class="px-4 py-2 rounded-xl text-sm font-medium transition {{ request('period') == 'week' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                📅 1 Minggu
             </a>
+            <a href="?{{ request('status') ? 'status='.request('status').'&' : '' }}period=month" class="px-4 py-2 rounded-xl text-sm font-medium transition {{ request('period') == 'month' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                📅 1 Bulan
+            </a>
+            <button onclick="openCustomDateModal()" class="px-4 py-2 rounded-xl text-sm font-medium transition {{ request('start') ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                📅 Custom
+            </button>
+            
+            {{-- Reset --}}
+            @if(request('status') || request('period') || request('start'))
+            <a href="{{ route('admin.kti.index') }}" class="px-4 py-2 rounded-xl text-sm font-medium bg-red-100 text-red-600 hover:bg-red-200 transition">
+                🔄 Reset Filter
+            </a>
+            @endif
         </div>
     </div>
 
@@ -231,10 +253,54 @@
         </div>
     </div>
 </div>
+<div id="customDateModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl w-full max-w-md mx-4 shadow-2xl p-6">
+        <h3 class="text-lg font-bold text-slate-800 mb-4">Filter Custom Tanggal</h3>
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-slate-700 mb-2">Dari Tanggal</label>
+            <input type="date" id="startDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
+        </div>
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-slate-700 mb-2">Sampai Tanggal</label>
+            <input type="date" id="endDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
+        </div>
+        <div class="flex gap-2">
+            <button onclick="closeCustomDateModal()" class="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-slate-700">Batal</button>
+            <button onclick="applyCustomDate()" class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg">Terapkan</button>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
 <script>
+    function openCustomDateModal() {
+    document.getElementById('customDateModal').classList.remove('hidden');
+    document.getElementById('customDateModal').classList.add('flex');
+    }
+
+    function closeCustomDateModal() {
+        document.getElementById('customDateModal').classList.add('hidden');
+        document.getElementById('customDateModal').classList.remove('flex');
+    }
+
+    function applyCustomDate() {
+        let start = document.getElementById('startDate').value;
+        let end = document.getElementById('endDate').value;
+        if (start && end) {
+            window.location.href = `?start=${start}&end=${end}`;
+        }
+    }
+
+    function filterStatus(status) {
+    let url = new URL(window.location.href);
+    if (status === 'all') {
+        url.searchParams.delete('status');
+    } else {
+        url.searchParams.set('status', status);
+    }
+        window.location.href = url.toString();
+    }
     // ============================================
     // APPROVE KTI
     // ============================================
@@ -301,3 +367,6 @@
     }
 </script>
 @endpush
+
+
+

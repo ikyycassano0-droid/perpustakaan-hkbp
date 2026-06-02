@@ -893,3 +893,7 @@ document.querySelectorAll(".nav-item").forEach(item => {
 @stack('scripts')
 </body>
 </html>
+
+
+
+

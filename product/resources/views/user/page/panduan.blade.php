@@ -1,4 +1,4 @@
-@extends('guest.component.master')
+@extends('user.component.master')
 
 @section('title', 'Panduan & Informasi - AKPER HKBP Balige')
 
@@ -1170,3 +1170,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 @endpush
+
+
+
+

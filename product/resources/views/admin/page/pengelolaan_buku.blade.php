@@ -21,7 +21,55 @@
                 <option value="APPROVED">Approved</option>
                 <option value="REJECTED">Rejected</option>
                 <option value="RETURNED">Returned</option>
+                <option value="LATE">Terlambat (Belum Kembali)</option>
             </select>
+        </div>
+    </div>
+
+    <!-- Filter Periode & Total Denda -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <!-- Filter Periode -->
+        <div class="card-modern p-4">
+            <label class="block text-sm font-medium text-slate-700 mb-2">
+                <i class="fas fa-calendar-alt text-indigo-500 mr-1"></i> Filter Periode Peminjaman
+            </label>
+            <div class="flex flex-wrap gap-2">
+                <button onclick="setDateFilter('today')" class="date-filter-btn px-3 py-1.5 text-xs rounded-lg bg-slate-100 hover:bg-indigo-100 transition">Hari Ini</button>
+                <button onclick="setDateFilter('week')" class="date-filter-btn px-3 py-1.5 text-xs rounded-lg bg-slate-100 hover:bg-indigo-100 transition">1 Minggu</button>
+                <button onclick="setDateFilter('month')" class="date-filter-btn px-3 py-1.5 text-xs rounded-lg bg-slate-100 hover:bg-indigo-100 transition">1 Bulan</button>
+                <button onclick="openCustomDateModal()" class="date-filter-btn px-3 py-1.5 text-xs rounded-lg bg-slate-100 hover:bg-indigo-100 transition">Custom</button>
+            </div>
+            <div id="activeFilterInfo" class="text-xs text-slate-500 mt-2">
+                <i class="fas fa-info-circle"></i> Menampilkan semua data
+            </div>
+        </div>
+
+        <!-- Statistik Denda -->
+        <div class="card-modern p-4 bg-gradient-to-r from-rose-50 to-orange-50">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-rose-600 font-medium">TOTAL DENDA</p>
+                    <p class="text-2xl font-bold text-rose-700" id="totalFineDisplay">Rp 0</p>
+                    <p class="text-[10px] text-rose-500 mt-1">Dari peminjaman terlambat</p>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-rose-200 flex items-center justify-center">
+                    <i class="fas fa-money-bill-wave text-rose-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistik Terlambat -->
+        <div class="card-modern p-4 bg-gradient-to-r from-amber-50 to-yellow-50">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-amber-600 font-medium">PEMINJAMAN TERLAMBAT</p>
+                    <p class="text-2xl font-bold text-amber-700" id="lateCountDisplay">0</p>
+                    <p class="text-[10px] text-amber-500 mt-1">Belum mengembalikan buku</p>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-amber-200 flex items-center justify-center">
+                    <i class="fas fa-exclamation-triangle text-amber-600 text-xl"></i>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -43,11 +91,15 @@
     <!-- TABLE DATA -->
     <div class="card-modern overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-slate-800 to-slate-700 rounded-t-2xl">
-            <div class="flex items-center gap-2">
-                <i class="fas fa-hand-holding-heart text-white/70"></i>
-                <h3 class="font-semibold text-white">Daftar Peminjaman Buku</h3>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-hand-holding-heart text-white/70"></i>
+                    <h3 class="font-semibold text-white">Daftar Peminjaman Buku</h3>
+                </div>
+                <div class="text-white/60 text-xs">
+                    Total: <span id="totalDisplay">{{ $orders->count() }}</span> peminjaman
+                </div>
             </div>
-            <p class="text-slate-300 text-xs mt-0.5">Total: {{ $orders->count() }} peminjaman</p>
         </div>
 
         <div class="overflow-x-auto">
@@ -64,9 +116,16 @@
                         <th class="text-center px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider" width="200">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="ordersTableBody">
                     @forelse($orders as $order)
-                    <tr class="order-row border-b border-slate-50 hover:bg-slate-50/30 transition" data-status="{{ $order->status }}">
+                    @php
+                        $isLate = $order->status === 'APPROVED' && $order->due_date && now()->gt($order->due_date);
+                    @endphp
+                    <tr class="order-row border-b border-slate-50 hover:bg-slate-50/30 transition" 
+                        data-status="{{ $order->status }}"
+                        data-is-late="{{ $isLate ? 'true' : 'false' }}"
+                        data-order-date="{{ $order->order_date?->format('Y-m-d') ?? '' }}"
+                        data-borrow-date="{{ $order->borrow_date?->format('Y-m-d') ?? '' }}">
                         <!-- USER -->
                         <td class="px-4 py-3">
                             <div class="flex items-center gap-3">
@@ -105,9 +164,15 @@
                                     <i class="fas fa-clock text-[10px]"></i> PENDING
                                 </span>
                             @elseif($order->status == 'APPROVED')
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-                                    <i class="fas fa-check-circle text-[10px]"></i> APPROVED
-                                </span>
+                                @if($isLate)
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-100 text-rose-700">
+                                        <i class="fas fa-exclamation-triangle text-[10px]"></i> TERLAMBAT
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                                        <i class="fas fa-check-circle text-[10px]"></i> APPROVED
+                                    </span>
+                                @endif
                             @elseif($order->status == 'REJECTED')
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-100 text-rose-700">
                                     <i class="fas fa-times-circle text-[10px]"></i> REJECTED
@@ -137,7 +202,7 @@
                         <!-- DUE DATE -->
                         <td class="px-4 py-3 text-center">
                             @if($order->due_date)
-                                <div class="{{ $order->is_late ? 'text-rose-600 font-bold' : 'text-slate-700' }}">
+                                <div class="{{ $isLate ? 'text-rose-600 font-bold animate-pulse' : 'text-slate-700' }}">
                                     {{ $order->due_date->format('d-m-Y') }}
                                 </div>
                                 @php
@@ -156,6 +221,15 @@
                                         <i class="fas fa-history"></i> Awal: {{ \Carbon\Carbon::parse($order->original_due_date)->format('d-m-Y') }}
                                     </div>
                                 @endif
+                                @if($isLate)
+                                    @php
+                                        $lateDays = now()->diffInDays($order->due_date, false);
+                                        $calculatedFine = $lateDays > 0 ? $lateDays * 2000 : 0;
+                                    @endphp
+                                    <div class="text-[10px] text-rose-500 mt-1 font-bold">
+                                        Terlambat {{ abs($lateDays) }} hari
+                                    </div>
+                                @endif
                             @else
                                 -
                             @endif
@@ -163,8 +237,23 @@
 
                         <!-- DENDA -->
                         <td class="px-4 py-3 text-center">
-                            <span class="text-rose-600 font-semibold text-sm">
-                                Rp {{ number_format($order->fine ?? 0, 0, ',', '.') }}
+                           @php
+                                $fine = $order->fine ?? 0;
+                                
+                                // Hitung denda real-time untuk yang masih APPROVED & terlambat
+                                if ($order->status === 'APPROVED' && $order->due_date && now()->gt($order->due_date)) {
+                                    $dueDate = \Carbon\Carbon::parse($order->due_date)->startOfDay();
+                                    $today = now()->startOfDay();
+                                    $lateDays = $dueDate->diffInDays($today, false);
+                                    
+                                    $fine = 0;
+                                    for ($i = 1; $i <= $lateDays; $i++) {
+                                        $fine += ($i <= 3) ? 2000 : 5000;
+                                    }
+                                }
+                            @endphp
+                            <span class="text-rose-600 font-semibold text-sm fine-amount" data-fine="{{ $fine }}">
+                                Rp {{ number_format($fine, 0, ',', '.') }}
                             </span>
                         </td>
 
@@ -198,7 +287,7 @@
                                     <button type="button" 
                                             onclick="openExtendModal({{ $order->id }})"
                                             class="px-3 py-1.5 text-xs font-medium text-white bg-amber-600 rounded-lg hover:bg-amber-700 transition flex items-center gap-1"
-                                            {{ $order->extension_count >= 3 || $order->is_late ? 'disabled' : '' }}>
+                                            {{ $order->extension_count >= 3 || $isLate ? 'disabled' : '' }}>
                                         <i class="fas fa-calendar-plus text-[10px]"></i> 
                                         Extend
                                     </button>
@@ -269,31 +358,211 @@
     </div>
 </div>
 
+<!-- Modal Custom Date -->
+<div id="customDateModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold text-slate-800">Filter Custom Tanggal</h3>
+            <button onclick="closeCustomDateModal()" class="text-slate-400 hover:text-slate-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-slate-700 mb-2">Dari Tanggal</label>
+            <input type="date" id="startDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-slate-700 mb-2">Sampai Tanggal</label>
+            <input type="date" id="endDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+        
+        <div class="flex gap-2">
+            <button type="button" 
+                    onclick="closeCustomDateModal()" 
+                    class="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition">
+                Batal
+            </button>
+            <button type="button" 
+                    onclick="applyCustomDateFilter()" 
+                    class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                <i class="fas fa-filter"></i> Terapkan
+            </button>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 
 <script>
+    let currentDateFilter = 'all';
+    let customStartDate = null;
+    let customEndDate = null;
+
     $(document).ready(function() {
         // Filter berdasarkan status
         $('#filterStatus').change(function() {
-            let status = $(this).val();
-            if (status === 'all') {
-                $('.order-row').show();
-            } else {
-                $('.order-row').hide();
-                $('.order-row[data-status="' + status + '"]').show();
-            }
+            applyAllFilters();
         });
 
         // Search berdasarkan nama user atau judul buku
         $('#searchOrder').on('keyup', function() {
-            let value = $(this).val().toLowerCase();
-            $('.order-row').filter(function() {
+            applyAllFilters();
+        });
+        updateStatistics();
+    });
+
+    function applyAllFilters() {
+        let status = $('#filterStatus').val();
+        let searchValue = $('#searchOrder').val().toLowerCase();
+        
+        $('.order-row').each(function() {
+            let showByStatus = true;
+            let showBySearch = true;
+            let showByDate = true;
+            
+            // Filter Status
+            let rowStatus = $(this).data('status');
+            let isLate = $(this).data('is-late') === 'true';
+            
+            if (status === 'LATE') {
+                showByStatus = isLate;
+            } else if (status !== 'all') {
+                showByStatus = rowStatus === status;
+            }
+            
+            // Filter Search
+            if (searchValue) {
                 let userName = $(this).find('td:first .font-semibold').text().toLowerCase();
                 let bookTitle = $(this).find('td:nth-child(2)').text().toLowerCase();
-                $(this).toggle(userName.indexOf(value) > -1 || bookTitle.indexOf(value) > -1);
-            });
+                showBySearch = userName.indexOf(searchValue) > -1 || bookTitle.indexOf(searchValue) > -1;
+            }
+            
+            // Filter Date
+            let orderDate = $(this).data('order-date');
+            let borrowDate = $(this).data('borrow-date');
+            let filterDate = orderDate || borrowDate;
+            
+            if (currentDateFilter !== 'all' && filterDate) {
+                let filterDateObj = new Date(filterDate);
+                let today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                if (currentDateFilter === 'today') {
+                    showByDate = filterDateObj.toDateString() === today.toDateString();
+                } else if (currentDateFilter === 'week') {
+                    let weekAgo = new Date(today);
+                    weekAgo.setDate(today.getDate() - 7);
+                    showByDate = filterDateObj >= weekAgo && filterDateObj <= today;
+                } else if (currentDateFilter === 'month') {
+                    let monthAgo = new Date(today);
+                    monthAgo.setMonth(today.getMonth() - 1);
+                    showByDate = filterDateObj >= monthAgo && filterDateObj <= today;
+                } else if (currentDateFilter === 'custom' && customStartDate && customEndDate) {
+                    let start = new Date(customStartDate);
+                    let end = new Date(customEndDate);
+                    end.setHours(23, 59, 59);
+                    showByDate = filterDateObj >= start && filterDateObj <= end;
+                }
+            }
+            
+            $(this).toggle(showByStatus && showBySearch && showByDate);
         });
-    });
+        
+        updateStatistics();
+        updateTotalDisplay();
+    }
+    
+    function setDateFilter(filter) {
+        currentDateFilter = filter;
+        
+        // Reset active button styles
+        $('.date-filter-btn').removeClass('bg-indigo-600 text-white').addClass('bg-slate-100');
+        
+        // Set active style and update info text
+        if (filter === 'today') {
+            $('.date-filter-btn:contains("Hari Ini")').removeClass('bg-slate-100').addClass('bg-indigo-600 text-white');
+            $('#activeFilterInfo').html('<i class="fas fa-info-circle"></i> Menampilkan peminjaman hari ini');
+        } else if (filter === 'week') {
+            $('.date-filter-btn:contains("1 Minggu")').removeClass('bg-slate-100').addClass('bg-indigo-600 text-white');
+            $('#activeFilterInfo').html('<i class="fas fa-info-circle"></i> Menampilkan peminjaman 1 minggu terakhir');
+        } else if (filter === 'month') {
+            $('.date-filter-btn:contains("1 Bulan")').removeClass('bg-slate-100').addClass('bg-indigo-600 text-white');
+            $('#activeFilterInfo').html('<i class="fas fa-info-circle"></i> Menampilkan peminjaman 1 bulan terakhir');
+        } else if (filter === 'custom') {
+            $('#activeFilterInfo').html('<i class="fas fa-info-circle"></i> Menampilkan peminjaman custom: ' + 
+                (customStartDate ? formatDate(customStartDate) : '') + ' s/d ' + 
+                (customEndDate ? formatDate(customEndDate) : ''));
+        } else {
+            $('#activeFilterInfo').html('<i class="fas fa-info-circle"></i> Menampilkan semua data');
+        }
+        
+        applyAllFilters();
+    }
+    
+    function openCustomDateModal() {
+        document.getElementById('customDateModal').classList.remove('hidden');
+        document.getElementById('customDateModal').classList.add('flex');
+        
+        // Set default values
+        let today = new Date().toISOString().split('T')[0];
+        let weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        
+        document.getElementById('startDate').value = weekAgo.toISOString().split('T')[0];
+        document.getElementById('endDate').value = today;
+    }
+    
+    function closeCustomDateModal() {
+        document.getElementById('customDateModal').classList.add('hidden');
+        document.getElementById('customDateModal').classList.remove('flex');
+    }
+    
+    function applyCustomDateFilter() {
+        customStartDate = document.getElementById('startDate').value;
+        customEndDate = document.getElementById('endDate').value;
+        
+        if (customStartDate && customEndDate) {
+            currentDateFilter = 'custom';
+            setDateFilter('custom');
+            closeCustomDateModal();
+        } else {
+            alert('Silakan pilih tanggal mulai dan tanggal akhir');
+        }
+    }
+    
+    function formatDate(dateString) {
+        let date = new Date(dateString);
+        return date.toLocaleDateString('id-ID');
+    }
+    
+    function updateStatistics() {
+        let totalFine = 0;
+        let lateCount = 0;
+        
+        $('.order-row:visible').each(function() {
+            let isLate = $(this).data('is-late') === 'true';
+            let status = $(this).data('status');
+            let fine = parseFloat($(this).find('.fine-amount').data('fine')) || 0;
+            
+            // Hitung keterlambatan (APPROVED + overdue)
+            if (isLate) {
+                lateCount++;
+            }
+            
+            // Hitung total denda (semua status)
+            totalFine += fine;
+        });
+        
+        $('#totalFineDisplay').text('Rp ' + totalFine.toLocaleString('id-ID'));
+        $('#lateCountDisplay').text(lateCount);
+    }
+    
+    function updateTotalDisplay() {
+        let visibleCount = $('.order-row:visible').length;
+        $('#totalDisplay').text(visibleCount);
+    }
 
     // ================= MODAL EXTEND =================
     function openExtendModal(orderId) {
@@ -319,6 +588,12 @@
             closeExtendModal();
         }
     });
+    
+    document.getElementById('customDateModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeCustomDateModal();
+        }
+    });
 
     // Auto close notifikasi
     setTimeout(function() {
@@ -332,3 +607,6 @@
 </script>
 
 @endsection
+
+
+

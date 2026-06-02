@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Notification;
-use Carbon\Carbon;
 
 class NotificationController extends Controller
 {
@@ -13,12 +12,29 @@ class NotificationController extends Controller
         $notifications = Notification::where('user_id', user_id())
             ->latest()
             ->get();
+            
+        $unreadCount = Notification::where('user_id', user_id())
+            ->where('is_read', false)
+            ->count();
 
-        
-        Notification::where('user_id',user_id())
+        return view('user.page.inbox', compact('notifications', 'unreadCount'));
+    }
+
+    public function markRead($id)
+    {
+        Notification::where('id', $id)
+            ->where('user_id', user_id())
+            ->update(['is_read' => true]);
+            
+        return response()->json(['success' => true]);
+    }
+
+    public function markAllRead()
+    {
+        Notification::where('user_id', user_id())
             ->where('is_read', false)
             ->update(['is_read' => true]);
-
-        return view('user.page.inbox', compact('notifications'));
+            
+        return response()->json(['success' => true]);
     }
 }

@@ -48,9 +48,10 @@
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
         // Dashboard admin
-        Route::get('admin/dashboard', function(){
-            return view('admin.page.home');
-        })->name('admin.home');
+    Route::get('admin/dashboard', [App\Http\Controllers\HomeController::class, 'admin'])->name('admin.home');
+    Route::get('admin/export/pdf', [HomeController::class, 'exportPdf'])->name('admin.export.pdf');
+    Route::get('admin/export/excel', [HomeController::class, 'exportExcel'])->name('admin.export.excel');
+    Route::get('/admin/dashboard/filter', [HomeController::class, 'adminFilter'])->name('admin.dashboard.filter');
 
     Route::prefix('admin')->name('admin.')->middleware(['admin'])->group(function () {
 
@@ -324,8 +325,6 @@
         Route::post('/upload-kti/store', [FinalProjectController::class, 'store'])
         ->name('upload.kti.store');
 
-
-
         Route::get('/koleksi/{category}', [FinalProjectController::class,'index'])
             ->name('koleksi')
             ->where('category','ebook|e-article|cd|video');
@@ -401,13 +400,12 @@
         Route::get('/search', [CollectionController::class, 'globalSearch'])
     ->name('guest.global_search');
 
-        Route::middleware([])->group(function () {
+        Route::middleware([''])->group(function () {
 
             Route::get('/inbox', [NotificationController::class, 'index'])
                 ->name('user.inbox');
-
-
-
+            Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
+            Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.readAll');
         });
 
         Route::get('/panduan', [ArchiveController::class, 'indexPanduanGuest'])

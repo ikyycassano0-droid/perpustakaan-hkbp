@@ -351,6 +351,7 @@
                             Filter Pencarian
                         </div>
 
+                        <!-- TIPE KONTEN -->
                         <div class="filter-group">
                             <span class="filter-label">📂 Tipe Konten</span>
                             <label class="filter-option">
@@ -363,27 +364,69 @@
                             </label>
                         </div>
 
+                        <!-- KLASIFIKASI -->
                         <div class="filter-group">
-                            <span class="filter-label">🔄 Urutkan Berdasarkan</span>
-                            <select id="sortBy" class="sort-select">
-                                <option value="relevance">Relevansi (Default)</option>
-                                <option value="title_asc">Judul (A-Z)</option>
-                                <option value="title_desc">Judul (Z-A)</option>
-                                <option value="newest">Terbaru</option>
-                                <option value="oldest">Terlama</option>
+                            <span class="filter-label">🏷️ Klasifikasi</span>
+                            <select id="filterClassification" class="sort-select">
+                                <option value="">Semua Klasifikasi</option>
+                                @foreach($classifications ?? [] as $c)
+                                    <option value="{{ $c->name }}" {{ request('classification') == $c->name ? 'selected' : '' }}>
+                                        {{ $c->name }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
 
+                        <!-- KATEGORI -->
+                        <div class="filter-group">
+                            <span class="filter-label">📁 Kategori</span>
+                            <select id="filterCategory" class="sort-select">
+                                <option value="">Semua Kategori</option>
+                                @foreach($categories ?? [] as $cat)
+                                    <option value="{{ $cat->name }}" {{ request('category') == $cat->name ? 'selected' : '' }}>
+                                        {{ $cat->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- TAHUN -->
+                        <div class="filter-group">
+                            <span class="filter-label">📅 Tahun</span>
+                            <select id="filterYear" class="sort-select">
+                                <option value="">Semua Tahun</option>
+                                @foreach($years ?? [] as $year)
+                                    <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>
+                                        {{ $year }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- URUTKAN -->
+                        <div class="filter-group">
+                            <span class="filter-label">🔄 Urutkan</span>
+                            <select id="sortBy" class="sort-select">
+                                <option value="relevance" {{ request('sort') == 'relevance' ? 'selected' : '' }}>Relevansi</option>
+                                <option value="title_asc" {{ request('sort') == 'title_asc' ? 'selected' : '' }}>Judul (A-Z)</option>
+                                <option value="title_desc" {{ request('sort') == 'title_desc' ? 'selected' : '' }}>Judul (Z-A)</option>
+                                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Terbaru</option>
+                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Terlama</option>
+                            </select>
+                        </div>
+
+                        <!-- TOMBOL -->
                         <div class="grid grid-cols-2 gap-2 mt-4">
                             <button id="applyFilterBtn" class="btn-primary text-sm py-2">
-                                Terapkan
+                                🔍 Terapkan
                             </button>
                             <button id="resetFilterBtn" class="btn-outline text-sm py-2">
-                                Reset
+                                🔄 Reset
                             </button>
                         </div>
                     </div>
                 </div>
+
 
                 <!-- HASIL PENCARIAN -->
                 <div class="lg:col-span-3">
@@ -506,38 +549,39 @@
     const resultsContainer = document.getElementById('resultsContainer');
 
     // Fungsi untuk menerapkan filter via URL parameter
-    function applyFilters() {
-        let params = new URLSearchParams(window.location.search);
+function applyFilters() {
+    let params = new URLSearchParams(window.location.search);
 
-        // Filter tipe
-        let selectedTypes = [];
-        if (filterCollection?.checked) selectedTypes.push('collection');
-        if (filterFinal?.checked) selectedTypes.push('final');
+    // Tipe konten
+    let selectedTypes = [];
+    if (document.getElementById('filterCollection')?.checked) selectedTypes.push('collection');
+    if (document.getElementById('filterFinal')?.checked) selectedTypes.push('final');
+    if (selectedTypes.length > 0) params.set('type', selectedTypes.join(','));
+    else params.delete('type');
 
-        if (selectedTypes.length > 0) {
-            params.set('type', selectedTypes.join(','));
-        } else {
-            params.delete('type');
-        }
+    // Classification
+    let classification = document.getElementById('filterClassification')?.value;
+    if (classification) params.set('classification', classification);
+    else params.delete('classification');
 
-        // Sortir
-        if (sortSelect && sortSelect.value !== 'relevance') {
-            params.set('sort', sortSelect.value);
-        } else {
-            params.delete('sort');
-        }
+    // Category
+    let category = document.getElementById('filterCategory')?.value;
+    if (category) params.set('category', category);
+    else params.delete('category');
 
-        // Reset ke halaman 1
-        params.delete('page');
+    // Year
+    let year = document.getElementById('filterYear')?.value;
+    if (year) params.set('year', year);
+    else params.delete('year');
 
-        // Tampilkan loading
-        if (loadingSkeleton && resultsContainer) {
-            resultsContainer.style.display = 'none';
-            loadingSkeleton.style.display = 'grid';
-        }
+    // Sort
+    let sort = document.getElementById('sortBy')?.value;
+    if (sort && sort !== 'relevance') params.set('sort', sort);
+    else params.delete('sort');
 
-        window.location.search = params.toString();
-    }
+    params.delete('page');
+    window.location.search = params.toString();
+}
 
     // Reset filter
     function resetFilters() {
@@ -612,3 +656,7 @@
     };
 </script>
 @endpush
+
+
+
+

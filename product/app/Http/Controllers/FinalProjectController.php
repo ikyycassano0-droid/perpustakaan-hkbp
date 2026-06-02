@@ -112,13 +112,8 @@ public function index(Request $request, $category = 'kti')
                 'status' => 'Pending',
             ]);
 
-            // Redirect sesuai asal request
-            if ($request->has('from') && $request->from === 'layanan') {
-                return redirect()->route('final_project.upload.kti')
-                    ->with('success', 'KTI berhasil diupload! Menunggu persetujuan admin.');
-            }
-
-            return redirect()->route('final_project.kti')
+            // SELALU redirect ke halaman list KTI
+            return redirect('/final-project/kti?t=' . time())
                 ->with('success', 'KTI berhasil diupload! Menunggu persetujuan admin.');
         }
 
@@ -204,12 +199,27 @@ public function index(Request $request, $category = 'kti')
     }
 
     // List semua KTI untuk admin
-    public function index_kti_admin()
+    public function index_kti_admin(Request $request)
     {
-        $data = FinalProject::with('category', 'firstSupervisor', 'secondSupervisor')
-                    ->latest()
-                    ->get();
-
+        $query = FinalProject::with('category', 'firstSupervisor', 'secondSupervisor');
+        
+        // Filter status
+        if ($request->status && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+        
+        // Filter periode
+        if ($request->period == 'today') {
+            $query->whereDate('created_at', today());
+        } elseif ($request->period == 'week') {
+            $query->whereBetween('created_at', [now()->subWeek(), now()]);
+        } elseif ($request->period == 'month') {
+            $query->whereBetween('created_at', [now()->subMonth(), now()]);
+        } elseif ($request->start && $request->end) {
+            $query->whereBetween('created_at', [$request->start, $request->end]);
+        }
+        
+        $data = $query->latest()->get();
         return view('admin.page.kti', compact('data'));
     }
 

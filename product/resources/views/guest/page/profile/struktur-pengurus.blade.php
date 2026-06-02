@@ -1295,3 +1295,7 @@ window.addEventListener('scroll', () => {
 console.log('Struktur Pengurus Page siap!');
 </script>
 @endpush
+
+
+
+

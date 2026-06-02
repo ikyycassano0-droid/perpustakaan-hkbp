@@ -8,6 +8,24 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <style>
+    .select2-selection__choice {
+    position: relative !important;
+    padding-right: 25px !important;
+    }
+    .select2-choice-delete {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #ef4444;
+        font-size: 12px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+    .select2-choice-delete:hover {
+        opacity: 1;
+    }
     .select2-selection__choice__remove {
         color: red !important;
         margin-right: 5px;
@@ -419,21 +437,44 @@
     // ========================================
     // SELECT2 INIT
     // ========================================
-    $(document).ready(function() {
-        $('.select2-multi').select2({
-            placeholder: "Pilih / cari",
-            width: '100%',
-            dropdownParent: $('#modalForm'),
-            closeOnSelect: false,
-            allowClear: true
-        });
-        
-        $('.select2-single').select2({
-            placeholder: "Pilih lokasi",
-            width: '100%',
-            dropdownParent: $('#modalForm'),
-            allowClear: true
-        });
+   $(document).ready(function() {
+    // Classification dengan ikon hapus
+    $('#classificationDropdown').select2({
+        placeholder: "Pilih / cari",
+        width: '100%',
+        dropdownParent: $('#modalForm'),
+        closeOnSelect: false,
+        allowClear: true,
+        templateSelection: function(data) {
+            if (!data.id) return data.text;
+            return $('<span>' + data.text + ' <i class="fas fa-trash-alt select2-choice-delete" onclick="event.stopPropagation(); deleteClassification(' + data.id + ', \'' + data.text.replace(/'/g, "\\'") + '\')"></i></span>');
+        }
+    });
+    
+    // Category dengan ikon hapus
+    $('#categoryDropdown').select2({
+        placeholder: "Pilih / cari",
+        width: '100%',
+        dropdownParent: $('#modalForm'),
+        closeOnSelect: false,
+        allowClear: true,
+        templateSelection: function(data) {
+            if (!data.id) return data.text;
+            return $('<span>' + data.text + ' <i class="fas fa-trash-alt select2-choice-delete" onclick="event.stopPropagation(); deleteCategory(' + data.id + ', \'' + data.text.replace(/'/g, "\\'") + '\')"></i></span>');
+        }
+    });
+    
+    // Location dengan ikon hapus
+    $('#locationDropdown').select2({
+        placeholder: "Pilih lokasi",
+        width: '100%',
+        dropdownParent: $('#modalForm'),
+        allowClear: true,
+        templateSelection: function(data) {
+            if (!data.id) return data.text;
+            return $('<span>' + data.text + ' <i class="fas fa-trash-alt select2-choice-delete" onclick="event.stopPropagation(); deleteLocation(' + data.id + ', \'' + data.text.replace(/'/g, "\\'") + '\')"></i></span>');
+        }
+    });
     });
     
     // ========================================
@@ -653,6 +694,78 @@ $(document).on('click', '.btn-add-location', function(e) {
     $('#newLocationName').val('');
     $('#modalAddLocation').modal('show');
 });
+
+// ========================================
+// HAPUS CLASSIFICATION
+// ========================================
+function deleteClassification(id, name) {
+    if (!confirm('Yakin ingin menghapus classification "' + name + '"?')) return;
+    
+    $.ajax({
+        url: "{{ url('admin/classification') }}/" + id,
+        method: "DELETE",
+        data: {
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(res) {
+            $('#classificationDropdown option[value="' + id + '"]').remove();
+            $('#classificationDropdown').trigger('change');
+            alert('Classification berhasil dihapus!');
+        },
+        error: function(xhr) {
+            alert('Gagal menghapus: ' + xhr.responseText);
+        }
+    });
+}
+
+// ========================================
+// HAPUS CATEGORY
+// ========================================
+function deleteCategory(id, name) {
+    if (!confirm('Yakin ingin menghapus category "' + name + '"?')) return;
+    
+    $.ajax({
+        url: "{{ url('admin/category') }}/" + id,
+        method: "DELETE",
+        data: {
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(res) {
+            $('#categoryDropdown option[value="' + id + '"]').remove();
+            $('#categoryDropdown').trigger('change');
+            alert('Category berhasil dihapus!');
+        },
+        error: function(xhr) {
+            alert('Gagal menghapus: ' + xhr.responseText);
+        }
+    });
+}
+
+// ========================================
+// HAPUS LOCATION
+// ========================================
+function deleteLocation(id, name) {
+    if (!confirm('Yakin ingin menghapus location "' + name + '"?')) return;
+    
+    $.ajax({
+        url: "{{ url('admin/location') }}/" + id,
+        method: "DELETE",
+        data: {
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(res) {
+            $('#locationDropdown option[value="' + id + '"]').remove();
+            $('#locationDropdown').trigger('change');
+            alert('Location berhasil dihapus!');
+        },
+        error: function(xhr) {
+            alert('Gagal menghapus: ' + xhr.responseText);
+        }
+    });
+}
 </script>
 
 @endsection
+
+
+

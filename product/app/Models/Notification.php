@@ -10,11 +10,22 @@ class Notification extends Model
         'user_id',
         'title',
         'message',
+        'type',
+        'icon',
         'is_read'
+    ];
+
+    protected $casts = [
+        'is_read' => 'boolean',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function scopeUnread($query)
+    {
+        return $query->where('is_read', false);
     }
 }

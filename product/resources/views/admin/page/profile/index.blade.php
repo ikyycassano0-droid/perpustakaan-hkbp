@@ -604,3 +604,7 @@ function getTypeLabel(type) {
 </style>
 
 @endsection
+
+
+
+

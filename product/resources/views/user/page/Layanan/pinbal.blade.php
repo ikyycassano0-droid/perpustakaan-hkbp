@@ -777,18 +777,12 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">📅 Tanggal Pinjam</label>
-                                    <input type="date" id="tglPinjam" name="tanggal_pinjam" class="form-input-modal" required>
+                                    <input type="date" id="tglPinjam" name="borrow_date" class="form-input-modal" required min="" onfocus="this.min=new Date().toISOString().split('T')[0]">
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">📅 Tanggal Kembali</label>
-                                    <input type="date" id="tglKembali" name="tanggal_kembali" class="form-input-modal" required>
+                                   <input type="date" id="tglKembali" name="return_date" class="form-input-modal" required min="" max="">
                                 </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">📝 Alasan / Keperluan (Opsional)</label>
-                                <textarea id="catatan" name="notes" rows="2" class="form-input-modal"
-                                          placeholder="Contoh: Untuk tugas akhir / penelitian..."></textarea>
                             </div>
 
                             <div class="form-group">
@@ -796,7 +790,7 @@
                                     ⚠️ *Peminjaman akan diproses oleh petugas perpustakaan.
                                 </p>
                                 <p class="text-xs text-gray-400 mt-1">
-                                    📌 *Masa pinjam maksimal 14 hari.
+                                    📌 *Masa pinjam maksimal 3 hari.
                                 </p>
                             </div>
 
@@ -1439,16 +1433,32 @@ document.getElementById('pinjamForm').addEventListener('submit', function(e) {
     var collectionId = document.getElementById('collection_id').value;
     if (!collectionId) {
         e.preventDefault();
-        showNotification('❌ Silakan pilih buku yang valid dari daftar!', 'error');
+        alert('❌ Silakan pilih buku!');
         return;
     }
 
-    var tglPinjam = document.getElementById('tglPinjam').value;
-    var tglKembali = document.getElementById('tglKembali').value;
+    var pinjam = new Date(document.getElementById('tglPinjam').value);
+    var kembali = new Date(document.getElementById('tglKembali').value);
+    var today = new Date(); today.setHours(0,0,0,0);
+    pinjam.setHours(0,0,0,0);
+    kembali.setHours(0,0,0,0);
 
-    if (new Date(tglPinjam) > new Date(tglKembali)) {
+    if (pinjam < today) {
         e.preventDefault();
-        showNotification('❌ Tanggal kembali harus setelah tanggal pinjam!', 'error');
+        alert('❌ Tanggal pinjam tidak boleh kurang dari hari ini!');
+        return;
+    }
+
+    if (kembali <= pinjam) {
+        e.preventDefault();
+        alert('❌ Tanggal kembali harus setelah tanggal pinjam!');
+        return;
+    }
+
+    var diff = (kembali - pinjam) / (1000 * 60 * 60 * 24);
+    if (diff > 3) {
+        e.preventDefault();
+        alert('❌ Maksimal peminjaman 3 hari!');
         return;
     }
 });
@@ -1458,16 +1468,26 @@ function openPinjamModal() {
     var modal = document.getElementById('pinjamModal');
     modal.classList.add('show');
 
-    var today = new Date().toISOString().split('T')[0];
-    document.getElementById('tglPinjam').value = today;
-
-    var returnDate = new Date();
-    returnDate.setDate(returnDate.getDate() + 14);
-    document.getElementById('tglKembali').value = returnDate.toISOString().split('T')[0];
+    var today = new Date();
+    var todayStr = today.toISOString().split('T')[0];
+    
+    var tglPinjam = document.getElementById('tglPinjam');
+    tglPinjam.value = todayStr;
+    tglPinjam.min = todayStr;
+    
+    var tglKembali = document.getElementById('tglKembali');
+    
+    // Set max return = 3 hari dari sekarang
+    var maxReturn = new Date(today);
+    maxReturn.setDate(maxReturn.getDate() + 3);
+    var maxStr = maxReturn.toISOString().split('T')[0];
+    
+    tglKembali.value = maxStr;
+    tglKembali.min = todayStr;
+    tglKembali.max = maxStr;
 
     document.getElementById('judulBukuInput').value = '';
     document.getElementById('collection_id').value = '';
-    document.getElementById('catatan').value = '';
 }
 
 function closePinjamModal() {
@@ -1518,3 +1538,7 @@ console.log('Halaman Pinbal siap!');
 @push('meta')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 @endpush
+
+
+
+

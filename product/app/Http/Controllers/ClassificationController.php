@@ -56,9 +56,14 @@ class ClassificationController extends Controller
     }
 
     // ================= DESTROY =================
-    public function destroy(Classification $classification)
+    public function destroy($id)
     {
-        // aman kalau relasi tidak ada data
+        $classification = Classification::find($id);
+        
+        if (!$classification) {
+            return back()->with('error', 'Classification tidak ditemukan');
+        }
+
         if (method_exists($classification, 'collections')) {
             $classification->collections()->detach();
         }
@@ -68,22 +73,22 @@ class ClassificationController extends Controller
         return back()->with('success', 'Classification berhasil dihapus');
     }
 
-    // ================= DELETE LAST (AJAX) =================
-    public function deleteLast()
+    // ================= DESTROY (AJAX) =================
+    public function destroyAjax($id)
     {
-        $last = Classification::latest()->first();
-
-        if (!$last) {
-            return response()->json(['message' => 'empty'], 404);
+        $classification = Classification::find($id);
+        
+        if (!$classification) {
+            return response()->json(['message' => 'Data sudah dihapus'], 200);
         }
 
-        $id = $last->id;
+        if (method_exists($classification, 'collections')) {
+            $classification->collections()->detach();
+        }
 
-        $last->delete();
+        $classification->delete();
 
-        return response()->json([
-            'id' => $id
-        ]);
+        return response()->json(['success' => true]);
     }
 
     public function storeAjax(Request $request)

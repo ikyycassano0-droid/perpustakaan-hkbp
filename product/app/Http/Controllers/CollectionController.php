@@ -353,11 +353,16 @@ class CollectionController extends Controller
     {
         $request->validate([
             'keyword' => 'required|string|max:255',
+            'type' => 'nullable|string',
+            'classification' => 'nullable|string',
+            'category' => 'nullable|string',
+            'year' => 'nullable|string',
         ]);
 
         $keyword = strtolower($request->keyword);
 
-        $collections = Collection::with(['categories'])
+        // Query Collections
+        $collections = Collection::with(['categories', 'classifications'])
             ->where('active', true)
             ->where(function ($query) use ($keyword) {
                 $query->where('title', 'LIKE', "%$keyword%")
@@ -365,47 +370,53 @@ class CollectionController extends Controller
                     ->orWhere('publisher', 'LIKE', "%$keyword%")
                     ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(author, '$')) LIKE ?", ["%$keyword%"]);
             })
+            // Filter classification
+            ->when($request->classification, function ($q) use ($request) {
+                $q->whereHas('classifications', function ($q2) use ($request) {
+                    $q2->where('name', $request->classification);
+                });
+            })
+            // Filter category
+            ->when($request->category, function ($q) use ($request) {
+                $q->whereHas('categories', function ($q2) use ($request) {
+                    $q2->where('name', $request->category);
+                });
+            })
+            // Filter tahun
+            ->when($request->year, function ($q) use ($request) {
+                $q->where('publication_year', $request->year);
+            })
             ->get()
             ->map(function ($item) use ($keyword) {
-
                 $score = 0;
-
                 if (str_contains(strtolower($item->title), $keyword)) $score += 5;
-
                 foreach ($item->author ?? [] as $author) {
-                    if (str_contains(strtolower($author), $keyword)) {
-                        $score += 4;
-                    }
+                    if (str_contains(strtolower($author), $keyword)) $score += 4;
                 }
-
-                if ($item->description && str_contains(strtolower($item->description), $keyword)) {
-                    $score += 2;
-                }
-
+                if ($item->description && str_contains(strtolower($item->description), $keyword)) $score += 2;
                 $item->score = $score;
                 $item->type = 'collection';
                 $item->is_restricted = $item->is_restricted ?? false;
-
                 return $item;
             });
 
+        // Query Final Projects
         $finalProjects = FinalProject::with(['category'])
-    ->where('status', 'Approved') // 🔥 WAJIB
+            ->where('status', 'Approved')
             ->where(function ($query) use ($keyword) {
                 $query->where('title', 'LIKE', "%$keyword%")
                     ->orWhere('abstract', 'LIKE', "%$keyword%")
                     ->orWhere('student_name', 'LIKE', "%$keyword%");
             })
+            ->when($request->year, function ($q) use ($request) {
+                $q->whereYear('created_at', $request->year);
+            })
             ->get()
             ->map(function ($item) use ($keyword) {
-
                 $score = 0;
-
-                if (str_contains(strtolower($item->title), $keyword)) $score += 5; // ✅ FIX
-
+                if (str_contains(strtolower($item->title), $keyword)) $score += 5;
                 $item->score = $score;
                 $item->type = 'final_project';
-
                 return $item;
             });
 
@@ -414,7 +425,17 @@ class CollectionController extends Controller
             ->sortByDesc('score')
             ->values();
 
-        return view('user.page.search_results', compact('results', 'keyword'));
+        // Data untuk filter dropdown
+        $classifications = Classification::orderBy('name')->get();
+        $categories = CategoryCollection::orderBy('name')->get();
+        $years = Collection::whereNotNull('publication_year')
+            ->distinct()
+            ->orderBy('publication_year', 'desc')
+            ->pluck('publication_year');
+
+        return view('user.page.search_results', compact(
+            'results', 'keyword', 'classifications', 'categories', 'years'
+        ));
     }
 
     // ================= LIVE SEARCH =================
