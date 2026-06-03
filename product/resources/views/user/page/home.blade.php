@@ -983,7 +983,7 @@
             <h3>KTI (Karya Tulis Ilmiah)</h3>
             <p>Akses digital ke hasil penelitian dan Karya Tulis Ilmiah mahasiswa sebagai referensi akademik yang kredibel dan teruji.</p>
         </div>
-        <div class="feature-card" data-aos="fade-up" data-aos-delay="700">
+        <div class="feature-card animate-float" style="animation-delay: 1.5s;" data-aos="fade-up" data-aos-delay="700">
             <i class="fas fa-book"></i>
             <h3>Buku Tercetak</h3>
             <p>Koleksi buku fisik keperawatan dan medis yang tersedia secara lengkap di rak perpustakaan untuk peminjaman luring.</p>
