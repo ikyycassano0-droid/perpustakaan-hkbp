@@ -15,7 +15,7 @@ class FinalProjectController extends Controller
     // ================= USER =================
 public function index(Request $request, $category = 'kti')
 {
-    
+
     if ($category !== 'kti') {
         return $this->showAdminUpload($request, $category);
     }
@@ -202,12 +202,12 @@ public function index(Request $request, $category = 'kti')
     public function index_kti_admin(Request $request)
     {
         $query = FinalProject::with('category', 'firstSupervisor', 'secondSupervisor');
-        
+
         // Filter status
         if ($request->status && $request->status !== 'all') {
             $query->where('status', $request->status);
         }
-        
+
         // Filter periode
         if ($request->period == 'today') {
             $query->whereDate('created_at', today());
@@ -218,7 +218,7 @@ public function index(Request $request, $category = 'kti')
         } elseif ($request->start && $request->end) {
             $query->whereBetween('created_at', [$request->start, $request->end]);
         }
-        
+
         $data = $query->latest()->get();
         return view('admin.page.kti', compact('data'));
     }

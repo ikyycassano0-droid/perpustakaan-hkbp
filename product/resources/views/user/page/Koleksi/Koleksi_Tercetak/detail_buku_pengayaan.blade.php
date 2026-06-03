@@ -8,7 +8,7 @@
        CSS KHUSUS UNTUK HALAMAN DETAIL BUKU PENGAYAAN
        Hanya CSS yang BELUM ADA di master blade
     ============================================ */
-    
+
     /* Glass card */
     .glass-card {
         background: rgba(15, 23, 42, 0.55);
@@ -17,7 +17,7 @@
         border-radius: 2rem;
         transition: all 0.3s ease;
     }
-    
+
     /* Title utama */
     .title-main {
         font-weight: 800;
@@ -27,7 +27,7 @@
         color: transparent;
         text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
     }
-    
+
     /* Neon border */
     .neon-border {
         position: relative;
@@ -35,11 +35,11 @@
         background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2));
         transition: all 0.3s ease;
     }
-    
+
     .neon-border:hover {
         box-shadow: 0 0 30px rgba(99,102,241,0.3);
     }
-    
+
     .neon-inner {
         background: rgba(15, 23, 42, 0.7);
         backdrop-filter: blur(20px);
@@ -47,7 +47,7 @@
         padding: 2rem;
         border: 1px solid rgba(255,255,255,0.08);
     }
-    
+
     /* Category Badge */
     .category-badge {
         display: inline-block;
@@ -56,12 +56,12 @@
         font-size: 0.7rem;
         font-weight: 600;
     }
-    
+
     .category-pengayaan { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.4); }
     .category-referensi { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.4); }
     .category-anatomi { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
     .category-keperawatan { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
-    
+
     /* Buttons */
     .btn-primary {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
@@ -74,12 +74,12 @@
         color: white;
         font-size: 0.9rem;
     }
-    
+
     .btn-primary:hover {
         transform: scale(1.05);
         box-shadow: 0 0 25px rgba(99, 102, 241, 0.5);
     }
-    
+
     .btn-outline {
         background: transparent;
         padding: 10px 24px;
@@ -91,18 +91,18 @@
         color: #c7d2fe;
         font-size: 0.85rem;
     }
-    
+
     .btn-outline:hover {
         background: rgba(99, 102, 241, 0.2);
         border-color: #6366f1;
         transform: translateY(-2px);
     }
-    
+
     .btn-outline:disabled {
         opacity: 0.5;
         cursor: not-allowed;
     }
-    
+
     .btn-link {
         background: transparent;
         border: none;
@@ -111,24 +111,24 @@
         font-size: 0.8rem;
         transition: all 0.3s ease;
     }
-    
+
     .btn-link:hover {
         color: #818cf8;
     }
-    
+
     /* Book Detail Styles */
     .book-cover-large {
         border-radius: 1.5rem;
         overflow: hidden;
         box-shadow: 0 25px 40px -15px rgba(0, 0, 0, 0.4);
     }
-    
+
     .metadata-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 1rem;
     }
-    
+
     .metadata-item {
         background: rgba(15, 23, 42, 0.6);
         border-radius: 1rem;
@@ -136,13 +136,13 @@
         border: 1px solid rgba(99, 102, 241, 0.2);
         transition: all 0.3s ease;
     }
-    
+
     .metadata-item:hover {
         border-color: rgba(99, 102, 241, 0.5);
         background: rgba(15, 23, 42, 0.8);
         transform: translateY(-2px);
     }
-    
+
     .metadata-label {
         font-size: 0.7rem;
         color: #94a3b8;
@@ -150,14 +150,14 @@
         letter-spacing: 0.5px;
         margin-bottom: 0.5rem;
     }
-    
+
     .metadata-value {
         font-size: 0.95rem;
         font-weight: 600;
         color: #e2e8f0;
         word-wrap: break-word;
     }
-    
+
     /* Notification */
     .notification {
         position: fixed;
@@ -173,11 +173,11 @@
         transform: translateX(120%);
         transition: transform 0.3s ease;
     }
-    
+
     .notification.show {
         transform: translateX(0);
     }
-    
+
     /* Section Title */
     .section-title {
         font-size: 1.25rem;
@@ -188,7 +188,7 @@
         border-bottom: 2px solid rgba(99, 102, 241, 0.3);
         display: inline-block;
     }
-    
+
     /* Info Grid 3 Columns */
     .info-grid-3 {
         display: grid;
@@ -196,13 +196,13 @@
         gap: 1rem;
         margin-top: 1rem;
     }
-    
+
     /* Stats Card */
     .stats-card {
         background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.05));
         border: 1px solid rgba(99, 102, 241, 0.3);
     }
-    
+
     /* Badge Container */
     .badge-container {
         display: flex;
@@ -210,12 +210,12 @@
         gap: 0.5rem;
         margin-top: 0.5rem;
     }
-    
+
     /* Delay utilities */
     .delay-1 { transition-delay: 0.1s; }
     .delay-2 { transition-delay: 0.2s; }
     .delay-3 { transition-delay: 0.3s; }
-    
+
     /* Responsive */
     @media (max-width: 768px) {
         .neon-inner {
@@ -391,7 +391,7 @@
                             <h2 class="section-title">
                                 <i class="fas fa-info-circle mr-2"></i> Informasi Lengkap
                             </h2>
-                            
+
                             <div class="metadata-grid mt-4">
                                 <!-- Penulis -->
                                 <div class="metadata-item">

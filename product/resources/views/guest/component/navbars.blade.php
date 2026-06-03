@@ -1,138 +1,211 @@
-<!-- NAVBAR MODERN FUTURISTIC -->
-<header class="fixed top-0 left-0 w-full z-[999] px-6 py-4">
-    <div class="navbar-container flex items-center justify-between">
-
-        <!-- LOGO SECTION (tidak berubah) -->
-        <div class="flex items-center gap-3">
-            <div class="flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-400/30">
-                <img src="{{ asset('assets/img/logo akper.png') }}"
-                    alt="Logo AKPER"
-                    class="w-14 h-14 object-contain">
-                    <!-- Ubah w-7 h-7 menjadi w-14 h-14 di atas agar gambar membesar -->
-            </div>
-            <div>
-                <span class="nav-logo">AKPER HKBP</span>
-                <div class="text-[11px] text-indigo-300/60 tracking-wider">BALIGE</div>
-            </div>
+<header>
+    <div class="logo-container">
+        <div class="logo-img">
+            <img src="{{ asset('assets/img/logo akper.png') }}" alt="Logo Perpustakaan AKPER HKBP">
         </div>
-
-        <!-- DESKTOP MENU (tidak berubah) -->
-        <ul class="desktop-menu flex items-center gap-1 lg:gap-2">
-            <!-- HOME -->
-            <li class="nav-item-modern">
-                <a href="{{ route('home') }}" class="px-3 py-2 block">Home</a>
-            </li>
-
-            <!-- PROFILE DROPDOWN -->
-            <li class="dropdown-modern nav-item-modern">
-                <button class="flex items-center gap-1 px-3 py-2">
-                    Profile
-                    <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </button>
-                <ul class="dropdown-menu-modern">
-                    <li><a href="{{ route('guest.profile.visi-misi') }}" class="dropdown-item-modern">Visi Misi</a></li>
-                    <li><a href="{{ route('guest.profile.kerjasama') }}" class="dropdown-item-modern">Kerjasama</a></li>
-                    <li><a href="{{ route('guest.profile.struktur') }}" class="dropdown-item-modern">Struktur</a></li>
-                    <li><a href="{{ route('guest.profile.tugas-fungsi') }}" class="dropdown-item-modern">Tugas & Fungsi</a></li>
+        <div class="logo-text">
+            <h1>Perpustakaan AKPER HKBP</h1>
+            <span>Sekolah Keperawatan HKBP Balige</span>
+        </div>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="{{ route('home') }}">Home</a></li>
+            <li>
+                <a href="#">Profile <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ route('guest.profile.visi-misi') }}">Visi Misi</a></li>
+                    <li><a href="{{ route('guest.profile.kerjasama') }}">Kerjasama</a></li>
+                    <li><a href="{{ route('guest.profile.struktur') }}">Struktur Pengurus</a></li>
+                    <li><a href="{{ route('guest.profile.tugas-fungsi') }}">Tugas, Fungsi, Tujuan</a></li>
                 </ul>
             </li>
-
-            <!-- LAYANAN DROPDOWN -->
-            <li class="dropdown-modern nav-item-modern">
-                <button class="flex items-center gap-1 px-3 py-2">
-                    Layanan <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <ul class="dropdown-menu-modern">
-                    <li><a href="{{ route('waktu.layanan') }}" class="dropdown-item-modern">Waktu Layanan</a></li>
+            <li>
+                <a href="{{ route('waktu.layanan') }}">Layanan <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ route('waktu.layanan') }}">Waktu Layanan</a></li>
                 </ul>
             </li>
-
-            <!-- KOLEKSI DROPDOWN (dengan submenu) -->
-            <li class="dropdown-modern nav-item-modern">
-                <button class="flex items-center gap-1 px-3 py-2">
-                    Koleksi <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <ul class="dropdown-menu-modern" style="min-width: 240px;">
-                    <li class="submenu-modern">
-                        <a href="#" class="dropdown-item-modern flex justify-between items-center">
-                            Koleksi Elektronik <span class="text-indigo-400 text-xs">▶</span>
-                        </a>
-                        <ul class="submenu-menu-modern">
-                            <li><a href="{{ route('guest.koleksi_elektronik.ebook') }}" class="dropdown-item-modern">E-book</a></li>
-                            <li><a href="{{ route('guest.koleksi_elektronik.earticle') }}" class="dropdown-item-modern">E-article</a></li>
-                            <li><a href="{{ route('guest.koleksi_elektronik.cd') }}" class="dropdown-item-modern">CD/DVD</a></li>
-                            <li><a href="{{ route('guest.koleksi_elektronik.video') }}" class="dropdown-item-modern">Video Edukasi</a></li>
-                        </ul>
-                    </li>
+            <li>
+                <a href="#">Koleksi Elektronik <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ route('guest.koleksi_elektronik.ebook') }}">E-book</a></li>
+                    <li><a href="{{ route('guest.koleksi_elektronik.earticle') }}">E-article</a></li>
+                    <li><a href="{{ route('guest.koleksi_elektronik.cd') }}">CD</a></li>
+                    <li><a href="{{ route('guest.koleksi_elektronik.video') }}">Video</a></li>
                 </ul>
             </li>
-
-            <!-- BERITA -->
-            <li class="nav-item-modern">
-                <a href="{{ url('/berita') }}" class="px-3 py-2 block">Berita</a>
-            </li>
-
-            <!-- INFORMASI DROPDOWN -->
-            <li class="dropdown-modern nav-item-modern">
-                <button class="flex items-center gap-1 px-3 py-2">
-                    Informasi <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <ul class="dropdown-menu-modern">
-                    <li><a href="{{ route('panduan') }}" class="dropdown-item-modern">Panduan</a></li>
+            <li><a href="{{ url('/berita') }}">Berita</a></li>
+            <li>
+                <a href="#">Informasi <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ route('panduan') }}">Panduan</a></li>
                 </ul>
             </li>
         </ul>
-
-        <!-- AREA LOGIN / PROFIL + MOBILE MENU BUTTON -->
-        <div class="flex items-center gap-3">
-            @auth
-                <!-- Tampilkan ikon profil + nama user (bisa diklik ke halaman menu profil) -->
-                <a href="{{ route('profile.menu') }}"
-                   class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 group">
-                    <!-- Ikon Profil (siluet user) -->
-                    <svg class="w-5 h-5 text-indigo-300 group-hover:text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    <!-- Nama User -->
-                    <span class="text-sm font-medium text-indigo-200 truncate max-w-[120px]">
-                        {{ session('user')['name'] ?? '' }}
-                    </span>
-                </a>
-            @else
-                <!-- Tombol Login (jika belum login) -->
-                <button onclick="window.location.href='{{ route('login') }}'" class="btn-login-modern">
-                    <span class="hidden sm:inline">Login</span>
-                </button>
-            @endauth
-
-            <!-- Mobile Menu Button (tetap) -->
-            <div class="mobile-menu-btn" id="mobileMenuBtn">
-                <svg class="w-6 h-6 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-            </div>
-        </div>
-    </div>
+    </nav>
+    @auth
+        <a href="{{ route('profile.menu') }}" class="login-btn" style="background-color: #1a6b47; color:white;">
+            <i class="fas fa-user-circle"></i> {{ session('user')['name'] ?? 'Profil' }}
+        </a>
+    @else
+        <a href="{{ route('login') }}" class="login-btn"><i class="fas fa-sign-in-alt"></i> LOGIN</a>
+    @endauth
 </header>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const ktiMenu = document.getElementById("kti-menu");
-
-    if (ktiMenu) {
-        ktiMenu.addEventListener("click", function (e) {
-            e.preventDefault();
-
-            if (confirm("Silakan login terlebih dahulu untuk mengakses KTI Digital. Login sekarang?")) {
-                window.location.href = "{{ route('login') }}";
-            }
-        });
+<style>
+    /* =============== NAVBAR STYLE (PUTIH) =============== */
+    header {
+        background-color: #ffffff;
+        color: var(--text-dark);
+        padding: 0.8rem 3%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 12px rgba(15, 74, 49, 0.10);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 2px solid #e6f0ea;
     }
-});
-</script>
 
+    .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
 
+    .logo-img {
+        width: 50px;
+        height: 50px;
+        background-color: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
 
+    .logo-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
 
+    .logo-text h1 {
+        font-size: 0.95rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        line-height: 1.2;
+        color: var(--text-dark);
+    }
+
+    .logo-text span {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+    }
+
+    nav ul {
+        list-style: none;
+        display: flex;
+        gap: 5px;
+    }
+
+    nav ul li {
+        position: relative;
+    }
+
+    nav ul li a {
+        padding: 10px 12px;
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: 0.3s;
+        color: var(--text-dark);
+    }
+
+    nav ul li a:hover,
+    nav ul li > a.active {
+        color: var(--primary-color);
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: #ffffff;
+        min-width: 220px;
+        box-shadow: 0 8px 20px rgba(15, 74, 49, 0.12);
+        border-radius: 8px;
+        display: none;
+        z-index: 100;
+        border-top: 3px solid var(--accent-green);
+    }
+
+    .dropdown-menu li {
+        width: 100%;
+    }
+
+    .dropdown-menu li a {
+        color: var(--text-dark) !important;
+        padding: 10px 15px;
+        border-bottom: 1px solid #f0f5f2;
+        font-weight: 500;
+        font-size: 0.8rem;
+    }
+
+    .dropdown-menu li a:hover {
+        background-color: #f0f9f4;
+        color: var(--primary-color) !important;
+        padding-left: 20px;
+    }
+
+    nav ul li:hover > .dropdown-menu {
+        display: block;
+    }
+
+    .login-btn {
+        background-color: var(--primary-color);
+        color: #fff !important;
+        padding: 9px 22px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.3s;
+        border: 2px solid var(--primary-color);
+    }
+
+    .login-btn:hover {
+        background-color: var(--deep-green);
+        border-color: var(--deep-green);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(15, 74, 49, 0.25);
+    }
+
+    @media (max-width: 1100px) {
+        nav ul {
+            gap: 2px;
+        }
+        nav ul li a {
+            font-size: 0.75rem;
+            padding: 10px 8px;
+        }
+    }
+    @media (max-width: 800px) {
+        /* Sederhana: menu bisa di-scroll horizontal, atau bisa ditambahkan mobile menu nanti */
+        nav {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        nav ul {
+            display: inline-flex;
+        }
+        .logo-text h1 {
+            font-size: 0.8rem;
+        }
+    }
+</style>

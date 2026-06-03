@@ -1,4 +1,4 @@
-        <?php
+<?php
 
         use App\Http\Controllers\AuthController;
         use Illuminate\Support\Facades\Route;
@@ -420,4 +420,3 @@
         Route::prefix('user')->group(function () {
             Route::get('/live-search', [CollectionController::class, 'liveSearch']);
         });
-

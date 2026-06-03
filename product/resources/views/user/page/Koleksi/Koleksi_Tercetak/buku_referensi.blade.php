@@ -1,284 +1,360 @@
+{{-- resources/views/user/page/koleksi_tercetak/buku_referensi.blade.php --}}
 @extends('user.component.master')
 
-@section('title', 'Koleksi Buku Referensi - AKPER HKBP Balige')
+@section('title', 'Koleksi Buku Referensi - Perpustakaan AKPER HKBP')
 
 @push('styles')
 <style>
     /* ============================================
-       CSS KHUSUS UNTUK HALAMAN BUKU REFERENSI
-       Hanya CSS yang BELUM ADA di master blade
+       GAYA BUKU REFERENSI (TEMA HIJAU KUNING)
+       Sama seperti halaman lain, konsisten dengan master
     ============================================ */
-
-    /* Glass card */
-    .glass-card {
-        background: rgba(30, 41, 59, 0.5);
-        backdrop-filter: blur(14px);
-        border: 1px solid rgba(99, 102, 241, 0.25);
+    :root {
+        --primary-color: #1a6b47;
+        --deep-green: #0f4a31;
+        --accent-green: #2daa6e;
+        --accent-yellow: #f1c40f;
+        --text-dark: #0d2137;
+        --text-muted: #5a7060;
+        --light-bg: #f4f7f5;
+        --card-bg: #ffffff;
+        --border-color: #d4e5d9;
+        --danger: #e74c3c;
     }
 
-    /* Glow text */
-    .glow-text {
-        text-shadow: 0 0 12px rgba(99, 102, 241, 0.7);
+    .main-container {
+        display: flex;
+        max-width: 1400px;
+        margin: 40px auto;
+        padding: 0 20px;
+        gap: 30px;
+        align-items: flex-start;
     }
 
-    /* Tambahkan di style Visi Misi */
-    .depth-2 { transform: translateZ(24px); }
+    .sidebar {
+        width: 280px;
+        flex-shrink: 0;
+        background: var(--card-bg);
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(15, 74, 49, 0.08);
+        border: 1px solid var(--border-color);
+        position: sticky;
+        top: 100px;
+    }
 
-    /* Title utama */
-    .title-main {
+    .sidebar h3 {
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+        color: var(--text-dark);
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 15px;
         font-weight: 800;
-        background: linear-gradient(135deg, #ffffff, #a5b4fc, #6366f1);
-        background-clip: text;
-        -webkit-background-clip: text;
-        color: transparent;
-        text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
     }
 
-    /* Neon border */
-    .neon-border {
-        position: relative;
-        border-radius: 28px;
-        background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2));
-        transition: all 0.3s ease;
+    .filter-group {
+        margin-bottom: 25px;
     }
 
-    .neon-border:hover {
-        box-shadow: 0 0 30px rgba(99,102,241,0.3);
-    }
-
-    .neon-inner {
-        background: rgba(15, 23, 42, 0.7);
-        backdrop-filter: blur(20px);
-        border-radius: 26px;
-        padding: 2rem;
-        border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    /* Search input */
-    .search-input {
-        width: 100%;
-        padding: 12px 20px;
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(99, 102, 241, 0.3);
-        border-radius: 40px;
-        color: white;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-    }
-
-    .search-input:focus {
-        outline: none;
-        border-color: #6366f1;
-        box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
-    }
-
-    .search-input::placeholder {
-        color: #64748b;
-    }
-
-    /* Sidebar Menu */
-    .sidebar-menu {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(12px);
-        border-radius: 1.25rem;
-        border: 1px solid rgba(99, 102, 241, 0.3);
-        overflow: hidden;
-    }
-
-    .sidebar-item {
-        padding: 12px 16px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        transition: all 0.3s ease;
-        cursor: pointer;
-        color: #cbd5e1;
-        font-size: 0.85rem;
-    }
-
-    .sidebar-item:hover {
-        background: rgba(99, 102, 241, 0.15);
-        color: white;
-        padding-left: 24px;
-    }
-
-    .sidebar-item.active {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.1));
-        color: #a5b4fc;
-        border-left: 3px solid #6366f1;
-    }
-
-    .sidebar-title {
+    .filter-group h4 {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        margin-bottom: 15px;
         font-weight: 700;
-        color: #c7d2fe;
-        padding: 12px 16px;
-        border-bottom: 1px solid rgba(99, 102, 241, 0.3);
     }
 
-    /* Featured Book Card */
-    .featured-card {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(12px);
-        border-radius: 1.25rem;
-        border: 1px solid rgba(99, 102, 241, 0.3);
-        transition: all 0.3s ease;
-    }
-
-    .featured-card:hover {
-        border-color: rgba(99, 102, 241, 0.7);
-        transform: translateY(-3px);
-    }
-
-    /* Table Styles */
-    .table-container {
-        overflow-x: auto;
-        border-radius: 1rem;
-    }
-
-    .data-table {
+    .range-slider {
         width: 100%;
-        border-collapse: collapse;
-        min-width: 800px;
+        cursor: pointer;
+        accent-color: var(--primary-color);
+        margin-bottom: 10px;
     }
 
-    .data-table th {
-        text-align: left;
-        padding: 1rem 1rem;
-        background: rgba(99, 102, 241, 0.15);
-        color: #c7d2fe;
-        font-weight: 600;
-        font-size: 0.8rem;
-        border-bottom: 1px solid rgba(99, 102, 241, 0.3);
-    }
-
-    .data-table td {
-        padding: 1rem 1rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        color: #e2e8f0;
+    .year-label {
+        display: flex;
+        justify-content: space-between;
         font-size: 0.85rem;
-        vertical-align: middle;
-    }
-
-    .data-table tr:hover {
-        background: rgba(99, 102, 241, 0.08);
-    }
-
-    /* Status Badges */
-    .status-badge {
-        display: inline-block;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 0.7rem;
+        color: var(--text-muted);
         font-weight: 600;
     }
 
-    .status-tersedia {
-        background: rgba(16, 185, 129, 0.2);
-        color: #34d399;
-        border: 1px solid rgba(16, 185, 129, 0.5);
-    }
-
-    .status-dipinjam {
-        background: rgba(245, 158, 11, 0.2);
-        color: #fbbf24;
-        border: 1px solid rgba(245, 158, 11, 0.5);
-    }
-
-    .status-kosong {
-        background: rgba(239, 68, 68, 0.2);
-        color: #f87171;
-        border: 1px solid rgba(239, 68, 68, 0.5);
-    }
-
-    /* Buttons */
-    .btn-primary {
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        padding: 6px 14px;
-        border-radius: 30px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        border: none;
+    .filter-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+        font-size: 0.9rem;
+        color: var(--text-muted);
         cursor: pointer;
+    }
+
+    .filter-item input {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        accent-color: var(--primary-color);
+    }
+
+    .content-section {
+        flex-grow: 1;
+    }
+
+    .page-header {
+        margin-bottom: 25px;
+    }
+
+    .page-header span {
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        background: #e0f0e8;
+        padding: 4px 12px;
+        border-radius: 50px;
+        display: inline-block;
+    }
+
+    .page-header h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        color: var(--text-dark);
+        margin-top: 10px;
+        font-weight: 800;
+    }
+
+    .filter-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .search-item {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        padding: 0 15px;
+    }
+
+    .search-item i {
+        color: var(--text-muted);
+        margin-right: 10px;
+    }
+
+    .search-item input,
+    .search-item select {
+        border: none;
+        outline: none;
+        padding: 12px 0;
+        width: 100%;
+        font-size: 0.9rem;
+        background: transparent;
+        color: var(--text-dark);
+    }
+
+    .filter-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 25px;
+        overflow-x: auto;
+        padding-bottom: 5px;
+    }
+
+    .chip {
+        padding: 8px 18px;
+        background: var(--card-bg);
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: 0.3s;
+        border: 1px solid var(--border-color);
+        white-space: nowrap;
+    }
+
+    .chip.active {
+        background: var(--primary-color);
         color: white;
+        border-color: var(--primary-color);
+    }
+
+    .chip:hover:not(.active) {
+        background: #f0f7f3;
+        border-color: var(--accent-green);
+        color: var(--primary-color);
+    }
+
+    /* Book Card */
+    .book-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 25px;
+        display: flex;
+        gap: 25px;
+        margin-bottom: 20px;
+        transition: 0.3s;
+        border: 1px solid var(--border-color);
+        border-top: 4px solid var(--accent-yellow);
+        box-shadow: 0 4px 12px rgba(15, 74, 49, 0.05);
+    }
+
+    .book-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(15, 74, 49, 0.12);
+    }
+
+    .book-img-box {
+        width: 140px;
+        height: 200px;
+        background: #f0f7f3;
+        border-radius: 8px;
+        overflow: hidden;
+        flex-shrink: 0;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .book-img-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .book-detail-info {
+        flex-grow: 1;
+    }
+
+    .cat-tag {
         font-size: 0.7rem;
+        font-weight: 800;
+        background: var(--accent-yellow);
+        color: var(--primary-color);
+        padding: 4px 12px;
+        border-radius: 50px;
+        text-transform: uppercase;
         display: inline-block;
-        white-space: nowrap;
+    }
+
+    .book-title-link {
+        font-size: 1.3rem;
+        color: var(--primary-color);
+        margin: 10px 0 5px;
+        cursor: pointer;
+        display: block;
+        font-weight: 700;
         text-decoration: none;
     }
 
-    .btn-primary:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
-    }
-
-    .btn-primary:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        transform: none;
-    }
-
-    .btn-outline {
-        background: transparent;
-        padding: 6px 14px;
-        border-radius: 30px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(99, 102, 241, 0.5);
-        cursor: pointer;
-        color: #c7d2fe;
-        font-size: 0.7rem;
-        display: inline-block;
-        white-space: nowrap;
-        text-decoration: none;
-    }
-
-    .btn-outline:hover {
-        background: rgba(99, 102, 241, 0.2);
-        border-color: #6366f1;
-    }
-
-    .btn-outline:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    .btn-link {
-        background: transparent;
-        border: none;
-        color: #a5b4fc;
-        cursor: pointer;
-        font-size: 0.75rem;
-        transition: all 0.3s ease;
-    }
-
-    .btn-link:hover {
-        color: #818cf8;
+    .book-title-link:hover {
         text-decoration: underline;
     }
 
-    /* Pagination */
-    .pagination-btn {
-        padding: 8px 14px;
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(99, 102, 241, 0.3);
-        border-radius: 8px;
-        color: #c7d2fe;
+    .book-author {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        margin-bottom: 5px;
+    }
+
+    .data-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 15px;
+        border-top: 1px solid var(--border-color);
+        padding-top: 15px;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    .data-grid strong {
+        color: var(--primary-color);
+    }
+
+    .action-side {
+        width: 170px;
+        border-left: 1px solid var(--border-color);
+        padding-left: 25px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .stock-box {
+        border: 1px solid var(--border-color);
+        background: #fafdfb;
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    .stock-box small {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        display: block;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .stock-box b {
+        font-size: 1.6rem;
+        color: var(--primary-color);
+    }
+
+    .btn-sm {
+        padding: 10px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border-radius: 50px;
+        border: 1px solid var(--border-color);
+        background: white;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: 0.2s;
+        color: var(--text-muted);
+        width: 100%;
     }
 
-    .pagination-btn:hover:not(:disabled) {
-        background: rgba(99, 102, 241, 0.2);
-        border-color: #6366f1;
+    .btn-sm:hover:not(:disabled) {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
     }
 
-    .pagination-btn:disabled {
-        opacity: 0.5;
+    .btn-sm:disabled {
+        opacity: 0.6;
         cursor: not-allowed;
     }
 
-    .pagination-btn.active {
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        border-color: transparent;
-        color: white;
+    /* Tooltip */
+    .btn-wrapper {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .btn-wrapper .tooltip-text {
+        visibility: hidden;
+        background-color: rgba(0,0,0,0.85);
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 6px 12px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        font-size: 0.7rem;
+        opacity: 0;
+        transition: opacity 0.3s;
+        pointer-events: none;
+    }
+
+    .btn-wrapper:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
     }
 
     /* Notification */
@@ -287,1054 +363,413 @@
         bottom: 30px;
         right: 30px;
         padding: 12px 24px;
-        background: rgba(15, 23, 42, 0.95);
+        background: #0d2137;
         backdrop-filter: blur(12px);
-        border: 1px solid rgba(99, 102, 241, 0.5);
+        border: 1px solid var(--primary-color);
         border-radius: 12px;
         color: white;
         z-index: 1000;
         transform: translateX(120%);
         transition: transform 0.3s ease;
+        font-size: 0.9rem;
+        font-weight: 500;
     }
 
     .notification.show {
         transform: translateX(0);
     }
 
-    /* Modal Styles */
-    .modal-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(12px);
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        visibility: hidden;
-        opacity: 0;
-        transition: all 0.3s ease;
-    }
-
-    .modal-overlay.active {
-        visibility: visible;
-        opacity: 1;
-    }
-
-    .modal-container {
-        background: rgba(15, 23, 42, 0.95);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(99, 102, 241, 0.5);
-        border-radius: 1.5rem;
-        width: 100%;
-        max-width: 28rem;
-        margin: 1rem;
-        transform: scale(0.9);
-        transition: transform 0.3s ease;
-    }
-
-    .modal-overlay.active .modal-container {
-        transform: scale(1);
-    }
-
-    /* Section spacing */
-    .section {
-        margin-top: 40px;
-    }
-
-    /* Kolom aksi dibuat tetap tidak pecah */
-    .data-table th:last-child,
-    .data-table td:last-child {
-        white-space: nowrap;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .sidebar-menu {
-            margin-bottom: 20px;
+    @media (max-width: 1024px) {
+        .sidebar {
+            display: none;
         }
-        .data-table th,
-        .data-table td {
-            padding: 0.75rem;
-            font-size: 0.75rem;
-        }
-        .btn-primary, .btn-outline {
-            padding: 4px 8px;
-            font-size: 0.65rem;
-        }
-    }
-
-    .line-clamp-2 {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .line-clamp-1 {
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-     /* Glass card untuk halaman visi misi */
-     .library-footer {
-        position: relative;
-        overflow: hidden;
-
-        padding: 3.5rem 3rem 2rem;
-
-        border-radius: 32px;
-
-        background:
-            linear-gradient(
-                145deg,
-                rgba(15, 23, 42, 0.92),
-                rgba(17, 24, 39, 0.96)
-            );
-
-        border: 1px solid rgba(255, 255, 255, 0.06);
-
-        backdrop-filter: blur(18px);
-
-        box-shadow:
-            0 10px 40px rgba(0, 0, 0, 0.35);
-    }
-
-    /* soft glow */
-    .library-footer::before {
-        content: "";
-
-        position: absolute;
-
-        width: 320px;
-        height: 320px;
-
-        top: -140px;
-        right: -100px;
-
-        border-radius: 999px;
-
-        background: rgba(99, 102, 241, 0.08);
-
-        filter: blur(80px);
-    }
-
-    /* grid */
-    .footer-grid {
-        position: relative;
-        z-index: 2;
-
-        display: grid;
-        grid-template-columns: 1.6fr 1fr 1fr 1fr;
-        gap: 3rem;
-    }
-
-    /* logo */
-    .footer-logo {
-        width: 58px;
-        height: 58px;
-
-        border-radius: 18px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        font-size: 1.5rem;
-
-        background:
-            linear-gradient(
-                135deg,
-                rgba(99, 102, 241, 0.25),
-                rgba(139, 92, 246, 0.15)
-            );
-
-        border: 1px solid rgba(99, 102, 241, 0.2);
-    }
-
-    /* description */
-    .footer-desc {
-        margin-top: 1rem;
-
-        color: #94a3b8;
-
-        line-height: 1.9;
-
-        font-size: 0.95rem;
-
-        max-width: 340px;
-    }
-
-    /* section title */
-    .footer-title {
-        color: white;
-
-        font-size: 1rem;
-        font-weight: 600;
-
-        margin-bottom: 1.3rem;
-    }
-
-    /* links */
-    .footer-links {
-        display: flex;
-        flex-direction: column;
-        gap: 0.9rem;
-    }
-
-    .footer-links a {
-        color: #94a3b8;
-
-        font-size: 0.92rem;
-
-        transition: all .25s ease;
-    }
-
-    .footer-links a:hover {
-        color: #c7d2fe;
-
-        transform: translateX(4px);
-    }
-
-    .footer-social {
-        width: 44px;
-        height: 44px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        border-radius: 14px;
-
-        background: rgba(255, 255, 255, 0.04);
-
-        border: 1px solid rgba(255, 255, 255, 0.06);
-
-        color: #cbd5e1;
-
-        backdrop-filter: blur(10px);
-
-        transition: all .3s ease;
-    }
-
-    .footer-social:hover {
-        transform: translateY(-4px);
-
-        background:
-            linear-gradient(
-                135deg,
-                rgba(99, 102, 241, 0.18),
-                rgba(139, 92, 246, 0.12)
-            );
-
-        border-color: rgba(99, 102, 241, 0.28);
-
-        color: white;
-
-        box-shadow:
-            0 10px 24px rgba(99, 102, 241, 0.18);
-    }
-
-    /* contact */
-    .footer-contact {
-        display: flex;
-        gap: 12px;
-
-        color: #94a3b8;
-
-        line-height: 1.7;
-    }
-
-    /* divider */
-    .footer-divider {
-        height: 1px;
-
-        margin: 2.5rem 0 1.5rem;
-
-        background:
-            linear-gradient(
-                to right,
-                transparent,
-                rgba(255, 255, 255, 0.1),
-                transparent
-            );
-    }
-
-    /* bottom */
-    .footer-bottom {
-        position: relative;
-        z-index: 2;
-
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        gap: 1rem;
-
-        color: #64748b;
-
-        font-size: 0.85rem;
-    }
-
-    .footer-bottom-links {
-        display: flex;
-        gap: 1.5rem;
-    }
-
-    .footer-bottom-links a {
-        transition: .25s ease;
-    }
-
-    .footer-bottom-links a:hover {
-        color: #c7d2fe;
-    }
-
-    /* responsive */
-    @media (max-width: 992px) {
-
-        .footer-grid {
-            grid-template-columns: 1fr 1fr;
-        }
-
-    }
-
-    @media (max-width: 640px) {
-
-        .library-footer {
-            padding: 2rem;
-            border-radius: 24px;
-        }
-
-        .footer-grid {
+        .filter-row {
             grid-template-columns: 1fr;
-            gap: 2.5rem;
         }
-
-        .footer-bottom {
+        .book-card {
             flex-direction: column;
-            align-items: flex-start;
         }
-
-        .footer-bottom-links {
-            flex-wrap: wrap;
-            gap: 1rem;
+        .action-side {
+            width: 100%;
+            border-left: none;
+            border-top: 1px solid var(--border-color);
+            padding: 20px 0 0;
         }
-
     }
 </style>
 @endpush
 
 @section('content')
-<div class="main-content">
+<div class="main-container">
 
-    <!-- HERO SECTION -->
-    <section class="pt-28 pb-8 text-center px-5">
-        <div class="inline-block glass-card px-5 py-2 rounded-full mb-5 fade-up">
-            <span class="text-indigo-300 text-sm font-medium tracking-wide">
-                📚 AKPER HKBP BALIGE
-            </span>
-        </div>
-
-        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight depth-2 fade-up">
-    Koleksi Buku <br>
-    <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent glow-text">Referensi</span>
-</h1>
-
-        <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
-            Akses ke sumber daya medis otoritatif untuk menunjang pembelajaran akademik.
-        </p>
-    </section>
-
-    <!-- MAIN CONTENT -->
-    <section class="section max-w-7xl mx-auto px-5">
-
-        <div class="neon-border fade-up">
-            <div class="neon-inner">
-
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-
-                    <!-- SIDEBAR -->
-                    <div class="lg:col-span-1">
-
-                        <div class="sidebar-menu">
-                            <div class="sidebar-title">📂 Koleksi Referensi</div>
-
-                            <div class="sidebar-item active">📚 Semua Referensi</div>
-                            <div class="sidebar-item">📖 Kamus</div>
-                            <div class="sidebar-item">🏥 Klinis</div>
-                            <div class="sidebar-item">🧬 Anatomi</div>
-                            <div class="sidebar-item">💊 Farmakologi</div>
-                            <div class="sidebar-item">👶 Pediatri</div>
-                        </div>
-
-                    </div>
-
-                    <!-- CONTENT -->
-                    <div class="lg:col-span-3">
-
-                        <!-- SEARCH -->
-                        <form method="GET" class="mb-6">
-                            <input type="text"
-                                   name="search"
-                                   value="{{ request('search') }}"
-                                   class="search-input"
-                                   placeholder="🔍 Cari buku...">
-                        </form>
-
-                        <!-- FEATURED (ambil 4 pertama dari pagination data) -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-
-                            @foreach($collections->take(4) as $item)
-                                @php
-                                    $borrowStatus = $userBorrowStatus[$item->id] ?? null;
-                                @endphp
-                                <div class="featured-card p-4">
-
-                                    <div class="flex items-start gap-3">
-
-                                        {{-- COVER BUKU --}}
-                                        <div class="flex-shrink-0">
-
-                                            @if($item->cover_image)
-                                                <img
-                                                    src="{{ asset('storage/' . $item->cover_image) }}"
-                                                    alt="{{ $item->title }}"
-                                                    class="w-16 h-24 object-cover rounded-xl border border-indigo-500/30 shadow-lg"
-                                                >
-                                            @else
-                                                <div class="w-16 h-24 rounded-xl flex items-center justify-center
-                                                            bg-gradient-to-br from-indigo-500/20 to-purple-500/20
-                                                            border border-indigo-500/30 text-3xl">
-                                                    📘
-                                                </div>
-                                            @endif
-                                        </div>
-
-                                        <div class="flex-1">
-                                            <h3 class="font-semibold text-indigo-200 text-sm">
-                                                {{ $item->title }}
-                                            </h3>
-
-                                            <p class="text-xs text-gray-400">
-                                                {{ $item->author_string }}
-                                            </p>
-
-                                            <p class="text-xs text-gray-500 mt-1">
-                                                {{ \Illuminate\Support\Str::limit($item->description ?? '', 80) }}
-                                            </p>
-
-                                            <div class="flex items-center justify-between mt-2">
-
-                                                <span class="status-badge {{ $item->available_stock > 0 ? 'status-tersedia' : 'status-kosong' }}">
-                                                    {{ $item->available_stock > 0 ? '✓ TERSEDIA' : '⚡ KOSONG' }}
-                                                </span>
-
-                                                @if(session()->has('user'))
-                                                    @if($borrowStatus && in_array($borrowStatus['status'], ['PENDING', 'APPROVED']))
-                                                        <button class="btn-outline text-xs" style="padding: 4px 10px;" disabled>
-                                                            {{ $borrowStatus['status'] == 'PENDING' ? 'Diproses' : 'Dipinjam' }}
-                                                        </button>
-                                                    @elseif($item->available_stock > 0)
-                                                        <button onclick="openModal({{ $item->id }}, '{{ addslashes($item->title) }}')"
-                                                                class="btn-primary text-xs" style="padding: 4px 10px;">
-                                                            Pinjam
-                                                        </button>
-                                                    @else
-                                                        <button class="btn-outline text-xs" style="padding: 4px 10px;" disabled>
-                                                            Habis
-                                                        </button>
-                                                    @endif
-                                                @else
-                                                    <a href="{{ route('login') }}" class="btn-primary text-xs" style="padding: 4px 10px;">
-                                                        Login
-                                                    </a>
-                                                @endif
-
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            @endforeach
-
-                        </div>
-
-                        <!-- TABLE -->
-                        <div class="mt-6">
-                            <h3 class="text-lg font-semibold text-indigo-200 mb-4">
-                                📋 Daftar Buku Referensi
-                            </h3>
-
-                            <div class="table-container">
-                                <table class="data-table">
-
-                                    <thead>
-                                        <tr>
-                                            <th>INFORMASI</th>
-                                            <th>TAHUN</th>
-                                            <th>KATEGORI</th>
-                                            <th>STATUS</th>
-                                            <th style="width: 85px;">DETAIL</th>
-                                            <th style="width: 85px;">PINJAM</th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody>
-                                    @forelse($collections as $item)
-                                        @php
-                                            $borrowStatus = $userBorrowStatus[$item->id] ?? null;
-                                        @endphp
-                                        <tr>
-
-                                            <!-- INFORMASI -->
-                                            <td>
-                                                <div class="font-semibold text-indigo-200 text-sm">
-                                                    {{ $item->title }}
-                                                </div>
-                                                <div class="text-xs text-gray-400">
-                                                    {{ $item->author_string }}
-                                                </div>
-                                            </td>
-
-                                            <!-- TAHUN -->
-                                            <td>
-                                                <div class="text-sm">
-                                                    {{ $item->publication_year ?? '-' }}
-                                                </div>
-                                                <div class="text-xs text-gray-500">
-                                                    {{ $item->edition ?? '-' }}
-                                                </div>
-                                            </td>
-
-                                            <!-- KATEGORI -->
-                                            <td>
-                                                <span class="text-xs text-gray-300">
-                                                    {{ $item->categories->first()->name ?? 'Umum' }}
-                                                </span>
-                                            </td>
-
-                                            <!-- STATUS -->
-                                            <td>
-                                                <span class="status-badge {{ $item->available_stock > 0 ? 'status-tersedia' : 'status-kosong' }}">
-                                                    {{ $item->available_stock > 0 ? '✓ TERSEDIA' : '⚡ KOSONG' }}
-                                                </span>
-                                            </td>
-
-                                            <!-- DETAIL -->
-                                            <td>
-                                                <a href="{{ route('user.koleksi.detail', $item->id) }}"
-                                                   class="btn-primary">
-                                                    Detail
-                                                </a>
-                                            </td>
-
-                                            <!-- PINJAM -->
-                                            <td>
-                                                @if(session()->has('user'))
-                                                    @if($borrowStatus && in_array($borrowStatus['status'], ['PENDING', 'APPROVED']))
-                                                        @if($borrowStatus['status'] == 'PENDING')
-                                                            <button class="btn-outline" disabled>
-                                                                Diproses
-                                                            </button>
-                                                        @else
-                                                            <button class="btn-outline" disabled>
-                                                                Dipinjam
-                                                            </button>
-                                                        @endif
-                                                    @elseif($item->available_stock > 0)
-                                                        <button onclick="openModal({{ $item->id }}, '{{ addslashes($item->title) }}')"
-                                                                class="btn-primary">
-                                                            Pinjam
-                                                        </button>
-                                                    @else
-                                                        <button class="btn-outline" disabled>
-                                                            Habis
-                                                        </button>
-                                                    @endif
-                                                @else
-                                                    <a href="{{ route('login') }}" class="btn-primary">
-                                                        Login
-                                                    </a>
-                                                @endif
-                                            </td>
-
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="6" class="text-center py-8 text-gray-400">
-                                                📭 Data tidak ditemukan
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                    </tbody>
-
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- PAGINATION LARAVEL -->
-                        <div class="flex justify-center mt-6">
-                            {{ $collections->withQueryString()->links() }}
-                        </div>
-
-                    </div>
-
-                </div>
-
+    <!-- Sidebar (statis, hanya UI) -->
+    <aside class="sidebar">
+        <h3>Ditapis dengan</h3>
+        <div class="filter-group">
+            <h4>Tahun Penerbitan</h4>
+            <input type="range" min="2000" max="{{ date('Y') }}" value="{{ date('Y') }}" class="range-slider" id="yearSlider">
+            <div class="year-label">
+                <span>2000</span>
+                <span id="currentYear" style="color:var(--primary-color); font-weight:800;">{{ date('Y') }}</span>
+                <span>{{ date('Y') }}</span>
             </div>
         </div>
+        <div class="filter-group">
+            <h4>Lokasi Rak</h4>
+            <label class="filter-item"><input type="checkbox"> Lantai 1 - Referensi (15)</label>
+            <label class="filter-item"><input type="checkbox"> Ruang Baca Dosen (5)</label>
+            <label class="filter-item"><input type="checkbox"> Lab Dasar (3)</label>
+        </div>
+        <div class="filter-group">
+            <h4>Bahasa</h4>
+            <label class="filter-item"><input type="checkbox"> Indonesia (15)</label>
+            <label class="filter-item"><input type="checkbox"> Inggris (5)</label>
+        </div>
+    </aside>
 
-    </section>
+    <!-- Main Content -->
+    <main class="content-section">
+        <div class="page-header">
+            <span>Koleksi Tercetak</span>
+            <h2>Koleksi Buku Referensi Utama</h2>
+        </div>
 
-</div>
-
-{{-- ================= MODAL PINJAM ================= --}}
-<div id="pinjamModal" class="modal-overlay">
-    <div class="modal-container p-6">
-
-        <h2 class="text-xl font-bold text-indigo-300 mb-4">
-            Form Peminjaman
-        </h2>
-
-        <form id="pinjamForm" method="POST" action="{{ route('orders.store') }}">
-            @csrf
-
-            <input type="hidden" name="collection_id" id="collection_id">
-
-            <div class="mb-3">
-                <label class="text-xs text-gray-400">Judul Buku</label>
-                <input type="text" id="book_title"
-                       class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700"
-                       readonly>
+        <!-- Form Search & Filter (server-side) -->
+        <form method="GET" action="{{ route('user.koleksi.buku_referensi') }}" class="filter-row">
+            <div class="search-item">
+                <i class="fas fa-search"></i>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari judul referensi, kamus, atau atlas...">
             </div>
-
-            <div class="mb-3">
-                <label class="text-xs text-gray-400">Tanggal Pinjam</label>
-                <input type="date" name="borrow_date" id="borrow_date"
-                       class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700"
-                       required>
+            <div class="search-item">
+                <select name="category">
+                    <option value="">Semua Subjek</option>
+                    @php
+                        $categories = \App\Models\CategoryCollection::orderBy('name')->get();
+                    @endphp
+                    @foreach($categories as $cat)
+                        <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                    @endforeach
+                </select>
             </div>
-
-            <div class="mb-3">
-                <label class="text-xs text-gray-400">Tanggal Kembali</label>
-                <input type="date" name="return_date" id="return_date"
-                       class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700"
-                       required>
+            <div class="search-item">
+                <select name="sort">
+                    <option value="default" {{ request('sort') == 'default' ? 'selected' : '' }}>Terbaru</option>
+                    <option value="title_asc" {{ request('sort') == 'title_asc' ? 'selected' : '' }}>Judul (A-Z)</option>
+                    <option value="title_desc" {{ request('sort') == 'title_desc' ? 'selected' : '' }}>Judul (Z-A)</option>
+                </select>
             </div>
-
-            <div class="flex gap-2">
-                <button type="button"
-                        onclick="closeModal()"
-                        class="w-full py-2 rounded bg-gray-700 text-white">
-                    Batal
-                </button>
-
-                <button type="submit"
-                        id="submitPinjamBtn"
-                        class="w-full py-2 rounded bg-indigo-600 text-white font-semibold">
-                    Pinjam
-                </button>
-            </div>
-
         </form>
 
-    </div>
-</div>
-<!-- ================= FOOTER ================= -->
-    <footer class="px-10 pb-12 pt-6">
-
-        <div class="max-w-9xl mx-auto">
-
-            <div class="library-footer fade-up">
-
-                <div class="footer-grid">
-
-                    <!-- BRAND -->
-                    <div>
-
-                        <div class="flex items-center gap-4">
-
-                            <div class="footer-logo">
-                                📚
-                            </div>
-
-                            <div>
-
-                                <h3 class="text-white font-semibold text-lg">
-                                    Perpustakaan Digital
-                                </h3>
-
-                                <p class="text-indigo-300 text-sm">
-                                    AKPER HKBP Balige
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                        <p class="footer-desc">
-                            Menyediakan akses e-book, jurnal,
-                            repository ilmiah, dan literatur digital
-                            modern untuk mendukung pembelajaran mahasiswa.
-                        </p>
-
-                        <!-- SOCIAL MEDIA -->
-                        <div class="flex items-center gap-3 mt-6">
-
-                            <a
-                                href="#"
-                                class="footer-social"
-                                aria-label="Website"
-                            >
-                                <i class="fas fa-globe"></i>
-                            </a>
-
-                            <a
-                                href="#"
-                                class="footer-social"
-                                aria-label="Facebook"
-                            >
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-
-                            <a
-                                href="#"
-                                class="footer-social"
-                                aria-label="YouTube"
-                            >
-                                <i class="fab fa-youtube"></i>
-                            </a>
-
-                            <a
-                                href="#"
-                                class="footer-social"
-                                aria-label="Instagram"
-                            >
-                                <i class="fab fa-instagram"></i>
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                    <!-- NAVIGATION -->
-                    <div>
-
-                        <h4 class="footer-title">
-                            Navigasi
-                        </h4>
-
-                        <ul class="footer-links">
-
-                            <li>
-                                <a href="{{ route('home') }}">
-                                    Beranda
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="{{ route('guest.profile.tugas-fungsi') }}">
-                                    E-Book
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#">
-                                    E-Journal
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#">
-                                    Repository
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#">
-                                    Katalog
-                                </a>
-                            </li>
-
-                        </ul>
-
-                    </div>
-
-                    <!-- SERVICES -->
-                    <div>
-
-                        <h4 class="footer-title">
-                            Layanan
-                        </h4>
-
-                        <ul class="footer-links">
-
-                            <li>
-                                <a href="{{ route('user.pinjam') }}">
-                                    Peminjaman
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="{{ route('final_project.upload.kti') }}">
-                                    Upload KTI
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="{{ route('panduan') }}">
-                                    Literasi Digital
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="{{ route('user.profile.struktur') }}">
-                                    Keanggotaan
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#">
-                                    Bantuan
-                                </a>
-                            </li>
-
-                        </ul>
-
-                    </div>
-
-                    <!-- CONTACT -->
-                    <div>
-
-                        <h4 class="footer-title">
-                            Kontak
-                        </h4>
-
-                        <div class="space-y-4 text-sm">
-
-                            <div class="footer-contact">
-
-                                <span>
-                                    📍
-                                </span>
-
-                                <p>
-                                    AKPER HKBP Balige,
-                                    Sumatera Utara
-                                </p>
-
-                            </div>
-
-                            <div class="footer-contact">
-
-                                <span>
-                                    📧
-                                </span>
-
-                                <p>
-                                    library@akperhkbp.ac.id
-                                </p>
-
-                            </div>
-
-                            <div class="footer-contact">
-
-                                <span>
-                                    📞
-                                </span>
-
-                                <p>
-                                    +62 812 xxxx xxxx
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- divider -->
-                <div class="footer-divider"></div>
-
-                <!-- bottom -->
-                <div class="footer-bottom">
-
-                    <p>
-                        © 2026 Perpustakaan Digital AKPER HKBP Balige.
-                    </p>
-
-                    <div class="footer-bottom-links">
-
-                        <a href="#">
-                            Privacy
-                        </a>
-
-                        <a href="#">
-                            Terms
-                        </a>
-
-                        <a href="#">
-                            Support
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
+        <!-- Category Chips -->
+        <div class="filter-container">
+            <a href="{{ route('user.koleksi.buku_referensi', array_merge(request()->except('category'), ['category' => ''])) }}"
+               class="chip {{ !request('category') ? 'active' : '' }}">Semua Referensi</a>
+            @foreach($categories as $cat)
+                <a href="{{ route('user.koleksi.buku_referensi', array_merge(request()->except('category'), ['category' => $cat->id])) }}"
+                   class="chip {{ request('category') == $cat->id ? 'active' : '' }}">{{ $cat->name }}</a>
+            @endforeach
         </div>
 
-    </footer>
+        <!-- Daftar Buku Referensi -->
+        <div class="book-list">
+            @forelse($collections as $item)
+                @php
+                    $borrowStatus = $userBorrowStatus[$item->id] ?? null;
+                    $authorStr = '';
+                    if (!empty($item->author)) {
+                        if (is_array($item->author)) {
+                            $authorStr = implode(', ', $item->author);
+                        } else {
+                            $authorStr = $item->author;
+                        }
+                    }
+                    $categoryName = $item->categories->isNotEmpty() ? $item->categories->first()->name : 'Referensi Utama';
+                    $keywords = $item->keywords;
+                    if (is_array($keywords)) {
+                        $keywords = implode(', ', $keywords);
+                    }
+
+                    // ========== LOGIKA PEMINJAMAN DENGAN BATAS 3 BUKU ==========
+                    $buttonText = 'Pinjam';
+                    $buttonDisabled = false;
+                    $buttonOnclick = "openModal({$item->id}, '".addslashes($item->title)."')";
+                    $tooltipText = '';
+
+                    if (session()->has('user')) {
+                        $activeBorrowCount = \App\Models\Order::where('user_id', auth()->id())
+                            ->whereIn('status', ['PENDING', 'APPROVED'])
+                            ->count();
+
+                        if ($borrowStatus) {
+                            switch ($borrowStatus['status']) {
+                                case 'PENDING':
+                                    $buttonText = '⏳ Menunggu Konfirmasi';
+                                    $buttonDisabled = true;
+                                    $buttonOnclick = '';
+                                    $tooltipText = 'Pengajuan peminjaman sedang diproses admin';
+                                    break;
+                                case 'APPROVED':
+                                    $buttonText = '📚 Sedang Dipinjam';
+                                    $buttonDisabled = true;
+                                    $buttonOnclick = '';
+                                    $tooltipText = 'Anda sedang meminjam buku ini';
+                                    break;
+                                case 'REJECTED':
+                                    $buttonText = '🔄 Pinjam Lagi';
+                                    $buttonDisabled = false;
+                                    $buttonOnclick = "openModal({$item->id}, '".addslashes($item->title)."')";
+                                    $tooltipText = 'Pengajuan sebelumnya ditolak, Anda dapat meminjam ulang';
+                                    break;
+                            }
+                        } else {
+                            if ($item->available_stock < 1) {
+                                $buttonText = '❌ Habis';
+                                $buttonDisabled = true;
+                                $buttonOnclick = '';
+                                $tooltipText = 'Stok buku sedang kosong';
+                            } elseif ($activeBorrowCount >= 3) {
+                                $buttonText = '⚠️ Maksimal 3 Buku';
+                                $buttonDisabled = true;
+                                $buttonOnclick = '';
+                                $tooltipText = 'Anda sudah mencapai batas maksimal peminjaman (3 buku)';
+                            } else {
+                                $buttonText = 'Pinjam';
+                                $buttonDisabled = false;
+                                $buttonOnclick = "openModal({$item->id}, '".addslashes($item->title)."')";
+                                $tooltipText = 'Pinjam buku ini';
+                            }
+                        }
+                    } else {
+                        // Guest
+                        $buttonText = '🔑 Login';
+                        $buttonDisabled = false;
+                        $buttonOnclick = "window.location.href='{{ route('login') }}'";
+                        $tooltipText = 'Silakan login untuk meminjam buku';
+                    }
+                @endphp
+
+                <div class="book-card">
+                    <div class="book-img-box">
+                        <img src="{{ $item->cover_image ? asset('storage/'.$item->cover_image) : 'https://via.placeholder.com/140x200?text=Referensi' }}" alt="Cover">
+                    </div>
+                    <div class="book-detail-info">
+                        <span class="cat-tag">{{ $categoryName }}</span>
+                        <a href="{{ route('user.koleksi.detail', $item->id) }}" class="book-title-link">{{ $item->title }}</a>
+                        <p class="book-author">Oleh: <strong>{{ $authorStr ?: 'Tim Penyusun' }}</strong></p>
+
+                        <div class="data-grid">
+                            <span><strong>ISBN:</strong> {{ $item->isbn ?? '-' }}</span>
+                            <span><strong>Penerbit:</strong> {{ $item->publisher ?? 'AKPER HKBP Press' }}, {{ $item->publication_year ?? date('Y') }}</span>
+                            <span><strong>Subjek:</strong> {{ $item->subject ?? ($keywords ?? '-') }}</span>
+                            <span><strong>Bahasa:</strong> {{ $item->language ?? 'Indonesia' }}</span>
+                            <span><strong>Klasifikasi:</strong> {{ $item->classification ?? '-' }}</span>
+                            <span><strong>Carrier Type:</strong> {{ $item->carrier_type ?? 'Volume' }}</span>
+                        </div>
+                    </div>
+                    <div class="action-side">
+                        <div class="stock-box">
+                            <small>Ketersediaan</small>
+                            <b>{{ $item->available_stock ?? 0 }}</b>
+                        </div>
+                        @if($item->marc_file)
+                            <button class="btn-sm" onclick="window.open('{{ asset('storage/'.$item->marc_file) }}', '_blank')">Unduh MARC</button>
+                        @endif
+                        <button class="btn-sm" onclick="showCitation('{{ addslashes($item->title) }}', '{{ addslashes($authorStr) }}', '{{ addslashes($item->publisher) }}', '{{ $item->publication_year }}')">Sitasi</button>
+
+                        <div class="btn-wrapper">
+                            @if($buttonOnclick && !$buttonDisabled)
+                                <button class="btn-sm" onclick="{{ $buttonOnclick }}" {{ $buttonDisabled ? 'disabled' : '' }}>
+                                    {{ $buttonText }}
+                                </button>
+                            @else
+                                <button class="btn-sm" disabled>{{ $buttonText }}</button>
+                            @endif
+                            @if($tooltipText)
+                                <span class="tooltip-text">{{ $tooltipText }}</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="text-center py-10 text-gray-500">Belum ada buku referensi yang tersedia.</div>
+            @endforelse
+        </div>
+
+        <!-- Pagination -->
+        @if(method_exists($collections, 'links'))
+            <div class="pagination" style="display: flex; justify-content: center; gap: 8px; margin-top: 30px;">
+                {{ $collections->appends(request()->query())->links('pagination::bootstrap-4') }}
+            </div>
+        @endif
+    </main>
+</div>
+
+<!-- Modal Peminjaman (dengan validasi 3 hari) -->
+<div id="pinjamModal" class="modal-overlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(12px); z-index: 1000; display: flex; align-items: center; justify-content: center; visibility: hidden; opacity: 0; transition: all 0.3s ease;">
+    <div class="modal-container" style="background: rgba(15,23,42,0.95); backdrop-filter: blur(16px); border: 1px solid rgba(99,102,241,0.5); border-radius: 1.5rem; width: 100%; max-width: 28rem; margin: 1rem; transform: scale(0.9); transition: transform 0.3s ease; padding: 1.5rem;">
+        <h2 class="text-xl font-bold text-indigo-300 mb-4">Form Peminjaman Buku Referensi</h2>
+        <form id="pinjamForm" method="POST" action="{{ route('orders.store') }}">
+            @csrf
+            <input type="hidden" name="collection_id" id="collection_id">
+            <div class="mb-3">
+                <label class="text-xs text-gray-400">Judul Buku</label>
+                <input type="text" id="book_title" class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700" readonly>
+            </div>
+            <div class="mb-3">
+                <label class="text-xs text-gray-400">Tanggal Pinjam</label>
+                <input type="date" name="borrow_date" id="borrow_date" class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700" required>
+            </div>
+            <div class="mb-3">
+                <label class="text-xs text-gray-400">Tanggal Kembali</label>
+                <input type="date" name="return_date" id="return_date" class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700" required>
+                <p class="text-xs text-gray-400 mt-1">* Maksimal peminjaman 3 hari</p>
+            </div>
+            <div class="flex gap-2">
+                <button type="button" onclick="closeModal()" class="w-full py-2 rounded bg-gray-700 text-white">Batal</button>
+                <button type="submit" id="submitPinjamBtn" class="w-full py-2 rounded bg-indigo-600 text-white font-semibold">Pinjam</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Notifikasi -->
+@if(session('success') || session('error'))
+    <div id="notif" class="notification {{ session('success') ? 'bg-green-800 border-green-500' : 'bg-red-800 border-red-500' }}">
+        {{ session('success') ?? session('error') }}
+    </div>
+@endif
 @endsection
 
 @push('scripts')
 <script>
-
-// ================= FORMAT DATE =================
-function formatDate(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
-
-// ================= OPEN MODAL =================
-function openModal(id, title) {
-    const modal = document.getElementById('pinjamModal');
-    modal.classList.add('active');
-
-    document.getElementById('collection_id').value = id;
-    document.getElementById('book_title').value = title;
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const borrowInput = document.getElementById('borrow_date');
-    const returnInput = document.getElementById('return_date');
-
-    // Reset value
-    borrowInput.value = '';
-    returnInput.value = '';
-
-    // Set borrow date = hari ini
-    borrowInput.min = formatDate(today);
-    borrowInput.value = formatDate(today);
-
-    const minReturn = new Date(today);
-    minReturn.setDate(minReturn.getDate() + 1);
-
-    // ✅ MAKSIMAL 3 HARI
-    const maxReturn = new Date(today);
-    maxReturn.setDate(maxReturn.getDate() + 3);
-
-    returnInput.min = formatDate(minReturn);
-    returnInput.max = formatDate(maxReturn);
-    returnInput.value = formatDate(minReturn);
-}
-
-// ================= CLOSE MODAL =================
-function closeModal() {
-    const modal = document.getElementById('pinjamModal');
-    modal.classList.remove('active');
-
-    // Reset form
-    document.getElementById('pinjamForm').reset();
-
-    // Enable submit button
-    const submitBtn = document.getElementById('submitPinjamBtn');
-    if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'Pinjam';
+    // Slider tahun UI
+    const slider = document.getElementById('yearSlider');
+    const output = document.getElementById('currentYear');
+    if (slider && output) {
+        slider.oninput = function() {
+            output.innerHTML = this.value;
+        };
     }
-}
 
-// Klik luar modal untuk menutup
-document.addEventListener('click', function(e) {
-    const modal = document.getElementById('pinjamModal');
-    if (e.target === modal) {
-        closeModal();
+    function showCitation(title, author, publisher, year) {
+        alert(`Sitasi APA:\n${author}. (${year}). ${title}. ${publisher}.`);
     }
-});
 
-// ================= UPDATE RETURN DINAMIS =================
-document.addEventListener('change', function(e) {
-    if (e.target.id === 'borrow_date') {
-        const borrow = new Date(e.target.value);
-        borrow.setHours(0, 0, 0, 0);
+    // Format tanggal (YYYY-MM-DD)
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
 
+    // Buka modal peminjaman
+    function openModal(id, title) {
+        const modal = document.getElementById('pinjamModal');
+        modal.style.visibility = 'visible';
+        modal.style.opacity = '1';
+        document.getElementById('collection_id').value = id;
+        document.getElementById('book_title').value = title;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const borrowInput = document.getElementById('borrow_date');
         const returnInput = document.getElementById('return_date');
-        const minReturn = new Date(borrow);
-        minReturn.setDate(minReturn.getDate() + 1);
 
-        // ✅ MAKSIMAL 3 HARI
-        const maxReturn = new Date(borrow);
-        maxReturn.setDate(maxReturn.getDate() + 3);
+        // Reset value
+        borrowInput.value = '';
+        returnInput.value = '';
+
+        // Set min & default borrow date = hari ini
+        borrowInput.min = formatDate(today);
+        borrowInput.value = formatDate(today);
+
+        const minReturn = new Date(today);
+        minReturn.setDate(minReturn.getDate() + 1);
+        const maxReturn = new Date(today);
+        maxReturn.setDate(maxReturn.getDate() + 3); // Maksimal 3 hari
 
         returnInput.min = formatDate(minReturn);
         returnInput.max = formatDate(maxReturn);
-
-        const currentReturn = new Date(returnInput.value);
-        if (currentReturn < minReturn || currentReturn > maxReturn) {
-            returnInput.value = formatDate(minReturn);
-        }
+        returnInput.value = formatDate(minReturn);
     }
-});
 
-// ================= VALIDASI SUBMIT =================
-document.addEventListener('submit', function(e) {
-    if (e.target.id === 'pinjamForm') {
-        const borrow = new Date(document.getElementById('borrow_date').value);
-        const ret = new Date(document.getElementById('return_date').value);
-
-        borrow.setHours(0, 0, 0, 0);
-        ret.setHours(0, 0, 0, 0);
-
-        const diff = (ret - borrow) / (1000 * 60 * 60 * 24);
-
-        if (diff < 1) {
-            alert('Minimal peminjaman 1 hari');
-            e.preventDefault();
-            return;
-        }
-
-        // ✅ CEK MAKSIMAL 3 HARI
-        if (diff > 3) {
-            alert('Maksimal peminjaman hanya 3 hari');
-            e.preventDefault();
-            return;
-        }
-
+    // Tutup modal
+    function closeModal() {
+        const modal = document.getElementById('pinjamModal');
+        modal.style.visibility = 'hidden';
+        modal.style.opacity = '0';
+        document.getElementById('pinjamForm').reset();
         const btn = document.getElementById('submitPinjamBtn');
         if (btn) {
-            btn.innerText = 'Memproses...';
-            btn.disabled = true;
+            btn.disabled = false;
+            btn.innerText = 'Pinjam';
         }
     }
-});
 
-// ============================================
-// NOTIFICATION AUTO CLOSE
-// ============================================
-setTimeout(function() {
-    const notif = document.getElementById('notif');
-    if (notif) {
-        notif.classList.add('show');
-        setTimeout(function() {
-            notif.style.transform = 'translateX(120%)';
-        }, 4000);
-    }
-}, 100);
+    // Tutup modal jika klik di luar area modal
+    document.addEventListener('click', function(e) {
+        const modal = document.getElementById('pinjamModal');
+        if (e.target === modal) closeModal();
+    });
 
-console.log('📚 Buku Referensi page loaded (Maksimal pinjam 3 hari)');
+    // Update batasan tanggal kembali ketika tanggal pinjam berubah
+    document.addEventListener('change', function(e) {
+        if (e.target.id === 'borrow_date') {
+            const borrow = new Date(e.target.value);
+            borrow.setHours(0, 0, 0, 0);
+            const returnInput = document.getElementById('return_date');
+            const minReturn = new Date(borrow);
+            minReturn.setDate(minReturn.getDate() + 1);
+            const maxReturn = new Date(borrow);
+            maxReturn.setDate(maxReturn.getDate() + 3);
+            returnInput.min = formatDate(minReturn);
+            returnInput.max = formatDate(maxReturn);
+            const curReturn = new Date(returnInput.value);
+            if (curReturn < minReturn || curReturn > maxReturn) {
+                returnInput.value = formatDate(minReturn);
+            }
+        }
+    });
 
+    // Validasi & submit form peminjaman
+    document.addEventListener('submit', function(e) {
+        if (e.target.id === 'pinjamForm') {
+            e.preventDefault();
+            const borrow = new Date(document.getElementById('borrow_date').value);
+            const ret = new Date(document.getElementById('return_date').value);
+            borrow.setHours(0, 0, 0, 0);
+            ret.setHours(0, 0, 0, 0);
+            const diff = (ret - borrow) / (1000 * 60 * 60 * 24);
+            if (diff < 1) {
+                alert('Minimal peminjaman 1 hari');
+                return;
+            }
+            if (diff > 3) {
+                alert('Maksimal peminjaman hanya 3 hari');
+                return;
+            }
+            const btn = document.getElementById('submitPinjamBtn');
+            if (btn) {
+                btn.innerText = 'Memproses...';
+                btn.disabled = true;
+            }
+            e.target.submit();
+        }
+    });
+
+    // Auto-hide notification
+    document.addEventListener('DOMContentLoaded', function() {
+        const notif = document.getElementById('notif');
+        if (notif) {
+            setTimeout(() => {
+                notif.classList.add('show');
+                setTimeout(() => {
+                    notif.classList.remove('show');
+                    setTimeout(() => notif.remove(), 500);
+                }, 3000);
+            }, 100);
+        }
+    });
 </script>
 @endpush
-
-
-
-

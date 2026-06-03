@@ -1,241 +1,221 @@
-<style>
-    .animate-pulse {
-    animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
-</style>
-
-
-<!-- NAVBAR MODERN FUTURISTIC (SEMUA RUTE SUDAH DIPERBAIKI) -->
-<header class="fixed top-0 left-0 w-full z-[999] px-6 py-4">
-    <div class="navbar-container flex items-center justify-between">
-
-        <!-- LOGO SECTION -->
-        <div class="flex items-center gap-3">
-            <div class="flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-400/30">
-                <img src="{{ asset('assets/img/logo akper.png') }}"
-                    alt="Logo AKPER"
-                    class="w-14 h-14 object-contain">
-                    <!-- Ubah w-7 h-7 menjadi w-14 h-14 di atas agar gambar membesar -->
-            </div>
-            <div>
-                <span class="nav-logo">AKPER HKBP</span>
-                <div class="text-[10px] text-indigo-300/60 tracking-wider">BALIGE</div>
-            </div>
+<header>
+    <div class="logo-container">
+        <div class="logo-img">
+            <img src="{{ asset('assets/img/logo akper.png') }}" alt="Logo Perpustakaan AKPER HKBP">
         </div>
-
-        <!-- DESKTOP MENU -->
-        <ul class="desktop-menu flex items-center gap-1 lg:gap-2">
-            <!-- HOME -->
-            <li class="nav-item-modern">
-                <a href="{{ route('user.dashboard') }}" class="px-3 py-2 block">Home</a>
-            </li>
-
-            <!-- PROFILE DROPDOWN -->
-            <li class="dropdown-modern nav-item-modern">
-                <button class="flex items-center gap-1 px-3 py-2">
-                    Profile
-                    <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </button>
-                <ul class="dropdown-menu-modern">
-                    <li><a href="{{ route('user.profile.visi_misi') }}" class="dropdown-item-modern">Visi Misi</a></li>
-                    <li><a href="{{ route('user.profile.kerjasama') }}" class="dropdown-item-modern">Kerjasama</a></li>
-                    <li><a href="{{ route('user.profile.struktur') }}" class="dropdown-item-modern">Struktur</a></li>
-                    <li><a href="{{ route('user.profile.tugas_fungsi') }}" class="dropdown-item-modern">Tugas & Fungsi</a></li>
+        <div class="logo-text">
+            <h1>Perpustakaan AKPER HKBP</h1>
+            <span>Sekolah Keperawatan HKBP Balige</span>
+        </div>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="{{ route('user.dashboard') }}">Home</a></li>
+            <li>
+                <a href="#">Profile <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ route('user.profile.visi_misi') }}">Visi Misi</a></li>
+                    <li><a href="{{ route('user.profile.kerjasama') }}">Kerjasama</a></li>
+                    <li><a href="{{ route('user.profile.struktur') }}">Struktur Pengurus</a></li>
+                    <li><a href="{{ route('user.profile.tugas_fungsi') }}">Tugas, Fungsi, Tujuan</a></li>
                 </ul>
             </li>
-
-            <!-- LAYANAN DROPDOWN -->
-            <li class="dropdown-modern nav-item-modern">
-                <button class="flex items-center gap-1 px-3 py-2">
-                    Layanan <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <ul class="dropdown-menu-modern">
-                    <li><a href="{{ route('user.pinbal.index') }}" class="dropdown-item-modern">Pinjam Buku</a></li>
-                    <li><a href="{{ route('user.waktu.layanan') }}" class="dropdown-item-modern">Waktu Layanan</a></li>
+            <li>
+                <a href="#">Layanan <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ route('user.pinbal.index') }}">Pinjam Buku</a></li>
+                    <li><a href="{{ route('user.waktu.layanan') }}">Waktu Layanan</a></li>
                 </ul>
             </li>
-
-            <!-- KOLEKSI DROPDOWN (Rute koleksi elektronik diperbaiki) -->
-            <li class="dropdown-modern nav-item-modern">
-                <button class="flex items-center gap-1 px-3 py-2">
-                    Koleksi <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <ul class="dropdown-menu-modern" style="min-width: 240px;">
-                    <!-- Koleksi Tercetak -->
-                    <li class="submenu-modern">
-                        <a href="#" class="dropdown-item-modern flex justify-between items-center">
-                            Koleksi Tercetak <span class="text-indigo-400 text-xs">▶</span>
-                        </a>
-                        <ul class="submenu-menu-modern">
-                            <li><a href="{{ route('user.koleksi.jurnal') }}" class="dropdown-item-modern">Jurnal</a></li>
-                            <li><a href="{{ route('user.koleksi.buku_pengayaan') }}" class="dropdown-item-modern">Buku Pengayaan</a></li>
-                            <li><a href="{{ route('user.koleksi.buku_referensi') }}" class="dropdown-item-modern">Buku Referensi</a></li>
-                            <li><a href="{{ route('user.koleksi.majalah') }}" class="dropdown-item-modern">Majalah</a></li>
-                        </ul>
-                    </li>
-                    <!-- Koleksi Elektronik (perbaikan: pakai final_project.koleksi) -->
-                    <li class="submenu-modern">
-                        <a href="#" class="dropdown-item-modern flex justify-between items-center">
-                            Koleksi Elektronik <span class="text-indigo-400 text-xs">▶</span>
-                        </a>
-                        <ul class="submenu-menu-modern">
-                            <li><a href="{{ route('final_project.koleksi', 'ebook') }}" class="dropdown-item-modern">E-book</a></li>
-                            <li><a href="{{ route('final_project.koleksi', 'e-article') }}" class="dropdown-item-modern">E-article</a></li>
-                            <li><a href="{{ route('final_project.koleksi', 'cd') }}" class="dropdown-item-modern">CD/DVD</a></li>
-                            <li><a href="{{ route('final_project.koleksi', 'video') }}" class="dropdown-item-modern">Video Edukasi</a></li>
-                            <li><a href="{{ route('final_project.kti') }}" class="dropdown-item-modern">KTI Digital</a></li>
-                        </ul>
-                    </li>
+            <li>
+                <a href="#">Koleksi Tercetak <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ route('user.koleksi.jurnal') }}">Jurnal</a></li>
+                    <li><a href="{{ route('user.koleksi.buku_pengayaan') }}">Buku Pengayaan</a></li>
+                    <li><a href="{{ route('user.koleksi.buku_referensi') }}">Buku Referensi</a></li>
+                    <li><a href="{{ route('user.koleksi.majalah') }}">Majalah</a></li>
                 </ul>
             </li>
-
-            <!-- BERITA -->
-            <li class="nav-item-modern">
-                <a href="{{ route('user.berita') }}" class="px-3 py-2 block">Berita</a>
+            <li>
+                <a href="#">Koleksi Elektronik <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ route('guest.koleksi_elektronik.ebook') }}">E-book</a></li>
+                    <li><a href="{{ route('guest.koleksi_elektronik.earticle') }}">E-article</a></li>
+                    <li><a href="{{ route('guest.koleksi_elektronik.cd') }}">CD</a></li>
+                    <li><a href="{{ route('guest.koleksi_elektronik.video') }}">Video</a></li>
+                    <li><a href="{{ route('final_project.kti') }}">KTI Digital</a></li>
+                </ul>
             </li>
-
-            <!-- INFORMASI DROPDOWN -->
-            <li class="dropdown-modern nav-item-modern">
-                <button class="flex items-center gap-1 px-3 py-2">
-                    Informasi <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <ul class="dropdown-menu-modern">
-                    <li><a href="{{ route('user.panduan') }}" class="dropdown-item-modern">Panduan</a></li>
+            <li><a href="{{ route('user.berita') }}">Berita</a></li>
+            <li>
+                <a href="#">Informasi <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ route('panduan') }}">Panduan</a></li>
                 </ul>
             </li>
         </ul>
-
-        <!-- AREA LOGIN / PROFIL + MOBILE MENU BUTTON -->
-<!-- AREA LOGIN / PROFIL + MOBILE MENU BUTTON -->
-<div class="flex items-center gap-3">
-@if(session()->has('user'))
-    {{-- NOTIFIKASI --}}
-    @php
-        $unreadNotif = \App\Models\Notification::where('user_id', session('user_id'))
-            ->where('is_read', false)
-            ->count();
-    @endphp
-    
-    <a href="{{ route('user.inbox') }}" 
-       class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300">
-        <svg class="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-        </svg>
-        @if($unreadNotif > 0)
-            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
-                {{ $unreadNotif > 9 ? '9+' : $unreadNotif }}
-            </span>
-        @endif
-    </a>
-    
-    <a href="{{ route('profile.menu') }}"
-       class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 group">
-        <svg class="w-5 h-5 text-indigo-300 group-hover:text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-        </svg>
-        <span class="text-sm font-medium text-indigo-200 truncate max-w-[120px]">
-            {{ session('user')['name'] ?? 'User' }}
-        </span>
-    </a>
-@else
-    <button onclick="window.location.href='{{ route('login') }}'" class="btn-login-modern">
-        <span class="hidden sm:inline">Login</span>
-    </button>
-@endif
-
-    <div class="mobile-menu-btn" id="mobileMenuBtn">
-        <svg class="w-6 h-6 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-    </div>
-</div>
-    </div>
+    </nav>
+    @auth
+        <a href="{{ route('profile.menu') }}" class="login-btn" style="background-color: #1a6b47; color:white;">
+            <i class="fas fa-user-circle"></i> {{ session('user')['name'] ?? 'Profil' }}
+        </a>
+    @else
+        <a href="{{ route('login') }}" class="login-btn"><i class="fas fa-sign-in-alt"></i> LOGIN</a>
+    @endauth
 </header>
 
-<!-- FORM LOGOUT TERSEMBUNYI (POST + CSRF) -->
-<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-    @csrf
-</form>
-
-<!-- CSS DAN SCRIPT (tambahan) -->
-@push('styles')
 <style>
-    /* ===== DROPDOWN & SUBMENU STYLES ===== */
-    .dropdown-modern { position: relative; }
-    .dropdown-modern .dropdown-menu-modern {
-        position: absolute; top: 100%; left: 0;
-        background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px);
-        border-radius: 1rem; border: 1px solid rgba(99, 102, 241, 0.4);
-        padding: 0.5rem 0; min-width: 180px;
-        opacity: 0; visibility: hidden; transform: translateY(-10px);
-        transition: all 0.2s ease; z-index: 1000;
+    /* =============== NAVBAR STYLE (PUTIH) =============== */
+    header {
+        background-color: #ffffff;
+        color: var(--text-dark);
+        padding: 0.8rem 3%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 12px rgba(15, 74, 49, 0.10);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 2px solid #e6f0ea;
     }
-    .dropdown-modern:hover .dropdown-menu-modern {
-        opacity: 1; visibility: visible; transform: translateY(0);
+
+    .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
     }
-    .dropdown-item-modern {
-        display: block; padding: 0.5rem 1.2rem;
-        color: #c7d2fe; transition: all 0.2s; font-size: 0.9rem;
+
+    .logo-img {
+        width: 50px;
+        height: 50px;
+        background-color: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
     }
-    .dropdown-item-modern:hover { background: rgba(99, 102, 241, 0.3); color: white; }
-    .submenu-modern { position: relative; }
-    .submenu-menu-modern {
-        position: absolute; left: 100%; top: 0;
-        background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px);
-        border-radius: 1rem; border: 1px solid rgba(99, 102, 241, 0.4);
-        padding: 0.5rem 0; min-width: 180px;
-        opacity: 0; visibility: hidden; transform: translateX(-10px);
-        transition: all 0.2s ease; z-index: 1001;
+
+    .logo-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
     }
-    .submenu-modern:hover .submenu-menu-modern {
-        opacity: 1; visibility: visible; transform: translateX(0);
+
+    .logo-text h1 {
+        font-size: 0.95rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        line-height: 1.2;
+        color: var(--text-dark);
     }
-    .glass-card {
-        background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px);
-        border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 1rem;
+
+    .logo-text span {
+        font-size: 0.75rem;
+        color: var(--text-muted);
     }
-    .btn-outline {
-        background: transparent; border: 1px solid #6366f1;
-        color: #c7d2fe; padding: 0.5rem 1rem; border-radius: 0.75rem;
-        transition: all 0.2s;
+
+    nav ul {
+        list-style: none;
+        display: flex;
+        gap: 5px;
     }
-    .btn-outline:hover { background: rgba(99, 102, 241, 0.2); }
-    .btn-login-modern {
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        padding: 0.5rem 1.2rem; border-radius: 2rem; color: white;
-        font-weight: 500; transition: all 0.2s; border: none; cursor: pointer;
+
+    nav ul li {
+        position: relative;
     }
-    .btn-login-modern:hover { transform: scale(1.02); box-shadow: 0 0 10px rgba(99, 102, 241, 0.5); }
-    .nav-item-modern a, .nav-item-modern button {
-        color: #c7d2fe; font-weight: 500; transition: all 0.2s;
-        background: transparent; border: none;
+
+    nav ul li a {
+        padding: 10px 12px;
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: 0.3s;
+        color: var(--text-dark);
     }
-    .nav-item-modern:hover a, .nav-item-modern:hover button { color: white; text-shadow: 0 0 5px #6366f1; }
-    .mobile-menu-btn { display: none; cursor: pointer; }
-    @media (max-width: 1024px) {
-        .desktop-menu { display: none; }
-        .mobile-menu-btn { display: block; }
+
+    nav ul li a:hover,
+    nav ul li > a.active {
+        color: var(--primary-color);
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: #ffffff;
+        min-width: 220px;
+        box-shadow: 0 8px 20px rgba(15, 74, 49, 0.12);
+        border-radius: 8px;
+        display: none;
+        z-index: 100;
+        border-top: 3px solid var(--accent-green);
+    }
+
+    .dropdown-menu li {
+        width: 100%;
+    }
+
+    .dropdown-menu li a {
+        color: var(--text-dark) !important;
+        padding: 10px 15px;
+        border-bottom: 1px solid #f0f5f2;
+        font-weight: 500;
+        font-size: 0.8rem;
+    }
+
+    .dropdown-menu li a:hover {
+        background-color: #f0f9f4;
+        color: var(--primary-color) !important;
+        padding-left: 20px;
+    }
+
+    nav ul li:hover > .dropdown-menu {
+        display: block;
+    }
+
+    .login-btn {
+        background-color: var(--primary-color);
+        color: #fff !important;
+        padding: 9px 22px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.3s;
+        border: 2px solid var(--primary-color);
+    }
+
+    .login-btn:hover {
+        background-color: var(--deep-green);
+        border-color: var(--deep-green);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(15, 74, 49, 0.25);
+    }
+
+    @media (max-width: 1100px) {
+        nav ul {
+            gap: 2px;
+        }
+        nav ul li a {
+            font-size: 0.75rem;
+            padding: 10px 8px;
+        }
+    }
+    @media (max-width: 800px) {
+        nav {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        nav ul {
+            display: inline-flex;
+        }
+        .logo-text h1 {
+            font-size: 0.8rem;
+        }
     }
 </style>
-@endpush
-
-@push('scripts')
-<script>
-    window.logout = function() {
-        if (confirm('Apakah Anda yakin ingin keluar?')) {
-            document.getElementById('logout-form').submit();
-        }
-    };
-</script>
-@endpush
-
-
-
-
