@@ -54,6 +54,9 @@
     Route::get('/admin/dashboard/filter', [HomeController::class, 'adminFilter'])->name('admin.dashboard.filter');
 
     Route::prefix('admin')->name('admin.')->middleware(['admin'])->group(function () {
+        Route::delete('/classification/{id}', [ClassificationController::class, 'destroyAjax'])->name('classification.delete.ajax');
+        Route::delete('/category/{id}', [CategoryCollectionController::class, 'destroyAjax'])->name('category.delete.ajax');
+        Route::delete('/location/{id}', [LocationController::class, 'destroyAjax'])->name('location.delete.ajax');
 
             Route::prefix('members')->name('members.')->group(function () {
 

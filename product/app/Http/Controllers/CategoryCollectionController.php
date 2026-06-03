@@ -69,10 +69,18 @@ class CategoryCollectionController extends Controller
     }
 
     // ================= DESTROY =================
-    public function destroy(CategoryCollection $category)
+    public function destroy($id)
     {
+        $category = CategoryCollection::find($id);
+        
+        if (!$category) {
+            return back()->with('error', 'Kategori tidak ditemukan');
+        }
+
         DB::transaction(function () use ($category) {
-            $category->collections()->detach();
+            if (method_exists($category, 'collections')) {
+                $category->collections()->detach();
+            }
             $category->delete();
         });
 
@@ -93,27 +101,21 @@ class CategoryCollectionController extends Controller
     }
 
     // ================= DELETE LAST (AJAX) =================
-    public function deleteLast()
+    public function destroyAjax($id)
     {
-        $data = CategoryCollection::latest()->first();
-
-        if (!$data) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data kosong'
-            ], 404);
+        $category = CategoryCollection::find($id);
+        
+        if (!$category) {
+            return response()->json(['message' => 'Data sudah dihapus'], 200);
         }
 
-        $id = $data->id;
-
-        DB::transaction(function () use ($data) {
-            $data->collections()->detach();
-            $data->delete();
+        DB::transaction(function () use ($category) {
+            if (method_exists($category, 'collections')) {
+                $category->collections()->detach();
+            }
+            $category->delete();
         });
 
-        return response()->json([
-            'success' => true,
-            'id' => $id
-        ]);
+        return response()->json(['success' => true]);
     }
 }

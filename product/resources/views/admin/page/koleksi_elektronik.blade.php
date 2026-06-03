@@ -27,6 +27,19 @@
     .cover-preview:hover {
         transform: scale(1.05);
     }
+
+    .select2-choice-delete {
+        cursor: pointer;
+        color: #ef4444;
+        margin-left: 5px;
+        font-size: 12px;
+    }
+    .select2-choice-delete:hover {
+        color: #dc2626;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        display: none !important;
+    }
 </style>
 
 <div class="max-w-7xl mx-auto">
@@ -369,24 +382,57 @@
     // ========================================
     // SELECT2 INIT
     // ========================================
-    $(document).ready(function() {
-        $('.select2-multi').select2({
-            placeholder: "Pilih / cari...",
-            width: '100%',
-            dropdownParent: $('#modalForm'),
-            closeOnSelect: false,
-            allowClear: true
-        });
-
-        // Set placeholder Indonesia
-        $.fn.select2.amd.require(['select2/selection/search'], function (Search) {
-            var oldRemoveChoice = Search.prototype.searchRemoveChoice;
-            Search.prototype.searchRemoveChoice = function () {
-                oldRemoveChoice.apply(this, arguments);
-                this.$search.attr('placeholder', 'Cari...');
-            };
-        });
+$(document).ready(function() {
+    $('#classificationDropdown').select2({
+        placeholder: "Pilih / cari...",
+        width: '100%',
+        dropdownParent: $('#modalForm'),
+        closeOnSelect: false,
+        allowClear: true,
+        templateSelection: function(data) {
+            if (!data.id) return data.text;
+            return $('<span>' + data.text + ' <i class="fas fa-trash-alt select2-choice-delete" onclick="event.stopPropagation(); deleteClassification(' + data.id + ', \'' + data.text.replace(/'/g, "\\'") + '\')"></i></span>');
+        }
     });
+    
+    $('#categoryDropdown').select2({
+        placeholder: "Pilih / cari...",
+        width: '100%',
+        dropdownParent: $('#modalForm'),
+        closeOnSelect: false,
+        allowClear: true,
+        templateSelection: function(data) {
+            if (!data.id) return data.text;
+            return $('<span>' + data.text + ' <i class="fas fa-trash-alt select2-choice-delete" onclick="event.stopPropagation(); deleteCategory(' + data.id + ', \'' + data.text.replace(/'/g, "\\'") + '\')"></i></span>');
+        }
+    });
+});
+
+function deleteClassification(id, name) {
+    if (!confirm('Yakin ingin menghapus "' + name + '"?')) return;
+    $.ajax({
+        url: "{{ url('admin/classification') }}/" + id,
+        method: "DELETE",
+        data: { _token: $('meta[name="csrf-token"]').attr('content') },
+        success: function() {
+            $('#classificationDropdown option[value="' + id + '"]').remove();
+            $('#classificationDropdown').trigger('change');
+        }
+    });
+}
+
+function deleteCategory(id, name) {
+    if (!confirm('Yakin ingin menghapus "' + name + '"?')) return;
+    $.ajax({
+        url: "{{ url('admin/category') }}/" + id,
+        method: "DELETE",
+        data: { _token: $('meta[name="csrf-token"]').attr('content') },
+        success: function() {
+            $('#categoryDropdown option[value="' + id + '"]').remove();
+            $('#categoryDropdown').trigger('change');
+        }
+    });
+}
     
     // ========================================
     // TAMBAH DATA - BUKA MODAL KOSONG

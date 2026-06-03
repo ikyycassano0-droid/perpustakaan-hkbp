@@ -172,31 +172,28 @@ public function index(Request $request, $category = 'kti')
     }
 
     // ================= ADMIN =================
-    // List semua Koleksi Elektronik
-    public function index_admin()
-    {
-        $data = FinalProject::with([
-            'category',
-            'classifications',
-            'categoriesMany'
-        ])->latest()->get();
+public function index_admin()
+{
+    // Ambil ID kategori KTI
+    $ktiCategory = CategoryFinalProject::where('slug', 'kti')->orWhere('name', 'kti')->first();
+    
+    $data = FinalProject::with(['category', 'classifications', 'categoriesMany'])
+        ->where('status', 'Approved')
+        ->when($ktiCategory, function($query) use ($ktiCategory) {
+            // JANGAN tampilkan yang kategori KTI
+            $query->where('category_final_project_id', '!=', $ktiCategory->id);
+        })
+        ->latest()
+        ->get();
 
-        $categories = CategoryFinalProject::all();
+    $categories = CategoryFinalProject::all();
+    $classifications = Classification::all();
+    $categoriesCollection = CategoryCollection::all();
 
-        $classifications = Classification::all();
-
-        $categoriesCollection = CategoryCollection::all();
-
-        return view(
-            'admin.page.koleksi_elektronik',
-            compact(
-                'data',
-                'categories',
-                'classifications',
-                'categoriesCollection'
-            )
-        );
-    }
+    return view('admin.page.koleksi_elektronik', compact(
+        'data', 'categories', 'classifications', 'categoriesCollection'
+    ));
+}
 
     // List semua KTI untuk admin
     public function index_kti_admin(Request $request)

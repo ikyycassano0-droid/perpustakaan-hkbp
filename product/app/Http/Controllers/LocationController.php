@@ -78,34 +78,21 @@ class LocationController extends Controller
         return back()->with('success', 'Location berhasil dihapus');
     }
 
-    // ================= DELETE LAST (AJAX) =================
-    public function deleteLast()
+    // ================= DESTROY (AJAX) =================
+    public function destroyAjax($id)
     {
-        $location = Location::latest()->first();
-
-        if (!$location) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data kosong'
-            ], 404);
+        $item = Location::find($id);
+        
+        if (!$item) {
+            return response()->json(['message' => 'Data sudah dihapus'], 200);
         }
 
-        // optional safety check (biar sama seperti destroy)
-        if ($location->collections()->count() > 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Location masih digunakan'
-            ], 400);
+        if ($item->collections()->count() > 0) {
+            return response()->json(['message' => 'Location masih digunakan'], 400);
         }
 
-        $id = $location->id;
+        $item->delete();
 
-        $location->delete();
-
-        return response()->json([
-            'success' => true,
-            'id' => $id,
-            'name' => $location->name
-        ]);
+        return response()->json(['success' => true]);
     }
 }   
