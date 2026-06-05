@@ -1,16 +1,14 @@
-{{-- resources/views/user/page/koleksi_tercetak/jurnal.blade.php --}}
+{{-- resources/views/user/page/Koleksi/Koleksi_Tercetak/jurnal.blade.php --}}
 @extends('user.component.master')
 
-@section('title', 'Koleksi Jurnal - Perpustakaan AKPER HKBP')
+@section('title', 'Koleksi Jurnal - AKPER HKBP')
 
 @push('styles')
 <style>
-    /* ============================================
-       GAYA KLASIK HIJAU (TANPA DEPENDENSI VAR)
-    ============================================ */
+    /* === GAYA ASLI JURNAL (PUTIH HIJAU) === */
     .main-container {
         display: flex;
-        max-width: 1400px;
+        max-width: 1300px;
         margin: 40px auto;
         padding: 0 20px;
         gap: 30px;
@@ -18,13 +16,13 @@
     }
 
     .sidebar {
-        width: 280px;
+        width: 220px;
         flex-shrink: 0;
-        background: #ffffff;
-        padding: 25px;
+        background: var(--card-bg);
+        padding: 20px;
         border-radius: 16px;
         box-shadow: 0 8px 24px rgba(15, 74, 49, 0.08);
-        border: 1px solid #d4e5d9;
+        border: 1px solid var(--border-color);
         position: sticky;
         top: 100px;
     }
@@ -32,8 +30,8 @@
     .sidebar h3 {
         font-size: 1.1rem;
         margin-bottom: 20px;
-        color: #0d2137;
-        border-bottom: 1px solid #d4e5d9;
+        color: var(--text-dark);
+        border-bottom: 1px solid var(--border-color);
         padding-bottom: 15px;
         font-weight: 800;
     }
@@ -44,45 +42,55 @@
 
     .filter-group h4 {
         font-size: 0.95rem;
-        color: #5a7060;
+        color: var(--text-muted);
         margin-bottom: 15px;
         font-weight: 700;
     }
 
-    .range-slider {
-        width: 100%;
-        cursor: pointer;
-        accent-color: #1a6b47;
-        margin-bottom: 10px;
-    }
-
-    .year-label {
+    .year-input-wrapper {
         display: flex;
-        justify-content: space-between;
-        font-size: 0.85rem;
-        color: #5a7060;
-        font-weight: 600;
-    }
-
-    .filter-item {
-        display: flex;
+        gap: 8px;
         align-items: center;
-        gap: 10px;
-        margin-bottom: 12px;
-        font-size: 0.9rem;
-        color: #5a7060;
-        cursor: pointer;
     }
 
-    .filter-item input {
-        width: 16px;
-        height: 16px;
+    .year-input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        outline: none;
+        transition: 0.3s;
+        background: var(--card-bg);
+        color: var(--text-dark);
+    }
+
+    .year-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(26, 107, 71, 0.1);
+    }
+
+    .btn-reset-tahun {
+        margin-top: 10px;
+        padding: 8px 14px;
+        background: var(--border-color);
+        color: var(--text-dark);
+        border: none;
+        border-radius: 8px;
+        font-size: 0.8rem;
         cursor: pointer;
-        accent-color: #1a6b47;
+        width: 100%;
+        transition: 0.3s;
+    }
+
+    .btn-reset-tahun:hover {
+        background: var(--text-muted);
+        color: white;
     }
 
     .content-section {
         flex-grow: 1;
+        min-width: 0;
     }
 
     .page-header {
@@ -90,20 +98,19 @@
     }
 
     .page-header span {
-        color: #1a6b47;
+        color: var(--primary-color);
         font-weight: 700;
         font-size: 0.8rem;
         text-transform: uppercase;
         background: #e0f0e8;
         padding: 4px 12px;
         border-radius: 50px;
-        display: inline-block;
     }
 
     .page-header h2 {
         font-family: 'Playfair Display', serif;
         font-size: 2rem;
-        color: #0d2137;
+        color: var(--text-dark);
         margin-top: 10px;
         font-weight: 800;
     }
@@ -112,12 +119,12 @@
         display: grid;
         grid-template-columns: 2fr 1fr 1fr;
         gap: 15px;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
     }
 
     .search-item {
-        background: #ffffff;
-        border: 1px solid #d4e5d9;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
         border-radius: 12px;
         display: flex;
         align-items: center;
@@ -125,7 +132,7 @@
     }
 
     .search-item i {
-        color: #5a7060;
+        color: var(--text-muted);
         margin-right: 10px;
     }
 
@@ -137,52 +144,19 @@
         width: 100%;
         font-size: 0.9rem;
         background: transparent;
-        color: #0d2137;
-    }
-
-    .filter-container {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 25px;
-        overflow-x: auto;
-        padding-bottom: 5px;
-    }
-
-    .chip {
-        padding: 8px 18px;
-        background: #ffffff;
-        border-radius: 50px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #5a7060;
-        cursor: pointer;
-        transition: 0.3s;
-        border: 1px solid #d4e5d9;
-        white-space: nowrap;
-    }
-
-    .chip.active {
-        background: #1a6b47;
-        color: white;
-        border-color: #1a6b47;
-    }
-
-    .chip:hover:not(.active) {
-        background: #f0f7f3;
-        border-color: #2daa6e;
-        color: #1a6b47;
+        color: var(--text-dark);
     }
 
     .book-card {
-        background: #ffffff;
+        background: var(--card-bg);
         border-radius: 16px;
         padding: 20px;
         display: flex;
         gap: 25px;
         margin-bottom: 20px;
         transition: 0.3s;
-        border: 1px solid #d4e5d9;
-        border-top: 4px solid #f1c40f;
+        border: 1px solid var(--border-color);
+        border-top: 4px solid var(--accent-yellow);
         box-shadow: 0 4px 12px rgba(15, 74, 49, 0.05);
     }
 
@@ -209,8 +183,8 @@
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 1px;
-        background: #f1c40f;
-        color: #1a6b47;
+        background: var(--accent-yellow);
+        color: var(--primary-color);
         padding: 4px 12px;
         border-radius: 50px;
         display: inline-block;
@@ -218,7 +192,7 @@
 
     .book-info h2 {
         font-size: 1.25rem;
-        color: #1a6b47;
+        color: var(--primary-color);
         margin: 8px 0;
         cursor: pointer;
         line-height: 1.3;
@@ -227,12 +201,12 @@
 
     .book-info p {
         font-size: 0.88rem;
-        color: #5a7060;
+        color: var(--text-muted);
         margin-bottom: 5px;
     }
 
     .book-info p strong {
-        color: #1a6b47;
+        color: var(--primary-color);
     }
 
     .tags {
@@ -246,7 +220,7 @@
         background: #f0f7f3;
         font-size: 0.75rem;
         border-radius: 50px;
-        color: #1a6b47;
+        color: var(--primary-color);
         font-weight: 600;
     }
 
@@ -256,12 +230,12 @@
         display: flex;
         flex-direction: column;
         gap: 12px;
-        border-left: 1px solid #d4e5d9;
+        border-left: 1px solid var(--border-color);
         padding-left: 20px;
     }
 
     .stock-box {
-        border: 1px solid #d4e5d9;
+        border: 1px solid var(--border-color);
         padding: 12px;
         border-radius: 12px;
         background: #fafdfb;
@@ -270,51 +244,208 @@
     .stock-box span {
         display: block;
         font-size: 0.7rem;
-        color: #5a7060;
+        color: var(--text-muted);
         text-transform: uppercase;
         font-weight: 700;
     }
 
     .stock-box strong {
         font-size: 1.5rem;
-        color: #1a6b47;
+        color: var(--primary-color);
     }
 
     .btn-action {
         padding: 10px;
         font-size: 0.8rem;
         background: white;
-        border: 1px solid #d4e5d9;
+        border: 1px solid var(--border-color);
         border-radius: 50px;
         cursor: pointer;
         transition: 0.3s;
         font-weight: 600;
-        color: #5a7060;
+        color: var(--text-muted);
+        text-align: center;
+        text-decoration: none;
+        display: block;
     }
 
     .btn-action:hover {
-        background: #1a6b47;
+        background: var(--primary-color);
         color: white;
-        border-color: #1a6b47;
+        border-color: var(--primary-color);
+    }
+
+    .btn-action.borrow-btn {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    .btn-action.borrow-btn:hover {
+        background: var(--deep-green);
+        border-color: var(--deep-green);
+    }
+
+    .btn-action:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .status-badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 50px;
+        display: inline-block;
+        margin-top: 5px;
+    }
+
+    .status-badge.pending { background: #fff3cd; color: #856404; }
+    .status-badge.approved { background: #d4edda; color: #155724; }
+    .status-badge.rejected { background: #f8d7da; color: #721c24; }
+
+    .pagination {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        color: var(--text-muted);
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .empty-state h3 {
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+    }
+
+    .empty-state p {
+        font-size: 0.9rem;
+    }
+
+    /* === MODAL PEMINJAMAN (GAYA HIJAU) === */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 74, 49, 0.4);
+        backdrop-filter: blur(8px);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        visibility: hidden;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .modal-container {
+        background: white;
+        border-radius: 24px;
+        width: 100%;
+        max-width: 480px;
+        margin: 1rem;
+        box-shadow: 0 25px 50px rgba(15, 74, 49, 0.25);
+        border: 1px solid var(--border-color);
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+        padding: 2rem;
+    }
+
+    .modal-overlay.active .modal-container {
+        transform: scale(1);
+    }
+
+    .modal-container h2 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .modal-container label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        display: block;
+        margin-bottom: 0.4rem;
+    }
+
+    .modal-container input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        background: #f9fbf9;
+    }
+
+    .modal-container input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(26, 107, 71, 0.1);
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 1rem;
+    }
+
+    .btn-modal {
+        flex: 1;
+        padding: 12px;
+        border-radius: 40px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: 0.3s;
+        border: none;
+    }
+
+    .btn-batal {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .btn-submit {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .btn-submit:hover {
+        background: var(--deep-green);
+    }
+
+    .btn-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
     }
 
     @media (max-width: 1024px) {
-        .sidebar {
-            display: none;
-        }
-
-        .filter-row {
-            grid-template-columns: 1fr;
-        }
-
-        .book-card {
-            flex-direction: column;
-        }
-
+        .sidebar { display: none; }
+        .filter-row { grid-template-columns: 1fr; }
+        .book-card { flex-direction: column; }
         .book-status {
             width: 100%;
             border-left: none;
-            border-top: 1px solid #d4e5d9;
+            border-top: 1px solid var(--border-color);
             padding: 20px 0 0;
         }
     }
@@ -322,178 +453,175 @@
 @endpush
 
 @section('content')
-<div class="main-content">
-    <div class="main-container">
+<div class="main-container">
+    {{-- SIDEBAR STICKY --}}
+    <aside class="sidebar">
+        <h3>Ditapis dengan</h3>
+        <div class="filter-group">
+            <h4>Tahun Penerbitan</h4>
+            <input type="number"
+                   id="yearInput"
+                   class="year-input"
+                   placeholder="Masukkan tahun"
+                   value="{{ request('year') }}"
+                   min="2000"
+                   max="{{ date('Y') }}">
+            <button class="btn-reset-tahun" id="resetYearBtn">
+                <i class="fas fa-sync-alt"></i> Reset Tahun
+            </button>
+        </div>
+    </aside>
 
-        <!-- Sidebar (statis, hanya UI) -->
-        <aside class="sidebar">
-            <h3>Ditapis dengan</h3>
-            <div class="filter-group">
-                <h4>Tahun Penerbitan</h4>
-                <input type="range" min="2000" max="{{ date('Y') }}" value="{{ date('Y') }}" class="range-slider" id="yearSlider">
-                <div class="year-label">
-                    <span>2000</span>
-                    <span id="currentYear" style="color:#1a6b47; font-weight:800;">{{ date('Y') }}</span>
-                    <span>{{ date('Y') }}</span>
-                </div>
-            </div>
-            <div class="filter-group">
-                <h4>Lokasi Rak</h4>
-                <label class="filter-item"><input type="checkbox"> Lantai 1 - Referensi (15)</label>
-                <label class="filter-item"><input type="checkbox"> Ruang Baca Dosen (5)</label>
-                <label class="filter-item"><input type="checkbox"> Lab Dasar (3)</label>
-            </div>
-            <div class="filter-group">
-                <h4>Bahasa</h4>
-                <label class="filter-item"><input type="checkbox"> Indonesia (15)</label>
-                <label class="filter-item"><input type="checkbox"> Inggris (5)</label>
-            </div>
-        </aside>
+    {{-- MAIN CONTENT --}}
+    <main class="content-section">
+        <div class="page-header">
+            <span>Koleksi Tercetak</span>
+            <h2>Koleksi Jurnal Keperawatan</h2>
+        </div>
 
-        <!-- Main Content -->
-        <main class="content-section">
-            <div class="page-header">
-                <span>Koleksi Tercetak</span>
-                <h2>Koleksi Jurnal Keperawatan</h2>
+        <div class="filter-row">
+            <div class="search-item">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Cari judul jurnal, penulis, atau ISSN..."
+                       id="searchInput" value="{{ request('search') }}">
             </div>
-
-            <!-- Form Search & Filter (server-side) -->
-            <form method="GET" action="{{ route('user.koleksi.jurnal') }}" class="filter-row">
-                <div class="search-item">
-                    <i class="fas fa-search"></i>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari judul jurnal, penulis, atau ISSN...">
-                </div>
-                <div class="search-item">
-                    <select name="category">
-                        <option value="">Semua Kategori</option>
-                        @php
-                            $categories = \App\Models\CategoryCollection::orderBy('name')->get();
-                        @endphp
-                        @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="search-item">
-                    <select name="sort">
-                        <option value="default" {{ request('sort') == 'default' ? 'selected' : '' }}>Terbaru</option>
-                        <option value="title_asc" {{ request('sort') == 'title_asc' ? 'selected' : '' }}>Judul (A-Z)</option>
-                        <option value="title_desc" {{ request('sort') == 'title_desc' ? 'selected' : '' }}>Judul (Z-A)</option>
-                    </select>
-                </div>
-            </form>
-
-            <!-- Category Chips -->
-            <div class="filter-container">
-                <a href="{{ route('user.koleksi.jurnal', array_merge(request()->except('category'), ['category' => ''])) }}"
-                   class="chip {{ !request('category') ? 'active' : '' }}">Semua Kategori</a>
-                @foreach($categories as $cat)
-                    <a href="{{ route('user.koleksi.jurnal', array_merge(request()->except('category'), ['category' => $cat->id])) }}"
-                       class="chip {{ request('category') == $cat->id ? 'active' : '' }}">{{ $cat->name }}</a>
-                @endforeach
+            <div class="search-item">
+                <select id="categoryFilter">
+                    <option value="">Semua Kategori</option>
+                    @foreach($categories as $cat)
+                        <option value="{{ $cat->name }}" {{ request('category') == $cat->name ? 'selected' : '' }}>
+                            {{ $cat->name }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
+            <div class="search-item">
+                <select id="sortOrder">
+                    <option value="latest" {{ request('sort', 'latest') == 'latest' ? 'selected' : '' }}>Terbaru</option>
+                    <option value="popular">Terpopuler</option>
+                    <option value="az">A - Z</option>
+                </select>
+            </div>
+        </div>
 
-            <!-- Daftar Jurnal -->
-            <div class="book-list">
-                @forelse($collections as $item)
-                    @php
-                        $borrowStatus = $userBorrowStatus[$item->id] ?? null;
-                        $authorStr = '';
-                        if (!empty($item->author)) {
-                            if (is_array($item->author)) {
-                                $authorStr = implode(', ', $item->author);
-                            } else {
-                                $authorStr = $item->author;
-                            }
-                        }
-                        $categoryName = $item->categories->isNotEmpty() ? $item->categories->first()->name : 'JURNAL';
-                        $keywords = $item->keywords;
-                        if (is_array($keywords)) {
-                            $keywords = implode(', ', $keywords);
-                        }
-                    @endphp
-                    <div class="book-card">
-                        <img src="{{ $item->cover_image ? asset('storage/'.$item->cover_image) : 'https://via.placeholder.com/140x190?text=Jurnal' }}" class="book-img" alt="Cover">
-                        <div class="book-info">
-                            <span class="category-label">{{ $categoryName }}</span>
-                            <h2 onclick="location.href='{{ route('user.koleksi.detail', $item->id) }}'">{{ $item->title }}</h2>
-                            <p><strong>Penulis:</strong> {{ $authorStr ?: 'Tim Penulis' }}</p>
-                            <p><strong>Penerbit:</strong> {{ $item->publisher ?? 'AKPER HKBP Press' }} -- {{ $item->city ?? 'Tarutung' }} : {{ $item->publication_year ?? date('Y') }}</p>
-                            <div class="tags">
-                                @if($keywords)
-                                    @foreach(explode(',', $keywords) as $tag)
-                                        <span class="tag">{{ trim($tag) }}</span>
-                                    @endforeach
-                                @else
-                                    <span class="tag">Nursing</span>
-                                    <span class="tag">Clinical</span>
-                                @endif
-                            </div>
+        {{-- Daftar Koleksi --}}
+        <div class="book-list">
+            @forelse($collections as $collection)
+                @php
+                    $authors = is_array($collection->author)
+                                ? $collection->author
+                                : json_decode($collection->author, true) ?? [];
+                    $authorNames = implode(', ', $authors);
+
+                    $coverUrl = $collection->cover_image
+                                ? asset('storage/' . $collection->cover_image)
+                                : 'https://images.unsplash.com/photo-1589998059171-988d887df646?auto=format&fit=crop&w=400&q=80';
+
+                    $tagNames = $collection->categories->pluck('name')->toArray();
+
+                    $borrowStatus = $userBorrowStatus[$collection->id] ?? null;
+                    $isBorrowed = $borrowStatus && in_array($borrowStatus['status'], ['PENDING', 'APPROVED']);
+                    $statusText = $borrowStatus['status_text'] ?? null;
+                @endphp
+
+                <div class="book-card">
+                    <img src="{{ $coverUrl }}" class="book-img" alt="Cover {{ $collection->title }}">
+                    <div class="book-info">
+                        <span class="category-label">JURNAL</span>
+                        <h2 onclick="location.href='{{ route('user.koleksi.detail', $collection->id) }}'">
+                            {{ $collection->title }}
+                        </h2>
+                        @if(!empty($authors))
+                            <p><strong>Penulis:</strong> {{ $authorNames }}</p>
+                        @endif
+                        <p><strong>Penerbit:</strong> {{ $collection->publisher }}
+                           @if($collection->publication_year)
+                               -- {{ $collection->publication_year }}
+                           @endif
+                        </p>
+                        @if(!empty($tagNames))
+                        <div class="tags">
+                            @foreach($tagNames as $tag)
+                                <span class="tag">{{ $tag }}</span>
+                            @endforeach
                         </div>
-                        <div class="book-status">
-                            <div class="stock-box">
-                                <span>Ketersediaan</span>
-                                <strong>{{ $item->available_stock ?? 0 }}</strong>
-                            </div>
-                            @if($item->marc_file)
-                                <button class="btn-action" onclick="window.open('{{ asset('storage/'.$item->marc_file) }}', '_blank')">Unduh MARC</button>
-                            @endif
-                            <button class="btn-action" onclick="showCitation('{{ addslashes($item->title) }}', '{{ addslashes($authorStr) }}', '{{ addslashes($item->publisher) }}', '{{ $item->publication_year }}')">Sitasi Jurnal</button>
-
-                            @if(session()->has('user'))
-                                @if($borrowStatus && in_array($borrowStatus['status'], ['PENDING', 'APPROVED']))
-                                    @if($borrowStatus['status'] == 'PENDING')
-                                        <button class="btn-action" style="background:#fbbf24; color:#000;" disabled>⏳ Diproses</button>
-                                    @else
-                                        <button class="btn-action" style="background:#f87171;" disabled>📚 Dipinjam</button>
-                                    @endif
-                                @elseif(($item->available_stock ?? 0) > 0)
-                                    <button class="btn-action" onclick="openModal({{ $item->id }}, '{{ addslashes($item->title) }}')">Pinjam</button>
-                                @else
-                                    <button class="btn-action" disabled>❌ Habis</button>
-                                @endif
-                            @else
-                                <a href="{{ route('login') }}" class="btn-action">🔑 Login</a>
-                            @endif
-                        </div>
+                        @endif
                     </div>
-                @empty
-                    <div class="text-center py-10 text-gray-500">Belum ada jurnal yang tersedia.</div>
-                @endforelse
-            </div>
+                    <div class="book-status">
+                        <div class="stock-box">
+                            <span>Ketersediaan</span>
+                            <strong>{{ $collection->available_stock }}</strong>
+                        </div>
 
-            <!-- Pagination -->
-            @if(method_exists($collections, 'links'))
-                <div class="pagination" style="display: flex; justify-content: center; gap: 8px; margin-top: 30px;">
-                    {{ $collections->appends(request()->query())->links('pagination::bootstrap-4') }}
+                        @if(session()->has('user'))
+                            @if($isBorrowed)
+                                <span class="status-badge {{ strtolower($borrowStatus['status']) }}">
+                                    {{ $statusText }}
+                                </span>
+                            @elseif($collection->available_stock > 0)
+                                <button onclick="openModal({{ $collection->id }}, '{{ addslashes($collection->title) }}')"
+                                        class="btn-action borrow-btn">
+                                    <i class="fas fa-book"></i> Pinjam
+                                </button>
+                            @else
+                                <button class="btn-action" disabled>Stok Habis</button>
+                            @endif
+                        @else
+                            <a href="{{ route('login') }}" class="btn-action">Login untuk Pinjam</a>
+                        @endif
+
+                        {{-- TOMBOL LIHAT DETAIL --}}
+                        <a href="{{ route('user.koleksi.detail', $collection->id) }}" class="btn-action">
+                            <i class="fas fa-info-circle"></i> Lihat Detail
+                        </a>
+                    </div>
                 </div>
-            @endif
-        </main>
-    </div>
+            @empty
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <h3>Tidak ada jurnal ditemukan</h3>
+                    <p>
+                        @if(request('year') || request('category') || request('search'))
+                            Maaf, tidak ada jurnal yang sesuai dengan filter yang dipilih.
+                            <br>Coba ubah atau <a href="{{ route('user.koleksi.jurnal') }}" style="color: var(--primary-color); text-decoration: underline;">reset filter</a>.
+                        @else
+                            Belum ada jurnal yang tersedia saat ini.
+                        @endif
+                    </p>
+                </div>
+            @endforelse
+        </div>
+
+        @if($collections->hasPages())
+            <div class="pagination">
+                {{ $collections->appends(request()->query())->links() }}
+            </div>
+        @endif
+    </main>
 </div>
 
-<!-- Modal Peminjaman -->
-<div id="pinjamModal" class="modal-overlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(12px); z-index: 1000; display: flex; align-items: center; justify-content: center; visibility: hidden; opacity: 0; transition: all 0.3s ease;">
-    <div class="modal-container" style="background: rgba(15,23,42,0.95); backdrop-filter: blur(16px); border: 1px solid rgba(99,102,241,0.5); border-radius: 1.5rem; width: 100%; max-width: 28rem; margin: 1rem; transform: scale(0.9); transition: transform 0.3s ease; padding: 1.5rem;">
-        <h2 class="text-xl font-bold text-indigo-300 mb-4">Form Peminjaman Jurnal</h2>
+{{-- MODAL PEMINJAMAN --}}
+<div id="pinjamModal" class="modal-overlay">
+    <div class="modal-container">
+        <h2><i class="fas fa-calendar-check" style="color:var(--primary-color);"></i> Form Peminjaman Jurnal</h2>
         <form id="pinjamForm" method="POST" action="{{ route('orders.store') }}">
             @csrf
             <input type="hidden" name="collection_id" id="collection_id">
-            <div class="mb-3">
-                <label class="text-xs text-gray-400">Judul Jurnal</label>
-                <input type="text" id="book_title" class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700" readonly>
+            <div>
+                <label>Judul Jurnal</label>
+                <input type="text" id="book_title" readonly>
             </div>
-            <div class="mb-3">
-                <label class="text-xs text-gray-400">Tanggal Pinjam</label>
-                <input type="date" name="borrow_date" id="borrow_date" class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700" required>
+            <div>
+                <label>Tanggal Pinjam</label>
+                <input type="date" name="borrow_date" id="borrow_date" required>
             </div>
-            <div class="mb-3">
-                <label class="text-xs text-gray-400">Tanggal Kembali</label>
-                <input type="date" name="return_date" id="return_date" class="w-full p-2 rounded bg-slate-800 text-white border border-slate-700" required>
+            <div>
+                <label>Tanggal Kembali (maks. 3 hari)</label>
+                <input type="date" name="return_date" id="return_date" required>
             </div>
-            <div class="flex gap-2">
-                <button type="button" onclick="closeModal()" class="w-full py-2 rounded bg-gray-700 text-white">Batal</button>
-                <button type="submit" id="submitPinjamBtn" class="w-full py-2 rounded bg-indigo-600 text-white font-semibold">Pinjam</button>
+            <div class="modal-actions">
+                <button type="button" onclick="closeModal()" class="btn-modal btn-batal">Batal</button>
+                <button type="submit" id="submitPinjamBtn" class="btn-modal btn-submit">Pinjam</button>
             </div>
         </form>
     </div>
@@ -502,20 +630,55 @@
 
 @push('scripts')
 <script>
-    // Slider tahun UI
-    const slider = document.getElementById('yearSlider');
-    const output = document.getElementById('currentYear');
-    if (slider && output) {
-        slider.oninput = function() {
-            output.innerHTML = this.value;
-        };
+    // ================= FUNGSI FILTER (TETAP) =================
+    function updateFilter(param, value) {
+        const url = new URL(window.location.href);
+        if (value) {
+            url.searchParams.set(param, value);
+        } else {
+            url.searchParams.delete(param);
+        }
+        window.location.href = url.toString();
     }
 
-    function showCitation(title, author, publisher, year) {
-        alert(`Sitasi APA:\n${author}. (${year}). ${title}. ${publisher}.`);
+    document.getElementById('categoryFilter')?.addEventListener('change', function() {
+        updateFilter('category', this.value);
+    });
+
+    const yearInput = document.getElementById('yearInput');
+    if (yearInput) {
+        yearInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const year = this.value.trim();
+                if (/^\d{4}$/.test(year) && year >= 2000 && year <= new Date().getFullYear()) {
+                    updateFilter('year', year);
+                } else {
+                    updateFilter('year', null);
+                }
+            }
+        });
     }
 
-    // Modal functions
+    document.getElementById('resetYearBtn')?.addEventListener('click', () => {
+        updateFilter('year', null);
+    });
+
+    document.getElementById('sortOrder')?.addEventListener('change', function() {
+        updateFilter('sort', this.value);
+    });
+
+    const searchInput = document.getElementById('searchInput');
+    searchInput?.addEventListener('keyup', function() {
+        const keyword = this.value.toLowerCase();
+        document.querySelectorAll('.book-card').forEach(card => {
+            const title = card.querySelector('h2')?.textContent.toLowerCase() || '';
+            const authors = card.querySelector('p')?.textContent.toLowerCase() || '';
+            card.style.display = (title.includes(keyword) || authors.includes(keyword)) ? 'flex' : 'none';
+        });
+    });
+
+    // ================= MODAL PEMINJAMAN =================
     function formatDate(date) {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -525,18 +688,20 @@
 
     function openModal(id, title) {
         const modal = document.getElementById('pinjamModal');
-        modal.style.visibility = 'visible';
-        modal.style.opacity = '1';
+        modal.classList.add('active');
+
         document.getElementById('collection_id').value = id;
         document.getElementById('book_title').value = title;
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
+
         const borrowInput = document.getElementById('borrow_date');
         const returnInput = document.getElementById('return_date');
 
         borrowInput.value = '';
         returnInput.value = '';
+
         borrowInput.min = formatDate(today);
         borrowInput.value = formatDate(today);
 
@@ -544,6 +709,7 @@
         minReturn.setDate(minReturn.getDate() + 1);
         const maxReturn = new Date(today);
         maxReturn.setDate(maxReturn.getDate() + 3);
+
         returnInput.min = formatDate(minReturn);
         returnInput.max = formatDate(maxReturn);
         returnInput.value = formatDate(minReturn);
@@ -551,13 +717,12 @@
 
     function closeModal() {
         const modal = document.getElementById('pinjamModal');
-        modal.style.visibility = 'hidden';
-        modal.style.opacity = '0';
+        modal.classList.remove('active');
         document.getElementById('pinjamForm').reset();
-        const btn = document.getElementById('submitPinjamBtn');
-        if (btn) {
-            btn.disabled = false;
-            btn.innerText = 'Pinjam';
+        const submitBtn = document.getElementById('submitPinjamBtn');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Pinjam';
         }
     }
 

@@ -1,4 +1,4 @@
-{{-- resources/views/guest/page/profile/struktur.blade.php --}}
+{{-- resources/views/guest/page/profile/struktur-pengurus.blade.php --}}
 @extends('guest.component.master')
 
 @section('title', 'Struktur Pengurus - Perpustakaan Sekolah Keperawatan HKBP')
@@ -6,11 +6,20 @@
 @push('styles')
 <style>
     /* ============================================
-       STYLE KHUSUS HALAMAN STRUKTUR PENGURUS
-       (mempertahankan desain asli: border kuning, bingkai hitam)
+       STYLE (sama seperti sebelumnya)
     ============================================ */
+    :root {
+        --primary-color: #1a6b47;
+        --deep-green: #0f4a31;
+        --accent-green: #2daa6e;
+        --accent-yellow: #f1c40f;
+        --text-dark: #0d2137;
+        --text-muted: #5a7060;
+        --light-bg: #f4f7f5;
+        --card-bg: #ffffff;
+        --border-color: #d4e5d9;
+    }
 
-    /* Banner Halaman */
     .page-banner {
         background: linear-gradient(rgba(15, 74, 49, 0.85), rgba(26, 107, 71, 0.85)),
                     url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1500&q=80');
@@ -33,7 +42,6 @@
         opacity: 0.92;
     }
 
-    /* Layout Utama (Content + Sidebar) */
     .main-layout {
         display: flex;
         max-width: 1300px;
@@ -51,7 +59,7 @@
         border-radius: 16px;
         box-shadow: 0 8px 24px rgba(15, 74, 49, 0.08);
         text-align: center;
-        border-top: 4px solid #f1c40f; /* kuning */
+        border-top: 4px solid var(--accent-yellow);
     }
 
     .org-header {
@@ -84,7 +92,7 @@
     }
 
     .category-label i {
-        color: #f1c40f;
+        color: var(--accent-yellow);
     }
 
     .cards-container {
@@ -106,7 +114,6 @@
         transform: translateY(-5px);
     }
 
-    /* Bingkai hitam */
     .image-box {
         position: relative;
         margin-bottom: 15px;
@@ -125,7 +132,6 @@
         border-radius: 4px;
     }
 
-    /* Garis bawah kuning */
     .image-box::after {
         content: '';
         position: absolute;
@@ -134,7 +140,7 @@
         transform: translateX(-50%);
         width: 40px;
         height: 3px;
-        background: #f1c40f;
+        background: var(--accent-yellow);
         border-radius: 2px;
     }
 
@@ -154,7 +160,7 @@
         font-weight: 500;
     }
 
-    /* Ukuran khusus untuk Kepala */
+    /* Ukuran khusus untuk Direktur */
     .section-top .member-item {
         width: 220px;
     }
@@ -172,7 +178,6 @@
         font-size: 1rem;
     }
 
-    /* Sidebar (konsisten dengan halaman lain) */
     .sidebar {
         flex: 0 0 320px;
         background: var(--card-bg);
@@ -262,7 +267,6 @@
         color: var(--primary-color);
     }
 
-    /* Responsive */
     @media (max-width: 1100px) {
         .main-layout {
             flex-direction: column;
@@ -280,172 +284,161 @@
 @endpush
 
 @section('content')
-    <!-- Banner Halaman -->
     <div class="page-banner" data-aos="fade-up">
         <h1>Struktur Organisasi</h1>
         <p>Arah dan Kepemimpinan Perpustakaan AKPER HKBP</p>
     </div>
 
     <div class="main-layout">
-        <!-- Konten Utama -->
         <main class="content-area" data-aos="fade-up" data-aos-delay="100">
             <h2 class="org-header">Organisasi Perpustakaan</h2>
 
             @php
-                // Mengelompokkan data berdasarkan kategori (field 'kategori')
-                $grouped = isset($struktur) ? $struktur->groupBy('kategori') : collect();
-                $hasData = isset($struktur) && $struktur->count() > 0;
+                use Illuminate\Support\Facades\Storage;
+
+                $strukturData = isset($struktur) ? $struktur->sortBy('order') : collect();
+                $hasData = $strukturData->count() > 0;
+
+                $direktur = null;
+                $kepalaPengurus = null;
+                $anggota = collect();
+
+                if ($hasData) {
+                    // Clone karena kita akan shift data asli
+                    $temp = clone $strukturData;
+                    $direktur = $temp->shift();
+                    $kepalaPengurus = $temp->shift();
+                    $anggota = $temp;
+                }
             @endphp
 
             @if($hasData)
-                @foreach($grouped as $kategori => $anggota)
-                    @php
-                        $label = '';
-                        $icon = '';
-                        $isTop = false;
-                        switch($kategori) {
-                            case 'kepala':
-                                $label = 'Kepala Perpustakaan';
-                                $icon = 'crown';
-                                $isTop = true;
-                                break;
-                            case 'manajemen':
-                                $label = 'Manajemen';
-                                $icon = 'user-shield';
-                                break;
-                            case 'layanan_teknis':
-                                $label = 'Layanan & Teknis';
-                                $icon = 'book-reader';
-                                break;
-                            case 'it':
-                                $label = 'Teknologi Informasi';
-                                $icon = 'microchip';
-                                break;
-                            default:
-                                $label = ucfirst(str_replace('_', ' ', $kategori));
-                                $icon = 'users';
-                        }
-                    @endphp
-                    <div class="org-section {{ $isTop ? 'section-top' : '' }}">
-                        <div class="category-label">
-                            <i class="fas fa-{{ $icon }}"></i> {{ $label }}
-                        </div>
-                        <div class="cards-container">
-                            @foreach($anggota as $member)
-                                <div class="member-item">
-                                    <div class="image-box">
-                                        @if($member->foto)
-                                            <img src="{{ asset('storage/' . $member->foto) }}" alt="{{ $member->nama }}">
-                                        @else
-                                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80" alt="Foto">
-                                        @endif
-                                    </div>
-                                    <div class="m-name">{{ $member->nama }}</div>
-                                    <div class="m-role">{{ $member->jabatan }}</div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                @endforeach
-            @else
-                <!-- Data Statis (fallback jika belum ada data) -->
-                <!-- KEPALA -->
+                {{-- DIREKTUR --}}
+                @if($direktur)
                 <div class="org-section section-top">
-                    <div class="category-label"><i class="fas fa-crown"></i> Kepala Perpustakaan</div>
+                    <div class="category-label"><i class="fas fa-crown"></i> Direktur</div>
                     <div class="cards-container">
                         <div class="member-item">
-                            <div class="image-box"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80" alt="Kepala"></div>
+                            <div class="image-box">
+                                @php
+                                    $imgUrl = null;
+                                    if ($direktur->image && Storage::disk('public')->exists($direktur->image)) {
+                                        $imgUrl = asset('storage/' . $direktur->image);
+                                    }
+                                @endphp
+                                @if($imgUrl)
+                                    <img src="{{ $imgUrl }}" alt="{{ $direktur->title }}">
+                                @else
+                                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80" alt="Direktur">
+                                @endif
+                            </div>
+                            <div class="m-name">{{ $direktur->title ?? '-' }}</div>
+                            <div class="m-role">{{ $direktur->jabatan ?? '-' }}</div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                {{-- KEPALA PENGURUS --}}
+                @if($kepalaPengurus)
+                <div class="org-section">
+                    <div class="category-label"><i class="fas fa-user-tie"></i> Kepala Pengurus</div>
+                    <div class="cards-container">
+                        <div class="member-item">
+                            <div class="image-box">
+                                @php
+                                    $imgUrl = null;
+                                    if ($kepalaPengurus->image && Storage::disk('public')->exists($kepalaPengurus->image)) {
+                                        $imgUrl = asset('storage/' . $kepalaPengurus->image);
+                                    }
+                                @endphp
+                                @if($imgUrl)
+                                    <img src="{{ $imgUrl }}" alt="{{ $kepalaPengurus->title }}">
+                                @else
+                                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80" alt="Kepala Pengurus">
+                                @endif
+                            </div>
+                            <div class="m-name">{{ $kepalaPengurus->title }}</div>
+                            <div class="m-role">{{ $kepalaPengurus->jabatan }}</div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                {{-- ANGGOTA --}}
+                @if($anggota->count() > 0)
+                <div class="org-section">
+                    <div class="category-label"><i class="fas fa-users"></i> Anggota</div>
+                    <div class="cards-container">
+                        @foreach($anggota as $member)
+                        <div class="member-item">
+                            <div class="image-box">
+                                @php
+                                    $imgUrl = null;
+                                    if ($member->image && Storage::disk('public')->exists($member->image)) {
+                                        $imgUrl = asset('storage/' . $member->image);
+                                    }
+                                @endphp
+                                @if($imgUrl)
+                                    <img src="{{ $imgUrl }}" alt="{{ $member->title }}">
+                                @else
+                                    <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=400&q=80" alt="Anggota">
+                                @endif
+                            </div>
+                            <div class="m-name">{{ $member->title }}</div>
+                            <div class="m-role">{{ $member->jabatan }}</div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+            @else
+                {{-- FALLBACK STATIS (sama seperti sebelumnya) --}}
+                <div class="org-section section-top">
+                    <div class="category-label"><i class="fas fa-crown"></i> Direktur</div>
+                    <div class="cards-container">
+                        <div class="member-item">
+                            <div class="image-box"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80" alt="Direktur"></div>
                             <div class="m-name">Prof. Dr. Ryadni Efendi, S.Si., M.I.T.</div>
-                            <div class="m-role">Penanggung Jawab Utama</div>
+                            <div class="m-role">Direktur Perpustakaan</div>
                         </div>
                     </div>
                 </div>
-
-                <!-- MANAJEMEN -->
                 <div class="org-section">
-                    <div class="category-label"><i class="fas fa-user-shield"></i> Manajemen</div>
+                    <div class="category-label"><i class="fas fa-user-tie"></i> Kepala Pengurus</div>
                     <div class="cards-container">
                         <div class="member-item">
-                            <div class="image-box"><img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80" alt="Wakil"></div>
+                            <div class="image-box"><img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80" alt="Kepala Pengurus"></div>
                             <div class="m-name">Bandari, S.Sos., M.Si.</div>
-                            <div class="m-role">Wakil Kepala & Sekretaris</div>
+                            <div class="m-role">Kepala Pengurus & Sekretaris</div>
                         </div>
                     </div>
                 </div>
-
-                <!-- LAYANAN & TEKNIS -->
                 <div class="org-section">
-                    <div class="category-label"><i class="fas fa-book-reader"></i> Layanan & Teknis</div>
+                    <div class="category-label"><i class="fas fa-users"></i> Anggota</div>
                     <div class="cards-container">
-                        <div class="member-item">
-                            <div class="image-box"><img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=400&q=80" alt="Staff"></div>
-                            <div class="m-name">Murniaty, S.Sos.</div>
-                            <div class="m-role">Pengelola Koleksi</div>
-                        </div>
-                        <div class="member-item">
-                            <div class="image-box"><img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=400&q=80" alt="Staff"></div>
-                            <div class="m-name">Suparlan, S.Sos.</div>
-                            <div class="m-role">Pengadaan Pustaka</div>
-                        </div>
-                        <div class="member-item">
-                            <div class="image-box"><img src="https://images.unsplash.com/photo-1559839734-2b71f1536b8a?auto=format&fit=crop&w=400&q=80" alt="Staff"></div>
-                            <div class="m-name">Helly Gailam, S.Sos.</div>
-                            <div class="m-role">Layanan Teknis</div>
-                        </div>
-                        <div class="member-item">
-                            <div class="image-box"><img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=400&q=80" alt="Staff"></div>
-                            <div class="m-name">Windi Sri Rahayu</div>
-                            <div class="m-role">Layanan Pemustaka</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- IT -->
-                <div class="org-section">
-                    <div class="category-label"><i class="fas fa-microchip"></i> Teknologi Informasi</div>
-                    <div class="cards-container">
-                        <div class="member-item">
-                            <div class="image-box"><img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80" alt="IT"></div>
-                            <div class="m-name">Adelia Lubis, S.T.</div>
-                            <div class="m-role">Pengelola IT</div>
-                        </div>
-                        <div class="member-item">
-                            <div class="image-box"><img src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&w=400&q=80" alt="IT"></div>
-                            <div class="m-name">Doni Sinaga, S.Kom.</div>
-                            <div class="m-role">Software Developer</div>
-                        </div>
+                        <div class="member-item"><div class="image-box"><img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=400&q=80" alt="Anggota"></div><div class="m-name">Murniaty, S.Sos.</div><div class="m-role">Pengelola Koleksi</div></div>
+                        <div class="member-item"><div class="image-box"><img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=400&q=80" alt="Anggota"></div><div class="m-name">Suparlan, S.Sos.</div><div class="m-role">Pengadaan Pustaka</div></div>
+                        <div class="member-item"><div class="image-box"><img src="https://images.unsplash.com/photo-1559839734-2b71f1536b8a?auto=format&fit=crop&w=400&q=80" alt="Anggota"></div><div class="m-name">Helly Gailam, S.Sos.</div><div class="m-role">Layanan Teknis</div></div>
+                        <div class="member-item"><div class="image-box"><img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=400&q=80" alt="Anggota"></div><div class="m-name">Windi Sri Rahayu</div><div class="m-role">Layanan Pemustaka</div></div>
+                        <div class="member-item"><div class="image-box"><img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80" alt="Anggota"></div><div class="m-name">Adelia Lubis, S.T.</div><div class="m-role">Pengelola IT</div></div>
+                        <div class="member-item"><div class="image-box"><img src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&w=400&q=80" alt="Anggota"></div><div class="m-name">Doni Sinaga, S.Kom.</div><div class="m-role">Software Developer</div></div>
                     </div>
                 </div>
             @endif
         </main>
 
-        <!-- Sidebar -->
         <aside class="sidebar" data-aos="fade-left" data-aos-delay="200">
             <div class="sidebar-brand">
                 <div class="logo-img-small"><i class="fas fa-plus-square"></i></div>
                 <h3>Perpustakaan<br>AKPER HKBP</h3>
             </div>
             <ul class="sidebar-menu">
-                <li>
-                    <a href="{{ route('guest.profile.visi-misi') }}">
-                        <i class="fas fa-lightbulb"></i> Visi, Misi, & Sasaran
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('guest.profile.kerjasama') }}">
-                        <i class="fas fa-handshake"></i> Kerjasama
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('guest.profile.struktur') }}" class="active">
-                        <i class="fas fa-users"></i> Struktur Pengurus
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('guest.profile.tugas-fungsi') }}">
-                        <i class="fas fa-tasks"></i> Tugas, Fungsi, Tujuan
-                    </a>
-                </li>
+                <li><a href="{{ route('guest.profile.visi-misi') }}"><i class="fas fa-lightbulb"></i> Visi, Misi, & Sasaran</a></li>
+                <li><a href="{{ route('guest.profile.kerjasama') }}"><i class="fas fa-handshake"></i> Kerjasama</a></li>
+                <li><a href="{{ route('guest.profile.struktur') }}" class="active"><i class="fas fa-users"></i> Struktur Pengurus</a></li>
+                <li><a href="{{ route('guest.profile.tugas-fungsi') }}"><i class="fas fa-tasks"></i> Tugas, Fungsi, Tujuan</a></li>
             </ul>
         </aside>
     </div>

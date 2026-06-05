@@ -1,4 +1,4 @@
-{{-- resources/views/guest/page/koleksi_elektronik/cd.blade.php --}}
+{{-- resources/views/guest/page/koleksi/cd.blade.php --}}
 @extends('guest.component.master')
 
 @section('title', 'CD & DVD Koleksi - Perpustakaan Sekolah Keperawatan HKBP')
@@ -10,7 +10,6 @@
        Tidak mengganggu master layout
     ============================================ */
 
-    /* Layout Utama */
     .main-container {
         display: flex;
         max-width: 1400px;
@@ -20,7 +19,6 @@
         align-items: flex-start;
     }
 
-    /* Sidebar */
     .sidebar {
         width: 260px;
         flex-shrink: 0;
@@ -79,7 +77,6 @@
         border-radius: 4px 12px 12px 4px;
     }
 
-    /* Content Area */
     .content-section {
         flex-grow: 1;
     }
@@ -108,7 +105,6 @@
         margin-bottom: 10px;
     }
 
-    /* Filter Row */
     .filter-row {
         display: grid;
         grid-template-columns: 2fr 1fr 1fr;
@@ -148,7 +144,6 @@
         background: transparent;
     }
 
-    /* Category Chips */
     .filter-container {
         display: flex;
         gap: 12px;
@@ -163,9 +158,10 @@
         font-size: 0.85rem;
         font-weight: 700;
         color: var(--text-muted);
-        cursor: pointer;
         border: 1px solid var(--border-color);
         transition: 0.3s;
+        text-decoration: none;
+        display: inline-block;
     }
 
     .chip.active {
@@ -180,7 +176,6 @@
         color: var(--primary-color);
     }
 
-    /* Featured Section */
     .featured-row {
         display: grid;
         grid-template-columns: 2fr 1fr;
@@ -197,7 +192,7 @@
         gap: 30px;
         box-shadow: 0 8px 24px rgba(15, 74, 49, 0.08);
         border: 1px solid var(--border-color);
-        border-top: 4px solid #f1c40f;
+        border-top: 4px solid var(--accent-yellow);
     }
 
     .featured-info h3 {
@@ -269,10 +264,8 @@
         align-items: center;
         justify-content: center;
         color: white;
-        font-size: 1.2rem;
     }
 
-    /* Help Card */
     .help-card {
         background: var(--deep-green);
         border-radius: 24px;
@@ -290,7 +283,7 @@
     .help-card i {
         font-size: 2.5rem;
         margin-bottom: 15px;
-        color: #f1c40f;
+        color: var(--accent-yellow);
     }
 
     .help-card h3 {
@@ -313,12 +306,11 @@
     }
 
     .btn-help:hover {
-        background: #f1c40f;
+        background: var(--accent-yellow);
         color: var(--primary-color);
         transform: translateY(-2px);
     }
 
-    /* CD Grid */
     .cd-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -332,7 +324,7 @@
         box-shadow: 0 4px 12px rgba(15, 74, 49, 0.05);
         transition: 0.3s;
         border: 1px solid var(--border-color);
-        border-top: 4px solid #f1c40f;
+        border-top: 4px solid var(--accent-yellow);
     }
 
     .cd-card:hover {
@@ -367,7 +359,7 @@
     }
 
     .badge-status.available {
-        background: #2daa6e;
+        background: var(--success);
         color: white;
     }
 
@@ -395,6 +387,8 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
     }
 
     .detail-link {
@@ -413,7 +407,45 @@
         gap: 8px;
     }
 
-    /* Pagination */
+    /* Tombol seragam */
+    .btn-read {
+        background: var(--primary-color);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: 0.3s;
+    }
+    .btn-read:hover {
+        background: var(--accent-green);
+        transform: translateY(-2px);
+        color: white;
+    }
+    .btn-outline-read {
+        background: transparent;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: 0.3s;
+    }
+    .btn-outline-read:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+    }
+
     .pagination {
         display: flex;
         justify-content: center;
@@ -448,7 +480,6 @@
         cursor: not-allowed;
     }
 
-    /* Responsive */
     @media (max-width: 1024px) {
         .sidebar,
         .featured-row {
@@ -491,11 +522,9 @@
             <div class="filter-item">
                 <select name="category">
                     <option value="">Semua Kategori</option>
-                    @php
-                        // Ambil kategori unik dari data yang sudah ada (field 'category' dari FinalProject? Tidak ada di model, bisa pakai 'category_final_project_id'?)
-                        // Untuk sementara, kita tidak punya kategori dinamis, bisa di-hardcode atau kosong.
-                        // Jika ingin menggunakan kategori dari category_final_project, kita perlu eager load.
-                    @endphp
+                    @foreach($filterCategories as $cat)
+                        <option value="{{ $cat->name }}" {{ request('category') == $cat->name ? 'selected' : '' }}>{{ $cat->name }}</option>
+                    @endforeach
                 </select>
             </div>
             <div class="filter-item">
@@ -503,83 +532,116 @@
                     <option value="default" {{ request('sort') == 'default' ? 'selected' : '' }}>Terbaru</option>
                     <option value="title_asc" {{ request('sort') == 'title_asc' ? 'selected' : '' }}>Judul (A-Z)</option>
                     <option value="title_desc" {{ request('sort') == 'title_desc' ? 'selected' : '' }}>Judul (Z-A)</option>
-                    <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Populer</option>
                 </select>
             </div>
         </form>
 
-        <!-- Category Chips (opsional, bisa dikosongkan) -->
-        <div class="filter-container">
-            <a href="{{ route('guest.koleksi_elektronik.cd', array_merge(request()->except('category'), ['category' => ''])) }}"
-               class="chip active">Semua Koleksi</a>
-        </div>
-
-        <!-- Featured & Help Cards (mengambil data pertama dari koleksi jika ada) -->
-        <div class="featured-row">
-            @php
-                $firstItem = isset($data) && $data->count() > 0 ? $data->first() : null;
-                $featuredTitle = $firstItem ? $firstItem->title : 'Ensiklopedia Video: Patofisiologi Penyakit Menular';
-                $featuredDesc = $firstItem ? $firstItem->abstract : 'Seri DVD yang membahas mekanisme seluler penyakit menular tropis dengan animasi medis tingkat tinggi.';
-                $featuredDuration = '12 Jam'; // Jika tidak ada field duration, bisa hardcode
-                $featuredFormat = $firstItem ? (pathinfo($firstItem->file_url, PATHINFO_EXTENSION) ?? 'DVD-HD') : 'DVD-HD';
-                $featuredCover = ($firstItem && $firstItem->cover_image) ? asset('storage/' . $firstItem->cover_image) : 'https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&w=500&q=80';
-            @endphp
-            <div class="featured-card">
-                <div class="featured-info">
-                    <span style="background: #f1c40f; color: var(--primary-color); padding:4px 12px; border-radius:50px; font-size:0.6rem; font-weight:800; margin-bottom:15px; display:inline-block;">KOLEKSI TERBARU</span>
-                    <h3>{{ $featuredTitle }}</h3>
-                    <p>{{ $featuredDesc }}</p>
-                    <div class="meta-boxes">
-                        <div class="meta-item"><span>DURASI</span><strong>{{ $featuredDuration }}</strong></div>
-                        <div class="meta-item"><span>FORMAT</span><strong>{{ $featuredFormat }}</strong></div>
+        <!-- FEATURED & HELP (hanya jika ada data) -->
+        @if(isset($data) && $data->count() > 0)
+            @php $featured = $data->first(); @endphp
+            <div class="featured-row">
+                <div class="featured-card">
+                    <div class="featured-info">
+                        <span style="background: var(--accent-yellow); color: var(--primary-color); padding:4px 12px; border-radius:50px; font-size:0.6rem; font-weight:800; margin-bottom:15px; display:inline-block;">KOLEKSI TERBARU</span>
+                        <h3>{{ $featured->title }}</h3>
+                        <p>{{ Str::limit($featured->abstract, 150) }}</p>
+                        <div class="meta-boxes">
+                            <div class="meta-item"><span>KATEGORI</span><strong>{{ $featured->category->name ?? 'Umum' }}</strong></div>
+                        </div>
+                        <div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
+                            <a href="{{ route('final_project.detail', $featured->id) }}"
+                            style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: var(--primary-color); color: white; border-radius: 50px; font-weight: 700; text-decoration: none; transition: 0.3s;"
+                            onmouseover="this.style.background='var(--accent-green)'; this.style.transform='translateY(-2px)';"
+                            onmouseout="this.style.background='var(--primary-color)'; this.style.transform='translateY(0)';">
+                                <i class="fas fa-info-circle"></i> Detail
+                            </a>
+                            @if($featured->file_url)
+                                <a href="{{ asset('storage/' . $featured->file_url) }}" target="_blank"
+                                style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: var(--accent-yellow); color: var(--primary-color); border-radius: 50px; font-weight: 700; text-decoration: none; transition: 0.3s;"
+                                onmouseover="this.style.background='#fff'; this.style.transform='translateY(-2px)';"
+                                onmouseout="this.style.background='var(--accent-yellow)'; this.style.transform='translateY(0)';">
+                                    <i class="fas fa-play-circle"></i> Akses
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="featured-media">
+                        @if($featured->cover_image && file_exists(public_path('storage/' . $featured->cover_image)))
+                            <img src="{{ asset('storage/' . $featured->cover_image) }}" alt="{{ $featured->title }}">
+                        @else
+                            <img src="https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&w=500&q=80">
+                        @endif
+                        <div class="play-btn"><i class="fas fa-play"></i></div>
                     </div>
                 </div>
-                <div class="featured-media">
-                    <img src="{{ $featuredCover }}" alt="Featured">
-                    <div class="play-btn"><i class="fas fa-play"></i></div>
+
+                <div class="help-card">
+                    <i class="fas fa-headphones"></i>
+                    <h3>Butuh Bantuan Media?</h3>
+                    <p>Hubungi petugas multimedia kami untuk bantuan pemutaran CD.</p>
+                    <button class="btn-help" onclick="alert('Hubungi pustakawan di (0632) 12345')">Hubungi Pustakawan</button>
                 </div>
             </div>
-
-            <div class="help-card">
-                <i class="fas fa-headphones"></i>
-                <h3>Butuh Bantuan Media?</h3>
-                <p>Hubungi petugas multimedia kami untuk bantuan pemutaran CD.</p>
-                <button class="btn-help" onclick="alert('Hubungi pustakawan di (0632) 12345')">Hubungi Pustakawan</button>
-            </div>
-        </div>
+        @endif
 
         <!-- CD Grid -->
         <div class="cd-grid">
-            @forelse($data ?? [] as $cd)
+            @forelse($data ?? [] as $item)
                 <div class="cd-card">
                     <div class="cd-thumb">
-                        @if($cd->cover_image && file_exists(public_path('storage/' . $cd->cover_image)))
-                            <img src="{{ asset('storage/' . $cd->cover_image) }}" alt="{{ $cd->title }}">
+                        @if($item->cover_image && file_exists(public_path('storage/' . $item->cover_image)))
+                            <img src="{{ asset('storage/' . $item->cover_image) }}" alt="{{ $item->title }}">
                         @else
                             <img src="https://via.placeholder.com/300x180?text=CD+Cover" alt="Cover">
                         @endif
-                        <span class="badge-status available">
-                            TERSEDIA
+                        <span class="badge-status {{ $item->status == 'Approved' ? 'available' : 'used' }}">
+                            {{ $item->status == 'Approved' ? 'TERSEDIA' : strtoupper($item->status) }}
                         </span>
                     </div>
                     <div class="cd-body">
                         <span style="font-size:0.7rem; font-weight:800; color:var(--text-muted);">
-                            {{ $cd->category->name ?? 'Koleksi CD' }} • {{ $cd->created_at->format('Y') }}
+                            {{ $item->category->name ?? 'Koleksi CD' }} • {{ $item->created_at->format('Y') }}
                         </span>
-                        <h4 class="cd-title">{{ $cd->title }}</h4>
+                        <h4 class="cd-title">{{ $item->title }}</h4>
                         <div class="cd-footer">
-                            <span style="font-size:0.7rem; color:var(--text-muted);">FORMAT: {{ pathinfo($cd->file_url, PATHINFO_EXTENSION) ?? 'ISO' }}</span>
-                            <a href="{{ route('final_project.detail', $cd->id) }}" class="detail-link">Detail <i class="fas fa-chevron-right"></i></a>
+                            <div style="display: flex; gap: 8px;">
+                                {{-- Detail --}}
+                                <a href="{{ route('final_project.detail', $item->id) }}" class="btn-outline-read">
+                                    <i class="fas fa-info-circle"></i> Detail
+                                </a>
+                                {{-- Dengarkan/Akses --}}
+                                @if($item->file_url)
+                                    <a href="{{ asset('storage/' . $item->file_url) }}" target="_blank" class="btn-read">
+                                        <i class="fas fa-play-circle"></i> Akses
+                                    </a>
+                                @else
+                                    <span class="btn-read" style="opacity:0.5;">Tidak tersedia</span>
+                                @endif
+                                {{-- Download --}}
+                                @if($item->file_url)
+                                    <a href="{{ route('final_project.download', $item->id) }}" class="btn-outline-read">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
             @empty
-                <div class="col-span-full text-center py-10 text-gray-500">Tidak ada koleksi CD/DVD yang ditemukan</div>
+                <div class="col-span-full text-center py-10 text-gray-500">
+                    @if(isset($noCategoryMessage) && $noCategoryMessage)
+                        {!! $noCategoryMessage !!}
+                    @elseif(request('search'))
+                        Tidak ada hasil untuk pencarian "{{ request('search') }}"
+                    @else
+                        Tidak ada koleksi {{ ucfirst($categoryType) }} yang ditemukan
+                    @endif
+                </div>
             @endforelse
         </div>
 
-        <!-- Pagination (hanya tampil jika data ada) -->
-        @if(isset($data) && $data->count() > 0)
+        <!-- Pagination -->
+        @if(isset($data) && method_exists($data, 'links'))
             <div class="pagination">
                 {{ $data->appends(request()->query())->links('pagination::bootstrap-4') }}
             </div>
@@ -590,7 +652,7 @@
 
 @push('scripts')
 <script>
-    // Submit form otomatis saat select berubah (filter & sort)
+    // Submit form otomatis saat select berubah (untuk filter & sort)
     document.querySelectorAll('.filter-item select').forEach(select => {
         select.addEventListener('change', function() {
             this.closest('form').submit();

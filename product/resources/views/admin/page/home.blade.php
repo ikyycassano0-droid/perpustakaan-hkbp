@@ -19,13 +19,13 @@
                 <option value="month">1 Bulan Ini</option>
                 <option value="custom">Custom</option>
             </select>
-            
+
             <div id="customDateRange" class="hidden flex gap-2">
                 <input type="date" id="startDate" class="px-3 py-2 text-sm border border-slate-200 rounded-xl">
                 <input type="date" id="endDate" class="px-3 py-2 text-sm border border-slate-200 rounded-xl">
                 <button onclick="applyCustomFilter()" class="px-3 py-2 text-sm bg-indigo-500 text-white rounded-xl hover:bg-indigo-600">Terapkan</button>
             </div>
-            
+
             <a href="#" onclick="exportReport('pdf')" class="px-4 py-2 text-sm bg-red-500 text-white rounded-xl hover:bg-red-600 transition flex items-center gap-2">
                 <i class="fas fa-file-pdf text-xs"></i> PDF
             </a>
@@ -305,9 +305,9 @@
     let currentFilter = 'all';
     let customStartDate = null;
     let customEndDate = null;
-    
+
     let loanChart, collectionChart, statusChart, electronicChart, barChart;
-    
+
     // Data dari server (PHP)
     const serverData = {
         monthlyLoans: @json($monthlyLoans ?? array_fill(0, 12, 0)),
@@ -320,10 +320,10 @@
         },
         popularBooks: @json($popularBooks ?? [])
     };
-    
+
     document.addEventListener('DOMContentLoaded', function() {
         initializeCharts();
-        
+
         // Event listener untuk filter periode
         document.getElementById('exportPeriod').addEventListener('change', function() {
             currentFilter = this.value;
@@ -335,7 +335,7 @@
             }
         });
     });
-    
+
     function initializeCharts() {
         // Loan Chart
         var loanOptions = {
@@ -416,11 +416,11 @@
         barChart = new ApexCharts(document.querySelector("#popularBooksChart"), barOptions);
         barChart.render();
     }
-    
+
     function loadFilteredData(filter) {
         let url = '/admin/dashboard/filter';
         let params = new URLSearchParams();
-        
+
         if (filter === 'today') {
             params.append('period', 'today');
         } else if (filter === 'week') {
@@ -431,7 +431,7 @@
             params.append('start_date', customStartDate);
             params.append('end_date', customEndDate);
         }
-        
+
         fetch(url + '?' + params.toString())
             .then(response => response.json())
             .then(data => {
@@ -439,7 +439,7 @@
             })
             .catch(error => console.error('Error:', error));
     }
-    
+
     function updateDashboardData(data) {
         // Update angka-angka di card
         document.getElementById('totalPhysicalCollections').textContent = data.totalPhysicalCollections || 0;
@@ -447,71 +447,71 @@
         document.getElementById('referenceBooks').textContent = data.referenceBooks || 0;
         document.getElementById('journals').textContent = data.journals || 0;
         document.getElementById('magazines').textContent = data.magazines || 0;
-        
+
         document.getElementById('totalElectronicCollections').textContent = data.totalElectronicCollections || 0;
         document.getElementById('ebooks').textContent = data.ebooks || 0;
         document.getElementById('earticles').textContent = data.earticles || 0;
         document.getElementById('theses').textContent = data.theses || 0;
         document.getElementById('multimedia').textContent = data.multimedia || 0;
-        
+
         document.getElementById('activeMembers').textContent = data.activeMembers || 0;
         document.getElementById('newMembersPeriod').textContent = '+ ' + (data.newMembersPeriod || 0) + ' periode ini';
         document.getElementById('activeLoans').textContent = data.activeLoans || 0;
         document.getElementById('pendingApprovals').textContent = (data.pendingApprovals || 0) + ' menunggu persetujuan';
-        
+
         document.getElementById('totalLoansPeriod').textContent = data.totalLoansPeriod || 0;
         document.getElementById('totalReturnsPeriod').textContent = data.totalReturnsPeriod || 0;
         document.getElementById('totalFinesPeriod').innerHTML = 'Rp ' + new Intl.NumberFormat('id-ID').format(data.totalFinesPeriod || 0);
-        
+
         document.getElementById('borrowedCount').textContent = data.borrowedCountPeriod || 0;
         document.getElementById('returnedCount').textContent = data.returnedCountPeriod || 0;
         document.getElementById('pendingCount').textContent = data.pendingCountPeriod || 0;
-        
+
         // Update charts
         if (data.monthlyLoans) {
             loanChart.updateSeries([{ data: data.monthlyLoans }]);
         }
-        
+
         if (data.physicalCollectionData) {
-            collectionChart.updateOptions({ 
-                series: data.physicalCollectionData.map(c => c.total), 
-                labels: data.physicalCollectionData.map(c => c.name) 
+            collectionChart.updateOptions({
+                series: data.physicalCollectionData.map(c => c.total),
+                labels: data.physicalCollectionData.map(c => c.name)
             });
         }
-        
+
         if (data.electronicCollectionData) {
-            electronicChart.updateOptions({ 
-                series: data.electronicCollectionData.map(c => c.total), 
-                labels: data.electronicCollectionData.map(c => c.name) 
+            electronicChart.updateOptions({
+                series: data.electronicCollectionData.map(c => c.total),
+                labels: data.electronicCollectionData.map(c => c.name)
             });
         }
-        
+
         if (data.statusData) {
             statusChart.updateSeries([data.statusData.borrowed || 0, data.statusData.returned || 0, data.statusData.pending || 0]);
         }
-        
+
         if (data.popularBooks && data.popularBooks.length > 0) {
-            barChart.updateOptions({ 
-                series: [{ data: data.popularBooks.map(b => b.total_borrowed) }], 
-                xaxis: { categories: data.popularBooks.map(b => b.title.length > 20 ? b.title.substring(0, 20) + '...' : b.title) } 
+            barChart.updateOptions({
+                series: [{ data: data.popularBooks.map(b => b.total_borrowed) }],
+                xaxis: { categories: data.popularBooks.map(b => b.title.length > 20 ? b.title.substring(0, 20) + '...' : b.title) }
             });
         }
-        
+
         // Update recent loans table
         if (data.recentLoans) {
             updateRecentLoansTable(data.recentLoans);
         }
     }
-    
+
     function updateRecentLoansTable(loans) {
         const tbody = document.getElementById('recentLoansTable');
         if (!tbody) return;
-        
+
         if (loans.length === 0) {
             tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-8 text-center text-slate-400">Tidak ada data peminjaman untuk periode ini</td></tr>';
             return;
         }
-        
+
         tbody.innerHTML = loans.map(loan => `
             <tr class="border-b border-slate-50 hover:bg-slate-50/30 transition">
                 <td class="px-5 py-3 text-sm font-medium text-slate-700">#${loan.order_number || loan.id}</td>
@@ -524,7 +524,7 @@
             </tr>
         `).join('');
     }
-    
+
     function getStatusBadge(status) {
         const badges = {
             'PENDING': '<span class="badge-warning">Menunggu</span>',
@@ -534,22 +534,22 @@
         };
         return badges[status] || '<span class="badge-secondary">' + status + '</span>';
     }
-    
+
     function applyCustomFilter() {
         customStartDate = document.getElementById('startDate').value;
         customEndDate = document.getElementById('endDate').value;
-        
+
         if (customStartDate && customEndDate) {
             loadFilteredData('custom');
         } else {
             alert('Silakan pilih tanggal mulai dan tanggal akhir');
         }
     }
-    
+
     function exportReport(type) {
         let period = currentFilter;
         let params = new URLSearchParams();
-        
+
         if (period === 'today') {
             params.append('period', 'today');
         } else if (period === 'week') {
@@ -560,7 +560,7 @@
             params.append('start_date', customStartDate);
             params.append('end_date', customEndDate);
         }
-        
+
         let url = type === 'pdf' ? '/admin/export/pdf' : '/admin/export/excel';
         window.location.href = url + '?' + params.toString();
     }

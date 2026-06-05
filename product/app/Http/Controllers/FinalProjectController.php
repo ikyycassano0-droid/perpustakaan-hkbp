@@ -9,6 +9,7 @@ use App\Models\CategoryFinalProject;
 use App\Models\User;
 use App\Models\Classification;
 use App\Models\CategoryCollection;
+use App\Models\Notification;
 
 class FinalProjectController extends Controller
 {
@@ -172,30 +173,27 @@ public function index(Request $request, $category = 'kti')
     }
 
     // ================= ADMIN =================
-    // List semua Koleksi Elektronik
     public function index_admin()
     {
-        $data = FinalProject::with([
-            'category',
-            'classifications',
-            'categoriesMany'
-        ])->latest()->get();
+        // Ambil ID kategori KTI
+        $ktiCategory = CategoryFinalProject::where('slug', 'kti')->orWhere('name', 'kti')->first();
+
+        $data = FinalProject::with(['category', 'classifications', 'categoriesMany'])
+            ->where('status', 'Approved')
+            ->when($ktiCategory, function($query) use ($ktiCategory) {
+                // JANGAN tampilkan yang kategori KTI
+                $query->where('category_final_project_id', '!=', $ktiCategory->id);
+            })
+            ->latest()
+            ->get();
 
         $categories = CategoryFinalProject::all();
-
         $classifications = Classification::all();
-
         $categoriesCollection = CategoryCollection::all();
 
-        return view(
-            'admin.page.koleksi_elektronik',
-            compact(
-                'data',
-                'categories',
-                'classifications',
-                'categoriesCollection'
-            )
-        );
+        return view('admin.page.koleksi_elektronik', compact(
+            'data', 'categories', 'classifications', 'categoriesCollection'
+        ));
     }
 
     // List semua KTI untuk admin
@@ -227,32 +225,21 @@ public function index(Request $request, $category = 'kti')
     public function store_admin(Request $request)
     {
         $request->validate([
-
             'title' => 'required|string|max:255',
-
             'abstract' => 'nullable|string',
-
             'keywords' => 'nullable|string',
-
-
+            'year' => 'nullable|integer|min:1900|max:2099',
             'isbn' => 'nullable|string|max:100',
-
             'category_final_project_id'
                 => 'required|exists:category_final_projects,id',
-
             'file_url'
                 => 'required|file|mimes:pdf,docx,mp3,mp4|max:10240',
-
             'cover_image'
                 => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-
             'classification_id' => 'nullable|array',
             'classification_id.*' => 'exists:classifications,id',
-
             'category_collection_id' => 'nullable|array',
-            'category_collection_id.*'
-                => 'exists:category_collections,id',
-
+            'category_collection_id.*'=> 'exists:category_collections,id',
         ]);
 
         $data = $request->only([
@@ -260,6 +247,7 @@ public function index(Request $request, $category = 'kti')
             'abstract',
             'isbn',
             'category_final_project_id',
+            'year',
         ]);
 
         // ================= FILE =================
@@ -305,31 +293,18 @@ public function index(Request $request, $category = 'kti')
     public function update_admin(Request $request, $id)
     {
         $request->validate([
-
             'title' => 'required|string|max:255',
-
             'abstract' => 'nullable|string',
-
             'keywords' => 'nullable|string',
-
+            'year' => 'nullable|integer|min:1900|max:2099',
             'isbn' => 'nullable|string|max:100',
-
-            'category_final_project_id'
-                => 'required|exists:category_final_projects,id',
-
-            'file_url'
-                => 'nullable|file|mimes:pdf,docx,mp3,mp4|max:10240',
-
-            'cover_image'
-                => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-
+            'category_final_project_id'=> 'required|exists:category_final_projects,id',
+            'file_url'=> 'nullable|file|mimes:pdf,docx,mp3,mp4|max:10240',
+            'cover_image'=> 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'classification_id' => 'nullable|array',
             'classification_id.*' => 'exists:classifications,id',
-
             'category_collection_id' => 'nullable|array',
-            'category_collection_id.*'
-                => 'exists:category_collections,id',
-
+            'category_collection_id.*'=> 'exists:category_collections,id',
         ]);
 
         $item = FinalProject::findOrFail($id);
@@ -338,6 +313,7 @@ public function index(Request $request, $category = 'kti')
             'title',
             'abstract',
             'isbn',
+            'year',
             'category_final_project_id',
         ]);
 
@@ -445,6 +421,12 @@ public function index(Request $request, $category = 'kti')
         $kti->status = 'Approved'; // ganti ke Approved
         $kti->save();
 
+         Notification::create([
+            'user_id' => $kti->user_id,
+            'title' => 'KTI Disetujui',
+            'message' => "KTI dengan judul \"{$kti->title}\" telah disetujui oleh admin."
+        ]);
+
         return redirect()->back()->with('success', 'KTI berhasil di-approve.');
     }
 
@@ -461,86 +443,151 @@ public function index(Request $request, $category = 'kti')
         $kti->status = 'Rejected';
         $kti->save();
 
+        Notification::create([
+            'user_id' => $kti->user_id,
+            'title' => 'KTI Ditolak',
+            'message' => "Maaf, KTI dengan judul \"{$kti->title}\" ditolak. Silakan periksa kembali."
+        ]);
         return redirect()->back()->with('success', 'KTI berhasil di-reject.');
     }
 
         // ================= Koleksi Elektronik (Admin Upload) =================
         public function showAdminUpload(Request $request, $category)
+        {
+            $viewMap = [
+                'ebook'     => 'e_book',
+                'e-article' => 'e_article',
+                'cd'        => 'cd',
+                'video'     => 'video',
+            ];
+
+            $categoryData = CategoryFinalProject::where('slug', $category)->firstOrFail();
+
+            $query = FinalProject::with(['category', 'user'])
+                ->where('category_final_project_id', $categoryData->id)
+                ->where('status', 'Approved');
+
+            // 🔍 SEARCH
+            if ($request->filled('search')) {
+                $query->where(function ($q) use ($request) {
+                    $q->where('title', 'like', '%' . $request->search . '%')
+                    ->orWhere('abstract', 'like', '%' . $request->search . '%');
+                });
+            }
+
+            // 🔍 FILTER KATEGORI (dari CategoryCollection)
+            $selectedCategory = $request->category;
+            $noCategoryMessage = null;
+
+            if ($request->filled('category')) {
+                $query->whereHas('categoriesMany', function ($q) use ($request) {
+                    $q->where('name', $request->category);
+                });
+                // Jika setelah filter tidak ada data, siapkan pesan untuk view
+                if ($query->count() === 0) {
+                    $noCategoryMessage = "Maaf, untuk kategori <strong>" . e($request->category) . "</strong> belum ada koleksi.";
+                }
+            }
+
+            // 🔍 SORT
+            if ($request->sort === 'title_asc') {
+                $query->orderBy('title', 'asc');
+            } elseif ($request->sort === 'title_desc') {
+                $query->orderBy('title', 'desc');
+            } else {
+                $query->latest();
+            }
+
+            $data = $query->paginate(6)->appends($request->query());
+            $filterCategories = CategoryCollection::all();
+
+            $viewData = [
+                'data'              => $data,
+                'ebooks'            => $data,
+                'videos'            => $data,
+                'filterCategories'  => $filterCategories,
+                'selectedCategory'  => $selectedCategory,
+                'noCategoryMessage' => $noCategoryMessage,
+            ];
+
+            return view(
+                'user.page.Koleksi_Elektronik.' . $viewMap[$category],
+                $viewData
+            );
+        }
+
+    public function showAdminUploadGuest(Request $request, $category)
     {
         $viewMap = [
-            'ebook' => 'e_book',
+            'ebook'     => 'e_book',
             'e-article' => 'e_article',
-            'cd' => 'cd',
-            'video' => 'video',
+            'cd'        => 'cd',
+            'video'     => 'video',
         ];
 
         $categoryData = CategoryFinalProject::where('slug', $category)->firstOrFail();
 
-        $query = FinalProject::where('category_final_project_id', $categoryData->id)
+        $query = FinalProject::with(['category', 'user'])
+            ->where('category_final_project_id', $categoryData->id)
             ->where('status', 'Approved');
 
-        // 🔍 SEARCH (INI YANG BUTUH $request)
-        if ($request->search) {
+        // 🔍 SEARCH
+        if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('title', 'like', '%' . $request->search . '%')
                 ->orWhere('abstract', 'like', '%' . $request->search . '%');
             });
         }
 
-        $data = $query->latest()->paginate(6);
+        // 🔍 FILTER KATEGORI (dari CategoryCollection)
+        $selectedCategory = $request->category;
+        $noCategoryMessage = null;
 
-        $categories = CategoryFinalProject::all();
-
-        return view(
-            'user.page.Koleksi_Elektronik.' . $viewMap[$category],
-            [
-                'data' => $data,
-                'ebooks' => $data,
-                'videos' => $data,
-                'categories' => $categories
-            ]
-        );
-    }
-
-        public function showAdminUploadGuest(Request $request, $category)
-    {
-        $viewMap = [
-            'ebook' => 'e_book',
-            'e-article' => 'e_article',
-            'cd' => 'cd',
-            'video' => 'video',
-        ];
-
-        $categoryData = CategoryFinalProject::where('slug', $category)->firstOrFail();
-
-        $query = FinalProject::where('category_final_project_id', $categoryData->id)
-            ->where('status', 'Approved');
-
-        // 🔍 SEARCH (INI YANG BUTUH $request)
-        if ($request->search) {
-            $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
-                ->orWhere('abstract', 'like', '%' . $request->search . '%');
+        if ($request->filled('category')) {
+            $query->whereHas('categoriesMany', function ($q) use ($request) {
+                $q->where('name', $request->category);
             });
+            // Jika setelah filter tidak ada data, siapkan pesan untuk view
+            if ($query->count() === 0) {
+                $noCategoryMessage = "Maaf, untuk kategori <strong>" . e($request->category) . "</strong> belum ada koleksi.";
+            }
         }
 
-        $data = $query->latest()->paginate(6);
+        // 🔍 SORT
+        if ($request->sort === 'title_asc') {
+            $query->orderBy('title', 'asc');
+        } elseif ($request->sort === 'title_desc') {
+            $query->orderBy('title', 'desc');
+        } else {
+            $query->latest();
+        }
 
-        $categories = CategoryFinalProject::all();
+        $data = $query->paginate(6)->appends($request->query());
+        $filterCategories = CategoryCollection::all();
+
+        $viewData = [
+            'data'              => $data,
+            'ebooks'            => $data,
+            'videos'            => $data,
+            'filterCategories'  => $filterCategories,
+            'selectedCategory'  => $selectedCategory,
+            'noCategoryMessage' => $noCategoryMessage,
+        ];
 
         return view(
             'guest.page.Koleksi_Elektronik.' . $viewMap[$category],
-            [
-                'data' => $data,
-                'ebooks' => $data,
-                'videos' => $data,
-                'categories' => $categories
-            ]
+            $viewData
         );
     }
 
     public function download($id)
     {
+            \Log::info('Download hit', [
+        'auth_check' => auth()->check(),
+        'user_id' => auth()->id(),
+        'session_id' => session()->getId(),
+        'request_url' => request()->fullUrl(),
+    ]);
         $file = FinalProject::findOrFail($id);
 
 
@@ -610,14 +657,21 @@ public function index(Request $request, $category = 'kti')
             'categoriesMany'
         ])->findOrFail($id);
 
-        // Cegah akses file yang belum approved
         if ($item->status !== 'Approved') {
             abort(403);
         }
 
-        return view(
-            'user.page.Koleksi_Elektronik.detail',
-            compact('item')
-        );
+
+        $slug = $item->category->slug ?? 'ebook';
+        $viewMap = [
+            'ebook' => 'user.page.Koleksi_Elektronik.detail',
+            'e-article' => 'user.page.Koleksi_Elektronik.detail',
+            'cd' => 'user.page.Koleksi_Elektronik.detail_cd',
+            'video' => 'user.page.Koleksi_Elektronik.detail_video',
+        ];
+
+        $view = $viewMap[$slug] ?? 'user.page.Koleksi_Elektronik.detail';
+
+        return view($view, compact('item'));
     }
 }

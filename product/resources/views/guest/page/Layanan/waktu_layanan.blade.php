@@ -169,22 +169,20 @@
                     <th>Hari</th>
                     <th>Jam Operasional</th>
                     <th>Keterangan</th>
-                </tr>   
+                </tr>
             </thead>
             <tbody>
                 @forelse($schedules ?? [] as $schedule)
                 <tr>
-                    <td><strong>{{ $schedule->hari }}</strong></td>
-                    <td>{{ $schedule->jam }}</td>
+                    <td><strong>{{ $schedule->day_name }}</strong></td>
+                    <td>{{ $schedule->service_hours }}</td>
                     <td>
-                        @if($schedule->status == 'buka')
-                            <span class="status-badge status-open">BUKA</span>
-                        @else
-                            <span class="status-badge status-closed">LIBUR</span>
-                        @endif
+                        <span class="status-badge" style="background-color: {{ $schedule->status_color }}20; color: {{ $schedule->status_color }};">
+                            {{ $schedule->status }}
+                        </span>
                     </td>
                 </tr>
-                @empty
+                @empty  
                 <!-- Data statis (fallback) -->
                 <tr>
                     <td><strong>Senin</strong></td>

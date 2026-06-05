@@ -1,4 +1,3 @@
-{{-- resources/views/user/page/informasi/panduan.blade.php --}}
 @extends('user.component.master')
 
 @section('title', 'Panduan Layanan - Perpustakaan Sekolah Keperawatan HKBP')
@@ -179,6 +178,45 @@
             grid-template-columns: 1fr;
         }
     }
+
+    /* === Pagination Styling (tidak mengubah tampilan utama) === */
+.pagination-wrapper {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+}
+.pagination-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.page-link {
+    display: inline-block;
+    padding: 10px 18px;
+    border: 1px solid var(--border-color, #d1d5db);
+    border-radius: 8px;
+    color: var(--text-dark, #2d3748);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    background: white;
+}
+.page-link:hover {
+    background: var(--primary-color, #1a6b47);
+    color: white;
+    border-color: var(--primary-color);
+}
+.page-link.active {
+    background: var(--primary-color, #1a6b47);
+    color: white;
+    border-color: var(--primary-color);
+}
+.page-link.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    background: #f7fafc;
+}
 </style>
 @endpush
 
@@ -189,26 +227,33 @@
 
         <!-- Guide Grid -->
         <div class="guide-grid" id="guideGrid">
-            @forelse($panduan ?? [] as $item)
-                <div class="guide-card" data-category="{{ strtolower($item->category ?? 'umum') }}" data-title="{{ $item->title }}" data-desc="{{ $item->description }}">
-                    <div class="icon-circle">{!! $item->icon ?? '<i class="fas fa-file-alt"></i>' !!}</div>
+            @forelse($data as $item)
+                <div class="guide-card"
+                     data-category="{{ strtolower($item->category ?? 'umum') }}"
+                     data-title="{{ $item->title }}"
+                     data-desc="{{ $item->description }}">
+                    <div class="icon-circle">
+                        <i class="{{ $item->icon ?: 'fas fa-file-alt' }}"></i>
+                    </div>
                     <h3>{{ $item->title }}</h3>
                     <p>{{ $item->description }}</p>
                     @php
-                        $hasFile = isset($item->files) && count($item->files) > 0;
+                        $firstFile = $item->files->first();
                     @endphp
-                    @if($hasFile)
-                        <button class="link-action" onclick="downloadFile('{{ $item->files[0]->url ?? '#' }}', '{{ $item->files[0]->original_name ?? 'panduan' }}')">
-                            Unduh PDF <i class="fas fa-download"></i>
-                        </button>
-                    @else
-                        <a href="{{ $item->link ?? '#' }}" class="link-action">
-                            {{ $item->button_text ?? 'Selengkapnya' }} <i class="fas fa-chevron-right"></i>
-                        </a>
-                    @endif
+                   @if($firstFile)
+    <button class="link-action"
+            onclick="downloadFile('{{ $firstFile->file_url }}', '{{ $firstFile->file_name }}')">
+        Unduh PDF <i class="fas fa-download"></i>
+    </button>
+@else
+    <button class="link-action"
+            onclick="downloadFile('', '{{ $item->title }}.pdf')">
+        Download <i class="fas fa-download"></i>
+    </button>
+@endif
                 </div>
             @empty
-                <!-- Data statis fallback -->
+                {{-- Data fallback statis --}}
                 <div class="guide-card" data-category="umum">
                     <div class="icon-circle"><i class="fas fa-user-plus"></i></div>
                     <h3>Pendaftaran</h3>
@@ -247,6 +292,36 @@
                 </div>
             @endforelse
         </div>
+
+        {{-- Pagination --}}
+        @if($data->lastPage() > 1)
+            <div class="pagination-wrapper">
+                <nav class="pagination-nav">
+                    {{-- Previous --}}
+                    @if($data->onFirstPage())
+                        <span class="page-link disabled">&laquo; Prev</span>
+                    @else
+                        <a href="{{ $data->previousPageUrl() }}" class="page-link">&laquo; Prev</a>
+                    @endif
+
+                    {{-- Page Numbers --}}
+                    @foreach(range(1, $data->lastPage()) as $page)
+                        @if($page == $data->currentPage())
+                            <span class="page-link active">{{ $page }}</span>
+                        @else
+                            <a href="{{ $data->url($page) }}" class="page-link">{{ $page }}</a>
+                        @endif
+                    @endforeach
+
+                    {{-- Next --}}
+                    @if($data->hasMorePages())
+                        <a href="{{ $data->nextPageUrl() }}" class="page-link">Next &raquo;</a>
+                    @else
+                        <span class="page-link disabled">Next &raquo;</span>
+                    @endif
+                </nav>
+            </div>
+        @endif
     </div>
 </div>
 

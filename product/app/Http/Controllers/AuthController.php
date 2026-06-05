@@ -41,12 +41,13 @@ public function login(Request $request) {
             ]);
 
             // ✅ Sinkronkan user ke database lokal
-            $localUser = \App\Models\User::firstOrCreate(
-                ['email' => $data['data']['user']['email']],
+            $userData = $data['data']['user'];
+            $localUser = \App\Models\User::updateOrCreate(
+                ['email' => $userData['email']], // cari berdasarkan email (unik)
                 [
-                    'role_id' => $data['data']['user']['role_id'],
-                    'name' => $data['data']['user']['name'],
-                    'npm' => $data['data']['user']['npm'],
+                    'role_id' => $userData['role_id'],
+                    'name' => $userData['name'],
+                    'npm' => $userData['npm'],
                     'password' => bcrypt($request->password),
                     'active' => 1,
                 ]
@@ -64,8 +65,9 @@ public function login(Request $request) {
         return back()->with('error', $data['message'] ?? 'NPM atau password salah');
 
     } catch (\Exception $e) {
-        return back()->with('error', 'Layanan autentikasi sedang tidak tersedia.');
-    }
+    \Log::error('Auth service connection error: ' . $e->getMessage());
+    return back()->with('error', 'Layanan autentikasi sedang tidak tersedia. Error: ' . $e->getMessage());
+}
 }
 
     public function logout(Request $request)

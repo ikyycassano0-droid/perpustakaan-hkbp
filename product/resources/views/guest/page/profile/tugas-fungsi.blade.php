@@ -296,10 +296,6 @@
                     </div>
                 @endforelse
             </div>
-
-            <a href="{{ route('home') }}" class="btn-back">
-                <i class="fas fa-arrow-left"></i> Kembali ke Beranda
-            </a>
         </main>
 
         <!-- Sidebar -->

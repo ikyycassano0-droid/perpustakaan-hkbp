@@ -42,34 +42,34 @@ public function store(Request $request)
 {
     Log::info('=== ORDER STORE START ===');
     Log::info('Request data:', $request->all());
-    
+
     $collectionId = $request->input('collection_id');
     $borrowDate = $request->input('borrow_date');
     $returnDate = $request->input('return_date');
-    
+
     // Validasi collection
     $collection = Collection::find($collectionId);
     if (!$collection) {
         return redirect()->back()->with('error', 'Buku tidak ditemukan!');
     }
-    
+
     if ($collection->available_stock < 1) {
         return redirect()->back()->with('error', 'Stok buku habis!');
     }
-    
+
     if (!is_logged_in()) {
         return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu');
     }
-    
+
     // Cek maksimal pinjam (PENDING + APPROVED)
     $activeCount = Order::where('user_id', user_id())
         ->whereIn('status', ['PENDING', 'APPROVED'])
         ->count();
-    
+
     if ($activeCount >= self::MAX_BORROW_COUNT) {
         return redirect()->back()->with('error', "Anda sudah meminjam {$activeCount} buku. Maksimal " . self::MAX_BORROW_COUNT . " buku!");
     }
-    
+
     // Cek duplikat
     $existingOrder = Order::where('user_id', user_id())
         ->whereIn('status', ['PENDING', 'APPROVED'])
@@ -77,26 +77,26 @@ public function store(Request $request)
             $q->where('collection_id', $collection->id);
         })
         ->exists();
-    
+
     if ($existingOrder) {
         return redirect()->back()->with('error', 'Buku sudah Anda pinjam atau sedang dalam proses konfirmasi!');
     }
-    
+
     // Validasi durasi pinjam
     $borrow = Carbon::parse($borrowDate);
     $due = Carbon::parse($returnDate);
     $daysDiff = $borrow->diffInDays($due);
-    
+
     if ($daysDiff < 1) {
         return redirect()->back()->with('error', 'Minimal peminjaman 1 hari!');
     }
-    
+
     if ($daysDiff > self::MAX_BORROW_DAYS) {
         return redirect()->back()->with('error', 'Maksimal peminjaman ' . self::MAX_BORROW_DAYS . ' hari!');
     }
-    
+
     DB::beginTransaction();
-    
+
     // Buat order
     $order = Order::create([
         'user_id'            => user_id(),
@@ -111,19 +111,19 @@ public function store(Request $request)
         'original_due_date'  => null,
         'status'             => 'PENDING',
     ]);
-    
+
     Log::info("Order created with ID: {$order->id}");
-    
+
     // Buat order detail
     $detail = $order->details()->create([
         'collection_id' => $collection->id,
         'qty' => 1
     ]);
-    
+
     Log::info("Order detail created with ID: {$detail->id}");
-    
+
     DB::commit();
-    
+
     return redirect()->back()->with('success', 'Peminjaman berhasil diajukan! Menunggu persetujuan admin.');
 }
 
@@ -131,27 +131,36 @@ public function store(Request $request)
 public function approve($id)
 {
     $order = Order::findOrFail($id);
-    
+
     // 🔥 ISI TANGGAL PINJAM DAN JATUH TEMPO jika masih NULL
     if (!$order->borrow_date) {
         $order->borrow_date = now();  // tanggal approve = tanggal pinjam
     }
-    
+
     if (!$order->due_date) {
         // Set jatuh tempo 14 hari dari tanggal pinjam
         $order->due_date = $order->borrow_date->copy()->addDays(14);
     }
-    
+
     $order->status = 'APPROVED';
     $order->save();
-    
-    // Update stok buku (kurangi available_stock)
-    foreach ($order->details as $detail) {
+     foreach ($order->details as $detail) {
         $collection = $detail->collection;
-        $collection->available_stock -= $detail->jumlah;
-        $collection->save();
+        if ($collection->available_stock >= $detail->qty) {
+            $collection->available_stock -= $detail->qty;
+            $collection->save();
+        } else {
+            // Stok tidak mencukupi, jangan approve sepenuhnya (opsional: rollback)
+            return back()->with('error', 'Stok buku tidak mencukupi untuk ' . $collection->title);
+        }
     }
-    
+
+    $judul = $order->details->first()->collection->title ?? 'buku';
+    $this->sendNotif(
+        $order->user_id,
+        'Peminjaman Disetujui',
+        "Peminjaman \"{$judul}\" telah disetujui. Batas pengembalian: " . $order->due_date->format('d M Y')
+    );
     return redirect()->back()->with('success', 'Peminjaman berhasil disetujui');
 }
 
@@ -168,6 +177,13 @@ public function approve($id)
             $order->user_id,
             'Peminjaman Ditolak',
             'Mohon maaf, peminjaman buku Anda ditolak.'
+        );
+
+        $judul = $order->details->first()->collection->title ?? 'buku';
+        $this->sendNotif(
+            $order->user_id,
+            'Peminjaman Ditolak',
+            "Peminjaman \"{$judul}\" telah ditolak."
         );
 
         return back()->with('success', 'Peminjaman ditolak');
@@ -228,67 +244,73 @@ public function approve($id)
     {
         // Hitung sudah berapa kali perpanjangan
         $extendCount = (int)($order->extend_days / self::EXTEND_DAYS);
-        
+
         // Maksimal perpanjangan 3 kali
         if ($extendCount >= self::MAX_EXTEND_COUNT) {
             return 'Maksimal perpanjangan sudah ' . self::MAX_EXTEND_COUNT . ' kali';
         }
-        
+
         // Status harus APPROVED
         if ($order->status !== 'APPROVED') {
             return 'Status peminjaman tidak valid untuk perpanjangan';
         }
-        
+
         // Belum dikembalikan
         if ($order->actual_return_date) {
             return 'Buku sudah dikembalikan';
         }
-        
+
         // Belum lewat due date (masih bisa perpanjang sebelum jatuh tempo)
         if (Carbon::now()->gt($order->due_date)) {
             return 'Sudah melewati jatuh tempo, tidak bisa perpanjang. Silakan kembalikan buku dan bayar denda.';
         }
-        
+
         return true;
     }
 
     // ================= RETURN BOOK =================
-public function returnBook($id)
-{
-    $order = Order::with('details.collection')->findOrFail($id);
-    $today = Carbon::now();
-    
-    // Hitung denda otomatis
-    $dueDate = Carbon::parse($order->due_date)->startOfDay();
-    $returnDate = $today->startOfDay();
-    $lateDays = $dueDate->diffInDays($returnDate, false);
-    
-    $fine = 0;
-    if ($lateDays > 0) {
-        for ($i = 1; $i <= $lateDays; $i++) {
-            $fine += ($i <= 3) ? 2000 : 5000;
+    public function returnBook($id)
+    {
+        $order = Order::with('details.collection')->findOrFail($id);
+        $today = Carbon::now();
+
+        // Hitung denda otomatis
+        $dueDate = Carbon::parse($order->due_date)->startOfDay();
+        $returnDate = $today->startOfDay();
+        $lateDays = $dueDate->diffInDays($returnDate, false);
+
+        $fine = 0;
+        if ($lateDays > 0) {
+            for ($i = 1; $i <= $lateDays; $i++) {
+                $fine += ($i <= 3) ? 2000 : 5000;
+            }
         }
+
+        // Update stok
+        foreach ($order->details as $detail) {
+            $detail->collection->increment('available_stock', $detail->qty);
+        }
+
+        // Update order
+        $order->update([
+            'actual_return_date' => $today,
+            'fine' => $fine,
+            'status' => 'RETURNED'
+        ]);
+
+        $message = 'Buku berhasil dikembalikan.';
+        if ($fine > 0) {
+            $message .= ' Denda: Rp ' . number_format($fine, 0, ',', '.');
+        }
+
+        $judul = $order->details->first()->collection->title ?? 'buku';
+        $message = "Buku \"{$judul}\" telah dikembalikan.";
+        if ($fine > 0) {
+            $message .= ' Total denda: Rp ' . number_format($fine, 0, ',', '.');
+        }
+        $this->sendNotif($order->user_id, 'Pengembalian Berhasil', $message);
+        return back()->with('success', $message);
     }
-
-    // Update stok
-    foreach ($order->details as $detail) {
-        $detail->collection->increment('available_stock', $detail->qty);
-    }
-
-    // Update order
-    $order->update([
-        'actual_return_date' => $today,
-        'fine' => $fine,
-        'status' => 'RETURNED'
-    ]);
-
-    $message = 'Buku berhasil dikembalikan.';
-    if ($fine > 0) {
-        $message .= ' Denda: Rp ' . number_format($fine, 0, ',', '.');
-    }
-
-    return back()->with('success', $message);
-}
     // ================= HISTORY USER =================
     public function history()
     {

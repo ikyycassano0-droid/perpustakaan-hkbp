@@ -1,4 +1,3 @@
-{{-- resources/views/user/page/koleksi/video.blade.php --}}
 @extends('user.component.master')
 
 @section('title', 'Video Tutorial & Simulasi Klinis - Perpustakaan Sekolah Keperawatan HKBP')
@@ -7,7 +6,6 @@
 <style>
     /* ============================================
        CSS KHUSUS HALAMAN VIDEO (GAYA KLASIK HIJAU)
-       Tidak mengganggu master layout
     ============================================ */
 
     .main-container {
@@ -19,7 +17,6 @@
         align-items: flex-start;
     }
 
-    /* Sidebar */
     .sidebar {
         width: 260px;
         flex-shrink: 0;
@@ -78,7 +75,6 @@
         border-radius: 4px 12px 12px 4px;
     }
 
-    /* Content Area */
     .content-area {
         flex-grow: 1;
     }
@@ -116,7 +112,6 @@
         gap: 8px;
     }
 
-    /* Filter Row */
     .filter-row {
         display: grid;
         grid-template-columns: 2fr 1fr 1fr;
@@ -155,32 +150,26 @@
         color: var(--text-dark);
     }
 
-    /* Featured Grid */
-    .featured-grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 25px;
-        margin-bottom: 40px;
-    }
-
-    .main-video {
+    /* Featured Video */
+    .featured-video {
         position: relative;
         border-radius: 24px;
         overflow: hidden;
         background: #000;
         height: 400px;
+        margin-bottom: 40px;
         border: 1px solid var(--border-color);
         border-top: 4px solid #f1c40f;
     }
 
-    .main-video img {
+    .featured-video img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         opacity: 0.6;
     }
 
-    .main-video-info {
+    .featured-video-info {
         position: absolute;
         bottom: 0;
         left: 0;
@@ -209,68 +198,11 @@
         transform: translateY(-2px);
     }
 
-    .side-panels {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    .panel-card {
-        background: var(--card-bg);
-        border-radius: 20px;
-        padding: 20px;
-        border: 1px solid var(--border-color);
-        border-top: 4px solid #f1c40f;
-    }
-
-    .panel-quiz a {
-        background: var(--primary-color);
-        color: white;
-        padding: 10px;
-        border-radius: 50px;
-        display: block;
-        text-align: center;
-        font-weight: 700;
-        transition: 0.3s;
-        text-decoration: none;
-    }
-
-    .panel-quiz a:hover {
-        background: var(--accent-green);
-        transform: translateY(-2px);
-    }
-
-    .panel-live {
-        background: var(--deep-green);
-        color: white;
-        position: relative;
-        overflow: hidden;
-        height: 180px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        border-radius: 20px;
-        border-top: 4px solid #f1c40f;
-    }
-
-    .panel-live img {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0.3;
-    }
-
-    .panel-live div {
-        z-index: 2;
-    }
-
     /* Video Grid */
     .video-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
     }
 
     .v-card {
@@ -280,6 +212,8 @@
         border: 1px solid var(--border-color);
         border-top: 4px solid #f1c40f;
         transition: 0.3s;
+        display: flex;
+        flex-direction: column;
     }
 
     .v-card:hover {
@@ -288,9 +222,10 @@
     }
 
     .v-thumb {
-        height: 140px;
+        height: 180px;
         position: relative;
         background: #f0f7f3;
+        overflow: hidden;
     }
 
     .v-thumb img {
@@ -312,47 +247,85 @@
 
     .v-info {
         padding: 15px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .v-cat {
+        font-size: 0.75rem;
+        color: var(--primary-color);
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 8px;
     }
 
     .v-title {
-        font-size: 0.9rem;
+        font-size: 1rem;
         font-weight: 700;
         color: var(--text-dark);
-        margin-bottom: 10px;
-        height: 2.6rem;
+        margin-bottom: 12px;
+        line-height: 1.4;
+        height: 2.8rem;
         overflow: hidden;
     }
 
-    .v-badge {
-        font-size: 0.65rem;
-        font-weight: 800;
-        padding: 4px 12px;
-        border-radius: 50px;
-        text-transform: uppercase;
-        display: inline-block;
+    .v-author {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-bottom: 15px;
     }
 
-    .btn-load-more {
-        display: block;
-        margin: 40px auto;
-        padding: 12px 40px;
-        background: var(--card-bg);
-        border: 1px solid var(--border-color);
-        border-radius: 50px;
-        font-weight: 700;
-        color: var(--primary-color);
-        cursor: pointer;
-        transition: 0.3s;
-        text-align: center;
+    .v-footer {
+        margin-top: auto;
+        padding-top: 12px;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
     }
 
-    .btn-load-more:hover {
+    /* Tombol seragam */
+    .btn-read {
         background: var(--primary-color);
         color: white;
-        border-color: var(--primary-color);
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: 0.3s;
+    }
+    .btn-read:hover {
+        background: var(--accent-green);
+        transform: translateY(-2px);
+        color: white;
+    }
+    .btn-outline-read {
+        background: transparent;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: 0.3s;
+    }
+    .btn-outline-read:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
     }
 
-    /* Pagination */
     .pagination {
         display: flex;
         justify-content: center;
@@ -360,9 +333,7 @@
         margin-top: 30px;
         flex-wrap: wrap;
     }
-    .pagination .page-item {
-        list-style: none;
-    }
+    .pagination .page-item { list-style: none; }
     .pagination .page-link {
         display: inline-block;
         padding: 8px 14px;
@@ -389,7 +360,7 @@
 
     @media (max-width: 1024px) {
         .sidebar,
-        .featured-grid {
+        .featured-video {
             display: none;
         }
         .filter-row {
@@ -406,10 +377,10 @@
     <aside class="sidebar">
         <h3 class="sidebar-title">Katalog Digital</h3>
         <ul class="side-menu">
-            <li><a href="{{ route('user.koleksi_elektronik.ebook') }}"><i class="fas fa-book"></i> E-book</a></li>
-            <li><a href="{{ route('user.koleksi_elektronik.earticle') }}"><i class="fas fa-file-alt"></i> E-Article</a></li>
-            <li><a href="{{ route('user.koleksi_elektronik.cd') }}"><i class="fas fa-compact-disc"></i> CD</a></li>
-            <li><a href="{{ route('user.koleksi_elektronik.video') }}" class="active"><i class="fas fa-video"></i> Video</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'ebook') }}" class="active"><i class="fas fa-book"></i> E-book</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'e-article') }}"><i class="fas fa-file-alt"></i> E-Article</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'cd') }}"><i class="fas fa-compact-disc"></i> CD</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'video') }}"><i class="fas fa-video"></i> Video</a></li>
         </ul>
     </aside>
 
@@ -424,7 +395,7 @@
         </div>
 
         <!-- Search & Filter Form -->
-        <form method="GET" action="{{ route('user.koleksi_elektronik.video') }}" class="filter-row">
+        <form method="GET" action="{{ route('guest.koleksi_elektronik.video') }}" class="filter-row">
             <div class="filter-input">
                 <i class="fas fa-search"></i>
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari prosedur atau topik simulasi...">
@@ -432,13 +403,9 @@
             <div class="filter-input">
                 <select name="category">
                     <option value="">Semua Kategori</option>
-                    @php
-                        $categories = collect($videos ?? [])->map(function($item) {
-                            return $item->category->name ?? null;
-                        })->unique()->filter();
-                    @endphp
-                    @foreach($categories as $cat)
-                        <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                    {{-- Gunakan $filterCategories dari controller --}}
+                    @foreach($filterCategories as $cat)
+                        <option value="{{ $cat->name }}" {{ request('category') == $cat->name ? 'selected' : '' }}>{{ $cat->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -451,41 +418,41 @@
             </div>
         </form>
 
-        <!-- Featured Section -->
-        <div class="featured-grid">
-            @php
-                $featuredVideo = $videos && $videos->count() > 0 ? $videos->first() : null;
-                $featuredTitle = $featuredVideo ? $featuredVideo->title : 'Teknik Pemasangan Infus pada Pasien Pediatrik';
-                $featuredDesc = $featuredVideo ? ($featuredVideo->abstract ?? $featuredVideo->description) : 'Simulasi mendalam mengenai pendekatan klinis dan teknik akses vaskular pada anak.';
-                $featuredCover = ($featuredVideo && $featuredVideo->cover_image) ? asset('storage/' . $featuredVideo->cover_image) : 'https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=1200&q=80';
-                $featuredLink = $featuredVideo ? route('final_project.detail', $featuredVideo->id) : '#';
-            @endphp
-            <div class="main-video">
-                <img src="{{ $featuredCover }}" alt="Featured Video">
-                <div class="main-video-info">
-                    <span style="background: #f1c40f; color: var(--primary-color); padding:4px 12px; border-radius:50px; font-size:0.7rem; font-weight:800;">VIDEO UNGGULAN</span>
-                    <h3>{{ $featuredTitle }}</h3>
-                    <p>{{ $featuredDesc }}</p>
-                    <a href="{{ $featuredLink }}" class="btn-play-now"><i class="fas fa-play"></i> Putar Sekarang</a>
-                </div>
-            </div>
-
-            <div class="side-panels">
-                <div class="panel-card panel-quiz">
-                    <span style="color: var(--primary-color); font-weight:800; font-size:0.7rem;">KUIS KLINIS</span>
-                    <h4>Uji Pemahaman Sterilisasi</h4>
-                    <p>Selesaikan kuis interaktif setelah menonton modul simulasi.</p>
-                    <a href="#">Mulai Kuis</a>
-                </div>
-                <div class="panel-live">
-                    <img src="https://images.unsplash.com/photo-1579154235602-3c27f391d2f1?auto=format&fit=crop&w=500&q=80">
-                    <div>
-                        <h4>Siaran Langsung</h4>
-                        <p style="font-size:0.75rem;">Akan datang: 24 Okt, 09:00 WIB</p>
+        <!-- Featured Video (item pertama) -->
+        @if(isset($videos) && $videos->count() > 0)
+            @php $featured = $videos->first(); @endphp
+            <div class="featured-video">
+                @if($featured->cover_image && file_exists(public_path('storage/' . $featured->cover_image)))
+                    <img src="{{ asset('storage/' . $featured->cover_image) }}" alt="{{ $featured->title }}">
+                @else
+                    <img src="https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=1200&q=80" alt="Featured">
+                @endif
+                <div class="featured-video-info">
+                    <span style="background: #f1c40f; color: var(--primary-color); padding:4px 12px; border-radius:50px; font-size:0.7rem; font-weight:800;">VIDEO TERBARU</span>
+                    <h3>{{ $featured->title }}</h3>
+                    <p>{{ Str::limit($featured->abstract ?? 'Tidak ada deskripsi', 100) }}</p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <a href="{{ route('final_project.detail', $featured->id) }}" class="btn-play-now" style="margin-top:0;">
+                            <i class="fas fa-info-circle"></i> Detail
+                        </a>
+                        @if($featured->file_url)
+                            @php
+                                $featExt = strtolower(pathinfo($featured->file_url, PATHINFO_EXTENSION));
+                                $videoExts = ['mp4', 'webm', 'ogg', 'mov'];
+                            @endphp
+                            @if(in_array($featExt, $videoExts))
+                                <a href="{{ asset('storage/' . $featured->file_url) }}" target="_blank"
+                                style="margin-top:0; background: var(--accent-yellow); color: var(--primary-color); padding: 12px 25px; border-radius: 50px; font-weight: 700; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; transition: 0.3s;"
+                                onmouseover="this.style.background='#fff'; this.style.transform='translateY(-2px)';"
+                                onmouseout="this.style.background='var(--accent-yellow)'; this.style.transform='translateY(0)';">
+                                    <i class="fas fa-play"></i> Putar
+                                </a>
+                            @endif
+                        @endif
                     </div>
                 </div>
             </div>
-        </div>
+        @endif
 
         <!-- Video Grid -->
         <div class="video-grid">
@@ -497,19 +464,54 @@
                         @else
                             <img src="https://via.placeholder.com/300x200?text=Video+Thumb" alt="Thumb">
                         @endif
-                        <span class="v-duration">
-                            {{ $video->duration ?? '00:00' }}
-                        </span>
+                        @if($video->file_url)
+                            <span class="v-duration">
+                                {{ strtoupper(pathinfo($video->file_url, PATHINFO_EXTENSION)) }}
+                            </span>
+                        @endif
                     </div>
                     <div class="v-info">
+                        <span class="v-cat">{{ $video->category->name ?? 'Keperawatan' }}</span>
                         <h4 class="v-title">{{ Str::limit($video->title, 50) }}</h4>
-                        <span class="v-badge" style="background:#e0f0e8; color:var(--primary-color);">
-                            {{ $video->category->name ?? 'Keperawatan' }}
-                        </span>
+                        <p class="v-author"><i class="far fa-user"></i> {{ $video->student_name ?? ($video->user->name ?? 'Administrator') }}</p>
+                        <div class="v-footer">
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                {{-- Tombol Detail --}}
+                                <a href="{{ route('final_project.detail', $video->id) }}" class="btn-outline-read">
+                                    <i class="fas fa-info-circle"></i> Detail
+                                </a>
+                                {{-- Tombol Putar (jika file video) --}}
+                                @if($video->file_url)
+                                    @php
+                                        $fileExt = strtolower(pathinfo($video->file_url, PATHINFO_EXTENSION));
+                                        $videoExts = ['mp4', 'webm', 'ogg', 'mov'];
+                                    @endphp
+                                    @if(in_array($fileExt, $videoExts))
+                                        <a href="{{ asset('storage/' . $video->file_url) }}" target="_blank" class="btn-outline-read">
+                                            ▶ Putar
+                                        </a>
+                                    @endif
+                                @endif
+                                {{-- Tombol Download (harus login) --}}
+                                @if($video->file_url)
+                                    <a href="{{ asset('storage/' . $video->file_url) }}" download class="btn-outline-read">
+                                        ⬇️ Download
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
             @empty
-                <div class="col-span-full text-center py-10 text-gray-500">Tidak ada video yang ditemukan</div>
+                <div class="col-span-full text-center py-10 text-gray-500">
+                    @if(isset($noCategoryMessage) && $noCategoryMessage)
+                        {!! $noCategoryMessage !!}
+                    @elseif(request('search'))
+                        Tidak ada hasil untuk pencarian "{{ request('search') }}"
+                    @else
+                        Tidak ada koleksi Video yang ditemukan
+                    @endif
+                </div>
             @endforelse
         </div>
 
@@ -525,7 +527,6 @@
 
 @push('scripts')
 <script>
-    // Submit form saat select berubah (filter & sort)
     document.querySelectorAll('.filter-input select').forEach(select => {
         select.addEventListener('change', function() {
             this.closest('form').submit();

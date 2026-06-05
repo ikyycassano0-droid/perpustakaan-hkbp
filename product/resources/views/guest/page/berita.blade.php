@@ -1,4 +1,3 @@
-{{-- resources/views/guest/page/berita/index.blade.php --}}
 @extends('guest.component.master')
 
 @section('title', 'Berita & Kegiatan - Perpustakaan Sekolah Keperawatan HKBP')
@@ -7,7 +6,6 @@
 <style>
     /* ============================================
        CSS KHUSUS HALAMAN BERITA (GAYA KLASIK HIJAU)
-       (tidak mengganggu master layout)
     ============================================ */
 
     /* Hero Banner */
@@ -212,11 +210,17 @@
         font-size: 0.9rem;
         cursor: pointer;
         color: var(--text-muted);
+        transition: 0.2s;
     }
 
     .category-list li:hover {
         color: var(--primary-color);
         padding-left: 5px;
+    }
+
+    .category-list li.active-cat {
+        color: var(--primary-color);
+        font-weight: 700;
     }
 
     .btn-help {
@@ -310,6 +314,45 @@
         width: 80%;
     }
 
+    /* ===== PAGINATION (SAMA SEPERTI PINBAL) ===== */
+    .pagination-wrapper {
+        margin-top: 40px;
+        display: flex;
+        justify-content: center;
+    }
+    .pagination-nav {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .page-link {
+        display: inline-block;
+        padding: 10px 18px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-dark);
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+        background: white;
+    }
+    .page-link:hover {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+    .page-link.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+    .page-link.disabled {
+        opacity: 0.4;
+        pointer-events: none;
+        background: #f7fafc;
+    }
+
     /* Responsive */
     @media (max-width: 900px) {
         .main-container {
@@ -336,15 +379,15 @@
     <div class="main-container">
         <main class="news-grid" id="newsGrid">
             @forelse($berita ?? [] as $item)
-                <div class="news-card">
-                    <a href="{{ route('guest.berita.show', $item->slug ?? $item->id) }}"
+                <div class="news-card" data-category="{{ $item->category ?? 'berita' }}">
+                    <a href="{{ route('user.berita.show', $item->slug ?? $item->id) }}"
                        class="news-img"
                        style="background-image: url('{{ asset('storage/' . $item->image) }}');"></a>
                     <div class="news-info">
-                        <span class="news-tag">{{ $item->category ?? 'Berita' }}</span>
-                        <h3><a href="{{ route('guest.berita.show', $item->slug ?? $item->id) }}">{{ $item->title }}</a></h3>
+                        <span class="news-tag">{{ ucfirst($item->category ?? 'Berita') }}</span>
+                        <h3><a href="{{ route('user.berita.show', $item->slug ?? $item->id) }}">{{ $item->title }}</a></h3>
                         <p>{{ $item->excerpt }}</p>
-                        <a href="{{ route('guest.berita.show', $item->slug ?? $item->id) }}" class="btn-readmore">
+                        <a href="{{ route('user.berita.show', $item->slug ?? $item->id) }}" class="btn-readmore">
                             Baca Selengkapnya <i class="fas fa-arrow-right"></i>
                         </a>
                         <div class="news-meta">
@@ -354,18 +397,10 @@
                     </div>
                 </div>
             @empty
-                <!-- Data statis (fallback) -->
-                <div class="news-card">
-                    <div class="news-img" style="background-image: url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=500&q=60');"></div>
-                    <div class="news-info">
-                        <span class="news-tag">Workshop</span>
-                        <h3><a href="#">Workshop Literasi Medis: Strategi Akses Jurnal Internasional Scopus</a></h3>
-                        <p>Membantu mahasiswa tingkat akhir dalam mencari referensi berkualitas melalui database internasional Scopus dan ScienceDirect.</p>
-                        <a href="#" class="btn-readmore">Baca Selengkapnya <i class="fas fa-arrow-right"></i></a>
-                        <div class="news-meta"><span><i class="far fa-calendar-alt"></i> 15 Mei 2024</span><span><i class="far fa-user"></i> Admin</span></div>
-                    </div>
+                <div style="text-align:center; padding:40px; color:var(--text-muted);">
+                    <i class="fas fa-newspaper" style="font-size:3rem; margin-bottom:10px; display:block;"></i>
+                    Belum ada berita.
                 </div>
-                <!-- tambahkan berita statis lainnya sesuai kebutuhan -->
             @endforelse
         </main>
 
@@ -382,11 +417,14 @@
             <!-- Widget Kategori -->
             <div class="sidebar-item">
                 <b class="sidebar-title">Kategori Berita</b>
-                <ul class="category-list">
-                    <li>Kegiatan Mahasiswa <span>(12)</span></li>
-                    <li>Update Koleksi <span>(8)</span></li>
-                    <li>Pengumuman <span>(5)</span></li>
-                    <li>Workshop & Seminar <span>(7)</span></li>
+                <ul class="category-list" id="categoryList">
+                    <li data-category="all" class="active-cat">Semua <span>({{ $berita->count() ?? 0 }})</span></li>
+                    <li data-category="akademik">Akademik <span>({{ $berita->where('category', 'akademik')->count() ?? 0 }})</span></li>
+                    <li data-category="pengumuman">Pengumuman <span>({{ $berita->where('category', 'pengumuman')->count() ?? 0 }})</span></li>
+                    <li data-category="kegiatan">Kegiatan <span>({{ $berita->where('category', 'kegiatan')->count() ?? 0 }})</span></li>
+                    <li data-category="riset">Riset <span>({{ $berita->where('category', 'riset')->count() ?? 0 }})</span></li>
+                    <li data-category="fasilitas">Fasilitas <span>({{ $berita->where('category', 'fasilitas')->count() ?? 0 }})</span></li>
+                    <li data-category="sosial">Sosial <span>({{ $berita->where('category', 'sosial')->count() ?? 0 }})</span></li>
                 </ul>
             </div>
 
@@ -416,11 +454,41 @@
             </div>
         </aside>
     </div>
+
+    {{-- PAGINATION --}}
+    @if(isset($berita) && method_exists($berita, 'hasPages') && $berita->hasPages())
+        <div class="pagination-wrapper" style="margin-bottom: 80px;">
+            <nav class="pagination-nav">
+                {{-- Previous --}}
+                @if($berita->onFirstPage())
+                    <span class="page-link disabled">&laquo; Prev</span>
+                @else
+                    <a href="{{ $berita->previousPageUrl() }}" class="page-link">&laquo; Prev</a>
+                @endif
+
+                {{-- Page Numbers --}}
+                @foreach(range(1, $berita->lastPage()) as $page)
+                    @if($page == $berita->currentPage())
+                        <span class="page-link active">{{ $page }}</span>
+                    @else
+                        <a href="{{ $berita->url($page) }}" class="page-link">{{ $page }}</a>
+                    @endif
+                @endforeach
+
+                {{-- Next --}}
+                @if($berita->hasMorePages())
+                    <a href="{{ $berita->nextPageUrl() }}" class="page-link">Next &raquo;</a>
+                @else
+                    <span class="page-link disabled">Next &raquo;</span>
+                @endif
+            </nav>
+        </div>
+    @endif
 @endsection
 
 @push('scripts')
 <script>
-    // Client-side search filter (berdasarkan judul dan deskripsi)
+    // Client-side search filter
     document.getElementById('newsSearch').addEventListener('keyup', function() {
         let filter = this.value.toLowerCase();
         let cards = document.querySelectorAll('.news-card');
@@ -432,6 +500,26 @@
             } else {
                 card.style.display = "none";
             }
+        });
+    });
+
+    // Kategori filter
+    const categoryItems = document.querySelectorAll('#categoryList li');
+    categoryItems.forEach(item => {
+        item.addEventListener('click', function() {
+            // Update active class
+            categoryItems.forEach(i => i.classList.remove('active-cat'));
+            this.classList.add('active-cat');
+
+            const category = this.dataset.category;
+            const cards = document.querySelectorAll('.news-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
         });
     });
 </script>

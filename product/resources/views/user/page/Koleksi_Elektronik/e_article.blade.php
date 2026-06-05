@@ -1,4 +1,3 @@
-{{-- resources/views/user/page/koleksi/e-article.blade.php --}}
 @extends('user.component.master')
 
 @section('title', 'E-Article & Jurnal - Perpustakaan Sekolah Keperawatan HKBP')
@@ -272,6 +271,8 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
     }
 
     .meta-text {
@@ -289,11 +290,34 @@
         font-weight: 700;
         transition: 0.3s;
         text-decoration: none;
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
     }
 
     .btn-read:hover {
         background: var(--accent-green);
+        transform: translateY(-2px);
+    }
+
+    .btn-outline-read {
+        background: transparent;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .btn-outline-read:hover {
+        background: var(--primary-color);
+        color: white;
         transform: translateY(-2px);
     }
 
@@ -339,6 +363,26 @@
             grid-template-columns: 1fr;
         }
     }
+
+    .btn-download {
+        background: #fef9e7;
+        color: #b7950b;
+        border: 1px solid #f1c40f;
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        transition: 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .btn-download:hover {
+        background: #f1c40f;
+        color: white;
+        transform: translateY(-2px);
+    }
 </style>
 @endpush
 
@@ -349,10 +393,10 @@
     <aside class="sidebar">
         <h3 class="sidebar-title">Katalog Digital</h3>
         <ul class="side-menu">
-            <li><a href="{{ route('user.koleksi_elektronik.ebook') }}"><i class="fas fa-book"></i> E-book</a></li>
-            <li><a href="{{ route('user.koleksi_elektronik.earticle') }}" class="active"><i class="fas fa-file-alt"></i> E-Article</a></li>
-            <li><a href="{{ route('user.koleksi_elektronik.cd') }}"><i class="fas fa-compact-disc"></i> CD</a></li>
-            <li><a href="{{ route('user.koleksi_elektronik.video') }}"><i class="fas fa-video"></i> Video</a></li>
+<li><a href="{{ route('final_project.koleksi', 'ebook') }}" class="active"><i class="fas fa-book"></i> E-book</a></li>
+<li><a href="{{ route('final_project.koleksi', 'e-article') }}"><i class="fas fa-file-alt"></i> E-Article</a></li>
+<li><a href="{{ route('final_project.koleksi', 'cd') }}"><i class="fas fa-compact-disc"></i> CD</a></li>
+<li><a href="{{ route('final_project.koleksi', 'video') }}"><i class="fas fa-video"></i> Video</a></li>
         </ul>
     </aside>
 
@@ -365,7 +409,7 @@
         </div>
 
         <!-- Form Search & Filter (server-side) -->
-        <form method="GET" action="{{ route('user.koleksi_elektronik.earticle') }}" class="filter-row">
+        <form method="GET" action="{{ route('guest.koleksi_elektronik.earticle') }}" class="filter-row">
             <div class="filter-item">
                 <i class="fas fa-search"></i>
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari artikel, jurnal, atau kata kunci riset...">
@@ -373,14 +417,8 @@
             <div class="filter-item">
                 <select name="category">
                     <option value="">Semua Kategori</option>
-                    @php
-                        // Ambil kategori dari relasi category (pastikan eager load)
-                        $categories = collect($ebooks ?? [])->map(function($item) {
-                            return $item->category->name ?? null;
-                        })->unique()->filter();
-                    @endphp
-                    @foreach($categories as $cat)
-                        <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                    @foreach($filterCategories as $cat)
+                        <option value="{{ $cat->name }}" {{ request('category') == $cat->name ? 'selected' : '' }}>{{ $cat->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -393,22 +431,13 @@
             </div>
         </form>
 
-        <!-- Category Chips (server-side filter) -->
-        <div class="filter-container">
-            <a href="{{ route('user.koleksi_elektronik.earticle', array_merge(request()->except('category'), ['category' => ''])) }}"
-               class="chip {{ !request('category') ? 'active' : '' }}">Semua Kategori</a>
-            @foreach($categories as $cat)
-                <a href="{{ route('user.koleksi_elektronik.earticle', array_merge(request()->except('category'), ['category' => $cat])) }}"
-                   class="chip {{ request('category') == $cat ? 'active' : '' }}">{{ $cat }}</a>
-            @endforeach
-        </div>
+        {{-- Category Chips dihapus --}}
 
         <!-- Article Grid -->
         <div class="article-grid">
             @forelse($ebooks as $article)
                 <div class="article-card">
                     <div class="article-thumb">
-                        <span class="badge-status">{{ $article->status == 'Approved' ? 'TERSEDIA' : 'PENDING' }}</span>
                         @if($article->cover_image && file_exists(public_path('storage/' . $article->cover_image)))
                             <img src="{{ asset('storage/' . $article->cover_image) }}" alt="{{ $article->title }}">
                         @else
@@ -419,19 +448,49 @@
                         <span class="article-cat">{{ $article->category->name ?? 'E-Article' }}</span>
                         <h4 class="article-title">{{ $article->title }}</h4>
                         <p class="article-author"><i class="far fa-user"></i> {{ $article->student_name ?? ($article->user->name ?? 'Penulis') }}</p>
+
+                        {{-- TOMBOL AKSI (DETAIL + BACA) --}}
                         <div class="article-footer">
-                            <span class="meta-text">
-                                <i class="fas fa-calendar-alt"></i> {{ $article->created_at->format('d M Y') }}
-                            </span>
-                            <a href="{{ $article->file_url ? asset('storage/' . $article->file_url) : '#' }}"
-                               class="btn-read" target="_blank">
-                                {{ $article->file_url ? 'Buka Artikel' : 'Tidak tersedia' }}
-                            </a>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                {{-- Tombol Detail --}}
+                                <a href="{{ route('final_project.detail', $article->id) }}" class="btn-outline-read">
+                                    <i class="fas fa-info-circle"></i> Detail
+                                </a>
+                                {{-- Tombol Baca --}}
+                                @if($article->file_url)
+                                    @php
+                                        $fileUrl  = asset('storage/' . $article->file_url);
+                                        $ext      = strtolower(pathinfo($article->file_url, PATHINFO_EXTENSION));
+                                        $isWord   = in_array($ext, ['doc', 'docx']);
+                                        $bacaUrl  = $isWord
+                                            ? 'https://docs.google.com/viewer?url=' . urlencode($fileUrl)
+                                            : $fileUrl;
+                                    @endphp
+                                    <a href="{{ $bacaUrl }}" target="_blank" class="btn-read">
+                                        📖 Baca
+                                    </a>
+                                    {{-- Tombol Download --}}
+                                    <a href="{{ asset('storage/' . $article->file_url) }}" download class="btn-outline-read">
+                                        ⬇️ Download
+                                    </a>
+
+                                @else
+                                    <span class="btn-read" style="opacity:0.5;">Tidak tersedia</span>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
             @empty
-                <div class="col-span-full text-center py-10 text-gray-500">Tidak ada artikel yang ditemukan</div>
+                <div class="col-span-full text-center py-10 text-gray-500">
+                    @if(isset($noCategoryMessage) && $noCategoryMessage)
+                        {!! $noCategoryMessage !!}
+                    @elseif(request('search'))
+                        Tidak ada hasil untuk pencarian "{{ request('search') }}"
+                    @else
+                        Tidak ada koleksi E-Article yang ditemukan
+                    @endif
+                </div>
             @endforelse
         </div>
 

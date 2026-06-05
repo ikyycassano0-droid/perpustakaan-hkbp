@@ -62,6 +62,11 @@ class Kernel extends HttpKernel
         'nocache' => \App\Http\Middleware\NoCacheMiddleware::class,
     ];
 
+    protected function schedule(Schedule $schedule)
+    {
+        $schedule->command('notifications:overdue')->dailyAt('08:00');
+    }
+
     /**
      * The application's middleware aliases.
      */

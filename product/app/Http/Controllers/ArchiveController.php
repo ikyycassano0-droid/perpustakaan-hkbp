@@ -15,7 +15,7 @@ class ArchiveController extends Controller
     $data = Archive::active()
         ->ordered()
         ->with('activeFiles')
-        ->get();
+        ->paginate(6);
 
     return view('user.page.panduan', compact('data'));
 }
@@ -25,7 +25,7 @@ class ArchiveController extends Controller
         $data = Archive::active()
             ->ordered()
             ->with('activeFiles')
-            ->get();
+            ->paginate(6);
 
         return view('guest.page.panduan', compact('data'));
     }

@@ -8,7 +8,7 @@ use App\Models\Classification;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Order;        
+use App\Models\Order;
 use App\Models\OrderDetail;
 
 class CollectionController extends Controller
@@ -52,10 +52,16 @@ class CollectionController extends Controller
             ? $request->file('file_url')->store('collections/file', 'public')
             : null;
 
+        // Simpan author sebagai array JSON
+        $authorArray = $request->author;
+        if (is_array($authorArray)) {
+            $authorArray = array_filter($authorArray);
+        }
+
         $collection = Collection::create([
             'title' => $request->title,
             'series_title' => $request->series_title,
-            'author' => $request->author,
+            'author' =>  $authorArray,
             'responsibility_statement' => $request->responsibility_statement,
             'content_type' => $request->content_type,
             'media_type' => $request->media_type,
@@ -105,81 +111,109 @@ class CollectionController extends Controller
             'isbn' => 'nullable|unique:collections,isbn,' . $collection->id,
         ]);
 
+        // === HITUNG STOK BARU ===
         $dipinjam = $collection->stock - $collection->available_stock;
-
         if ($request->stock < $dipinjam) {
-            return back()->with('error', 'Stock tidak boleh lebih kecil dari yang sedang dipinjam');
+            return back()->with('error', 'Stok tidak boleh lebih kecil dari yang sedang dipinjam');
         }
-
         $available = $request->stock - $dipinjam;
+        $data = [];
+        $data['stock'] = (int) $request->stock;
+        $data['available_stock'] = (int) $available;
 
-        $data = [
-            'title' => $request->title,
-            'series_title' => $request->series_title,
-            'author' => $request->author,
-
-            'responsibility_statement' => $request->responsibility_statement,
-            'content_type' => $request->content_type,
-            'media_type' => $request->media_type,
-
-            'publisher' => $request->publisher,
-            'publication_year' => $request->publication_year,
-            'language' => $request->language,
-            'isbn' => $request->isbn,
-            'edition' => $request->edition,
-            'subject' => $request->subject,
-            'description' => $request->description,
-
-            'carrier_type' => $request->carrier_type,
-            'specific_detail_info' => $request->specific_detail_info,
-
-            'keywords' => $request->keywords
-                ? array_map('trim', explode(',', $request->keywords))
-                : null,
-
-            'location_id' => $request->location_id,
-            'format' => $request->format,
-
-            'stock' => (int) $request->stock,
-            'available_stock' => (int) $available,
-
-            'menu_type' => $request->menu_type,
-            'updated_by' => session('user_id'),
+        // === FIELD YANG HANYA DIUPDATE JIKA DIKIRIM ===
+        $fields = [
+            'title',
+            'series_title',
+            'responsibility_statement',
+            'content_type',
+            'media_type',
+            'publisher',
+            'publication_year',
+            'language',
+            'edition',
+            'subject',
+            'description',
+            'carrier_type',
+            'specific_detail_info',
+            'format',
+            'menu_type',
+            'location_id',
         ];
 
+        foreach ($fields as $field) {
+            if ($request->has($field)) {
+                $data[$field] = $request->input($field);
+            }
+        }
+
+        // === AUTHOR (KHUSUS) ===
+        if ($request->has('author')) {
+            $authorArray = $request->author;
+            if (is_array($authorArray)) {
+                $authorArray = array_filter($authorArray);
+            }
+            $data['author'] = $authorArray;
+        }
+
+        // === KEYWORDS (KHUSUS) ===
+        if ($request->has('keywords')) {
+            $data['keywords'] = $request->keywords
+                ? array_map('trim', explode(',', $request->keywords))
+                : null;
+        }
+
+        // === ISBN (KHUSUS) ===
+        if ($request->has('isbn')) {
+            $data['isbn'] = $request->isbn;
+        }
+
+        // === COVER & FILE ===
         if ($request->hasFile('cover_image')) {
             if ($collection->cover_image) {
                 Storage::disk('public')->delete($collection->cover_image);
             }
-
-            $data['cover_image'] = $request->file('cover_image')
-                ->store('collections/cover', 'public');
+            $data['cover_image'] = $request->file('cover_image')->store('collections/cover', 'public');
         }
 
         if ($request->hasFile('file_url')) {
             if ($collection->file_url) {
                 Storage::disk('public')->delete($collection->file_url);
             }
-
-            $data['file_url'] = $request->file('file_url')
-                ->store('collections/file', 'public');
+            $data['file_url'] = $request->file('file_url')->store('collections/file', 'public');
         }
 
+        // === SET UPDATED_BY ===
+        $data['updated_by'] = session('user_id');
+
+        // === UPDATE COLLECTION ===
         $collection->update($data);
 
-        $collection->classifications()->sync($request->classification_id ?? []);
-        $collection->categories()->sync($request->category_collection_id ?? []);
+        // === SYNC RELASI HANYA JIKA INPUT ADA ===
+        if ($request->has('classification_id')) {
+            $collection->classifications()->sync($request->classification_id ?? []);
+        }
+        if ($request->has('category_collection_id')) {
+            $collection->categories()->sync($request->category_collection_id ?? []);
+        }
 
         return back()->with('success', 'Koleksi berhasil diupdate');
     }
 
+
+
     // ================= DELETE =================
     public function destroy(Collection $collection)
     {
-        Storage::disk('public')->delete([
+        // Filter null values before deletion
+        $filesToDelete = array_filter([
             $collection->cover_image,
             $collection->file_url
         ]);
+
+        if (!empty($filesToDelete)) {
+            Storage::disk('public')->delete($filesToDelete);
+        }
 
         $collection->delete();
 
@@ -187,30 +221,44 @@ class CollectionController extends Controller
     }
 
     // ================= SHOW DETAIL =================
-    public function show($id)
-    {
-        $collection = Collection::query()
-            ->select('id','title','menu_type','location_id','description','cover_image')
-            ->with([
-                'classifications:id,name',
-                'categories:id,name',
-                'location:id,name'
-            ])
-            ->findOrFail($id);
+public function show($id)
+{
+    $collection = Collection::with([
+        'classifications:id,name',
+        'categories:id,name',
+        'location:id,name'
+    ])->findOrFail($id);
 
-        $viewMap = [
-            'jurnal' => 'user.page.Koleksi.Koleksi_Tercetak.detail_jurnal',
-            'buku_pengayaan' => 'user.page.Koleksi.Koleksi_Tercetak.detail_buku_pengayaan',
-            'buku_referensi' => 'user.page.Koleksi.Koleksi_Tercetak.detail_buku_referensi',
-            'majalah' => 'user.page.Koleksi.Koleksi_Tercetak.detail_majalah',
-        ];
-
-        return view(
-            $viewMap[$collection->menu_type]
-                ?? $viewMap['buku_pengayaan'],
-            compact('collection')
-        );
+    // Ambil status peminjaman untuk koleksi ini oleh user yang sedang login
+    $borrowStatus = null;
+    if (is_logged_in()) {
+        $activeOrder = Order::where('user_id', user_id())
+            ->whereHas('details', function ($q) use ($id) {
+                $q->where('collection_id', $id);
+            })
+            ->whereIn('status', ['PENDING', 'APPROVED', 'REJECTED'])
+            ->first();
+        if ($activeOrder) {
+            $borrowStatus = [
+                'status' => $activeOrder->status,
+                'order_id' => $activeOrder->id,
+                'status_text' => $this->getStatusText($activeOrder->status)
+            ];
+        }
     }
+
+    $viewMap = [
+        'jurnal' => 'user.page.Koleksi.Koleksi_Tercetak.detail_jurnal',
+        'buku_pengayaan' => 'user.page.Koleksi.Koleksi_Tercetak.detail_buku_pengayaan',
+        'buku_referensi' => 'user.page.Koleksi.Koleksi_Tercetak.detail_buku_referensi',
+        'majalah' => 'user.page.Koleksi.Koleksi_Tercetak.detail_majalah',
+    ];
+
+    return view(
+        $viewMap[$collection->menu_type] ?? $viewMap['buku_pengayaan'],
+        compact('collection', 'borrowStatus')
+    );
+}
 
 
     public function pinbal()
@@ -222,13 +270,13 @@ class CollectionController extends Controller
         }])
         ->orderBy('created_at', 'desc')
         ->paginate(10);
-    
+
     // Ambil daftar buku yang tersedia untuk autocomplete
     $availableBooks = Collection::where('active', 1)
         ->where('available_stock', '>', 0)
         ->select('id', 'title', 'author')
         ->get();
-    
+
     return view('user.page.Layanan.pinbal', compact('peminjaman', 'availableBooks'));
 }
 
@@ -238,26 +286,26 @@ class CollectionController extends Controller
             'collection_id' => 'required|exists:collections,id',
             'notes' => 'nullable|string'
         ]);
-        
+
         $collection = Collection::find($request->collection_id);
-        
+
         if ($collection->available_stock <= 0) {
             return back()->with('error', 'Maaf, stok buku sedang kosong.');
         }
-        
+
         $order = Order::create([
             'user_id' => user_id(),
             'order_number' => 'ORD-' . strtoupper(uniqid()),
             'status' => 'PENDING',
             'notes' => $request->notes,
         ]);
-        
+
         OrderDetail::create([
             'order_id' => $order->id,
             'collection_id' => $request->collection_id,
             'jumlah' => 1,
         ]);
-        
+
         return back()->with('success', 'Peminjaman berhasil diajukan! Silakan tunggu konfirmasi dari petugas.');
     }
 
@@ -287,11 +335,10 @@ class CollectionController extends Controller
                 'location:id,name',
                 'classifications:id,name'
             ])
-            ->where('menu_type', $menu_type)
+             ->where('menu_type', $menu_type)
             ->where('active', 1)
-            ->when($request->search, function ($q) use ($request) {
+            ->when($request->filled('search'), function ($q) use ($request) {
                 $search = $request->search;
-
                 $q->where(function ($q2) use ($search) {
                     $q2->where('title', 'like', "%$search%")
                         ->orWhere('publisher', 'like', "%$search%")
@@ -299,20 +346,30 @@ class CollectionController extends Controller
                         ->orWhere('keywords', 'like', "%$search%");
                 });
             })
-            ->latest()
-            ->paginate(10);
+             ->when($request->filled('year'), function ($q) use ($request) {
+                $q->where('publication_year', (int) $request->year);
+            })
+            ->when($request->filled('category'), function ($q) use ($request) {
+                $q->whereHas('categories', function ($q2) use ($request) {
+                    $q2->where('name', $request->category);
+                });
+            })
+            ->when($request->sort == 'az', function ($q) {
+                $q->orderBy('title', 'asc');
+            }, function ($q) {
+                $q->latest();
+            })
+            ->paginate(6);
 
         // ================= USER BORROW STATUS =================
         $userBorrowStatus = [];
 
-        if (is_logged_in())  {
-            // Ambil semua order aktif user (PENDING, APPROVED, REJECTED)
+        if (is_logged_in()) {
             $activeOrders = Order::where('user_id', user_id())
                 ->whereIn('status', ['PENDING', 'APPROVED', 'REJECTED'])
                 ->with('details')
                 ->get();
 
-            // Buat mapping collection_id => status
             foreach ($activeOrders as $order) {
                 foreach ($order->details as $detail) {
                     $userBorrowStatus[$detail->collection_id] = [
@@ -333,8 +390,9 @@ class CollectionController extends Controller
         ];
 
         $view = $viewMap[$menu_type] ?? $viewMap['buku_referensi'];
+        $categories = CategoryCollection::select('id', 'name')->orderBy('name')->get();
 
-        return view($view, compact('collections', 'menu_type', 'userBorrowStatus'));
+        return view($view, compact('collections', 'menu_type', 'userBorrowStatus', 'categories'));
     }
 
     private function getStatusText($status)

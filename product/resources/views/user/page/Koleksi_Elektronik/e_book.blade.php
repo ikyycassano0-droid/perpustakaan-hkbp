@@ -1,4 +1,3 @@
-{{-- resources/views/user/page/koleksi/ebook.blade.php --}}
 @extends('user.component.master')
 
 @section('title', 'E-BOOK KOLEKSI - Perpustakaan Sekolah Keperawatan HKBP')
@@ -176,7 +175,7 @@
 
     .book-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
         gap: 25px;
     }
 
@@ -222,6 +221,16 @@
         font-weight: 800;
     }
 
+    /* Badge tambahan */
+    .badge-available {
+        background-color: #2daa6e;
+        color: white;
+    }
+    .badge-pending {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
     .book-info {
         padding: 15px;
         flex-grow: 1;
@@ -262,23 +271,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-    }
-
-    .rating {
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #f59e0b;
-    }
-
-    .read-link {
-        font-size: 0.75rem;
-        color: var(--primary-color);
-        font-weight: 600;
-        text-decoration: none;
-    }
-
-    .read-link:hover {
-        color: var(--accent-green);
+        gap: 10px;
     }
 
     .pagination {
@@ -323,6 +316,45 @@
             grid-template-columns: 1fr;
         }
     }
+
+    /* === TOMBOL SERAGAM DENGAN E-ARTICLE === */
+    .btn-read {
+        background: var(--primary-color);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        transition: 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .btn-read:hover {
+        background: var(--accent-green);
+        transform: translateY(-2px);
+        color: white;
+    }
+    .btn-outline-read {
+        background: transparent;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .btn-outline-read:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+    }
 </style>
 @endpush
 
@@ -333,10 +365,10 @@
     <aside class="sidebar">
         <h3 class="sidebar-title">Katalog Digital</h3>
         <ul class="side-menu">
-            <li><a href="{{ route('user.koleksi_elektronik.ebook') }}" class="active"><i class="fas fa-book"></i> E-book</a></li>
-            <li><a href="{{ route('user.koleksi_elektronik.earticle') }}"><i class="fas fa-file-alt"></i> E-Article</a></li>
-            <li><a href="{{ route('user.koleksi_elektronik.cd') }}"><i class="fas fa-compact-disc"></i> CD</a></li>
-            <li><a href="{{ route('user.koleksi_elektronik.video') }}"><i class="fas fa-video"></i> Video</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'ebook') }}" class="active"><i class="fas fa-book"></i> E-book</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'e-article') }}"><i class="fas fa-file-alt"></i> E-Article</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'cd') }}"><i class="fas fa-compact-disc"></i> CD</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'video') }}"><i class="fas fa-video"></i> Video</a></li>
         </ul>
     </aside>
 
@@ -349,7 +381,7 @@
         </div>
 
         <!-- Form Search & Filter (server-side) -->
-        <form method="GET" action="{{ route('user.koleksi_elektronik.ebook') }}" class="filter-row">
+        <form method="GET" action="{{ route('guest.koleksi_elektronik.ebook') }}" class="filter-row">
             <div class="filter-item">
                 <i class="fas fa-search"></i>
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari judul buku, penulis, atau ISBN...">
@@ -357,14 +389,8 @@
             <div class="filter-item">
                 <select name="category">
                     <option value="">Semua Kategori</option>
-                    @php
-                        // Ambil kategori dari relasi category (pastikan eager load)
-                        $categories = collect($ebooks ?? [])->map(function($item) {
-                            return $item->category->name ?? null;
-                        })->unique()->filter();
-                    @endphp
-                    @foreach($categories as $cat)
-                        <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                    @foreach($filterCategories as $cat)
+                        <option value="{{ $cat->name }}" {{ request('category') == $cat->name ? 'selected' : '' }}>{{ $cat->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -377,22 +403,16 @@
             </div>
         </form>
 
-        <!-- Category Chips (server-side filter) -->
-        <div class="filter-container">
-            <a href="{{ route('user.koleksi_elektronik.ebook', array_merge(request()->except('category'), ['category' => ''])) }}"
-               class="chip {{ !request('category') ? 'active' : '' }}">Semua Kategori</a>
-            @foreach($categories as $cat)
-                <a href="{{ route('user.koleksi_elektronik.ebook', array_merge(request()->except('category'), ['category' => $cat])) }}"
-                   class="chip {{ request('category') == $cat ? 'active' : '' }}">{{ $cat }}</a>
-            @endforeach
-        </div>
+        {{-- Chips tidak digunakan --}}
 
         <!-- Book Grid -->
         <div class="book-grid">
             @forelse($ebooks as $book)
                 <div class="book-card">
                     <div class="book-thumb">
-                        <span class="badge-status">{{ $book->status == 'Approved' ? 'TERSEDIA' : 'PENDING' }}</span>
+                        <span class="badge-status {{ $book->status == 'Approved' ? 'badge-available' : 'badge-pending' }}">
+                            {{ $book->status == 'Approved' ? 'TERSEDIA' : strtoupper($book->status) }}
+                        </span>
                         @if($book->cover_image && file_exists(public_path('storage/' . $book->cover_image)))
                             <img src="{{ asset('storage/' . $book->cover_image) }}" alt="{{ $book->title }}">
                         @else
@@ -403,20 +423,48 @@
                         <span class="book-cat">{{ $book->category->name ?? 'Umum' }}</span>
                         <h4 class="book-title">{{ $book->title }}</h4>
                         <p class="book-author">{{ $book->student_name ?? ($book->user->name ?? 'Penulis tidak diketahui') }}</p>
+
+                        {{-- TOMBOL AKSI (PERSIS SEPERTI E-ARTICLE) --}}
                         <div class="book-footer">
-                            <span class="rating">
-                                @for($i=1; $i<=5; $i++)
-                                    <i class="far fa-star"></i>
-                                @endfor
-                                0.0
-                            </span>
-                            <a href="{{ $book->file_url ? asset('storage/' . $book->file_url) : '#' }}"
-                               class="read-link" target="_blank">Baca E-book <i class="fas fa-arrow-right"></i></a>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                {{-- Detail (outline) --}}
+                                <a href="{{ route('final_project.detail', $book->id) }}" class="btn-outline-read">
+                                    <i class="fas fa-info-circle"></i> Detail
+                                </a>
+                                {{-- Baca (solid) --}}
+                                @if($book->file_url)
+                                    @php
+                                        $fileUrl  = asset('storage/' . $book->file_url);
+                                        $ext      = strtolower(pathinfo($book->file_url, PATHINFO_EXTENSION));
+                                        $isWord   = in_array($ext, ['doc', 'docx']);
+                                        $bacaUrl  = $isWord
+                                            ? 'https://docs.google.com/viewer?url=' . urlencode($fileUrl)
+                                            : $fileUrl;
+                                    @endphp
+                                    <a href="{{ $bacaUrl }}" target="_blank" class="btn-read">
+                                        📖 Baca
+                                    </a>
+                                    {{-- Download (outline) --}}
+                                    <a href="{{ asset('storage/' . $book->file_url) }}" download class="btn-outline-read">
+                                        ⬇️ Download
+                                    </a>
+                                @else
+                                    <span class="btn-read" style="opacity:0.5;">Tidak tersedia</span>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
             @empty
-                <div class="col-span-full text-center py-10 text-gray-500">Tidak ada e-book yang ditemukan</div>
+                <div class="col-span-full text-center py-10 text-gray-500">
+                    @if(isset($noCategoryMessage) && $noCategoryMessage)
+                        {!! $noCategoryMessage !!}
+                    @elseif(request('search'))
+                        Tidak ada hasil untuk pencarian "{{ request('search') }}"
+                    @else
+                        Tidak ada koleksi E‑Book yang ditemukan
+                    @endif
+                </div>
             @endforelse
         </div>
 

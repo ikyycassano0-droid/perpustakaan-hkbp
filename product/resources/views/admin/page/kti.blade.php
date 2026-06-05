@@ -4,13 +4,13 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto">
-    {{-- Header Section --}}
+    {{-- HEADER SECTION --}}
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <div>
             <h2 class="text-2xl font-bold text-slate-800 tracking-tight">📚 Manajemen Karya Tulis Ilmiah</h2>
             <p class="text-slate-500 text-sm mt-1">Kelola, approve, dan reject KTI yang diupload oleh mahasiswa</p>
         </div>
-            <div class="flex gap-3 flex-wrap items-center">
+        <div class="flex gap-3 flex-wrap items-center">
             {{-- Filter Status Dropdown --}}
             <select id="statusFilter" class="px-4 py-2 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:border-indigo-300 cursor-pointer" onchange="filterStatus(this.value)">
                 <option value="all" {{ !request('status') ? 'selected' : '' }}>📋 Semua Status</option>
@@ -18,31 +18,36 @@
                 <option value="Approved" {{ request('status') == 'Approved' ? 'selected' : '' }}>✅ Disetujui</option>
                 <option value="Rejected" {{ request('status') == 'Rejected' ? 'selected' : '' }}>❌ Ditolak</option>
             </select>
-            
+
             {{-- Filter Periode --}}
-            <a href="?{{ request('status') ? 'status='.request('status').'&' : '' }}period=today" class="px-4 py-2 rounded-xl text-sm font-medium transition {{ request('period') == 'today' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+            <a href="?{{ request('status') ? 'status='.request('status').'&' : '' }}period=today"
+                class="px-4 py-2 rounded-xl text-sm font-medium transition {{ request('period') == 'today' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                 📅 Hari Ini
             </a>
-            <a href="?{{ request('status') ? 'status='.request('status').'&' : '' }}period=week" class="px-4 py-2 rounded-xl text-sm font-medium transition {{ request('period') == 'week' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+            <a href="?{{ request('status') ? 'status='.request('status').'&' : '' }}period=week"
+                class="px-4 py-2 rounded-xl text-sm font-medium transition {{ request('period') == 'week' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                 📅 1 Minggu
             </a>
-            <a href="?{{ request('status') ? 'status='.request('status').'&' : '' }}period=month" class="px-4 py-2 rounded-xl text-sm font-medium transition {{ request('period') == 'month' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+            <a href="?{{ request('status') ? 'status='.request('status').'&' : '' }}period=month"
+                class="px-4 py-2 rounded-xl text-sm font-medium transition {{ request('period') == 'month' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                 📅 1 Bulan
             </a>
-            <button onclick="openCustomDateModal()" class="px-4 py-2 rounded-xl text-sm font-medium transition {{ request('start') ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+            <button onclick="openCustomDateModal()"
+                class="px-4 py-2 rounded-xl text-sm font-medium transition {{ request('start') ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                 📅 Custom
             </button>
-            
+
             {{-- Reset --}}
             @if(request('status') || request('period') || request('start'))
-            <a href="{{ route('admin.kti.index') }}" class="px-4 py-2 rounded-xl text-sm font-medium bg-red-100 text-red-600 hover:bg-red-200 transition">
+            <a href="{{ route('admin.kti.index') }}"
+                class="px-4 py-2 rounded-xl text-sm font-medium bg-red-100 text-red-600 hover:bg-red-200 transition">
                 🔄 Reset Filter
             </a>
             @endif
         </div>
     </div>
 
-    {{-- Success Alert --}}
+    {{-- SUCCESS ALERT --}}
     @if(session('success'))
     <div class="mb-6 bg-emerald-50 border border-emerald-200 text-emerald-700 px-5 py-3 rounded-xl flex items-center gap-3">
         <i class="fas fa-check-circle text-emerald-500"></i>
@@ -53,7 +58,7 @@
     </div>
     @endif
 
-    {{-- Stats Cards --}}
+    {{-- STATS CARDS --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
         <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
             <div class="flex items-center justify-between">
@@ -90,7 +95,7 @@
         </div>
     </div>
 
-    {{-- Table --}}
+    {{-- TABLE --}}
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full">
@@ -109,7 +114,7 @@
                 <tbody class="divide-y divide-slate-100">
                     @forelse($data as $index => $kti)
                     <tr class="hover:bg-slate-50 transition">
-                        <td class="px-6 py-4 text-sm text-slate-600">{{ $index + 1 }}
+                        <td class="px-6 py-4 text-sm text-slate-600">{{ $index + 1 }}</td>
                         <td class="px-6 py-4">
                             <div class="max-w-xs">
                                 <p class="font-semibold text-slate-800 truncate">{{ $kti->title }}</p>
@@ -117,18 +122,18 @@
                                 <p class="text-xs text-slate-400 mt-1 truncate">{{ Str::limit($kti->abstract, 60) }}</p>
                                 @endif
                             </div>
-                        
+                        </td>
                         <td class="px-6 py-4">
                             <p class="text-sm text-slate-700">{{ $kti->student_name ?? $kti->user?->name ?? '-' }}</p>
                             <p class="text-xs text-slate-400">{{ $kti->study_program ?? '-' }}</p>
-                        
-                        <td class="px-6 py-4 text-sm text-slate-600">{{ $kti->npm ?? '-' }}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-slate-600">{{ $kti->npm ?? '-' }}</td>
                         <td class="px-6 py-4">
                             <p class="text-sm text-slate-700">{{ $kti->firstSupervisor?->name ?? '-' }}</p>
                             @if($kti->secondSupervisor)
                             <p class="text-xs text-slate-400">{{ $kti->secondSupervisor?->name }}</p>
                             @endif
-                        
+                        </td>
                         <td class="px-6 py-4">
                             @if($kti->status == 'Approved')
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
@@ -146,11 +151,10 @@
                                     Rejected
                                 </span>
                             @endif
-                        
+                        </td>
                         <td class="px-6 py-4">
                             @if($kti->file_url)
-                                {{-- 🔥 PERBAIKAN: Gunakan route admin.kti.download --}}
-                                <a href="{{ route('admin.kti.download', $kti->id) }}" 
+                                <a href="{{ route('admin.kti.download', $kti->id) }}"
                                    target="_blank"
                                    class="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-800 text-sm">
                                     <i class="fas fa-download"></i>
@@ -159,32 +163,32 @@
                             @else
                                 <span class="text-slate-400 text-sm">Tidak ada file</span>
                             @endif
-                        
+                        </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center justify-center gap-2">
                                 @if($kti->status == 'Pending')
-                                    <button onclick="approveKTI({{ $kti->id }}, '{{ addslashes($kti->title) }}')" 
+                                    <button onclick="approveKTI({{ $kti->id }}, '{{ addslashes($kti->title) }}')"
                                             class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-xs font-medium transition flex items-center gap-1">
                                         <i class="fas fa-check"></i> Approve
                                     </button>
-                                    <button onclick="rejectKTI({{ $kti->id }}, '{{ addslashes($kti->title) }}')" 
+                                    <button onclick="rejectKTI({{ $kti->id }}, '{{ addslashes($kti->title) }}')"
                                             class="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-medium transition flex items-center gap-1">
                                         <i class="fas fa-times"></i> Reject
                                     </button>
                                 @endif
-                                <button onclick="deleteKTI({{ $kti->id }}, '{{ addslashes($kti->title) }}')" 
+                                <button onclick="deleteKTI({{ $kti->id }}, '{{ addslashes($kti->title) }}')"
                                         class="px-3 py-1.5 bg-slate-100 hover:bg-red-100 text-slate-600 hover:text-red-600 rounded-lg text-xs font-medium transition flex items-center gap-1">
                                     <i class="fas fa-trash-alt"></i> Hapus
                                 </button>
                             </div>
-                       
+                        </td>
                     </tr>
                     @empty
                     <tr>
                         <td colspan="8" class="px-6 py-12 text-center text-slate-500">
                             <i class="fas fa-folder-open text-4xl mb-3 block text-slate-300"></i>
                             <p>Belum ada data KTI</p>
-                        
+                        </td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -203,10 +207,12 @@
             <h3 class="text-xl font-bold text-slate-800 mb-2">Approve KTI</h3>
             <p class="text-slate-500 mb-6">Apakah Anda yakin ingin menyetujui KTI <strong id="approveTitle"></strong>?</p>
             <div class="flex gap-3">
-                <button onclick="closeApproveModal()" class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition">Batal</button>
+                <button onclick="closeApproveModal()"
+                    class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition">Batal</button>
                 <form id="approveForm" method="POST" action="">
                     @csrf
-                    <button type="submit" class="w-full px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition shadow-sm">Ya, Approve</button>
+                    <button type="submit"
+                        class="w-full px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition shadow-sm">Ya, Approve</button>
                 </form>
             </div>
         </div>
@@ -223,10 +229,12 @@
             <h3 class="text-xl font-bold text-slate-800 mb-2">Reject KTI</h3>
             <p class="text-slate-500 mb-6">Apakah Anda yakin ingin menolak KTI <strong id="rejectTitle"></strong>? File akan dihapus.</p>
             <div class="flex gap-3">
-                <button onclick="closeRejectModal()" class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition">Batal</button>
+                <button onclick="closeRejectModal()"
+                    class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition">Batal</button>
                 <form id="rejectForm" method="POST" action="">
                     @csrf
-                    <button type="submit" class="w-full px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold transition shadow-sm">Ya, Reject</button>
+                    <button type="submit"
+                        class="w-full px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold transition shadow-sm">Ya, Reject</button>
                 </form>
             </div>
         </div>
@@ -243,16 +251,20 @@
             <h3 class="text-xl font-bold text-slate-800 mb-2">Hapus KTI</h3>
             <p class="text-slate-500 mb-6">Apakah Anda yakin ingin menghapus KTI <strong id="deleteTitle"></strong>? Data akan dihapus permanen.</p>
             <div class="flex gap-3">
-                <button onclick="closeDeleteModal()" class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition">Batal</button>
+                <button onclick="closeDeleteModal()"
+                    class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition">Batal</button>
                 <form id="deleteForm" method="POST" action="">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="w-full px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold transition shadow-sm">Ya, Hapus</button>
+                    <button type="submit"
+                        class="w-full px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold transition shadow-sm">Ya, Hapus</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+{{-- ==================== MODAL CUSTOM DATE ==================== --}}
 <div id="customDateModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm">
     <div class="bg-white rounded-2xl w-full max-w-md mx-4 shadow-2xl p-6">
         <h3 class="text-lg font-bold text-slate-800 mb-4">Filter Custom Tanggal</h3>
@@ -265,8 +277,10 @@
             <input type="date" id="endDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
         </div>
         <div class="flex gap-2">
-            <button onclick="closeCustomDateModal()" class="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-slate-700">Batal</button>
-            <button onclick="applyCustomDate()" class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg">Terapkan</button>
+            <button onclick="closeCustomDateModal()"
+                class="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-slate-700">Batal</button>
+            <button onclick="applyCustomDate()"
+                class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg">Terapkan</button>
         </div>
     </div>
 </div>
@@ -275,8 +289,8 @@
 @push('scripts')
 <script>
     function openCustomDateModal() {
-    document.getElementById('customDateModal').classList.remove('hidden');
-    document.getElementById('customDateModal').classList.add('flex');
+        document.getElementById('customDateModal').classList.remove('hidden');
+        document.getElementById('customDateModal').classList.add('flex');
     }
 
     function closeCustomDateModal() {
@@ -293,14 +307,15 @@
     }
 
     function filterStatus(status) {
-    let url = new URL(window.location.href);
-    if (status === 'all') {
-        url.searchParams.delete('status');
-    } else {
-        url.searchParams.set('status', status);
-    }
+        let url = new URL(window.location.href);
+        if (status === 'all') {
+            url.searchParams.delete('status');
+        } else {
+            url.searchParams.set('status', status);
+        }
         window.location.href = url.toString();
     }
+
     // ============================================
     // APPROVE KTI
     // ============================================
@@ -360,13 +375,12 @@
         const approveModal = document.getElementById('approveModal');
         const rejectModal = document.getElementById('rejectModal');
         const deleteModal = document.getElementById('deleteModal');
-        
+        const customDateModal = document.getElementById('customDateModal');
+
         if (event.target === approveModal) closeApproveModal();
         if (event.target === rejectModal) closeRejectModal();
         if (event.target === deleteModal) closeDeleteModal();
+        if (event.target === customDateModal) closeCustomDateModal();
     }
 </script>
 @endpush
-
-
-

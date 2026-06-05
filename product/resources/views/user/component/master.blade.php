@@ -306,65 +306,9 @@
 <body>
 
     {{-- Header --}}
-    <header>
-        <div class="logo-container">
-            <div class="logo-img">
-                <img src="{{ asset('assets/img/logo akper.png') }}" alt="Logo Perpustakaan AKPER HKBP">
-            </div>
-            <div class="logo-text">
-                <h1>Perpustakaan AKPER HKBP</h1>
-                <span>Sekolah Keperawatan HKBP Balige</span>
-            </div>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="{{ url('/') }}">Home</a></li>
-                <li>
-                    <a href="#">Profile <i class="fas fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ route('user.profile.visi_misi') }}">Visi Misi</a></li>
-                        <li><a href="{{ route('user.profile.kerjasama') }}">Kerjasama</a></li>
-                        <li><a href="{{ route('user.profile.struktur') }}">Struktur Pengurus</a></li>
-                        <li><a href="{{ route('user.profile.tugas_fungsi') }}">Tugas, Fungsi, Tujuan</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">Layanan <i class="fas fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ route('user.pinbal.index') }}">Pinjam Buku</a></li>
-                        <li><a href="{{ route('waktu.layanan') }}">Waktu Layanan</a></li>
-                    </ul>
-                </li>
-                <li>
-                <a href="#">Koleksi Tercetak <i class="fas fa-chevron-down"></i></a>
-                <ul class="dropdown-menu">
-                    <li><a href="{{ route('user.koleksi.jurnal') }}">jurnal</a></li>
-                    <li><a href="{{ route('user.koleksi.buku_pengayaan') }}">Buku Pengayaan</a></li>
-                    <li><a href="{{ route('user.koleksi.buku_referensi') }}">Buku Referensi</a></li>
-                    <li><a href="{{ route('user.koleksi.majalah') }}">Majalah</a></li>
-                </ul>
-            </li>
-                <li>
-                    <a href="#">Koleksi Elektronik <i class="fas fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ route('guest.koleksi_elektronik.ebook') }}">E-book</a></li>
-                        <li><a href="{{ route('guest.koleksi_elektronik.earticle') }}">E-article</a></li>
-                        <li><a href="{{ route('guest.koleksi_elektronik.cd') }}">CD</a></li>
-                        <li><a href="{{ route('guest.koleksi_elektronik.video') }}">Video</a></li>
-                        <li><a href="{{ route('final_project.kti') }}">Karya Tulis Ilmiah</a></li>
-                    </ul>
-                </li>
-                <li><a href="{{ route('user.berita') }}">Berita</a></li>
-                <li>
-                    <a href="#">Informasi <i class="fas fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ route('panduan') }}">Panduan</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
-        <a href="{{ route('login') }}" class="login-btn"><i class="fas fa-sign-in-alt"></i> LOGIN</a>
-    </header>
+
+    @include('user.component.navbars')
+
 
     {{-- Hero Section (optional, bisa diisi oleh child) --}}
     @yield('hero')
