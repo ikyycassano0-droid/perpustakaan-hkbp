@@ -4,19 +4,20 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto">
-    {{-- Header Section --}}
+    {{-- HEADER SECTION --}}
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <div>
             <h2 class="text-2xl font-bold text-slate-800 tracking-tight">📘 Manajemen Panduan</h2>
             <p class="text-slate-500 text-sm mt-1">Kelola dokumen panduan, kebijakan, dan prosedur perpustakaan</p>
         </div>
-        <button onclick="openCreateModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-sm transition flex items-center gap-2 w-fit">
+        <button onclick="openCreateModal()"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-md transition flex items-center gap-2 w-fit">
             <i class="fas fa-plus-circle text-sm"></i>
             <span>Tambah Panduan Baru</span>
         </button>
     </div>
 
-    {{-- Success Alert --}}
+    {{-- SUCCESS ALERT --}}
     @if(session('success'))
     <div class="mb-6 bg-emerald-50 border border-emerald-200 text-emerald-700 px-5 py-3 rounded-xl flex items-center gap-3">
         <i class="fas fa-check-circle text-emerald-500"></i>
@@ -27,71 +28,83 @@
     </div>
     @endif
 
-    {{-- Grouped by Category --}}
+    {{-- GROUPED BY CATEGORY --}}
     @forelse($data as $category => $items)
-    <div class="mb-10">
+    <div class="mb-12">
         {{-- Category Header --}}
-        <div class="flex items-center gap-3 mb-4">
-            <div class="w-1 h-7 bg-indigo-500 rounded-full"></div>
-            <h3 class="text-lg font-bold text-slate-800">
+        <div class="flex items-center gap-3 mb-5">
+            <div class="w-1 h-8 bg-indigo-500 rounded-full"></div>
+            <h3 class="text-xl font-bold text-slate-800">
                 {{ $category }}
             </h3>
-            <span class="bg-slate-100 text-slate-500 text-xs px-2 py-0.5 rounded-full">{{ $items->count() }} item</span>
+            <span class="bg-slate-100 text-slate-500 text-xs px-2.5 py-1 rounded-full font-medium">{{ $items->count() }} item</span>
         </div>
 
         {{-- Cards Grid --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($items as $archive)
-            <div class="card-modern p-5 group relative hover:shadow-lg transition-all duration-200">
-                {{-- Icon & Title --}}
-                <div class="flex items-start justify-between">
-                    <div class="flex items-center gap-3 flex-1 min-w-0">
-                        <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-500 flex-shrink-0">
-                            <i class="{{ $archive->icon ?? 'fas fa-file-alt' }} text-lg"></i>
+            <div class="bg-white rounded-xl border border-slate-200 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group">
+                {{-- Card Content --}}
+                <div class="p-5">
+                    {{-- Icon & Title --}}
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center gap-3 flex-1 min-w-0">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center text-indigo-600 flex-shrink-0 shadow-sm">
+                                <i class="{{ $archive->icon ?? 'fas fa-file-alt' }} text-xl"></i>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-base truncate">{{ $archive->title }}</h4>
                         </div>
-                        <h4 class="font-bold text-slate-800 truncate">{{ $archive->title }}</h4>
+                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0 ml-2">
+                            <a href="{{ route('admin.panduan.index', ['edit' => $archive->id]) }}"
+                                class="p-2 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition">
+                                <i class="fas fa-edit text-sm"></i>
+                            </a>
+                            <button onclick="confirmDelete({{ $archive->id }}, '{{ addslashes($archive->title) }}')"
+                                class="p-2 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition">
+                                <i class="fas fa-trash-alt text-sm"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition flex-shrink-0 ml-2">
-                        <a href="{{ route('admin.panduan.index', ['edit' => $archive->id]) }}" class="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg transition">
-                            <i class="fas fa-edit text-sm"></i>
-                        </a>
-                        <button onclick="confirmDelete({{ $archive->id }}, '{{ addslashes($archive->title) }}')" class="p-1.5 text-slate-400 hover:text-red-600 rounded-lg transition">
-                            <i class="fas fa-trash-alt text-sm"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                {{-- Description --}}
-                @if($archive->description)
-                <p class="text-slate-500 text-sm mt-3 line-clamp-2">{{ $archive->description }}</p>
-                @endif
 
-                {{-- Files Info --}}
-                @if($archive->activeFiles && $archive->activeFiles->count() > 0)
-                <div class="mt-3 flex flex-col gap-2">
-                    @foreach($archive->activeFiles as $file)
-                    <div class="flex items-center justify-between p-2 bg-slate-50 rounded-lg">
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-file-pdf text-red-400 text-sm"></i>
-                            <span class="text-xs text-slate-600 truncate max-w-[150px]">{{ $file->file_name }}</span>
+                    {{-- Description --}}
+                    @if($archive->description)
+                    <p class="text-slate-500 text-sm mt-2 leading-relaxed line-clamp-2">{{ $archive->description }}</p>
+                    @else
+                    <p class="text-slate-400 text-sm mt-2 italic">Tidak ada deskripsi</p>
+                    @endif
+
+                    {{-- Files Info --}}
+                    @if($archive->activeFiles && $archive->activeFiles->count() > 0)
+                    <div class="mt-4 flex flex-col gap-2">
+                        <div class="text-xs font-medium text-slate-500 mb-1 flex items-center gap-1">
+                            <i class="fas fa-paperclip text-[10px]"></i>
+                            <span>Lampiran ({{ $archive->activeFiles->count() }})</span>
                         </div>
-                        <a href="{{ $file->file_url_full }}" target="_blank" class="text-indigo-600 hover:text-indigo-700 text-xs">
-                            <i class="fas fa-download"></i>
-                        </a>
+                        @foreach($archive->activeFiles as $file)
+                        <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg border border-slate-100">
+                            <div class="flex items-center gap-2 flex-1 min-w-0">
+                                <i class="fas fa-file-pdf text-red-400 text-sm flex-shrink-0"></i>
+                                <span class="text-xs text-slate-600 truncate">{{ $file->file_name }}</span>
+                            </div>
+                            <a href="{{ $file->file_url_full }}" target="_blank"
+                                class="text-indigo-600 hover:text-indigo-700 text-sm flex-shrink-0 ml-2">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                        @endforeach
                     </div>
-                    @endforeach
+                    @endif
                 </div>
-                @endif
 
                 {{-- Footer Meta --}}
-                <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                    <div class="flex items-center gap-2 text-slate-400">
-                        <i class="fas fa-sort-numeric-down-alt text-[10px]"></i>
-                        <span>Urutan: {{ $archive->sequence }}</span>
+                <div class="mt-2 px-5 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2 text-slate-500">
+                        <i class="fas fa-sort-numeric-down-alt text-[11px]"></i>
+                        <span class="font-medium">Urutan: {{ $archive->sequence }}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                        <span class="text-slate-400">Aktif</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-sm"></span>
+                        <span class="text-slate-500 font-medium">Aktif</span>
                     </div>
                 </div>
             </div>
@@ -99,7 +112,7 @@
         </div>
     </div>
     @empty
-    <div class="card-modern p-12 text-center">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-md p-12 text-center">
         <div class="w-20 h-20 mx-auto bg-slate-100 rounded-full flex items-center justify-center mb-4">
             <i class="fas fa-folder-open text-3xl text-slate-300"></i>
         </div>
@@ -123,11 +136,13 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Judul Panduan <span class="text-red-500">*</span></label>
-                    <input type="text" name="title" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition">
+                    <input type="text" name="title" required
+                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Kategori <span class="text-red-500">*</span></label>
-                    <select name="category" id="create_category" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition bg-white">
+                    <select name="category" id="create_category" required
+                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition bg-white">
                         <option value="">Pilih Kategori</option>
                         <option value="Petunjuk Penggunaan">📖 Petunjuk Penggunaan</option>
                         <option value="Kebijakan">⚖️ Kebijakan</option>
@@ -138,13 +153,15 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Urutan (Sequence) <span class="text-red-500">*</span></label>
-                    <input type="number" name="sequence" required min="1" value="1" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition">
+                    <input type="number" name="sequence" required min="1" value="1"
+                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition">
                     <p class="text-xs text-slate-400 mt-1">Semakin kecil angka, semakin atas posisinya dalam kategori.</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Icon (Font Awesome)</label>
                     <div class="flex gap-2">
-                        <input type="text" name="icon" id="create_icon" placeholder="Akan otomatis terisi" readonly class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-500">
+                        <input type="text" name="icon" id="create_icon" placeholder="Akan otomatis terisi" readonly
+                            class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-500">
                         <div class="w-11 h-11 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-indigo-500">
                             <i id="create_icon_preview" class="fas fa-question text-lg"></i>
                         </div>
@@ -153,13 +170,15 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Deskripsi (Opsional)</label>
-                    <textarea name="description" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition"></textarea>
+                    <textarea name="description" rows="3"
+                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition"></textarea>
                 </div>
-                
+
                 {{-- Upload File --}}
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Upload File (PDF/DOC)</label>
-                    <div class="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:border-indigo-300 transition cursor-pointer" onclick="document.getElementById('file_input').click()">
+                    <div class="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:border-indigo-300 transition cursor-pointer"
+                        onclick="document.getElementById('file_input').click()">
                         <input type="file" name="files[]" id="file_input" class="hidden" multiple accept=".pdf,.doc,.docx">
                         <i class="fas fa-cloud-upload-alt text-3xl text-slate-400 mb-2"></i>
                         <p class="text-sm text-slate-500">Klik atau drag & drop file disini</p>
@@ -178,8 +197,10 @@
                 </div>
             </div>
             <div class="flex gap-3 mt-6 pt-3">
-                <button type="button" onclick="closeCreateModal()" class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition">Batal</button>
-                <button type="submit" class="flex-1 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition shadow-sm">Simpan Panduan</button>
+                <button type="button" onclick="closeCreateModal()"
+                    class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition">Batal</button>
+                <button type="submit"
+                    class="flex-1 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition shadow-sm">Simpan Panduan</button>
             </div>
         </form>
     </div>
@@ -201,11 +222,13 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Judul Panduan</label>
-                    <input type="text" name="title" value="{{ old('title', $editData->title) }}" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition">
+                    <input type="text" name="title" value="{{ old('title', $editData->title) }}"
+                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Kategori</label>
-                    <select name="category" id="edit_category" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition bg-white">
+                    <select name="category" id="edit_category"
+                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition bg-white">
                         <option value="Petunjuk Penggunaan" {{ ($editData->category == 'Petunjuk Penggunaan') ? 'selected' : '' }}>📖 Petunjuk Penggunaan</option>
                         <option value="Kebijakan" {{ ($editData->category == 'Kebijakan') ? 'selected' : '' }}>⚖️ Kebijakan</option>
                         <option value="Syarat & Ketentuan" {{ ($editData->category == 'Syarat & Ketentuan') ? 'selected' : '' }}>📜 Syarat & Ketentuan</option>
@@ -215,13 +238,15 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Urutan (Sequence)</label>
-                    <input type="number" name="sequence" value="{{ old('sequence', $editData->sequence) }}" min="1" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition">
+                    <input type="number" name="sequence" value="{{ old('sequence', $editData->sequence) }}" min="1"
+                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition">
                     <p class="text-xs text-slate-400 mt-1">Semakin kecil angka, semakin atas posisinya dalam kategori.</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Icon (Font Awesome)</label>
                     <div class="flex gap-2">
-                        <input type="text" name="icon" id="edit_icon" value="{{ old('icon', $editData->icon) }}" class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-500" readonly>
+                        <input type="text" name="icon" id="edit_icon" value="{{ old('icon', $editData->icon) }}" readonly
+                            class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-500">
                         <div class="w-11 h-11 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-indigo-500">
                             <i id="edit_icon_preview" class="{{ $editData->icon ?? 'fas fa-question' }} text-lg"></i>
                         </div>
@@ -229,7 +254,8 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Deskripsi</label>
-                    <textarea name="description" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition">{{ old('description', $editData->description) }}</textarea>
+                    <textarea name="description" rows="3"
+                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition">{{ old('description', $editData->description) }}</textarea>
                 </div>
 
                 {{-- Existing Files --}}
@@ -247,10 +273,12 @@
                                 </div>
                             </div>
                             <div class="flex gap-2">
-                                <a href="{{ $file->file_url_full }}" target="_blank" class="text-indigo-600 hover:text-indigo-700 text-sm">
+                                <a href="{{ $file->file_url_full }}" target="_blank"
+                                    class="text-indigo-600 hover:text-indigo-700 text-sm">
                                     <i class="fas fa-download"></i>
                                 </a>
-                                <button type="button" onclick="deleteFile({{ $file->id }}, {{ $editData->id }})" class="text-red-400 hover:text-red-600 text-sm">
+                                <button type="button" onclick="deleteFile({{ $file->id }})"
+                                    class="text-red-400 hover:text-red-600 text-sm">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
@@ -263,7 +291,8 @@
                 {{-- Upload New File --}}
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Tambah File Baru (Opsional)</label>
-                    <div class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:border-indigo-300 transition cursor-pointer" onclick="document.getElementById('edit_file_input').click()">
+                    <div class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:border-indigo-300 transition cursor-pointer"
+                        onclick="document.getElementById('edit_file_input').click()">
                         <input type="file" name="new_files[]" id="edit_file_input" class="hidden" multiple accept=".pdf,.doc,.docx">
                         <i class="fas fa-cloud-upload-alt text-2xl text-slate-400 mb-1"></i>
                         <p class="text-xs text-slate-500">Klik untuk upload file baru</p>
@@ -281,21 +310,23 @@
                 </div>
             </div>
             <div class="flex gap-3 mt-6 pt-3">
-                <a href="{{ route('admin.panduan.index') }}" class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition text-center">Batal</a>
-                <button type="submit" class="flex-1 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition shadow-sm">Update Panduan</button>
+                <a href="{{ route('admin.panduan.index') }}"
+                    class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition text-center">Batal</a>
+                <button type="submit"
+                    class="flex-1 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition shadow-sm">Update Panduan</button>
             </div>
         </form>
     </div>
 </div>
 @endif
 
-{{-- Delete Confirmation Form --}}
+{{-- DELETE CONFIRMATION FORM --}}
 <form id="deleteForm" method="POST" action="" style="display: none;">
     @csrf
     @method('DELETE')
 </form>
 
-{{-- Delete File Form --}}
+{{-- DELETE FILE FORM --}}
 <form id="deleteFileForm" method="POST" action="" style="display: none;">
     @csrf
     @method('DELETE')
@@ -312,7 +343,7 @@
         'FAQ': 'fas fa-question-circle',
         'Lainnya': 'fas fa-ellipsis-h'
     };
-    
+
     // Auto icon for create modal
     document.getElementById('create_category')?.addEventListener('change', function() {
         const category = this.value;
@@ -320,7 +351,7 @@
         document.getElementById('create_icon').value = icon;
         document.getElementById('create_icon_preview').className = icon + ' text-lg';
     });
-    
+
     // Auto icon for edit modal
     document.getElementById('edit_category')?.addEventListener('change', function() {
         const category = this.value;
@@ -328,7 +359,7 @@
         document.getElementById('edit_icon').value = icon;
         document.getElementById('edit_icon_preview').className = icon + ' text-lg';
     });
-    
+
     // File upload handling for create modal
     document.getElementById('file_input')?.addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -336,18 +367,18 @@
             const fileInfo = document.getElementById('file_info');
             const fileName = document.getElementById('file_name');
             const fileSize = document.getElementById('file_size');
-            
+
             fileName.textContent = file.name;
             fileSize.textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
             fileInfo.classList.remove('hidden');
         }
     });
-    
+
     function removeFile() {
         document.getElementById('file_input').value = '';
         document.getElementById('file_info').classList.add('hidden');
     }
-    
+
     // File upload handling for edit modal
     document.getElementById('edit_file_input')?.addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -355,18 +386,18 @@
             const fileInfo = document.getElementById('edit_file_info');
             const fileName = document.getElementById('edit_file_name');
             const fileSize = document.getElementById('edit_file_size');
-            
+
             fileName.textContent = file.name;
             fileSize.textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
             fileInfo.classList.remove('hidden');
         }
     });
-    
+
     function removeEditFile() {
         document.getElementById('edit_file_input').value = '';
         document.getElementById('edit_file_info').classList.add('hidden');
     }
-    
+
     // Delete file function
     function deleteFile(fileId) {
         if (confirm('Hapus file ini? Data akan dihapus secara permanen.')) {
@@ -375,7 +406,7 @@
             form.submit();
         }
     }
-    
+
     // Create Modal
     function openCreateModal() {
         document.getElementById('createModal').classList.remove('hidden');
@@ -387,13 +418,13 @@
         document.getElementById('create_icon_preview').className = 'fas fa-question text-lg';
         removeFile();
     }
-    
+
     function closeCreateModal() {
         document.getElementById('createModal').classList.add('hidden');
         document.getElementById('createModal').classList.remove('flex');
         document.body.style.overflow = '';
     }
-    
+
     // Delete Confirmation
     function confirmDelete(id, title) {
         if (confirm(`Hapus panduan "${title}"? Data akan dihapus secara permanen.`)) {
@@ -402,7 +433,7 @@
             form.submit();
         }
     }
-    
+
     // Close modal on outside click
     window.onclick = function(event) {
         const createModal = document.getElementById('createModal');
@@ -410,6 +441,3 @@
     }
 </script>
 @endpush
-
-
-

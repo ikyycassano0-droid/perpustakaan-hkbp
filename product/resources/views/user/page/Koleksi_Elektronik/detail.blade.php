@@ -1,596 +1,440 @@
 @extends('user.component.master')
 
-@section('title', 'Detail Koleksi Elektronik - AKPER HKBP Balige')
+@section('title', $item->title . ' - Detail Koleksi Elektronik')
 
 @push('styles')
 <style>
-    /* Glass card */
-    .glass-card {
-        background: rgba(15, 23, 42, 0.55);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 2rem;
-        transition: all 0.3s ease;
-    }
-    
-    /* Title utama */
-    .title-main {
-        font-weight: 800;
-        background: linear-gradient(135deg, #ffffff, #a5b4fc, #6366f1);
-        background-clip: text;
-        -webkit-background-clip: text;
-        color: transparent;
-        text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
-    }
-    
-    /* Neon border */
-    .neon-border {
-        position: relative;
-        border-radius: 28px;
-        background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2));
-        transition: all 0.3s ease;
-    }
-    
-    .neon-border:hover {
-        box-shadow: 0 0 30px rgba(99,102,241,0.3);
-    }
-    
-    .neon-inner {
-        background: rgba(15, 23, 42, 0.7);
-        backdrop-filter: blur(20px);
-        border-radius: 26px;
-        padding: 2rem;
-        border: 1px solid rgba(255,255,255,0.08);
-    }
-    
-    /* Category Badge */
-    .category-badge {
-        display: inline-block;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.7rem;
-        font-weight: 600;
-    }
-    
-    .badge-ebook { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.4); }
-    .badge-earticle { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
-    .badge-cd { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
-    .badge-video { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.4); }
-    
-    /* Metadata Grid */
-    .metadata-grid {
+    /* ============================================
+       CSS KHUSUS HALAMAN DETAIL (GAYA KLASIK HIJAU)
+       Hanya aturan yang TIDAK ada di master
+    ============================================ */
+
+    .main-wrapper {
+        max-width: 1200px;
+        margin: 50px auto;
+        padding: 0 20px;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1rem;
+        grid-template-columns: 380px 1fr;
+        gap: 60px;
     }
-    
-    .metadata-item {
-        background: rgba(15, 23, 42, 0.6);
-        border-radius: 1rem;
-        padding: 1rem;
-        border: 1px solid rgba(99, 102, 241, 0.2);
-        transition: all 0.3s ease;
+
+    /* --- BUKU 3D --- */
+    .book-wrap {
+        perspective: 1500px;
+        position: sticky;
+        top: 120px;
     }
-    
-    .metadata-item:hover {
-        border-color: rgba(99, 102, 241, 0.5);
-        background: rgba(15, 23, 42, 0.8);
-        transform: translateY(-2px);
+
+    .book {
+        width: 320px;
+        height: 480px;
+        position: relative;
+        transform-style: preserve-3d;
+        transform: rotateY(-25deg);
+        transition: transform 0.8s cubic-bezier(0.2, 0.6, 0.3, 1);
     }
-    
-    .metadata-label {
-        font-size: 0.7rem;
-        color: #94a3b8;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 0.5rem;
+
+    .book:hover {
+        transform: rotateY(-5deg) translateX(50px);
     }
-    
-    .metadata-value {
+
+    .cover {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: var(--primary-color);
+        border-radius: 3px 12px 12px 3px;
+        z-index: 10;
+        transform-origin: left;
+        transition: transform 0.8s cubic-bezier(0.2, 0.6, 0.3, 1);
+        box-shadow: 10px 10px 25px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+    }
+
+    .cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .page {
+        position: absolute;
+        width: 98%;
+        height: 96%;
+        top: 2%;
+        left: 1%;
+        background: #fffcf0;
+        padding: 40px 30px;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 5;
+        transform: translateZ(-1px);
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .page h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.5rem;
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--accent-yellow);
+        display: inline-block;
+        padding-bottom: 5px;
+    }
+
+    .page p {
+        font-family: 'Playfair Display', serif;
+        font-style: italic;
         font-size: 0.95rem;
-        font-weight: 600;
-        color: #e2e8f0;
-        word-wrap: break-word;
+        line-height: 1.7;
+        color: #444;
     }
-    
-    /* Section Title */
-    .section-title {
+
+    .spine {
+        position: absolute;
+        width: 45px;
+        height: 100%;
+        background: var(--deep-green);
+        left: 0;
+        transform: rotateY(-90deg);
+        transform-origin: left;
+        z-index: 8;
+    }
+
+    .book:hover .cover {
+        transform: rotateY(-155deg);
+    }
+
+    /* --- TOMBOL AKSI EBOOK --- */
+    .ebook-actions {
+        margin-top: 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .btn-ebook {
+        width: 100%;
+        padding: 18px;
+        border-radius: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.4s;
+        font-size: 0.95rem;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-decoration: none;
+    }
+
+    .btn-read {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .btn-read:hover {
+        background: var(--accent-green);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(26, 107, 71, 0.2);
+        color: white;
+    }
+
+    .btn-download {
+        background: #e0f0e8;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+    }
+
+    .btn-download:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-3px);
+    }
+
+    /* --- DETAIL BOX --- */
+    .detail-box {
+        background: white;
+        border-radius: 25px;
+        padding: 45px;
+        box-shadow: 0 8px 24px rgba(15, 74, 49, 0.08);
+        border: 1px solid var(--border-color);
+        border-top: 4px solid var(--accent-yellow);
+    }
+
+    .title-area h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.4rem;
+        color: var(--primary-color);
+        margin-bottom: 10px;
+        line-height: 1.2;
+    }
+
+    .author-text {
+        color: var(--text-muted);
+        margin-bottom: 35px;
+        font-size: 1rem;
+    }
+
+    .section-header {
         font-size: 1.25rem;
         font-weight: 700;
-        color: #a5b4fc;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid rgba(99, 102, 241, 0.3);
-        display: inline-block;
-    }
-    
-    /* Badge Container */
-    .badge-container {
+        color: var(--text-dark);
+        margin-bottom: 20px;
         display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
+        align-items: center;
+        gap: 12px;
     }
-    
-    /* Cover Image */
-    .cover-large {
-        border-radius: 1.5rem;
+
+    .section-header span {
+        color: var(--text-muted);
+        font-weight: 400;
+    }
+
+    .availability-card {
+        background: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
         overflow: hidden;
-        box-shadow: 0 25px 40px -15px rgba(0, 0, 0, 0.4);
-        background: linear-gradient(135deg, #1e293b, #0f172a);
+        margin-bottom: 40px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
     }
-    
-    /* Buttons */
-    .btn-primary {
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        padding: 12px 28px;
-        border-radius: 40px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-        color: white;
+
+    .avail-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .avail-table th {
+        background: #f0f7f3;
+        color: var(--primary-color);
+        font-weight: 700;
+        text-align: left;
+        padding: 16px 24px;
         font-size: 0.9rem;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .avail-table td {
+        padding: 20px 24px;
+        color: var(--text-dark);
+        font-size: 0.95rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .status-badge {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        text-decoration: none;
+        color: var(--accent-green);
+        font-weight: 700;
+        font-size: 0.9rem;
     }
-    
-    .btn-primary:hover {
-        transform: scale(1.02);
-        box-shadow: 0 0 25px rgba(99, 102, 241, 0.5);
+
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--accent-green);
+        border-radius: 50%;
+        position: relative;
     }
-    
-    .btn-outline {
-        background: transparent;
-        padding: 10px 24px;
-        border-radius: 40px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(99, 102, 241, 0.5);
-        cursor: pointer;
-        color: #c7d2fe;
-        font-size: 0.85rem;
-        display: inline-flex;
+
+    .pulse-dot::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: var(--accent-green);
+        border-radius: 50%;
+        animation: pulse-ring 1.5s infinite;
+    }
+
+    @keyframes pulse-ring {
+        0% { transform: scale(0.33); opacity: 0.8; }
+        80%, 100% { transform: scale(2.5); opacity: 0; }
+    }
+
+    .info-heading {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin: 45px 0 25px;
+        display: flex;
         align-items: center;
-        gap: 8px;
-        text-decoration: none;
+        border-left: 5px solid var(--accent-yellow);
+        padding-left: 15px;
     }
-    
-    .btn-outline:hover {
-        background: rgba(99, 102, 241, 0.2);
-        border-color: #6366f1;
-        transform: translateY(-2px);
+
+    .info-row {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        padding: 15px 0;
+        border-bottom: 1px solid var(--border-color);
     }
-    
-    /* File Preview */
-    .file-preview {
-        background: rgba(15, 23, 42, 0.4);
-        border-radius: 1rem;
-        padding: 1rem;
-        text-align: center;
+
+    .label {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        font-weight: 600;
     }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-        .neon-inner {
-            padding: 1rem;
-        }
-        .metadata-grid {
+
+    .value {
+        color: var(--text-dark);
+        font-weight: 400;
+        font-size: 0.95rem;
+    }
+
+    @media (max-width: 1024px) {
+        .main-wrapper {
             grid-template-columns: 1fr;
         }
-        .btn-primary, .btn-outline {
-            padding: 8px 16px;
-            font-size: 0.8rem;
+        .book-wrap {
+            position: relative;
+            top: 0;
+            margin: 0 auto 50px;
+            width: 320px;
         }
     }
 </style>
 @endpush
 
 @section('content')
-<div class="main-content">
-
-    {{-- HERO SECTION --}}
-    <section class="pt-28 pb-8 text-center px-5">
-        <div class="inline-block glass-card px-5 py-2 rounded-full mb-5 fade-up">
-            <span class="text-indigo-300 text-sm font-medium tracking-wide">
-                💿 {{ strtoupper($item->category->name ?? 'KOLEKSI ELEKTRONIK') }}
-            </span>
-        </div>
-
-        <h1 class="text-3xl md:text-5xl font-extrabold title-main fade-up">
-            {{ $item->title }}
-        </h1>
-
-        <div class="flex flex-wrap justify-center gap-3 mt-4 text-gray-400 text-sm fade-up">
-            @if($item->isbn)
-            <span><i class="fas fa-barcode mr-1"></i> ISBN: {{ $item->isbn }}</span>
-            @endif
-
-            @if($item->year)
-            <span><i class="far fa-calendar-alt mr-1"></i> {{ $item->year }}</span>
-            @endif
-
-            <span><i class="fas fa-calendar-plus mr-1"></i> Diupload: {{ $item->created_at->format('d M Y') }}</span>
-        </div>
-    </section>
-
-    {{-- MAIN CONTENT --}}
-    <section class="section max-w-6xl mx-auto px-5">
-        <div class="neon-border fade-up">
-            <div class="neon-inner">
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-                    {{-- LEFT COLUMN - COVER --}}
-                    <div class="flex flex-col">
-                        <div class="cover-large">
-                            @if($item->cover_image)
-                                <img src="{{ asset('storage/'.$item->cover_image) }}"
-                                     class="w-full" alt="Cover {{ $item->title }}">
-                            @else
-                                <div class="aspect-[3/4] flex items-center justify-center text-8xl bg-gradient-to-br from-slate-800 to-slate-900">
-                                    @php
-                                        $slug = $item->category->slug ?? '';
-                                        $icon = match($slug) {
-                                            'ebook' => '📖',
-                                            'e-article' => '📄',
-                                            'cd' => '💿',
-                                            'video' => '🎬',
-                                            default => '📁'
-                                        };
-                                    @endphp
-                                    {{ $icon }}
-                                </div>
-                            @endif
-                        </div>
-
-                        {{-- ACTION BUTTONS --}}
-                        <div class="mt-6 flex flex-col gap-3">
-                            @if($item->file_url)
-                                @php
-                                    $fileExt = pathinfo($item->file_url, PATHINFO_EXTENSION);
-                                    $fileUrl = asset('storage/'.$item->file_url);
-                                @endphp
-
-                                @if(in_array($fileExt, ['mp4', 'webm', 'ogg']))
-                                    <button onclick="openVideoModal('{{ $fileUrl }}', '{{ addslashes($item->title) }}')"
-                                            class="btn-primary w-full justify-center">
-                                        <i class="fas fa-play"></i> Putar Video
-                                    </button>
-                                @elseif(in_array($fileExt, ['mp3', 'wav', 'ogg']))
-                                    <button onclick="openAudioModal('{{ $fileUrl }}', '{{ addslashes($item->title) }}')"
-                                            class="btn-primary w-full justify-center">
-                                        <i class="fas fa-headphones"></i> Dengarkan Audio
-                                    </button>
-                                @elseif($fileExt === 'pdf')
-                                    <a href="{{ $fileUrl }}" target="_blank" class="btn-primary w-full justify-center">
-                                        <i class="fas fa-file-pdf"></i> Baca PDF
-                                    </a>
-                                @else
-                                    <a href="{{ $fileUrl }}" target="_blank" class="btn-primary w-full justify-center">
-                                        <i class="fas fa-download"></i> Download File
-                                    </a>
-                                @endif
-                            @endif
-
-                            <a href="{{ url()->previous() }}" class="btn-outline w-full justify-center">
-                                <i class="fas fa-arrow-left"></i> Kembali
-                            </a>
-                        </div>
-                    </div>
-
-                    {{-- RIGHT COLUMN - DETAIL INFORMASI --}}
-                    <div class="lg:col-span-2">
-
-                        {{-- DESKRIPSI / ABSTRACT --}}
-                        @if($item->abstract)
-                        <div class="mb-8">
-                            <h2 class="section-title">
-                                <i class="fas fa-align-left mr-2"></i> Abstract / Ringkasan
-                            </h2>
-                            <div class="mt-3 text-gray-300 leading-relaxed">
-                                {{ $item->abstract }}
-                            </div>
-                        </div>
-                        @endif
-
-                        {{-- INFORMASI LENGKAP --}}
-                        <div class="mb-8">
-                            <h2 class="section-title">
-                                <i class="fas fa-info-circle mr-2"></i> Informasi Lengkap
-                            </h2>
-                            
-                            <div class="metadata-grid mt-4">
-                                {{-- Jenis Koleksi --}}
-                                <div class="metadata-item">
-                                    <div class="metadata-label">
-                                        <i class="fas fa-tag mr-1"></i> Jenis Koleksi
-                                    </div>
-                                    <div class="metadata-value">
-                                        @php
-                                            $slug = $item->category->slug ?? '';
-                                            $badgeClass = match($slug) {
-                                                'ebook' => 'badge-ebook',
-                                                'e-article' => 'badge-earticle',
-                                                'cd' => 'badge-cd',
-                                                'video' => 'badge-video',
-                                                default => 'badge-ebook'
-                                            };
-                                        @endphp
-                                        <span class="category-badge {{ $badgeClass }}">
-                                            {{ $item->category->name ?? '-' }}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {{-- ISBN --}}
-                                <div class="metadata-item">
-                                    <div class="metadata-label">
-                                        <i class="fas fa-barcode mr-1"></i> ISBN
-                                    </div>
-                                    <div class="metadata-value">
-                                        {{ $item->isbn ?? '-' }}
-                                        @if(!$item->isbn)
-                                            <span class="text-gray-500 text-xs">(Tidak tersedia)</span>
-                                        @endif
-                                    </div>
-                                </div>
-
-                                {{-- Tahun --}}
-                                @if($item->year)
-                                <div class="metadata-item">
-                                    <div class="metadata-label">
-                                        <i class="far fa-calendar-alt mr-1"></i> Tahun
-                                    </div>
-                                    <div class="metadata-value">{{ $item->year }}</div>
-                                </div>
-                                @endif
-
-                                {{-- Tanggal Upload --}}
-                                <div class="metadata-item">
-                                    <div class="metadata-label">
-                                        <i class="fas fa-upload mr-1"></i> Tanggal Upload
-                                    </div>
-                                    <div class="metadata-value">{{ $item->created_at->format('d F Y') }}</div>
-                                </div>
-
-                                {{-- Format File --}}
-                                @if($item->file_url)
-                                <div class="metadata-item">
-                                    <div class="metadata-label">
-                                        <i class="fas fa-file mr-1"></i> Format File
-                                    </div>
-                                    <div class="metadata-value">
-                                        {{ strtoupper(pathinfo($item->file_url, PATHINFO_EXTENSION)) }}
-                                    </div>
-                                </div>
-                                @endif
-
-                                {{-- Ukuran File (opsional jika ada kolom size) --}}
-                                @if(isset($item->file_size) && $item->file_size)
-                                <div class="metadata-item">
-                                    <div class="metadata-label">
-                                        <i class="fas fa-weight-hanging mr-1"></i> Ukuran File
-                                    </div>
-                                    <div class="metadata-value">{{ number_format($item->file_size / 1024, 2) }} KB</div>
-                                </div>
-                                @endif
-                            </div>
-                        </div>
-
-                        {{-- CLASSIFICATION --}}
-                        @if($item->classifications && $item->classifications->count() > 0)
-                        <div class="mb-8">
-                            <h2 class="section-title">
-                                <i class="fas fa-tags mr-2"></i> Klasifikasi
-                            </h2>
-                            <div class="badge-container mt-3">
-                                @foreach($item->classifications as $classification)
-                                    <span class="category-badge" style="background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border-color: rgba(99, 102, 241, 0.4);">
-                                        <i class="fas fa-hashtag mr-1"></i> {{ $classification->name }}
-                                    </span>
-                                @endforeach
-                            </div>
-                        </div>
-                        @endif
-
-                        {{-- CATEGORIES --}}
-                        @if($item->categoriesMany && $item->categoriesMany->count() > 0)
-                        <div class="mb-8">
-                            <h2 class="section-title">
-                                <i class="fas fa-folder-open mr-2"></i> Kategori
-                            </h2>
-                            <div class="badge-container mt-3">
-                                @foreach($item->categoriesMany as $category)
-                                    <span class="category-badge badge-ebook">
-                                        <i class="fas fa-folder mr-1"></i> {{ $category->name }}
-                                    </span>
-                                @endforeach
-                            </div>
-                        </div>
-                        @endif
-
-                        {{-- KEYWORDS --}}
-                        @if($item->keywords && count($item->keywords) > 0)
-                        <div class="mb-8">
-                            <h2 class="section-title">
-                                <i class="fas fa-key mr-2"></i> Kata Kunci
-                            </h2>
-                            <div class="badge-container mt-3">
-                                @foreach($item->keywords as $keyword)
-                                    <span class="category-badge" style="background: rgba(139, 92, 246, 0.2); color: #a78bfa; border-color: rgba(139, 92, 246, 0.4);">
-                                        <i class="fas fa-hashtag mr-1"></i> {{ $keyword }}
-                                    </span>
-                                @endforeach
-                            </div>
-                        </div>
-                        @endif
-
-                        {{-- PREVIEW FILE (Untuk PDF) --}}
-                        @if($item->file_url && pathinfo($item->file_url, PATHINFO_EXTENSION) === 'pdf')
-                        <div class="mb-8">
-                            <h2 class="section-title">
-                                <i class="fas fa-file-pdf mr-2"></i> Preview File
-                            </h2>
-                            <div class="file-preview mt-3">
-                                <iframe src="{{ asset('storage/'.$item->file_url) }}" 
-                                        width="100%" 
-                                        height="400" 
-                                        class="rounded-xl"
-                                        frameborder="0">
-                                </iframe>
-                            </div>
-                        </div>
-                        @endif
-
-                    </div>
+<div class="main-wrapper">
+    {{-- SISI KIRI: BUKU 3D & TOMBOL AKSI --}}
+    <div class="book-wrap" data-aos="zoom-in-right">
+        <div class="book">
+            <div class="spine"></div>
+            <div class="cover">
+                @if($item->cover_image && file_exists(public_path('storage/' . $item->cover_image)))
+                    <img src="{{ asset('storage/' . $item->cover_image) }}" alt="{{ $item->title }}">
+                @else
+                    <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=500&q=80" alt="Cover Default">
+                @endif
+            </div>
+            <div class="page">
+                <h2>Abstrak</h2>
+                <p>{{ $item->abstract ?? 'Tidak ada abstrak tersedia.' }}</p>
+                <div style="font-size: 0.75rem; color: #888; margin-top: auto;">
+                    @php
+                        $ext = $item->file_url ? strtoupper(pathinfo($item->file_url, PATHINFO_EXTENSION)) : 'PDF';
+                    @endphp
+                    <i class="fas fa-file-pdf"></i> Format: {{ $ext }}<br>
+                    <i class="fas fa-hdd"></i> Size: -
                 </div>
-
             </div>
         </div>
-    </section>
-</div>
 
-{{-- MODAL VIDEO --}}
-<div id="videoModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 hidden items-center justify-center">
-    <div class="relative w-full max-w-4xl mx-4">
-        <button onclick="closeVideoModal()" 
-                class="absolute -top-12 right-0 text-white text-2xl hover:text-gray-300 transition">
-            <i class="fas fa-times"></i>
-        </button>
-        <video id="videoPlayer" class="w-full rounded-xl" controls>
-            <source id="videoSource" src="">
-            Browser Anda tidak mendukung video.
-        </video>
-        <h3 id="videoTitle" class="text-white text-center mt-4"></h3>
-    </div>
-</div>
-
-{{-- MODAL AUDIO --}}
-<div id="audioModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 hidden items-center justify-center">
-    <div class="relative w-full max-w-2xl mx-4 bg-slate-900 rounded-2xl p-6 border border-indigo-500/30">
-        <button onclick="closeAudioModal()" 
-                class="absolute -top-10 right-0 text-white text-2xl hover:text-gray-300 transition">
-            <i class="fas fa-times"></i>
-        </button>
-        <div class="text-center mb-4">
-            <i class="fas fa-headphones text-6xl text-indigo-400"></i>
+        <div class="ebook-actions">
+            @if($item->file_url)
+                @php
+                    $fileUrl = asset('storage/' . $item->file_url);
+                    $ext = strtolower(pathinfo($item->file_url, PATHINFO_EXTENSION));
+                    $isWord = in_array($ext, ['doc', 'docx']);
+                    $bacaUrl = $isWord ? 'https://docs.google.com/viewer?url=' . urlencode($fileUrl) : $fileUrl;
+                @endphp
+                <a href="{{ $bacaUrl }}" target="_blank" class="btn-ebook btn-read">
+                    <i class="fas fa-book-reader"></i> BACA SEKARANG (ONLINE)
+                </a>
+                <a href="{{ $fileUrl }}" download class="btn-ebook btn-download">
+                    <i class="fas fa-file-download"></i> UNDUH (OFFLINE)
+                </a>
+            @else
+                <button class="btn-ebook btn-read" disabled>
+                    <i class="fas fa-book-reader"></i> TIDAK TERSEDIA
+                </button>
+            @endif
         </div>
-        <h3 id="audioTitle" class="text-white text-center text-xl mb-6"></h3>
-        <audio id="audioPlayer" class="w-full" controls>
-            <source id="audioSource" src="">
-            Browser Anda tidak mendukung audio.
-        </audio>
+    </div>
+
+    {{-- SISI KANAN: DETAIL LENGKAP --}}
+    <div class="detail-box" data-aos="fade-left">
+
+        <div class="title-area">
+            <span style="color: var(--accent-green); font-weight: 800; font-size: 0.75rem; text-transform: uppercase;">
+                KOLEKSI ELEKTRONIK ({{ strtoupper($item->category->name ?? 'E-BOOK') }})
+            </span>
+            <h1>{{ $item->title }}</h1>
+            <p class="author-text">Oleh <strong>{{ $item->student_name ?? $item->user->name ?? 'Administrator' }}</strong></p>
+        </div>
+
+        <h2 class="section-header">Status Akses Digital <span>— Repositori AKPER</span></h2>
+        <div class="availability-card">
+            <table class="avail-table">
+                <thead>
+                    <tr>
+                        <th># Tipe Akses</th>
+                        <th>Server Location</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Full Text</strong></td>
+                        <td>Digital-Cloud-HKBP-01</td>
+                        <td>
+                            @if($item->status === 'Approved')
+                                <div class="status-badge"><div class="pulse-dot"></div> Tersedia (Open Access)</div>
+                            @else
+                                <div class="status-badge" style="color: #e67e22;"><i class="fas fa-clock"></i> {{ $item->status }}</div>
+                            @endif
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="info-heading">Informasi Detail</div>
+        <div class="info-list">
+            <div class="info-row">
+                <div class="label">Jenis Koleksi</div>
+                <div class="value">{{ $item->category->name ?? 'Umum' }}</div>
+            </div>
+            @if($item->isbn)
+            <div class="info-row">
+                <div class="label">ISBN</div>
+                <div class="value">{{ $item->isbn }}</div>
+            </div>
+            @endif
+            @if($item->year)
+            <div class="info-row">
+                <div class="label">Tahun</div>
+                <div class="value">{{ $item->year }}</div>
+            </div>
+            @endif
+            <div class="info-row">
+                <div class="label">Bahasa</div>
+                <div class="value">Indonesia</div>
+            </div>
+            <div class="info-row">
+                <div class="label">Subjek</div>
+                <div class="value">{{ is_array($item->keywords) ? implode(', ', $item->keywords) : ($item->keywords ?? '-') }}</div>
+            </div>
+            <div class="info-row">
+                <div class="label">Klasifikasi</div>
+                <div class="value">{{ $item->classifications->pluck('name')->implode(', ') ?: '-' }}</div>
+            </div>
+            <div class="info-row">
+                <div class="label">Kategori Koleksi</div>
+                <div class="value">{{ $item->categoriesMany->pluck('name')->implode(', ') ?: '-' }}</div>
+            </div>
+        </div>
+        <div style="margin-top: 30px; text-align: center;">
+           @php
+                $categorySlug = $item->category->slug ?? 'ebook';
+                // Hapus dash agar cocok dengan nama route (earticle, cd, video, ebook)
+                $routeSlug = str_replace('-', '', $categorySlug);
+                // Fallback jika route tidak ditemukan
+                $backRoute = 'guest.koleksi_elektronik.' . $routeSlug;
+                if (!Route::has($backRoute)) {
+                    $backRoute = 'guest.koleksi_elektronik.ebook'; // default
+                }
+            @endphp
+            <a href="{{ route($backRoute) }}" class="btn-ebook btn-download" style="display: inline-flex; width: auto; padding: 12px 32px; border-radius: 50px; margin: 0 auto;">
+                <i class="fas fa-arrow-left"></i> Kembali ke Koleksi {{ ucfirst($item->category->name ?? 'E-Book') }}
+            </a>
+        </div>
+    </div> {{-- penutup detail-box --}}
     </div>
 </div>
-
 @endsection
-
-@push('scripts')
-<script>
-    // ================= VIDEO MODAL =================
-    function openVideoModal(url, title) {
-        const modal = document.getElementById('videoModal');
-        const videoPlayer = document.getElementById('videoPlayer');
-        const videoSource = document.getElementById('videoSource');
-        const videoTitle = document.getElementById('videoTitle');
-        
-        videoSource.src = url;
-        videoPlayer.load();
-        videoTitle.textContent = title;
-        
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        
-        // Play video
-        videoPlayer.play().catch(e => console.log('Auto-play prevented:', e));
-    }
-    
-    function closeVideoModal() {
-        const modal = document.getElementById('videoModal');
-        const videoPlayer = document.getElementById('videoPlayer');
-        
-        videoPlayer.pause();
-        videoPlayer.currentTime = 0;
-        
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    }
-    
-    // ================= AUDIO MODAL =================
-    function openAudioModal(url, title) {
-        const modal = document.getElementById('audioModal');
-        const audioPlayer = document.getElementById('audioPlayer');
-        const audioSource = document.getElementById('audioSource');
-        const audioTitle = document.getElementById('audioTitle');
-        
-        audioSource.src = url;
-        audioPlayer.load();
-        audioTitle.textContent = title;
-        
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        
-        // Play audio
-        audioPlayer.play().catch(e => console.log('Auto-play prevented:', e));
-    }
-    
-    function closeAudioModal() {
-        const modal = document.getElementById('audioModal');
-        const audioPlayer = document.getElementById('audioPlayer');
-        
-        audioPlayer.pause();
-        audioPlayer.currentTime = 0;
-        
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    }
-    
-    // ================= CLOSE MODAL WITH ESC =================
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeVideoModal();
-            closeAudioModal();
-        }
-    });
-    
-    // ================= FADE UP ANIMATION =================
-    const fadeElements = document.querySelectorAll('.fade-up');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('show');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1 });
-    
-    fadeElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
-    });
-    
-    // Add show class for initial elements
-    const style = document.createElement('style');
-    style.textContent = `
-        .fade-up.show {
-            opacity: 1 !important;
-            transform: translateY(0) !important;
-        }
-    `;
-    document.head.appendChild(style);
-    
-    // Make functions global
-    window.openVideoModal = openVideoModal;
-    window.closeVideoModal = closeVideoModal;
-    window.openAudioModal = openAudioModal;
-    window.closeAudioModal = closeAudioModal;
-</script>
-@endpush
-
-
-

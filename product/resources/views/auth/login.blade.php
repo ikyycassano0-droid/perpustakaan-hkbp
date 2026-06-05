@@ -31,7 +31,7 @@
 
 <body class="h-screen flex antialiased">
 
-<!-- LEFT HERO (FULL SAMA SEPERTI REFERENSI) -->
+<!-- LEFT HERO -->
 <div class="hidden lg:flex w-1/2 relative text-white overflow-hidden">
 
     <img src="{{ asset('assets/img/login2.jpg') }}"
@@ -79,7 +79,7 @@
     </div>
 </div>
 
-<!-- RIGHT LOGIN (UI FULL DIUBAH SESUAI REFERENSI 2) -->
+<!-- RIGHT LOGIN -->
 <div class="w-full lg:w-1/2 flex items-center justify-center bg-gray-50 px-6 py-10">
 
     <div class="w-full max-w-md">
@@ -94,7 +94,31 @@
                 </p>
             </div>
 
-            <!-- ROLE UI (TANPA LOGIC) -->
+            <!-- TAMPILAN PESAN ERROR -->
+            @if ($errors->any())
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    <strong>Terjadi kesalahan:</strong>
+                    <ul class="mt-1 list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            @if (session('success'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            <!-- ROLE UI (HANYA UI, TANPA LOGIC) -->
             <div class="mb-6">
                 <label class="text-xs font-bold text-gray-500 uppercase">Pilih Role</label>
 
@@ -111,7 +135,7 @@
                 </div>
             </div>
 
-            <!-- FORM (LOGIC TETAP AMAN) -->
+            <!-- FORM LOGIN -->
             <form method="POST" action="{{ route('login.submit') }}">
                 @csrf
 
@@ -123,6 +147,7 @@
 
                     <input type="text"
                         name="npm"
+                        value="{{ old('npm') }}"
                         placeholder="Masukkan NPM / NIDN"
                         class="w-full mt-1 px-4 py-3 rounded-xl border bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#0c2d5c]">
                 </div>
@@ -142,7 +167,7 @@
                 <!-- REMEMBER -->
                 <div class="flex items-center justify-between mb-6">
                     <label class="flex items-center gap-2 text-sm text-gray-600">
-                        <input type="checkbox">
+                        <input type="checkbox" name="remember">
                         Ingat saya
                     </label>
 
@@ -170,4 +195,3 @@
 
 </body>
 </html>
-

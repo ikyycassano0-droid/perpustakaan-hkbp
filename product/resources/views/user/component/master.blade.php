@@ -1,898 +1,544 @@
+{{-- master.blade.php --}}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Ultra 3D Website')</title>
-    <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'Perpustakaan Sekolah Keperawatan HKBP')</title>
 
+    {{-- CSS Libraries --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    {{-- Custom CSS --}}
     <style>
         /* ============================================
-           ORIGINAL STYLES - FULLY PRESERVED
+           PALET WARNA — REFERENSI GAMBAR
+           - Navbar    : putih / #ffffff
+           - Primary   : hijau teal  #1a6b47
+           - Secondary : hijau gelap #0f4a31
+           - Accent    : hijau muda  #2daa6e
+           - Navy text : #0d2137
+           - BG utama  : #f4f7f5
+           - BG card   : #ffffff
         ============================================ */
+
+        /* Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'DM Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: radial-gradient(circle at 20% 20%, #1e293b, #020617);
-            color: white;
+            background-color: #f4f7f5;
+            color: #0d2137;
+            line-height: 1.6;
             overflow-x: hidden;
         }
 
-        /* Glow background blobs */
-        .blob {
-            position: absolute;
-            width: 450px;
-            height: 400px;
-            background: radial-gradient(circle, #6366f1, transparent);
-            filter: blur(120px);
-            opacity: 0.6;
-            z-index: -1;
+        a {
+            text-decoration: none;
+            color: inherit;
         }
 
-        /* Glass */
-        .glass {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(255,255,255,0.1);
+        /* CSS Variables */
+        :root {
+            --primary-color: #1a6b47;
+            --secondary-color: #1f7d54;
+            --deep-green: #0f4a31;
+            --accent-green: #2daa6e;
+            --green: #2daa6e;
+            --accent-yellow: #f1c40f;
+            --text-dark: #0d2137;
+            --text-muted: #5a7060;
+            --text-light: #ffffff;
+            --dark: #0d2137;
+            --light-bg: #f4f7f5;
+            --card-bg: #ffffff;
+            --border-color: #d4e5d9;
+            --teal: #1a6b47;
+            --teal-light: #2daa6e;
+            --blue-gradient-top: #1f7d54;
+            --blue-gradient-bottom: #0f4a31;
         }
 
-        /* 3D container */
-        .tilt {
-            transform-style: preserve-3d;
-            transition: transform 0.2s ease;
+        @keyframes floating {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
         }
 
-        /* Depth layers */
-        .depth-1 { transform: translateZ(20px); }
-        .depth-2 { transform: translateZ(40px); }
-        .depth-3 { transform: translateZ(60px); }
-
-        /* Glow */
-        .glow {
-            box-shadow: 0 0 60px rgba(99,102,241,0.6);
+        /* ===========================
+           HEADER / NAVBAR — PUTIH
+        =========================== */
+        header {
+            background-color: #ffffff;
+            color: var(--text-dark);
+            padding: 0.8rem 3%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 12px rgba(15, 74, 49, 0.10);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid #e6f0ea;
         }
 
-        /* Floating animation */
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
-        .float {
-            animation: float 6s ease-in-out infinite;
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        /* Fade */
-        .fade-up {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: all 1s ease;
-        }
-        .fade-up.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* ==========================
-           🌌 FUTURISTIC 3D CURSOR
-        ========================== */
-        .cursor-glow {
-            position: fixed;
+        .logo-img {
             width: 50px;
             height: 50px;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-
-            /* bentuk tidak kaku (organik blob) */
-            border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
-
-            /* multi-layer glow */
-            background:
-                radial-gradient(circle at 30% 30%, rgba(99, 107, 185, 0.6), transparent 60%),
-                radial-gradient(circle at 70% 70%, rgba(99,102,241,0.5), transparent 70%),
-                radial-gradient(circle at 50% 50%, rgba(59,130,246,0.4), transparent 80%);
-
-            /* blur = depth */
-            filter: blur(40px);
-
-            /* smooth animation */
-            animation: blobMove 8s ease-in-out infinite,
-                       pulseGlow 4s ease-in-out infinite;
-
-            transition: transform 0.2s ease, filter 0.3s ease;
-        }
-
-        /* ==========================
-           🌊 ORGANIC MORPHING SHAPE
-        ========================== */
-        @keyframes blobMove {
-            0% {
-                border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
-            }
-            25% {
-                border-radius: 50% 60% 40% 60% / 60% 40% 60% 40%;
-            }
-            50% {
-                border-radius: 70% 30% 60% 40% / 40% 70% 30% 60%;
-            }
-            75% {
-                border-radius: 40% 60% 50% 50% / 60% 30% 70% 40%;
-            }
-            100% {
-                border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
-            }
-        }
-
-        /* ==========================
-           ✨ GLOW PULSE (DEPTH)
-        ========================== */
-        @keyframes pulseGlow {
-            0%, 100% {
-                filter: blur(40px) brightness(1);
-            }
-            50% {
-                filter: blur(55px) brightness(1.3);
-            }
-        }
-
-        body {
-            background: linear-gradient(-45deg, #020617, #0f172a, #1e293b, #020617);
-            background-size: 400% 400%;
-            animation: gradientMove 15s ease infinite;
-        }
-
-        /* 3D Card */
-        .card3d {
-            transform-style: preserve-3d;
-            transition: transform 0.2s ease;
-        }
-
-        /* Magnetic button */
-        .magnetic {
-            transition: transform 0.2s ease;
-        }
-
-        /* Ripple style */
-        .ripple {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: rgba(255,255,255,0.5);
+            background-color: var(--primary-color);
             border-radius: 50%;
-            transform: scale(0);
-            animation: rippleAnim 0.6s linear;
-            pointer-events: none;
-        }
-
-        @keyframes rippleAnim {
-            to {
-                transform: scale(15);
-                opacity: 0;
-            }
-        }
-
-        /* NOTIF BASE */
-        .notif {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 14px 20px;
-            border-radius: 16px;
-            backdrop-filter: blur(12px);
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.15);
-            color: white;
-            font-weight: 500;
-            z-index: 9999;
-
-            transform: translateX(120%);
-            opacity: 0;
-
-            transition: all 0.5s ease;
-        }
-
-        /* SHOW */
-        .notif.show {
-            transform: translateX(0);
-            opacity: 1;
-        }
-
-        /* SUCCESS */
-        .notif.success {
-            box-shadow: 0 0 20px rgba(99,102,241,0.6);
-        }
-
-        /* WARNING */
-        .notif.warning {
-            box-shadow: 0 0 20px rgba(255,165,0,0.6);
-        }
-
-        /* ICON */
-        .notif span {
-            margin-right: 8px;
-        }
-
-        /* ===== NAVBAR STYLE YANG DIMODIFIKASI ===== */
-
-        /* Navbar Container */
-        .navbar-container {
-            background: rgba(10, 15, 30, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 50px;
-            padding: 0.5rem 1.5rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        }
-
-        .navbar-container:hover {
-            border-color: rgba(99, 102, 241, 0.6);
-            box-shadow: 0 0 25px rgba(99, 102, 241, 0.2);
-        }
-
-        /* Logo Styling */
-        .nav-logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ffffff, #a5b4fc, #6366f1);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            letter-spacing: -0.5px;
-        }
-
-        /* Nav Item Modern */
-        .nav-item-modern {
-            position: relative;
-            padding: 0.5rem 0;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            color: #ffffff;
-        }
-
-        .nav-item-modern a, .nav-item-modern button {
-            color: inherit;
-            transition: all 0.3s ease;
-        }
-
-        .nav-item-modern:hover {
-            color: #ffffff;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-        }
-
-        /* Active Nav Item */
-        .nav-item-modern.active {
-            color: #818cf8;
-        }
-
-        .nav-item-modern.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, #6366f1, #e7e4e9);
-            border-radius: 2px;
-            box-shadow: 0 0 8px rgba(99, 102, 241, 0.6);
-        }
-
-        /* Dropdown Modern */
-        .dropdown-modern {
-            position: relative;
-        }
-
-        .dropdown-menu-modern {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            margin-top: 0.75rem;
-            min-width: 200px;
-            background: rgba(15, 25, 45, 0.95);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 16px;
-            padding: 0.5rem;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
-            z-index: 50;
-        }
-
-        .dropdown-modern:hover .dropdown-menu-modern {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .dropdown-item-modern {
-            display: block;
-            padding: 0.5rem 1rem;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            color: #cbd5e1;
-            transition: all 0.2s ease;
-        }
-
-        .dropdown-item-modern:hover {
-            background: rgba(99, 102, 241, 0.2);
-            color: #a5b4fc;
-            transform: translateX(5px);
-        }
-
-        /* Submenu Modern */
-        .submenu-modern {
-            position: relative;
-        }
-
-        .submenu-menu-modern {
-            position: absolute;
-            left: 100%;
-            top: 0;
-            margin-left: 0.5rem;
-            min-width: 180px;
-            background: rgba(15, 25, 45, 0.95);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 16px;
-            padding: 0.5rem;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateX(-10px);
-            transition: all 0.3s ease;
-        }
-
-        .submenu-modern:hover .submenu-menu-modern {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(0);
-        }
-
-        /* Login Button Modern */
-        .btn-login-modern {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.1));
-            border: 1px solid rgba(99, 102, 241, 0.5);
-            padding: 0.5rem 1.5rem;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            color: #c7d2fe;
-        }
-
-        .btn-login-modern:hover {
-            background: linear-gradient(135deg, #6366f1 , #4731c6);
-            border-color: transparent;
-            color: white;
-            transform: scale(1.05);
-            box-shadow: 0 0 25px rgba(99, 102, 241, 0.6);
-        }
-
-        /* Chevron Icon */
-        .chevron {
-            transition: transform 0.3s ease;
-        }
-
-        .dropdown-modern:hover .chevron {
-            transform: rotate(180deg);
-        }
-
-        /* Mobile Menu Button (hidden on desktop) */
-        .mobile-menu-btn {
-            display: none;
-            background: rgba(99, 102, 241, 0.2);
-            border: 1px solid rgba(99, 102, 241, 0.4);
-            border-radius: 12px;
-            padding: 0.5rem;
-            cursor: pointer;
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .desktop-menu {
-                display: none;
-            }
-            .mobile-menu-btn {
-                display: block;
-            }
-            .navbar-container {
-                border-radius: 24px;
-            }
-        }
-
-        /* NAV ITEM (old - kept for compatibility) */
-        .nav-item {
-            position: relative;
-            cursor: pointer;
-            color: #ccc;
-            transition: 0.3s;
-        }
-
-        .nav-item:hover {
-            color: white;
-            text-shadow: 0 0 10px rgba(99,102,241,0.8);
-        }
-
-        .nav-item::after {
-            content: "";
-            position: absolute;
-            bottom: -6px;
-            left: 50%;
-            width: 0%;
-            height: 2px;
-            background: #6366f1;
-            transition: 0.3s;
-            transform: translateX(-50%);
-        }
-
-        .nav-item:hover::after {
-            width: 100%;
-        }
-
-        .nav-item.active {
-            color: white;
-        }
-
-        .nav-item:hover {
-            transform: translateY(-2px);
-        }
-
-        nav .glass {
-            backdrop-filter: blur(16px);
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .animate-gradientMove {
-          animation: gradientMove 4s ease infinite;
-        }
-        .dropdown-item {
-            display: block;
-            padding: 8px 12px;
-            border-radius: 10px;
-            transition: all 0.3s;
-        }
-
-        .dropdown-item:hover {
-            background: rgba(26, 2, 205, 0.389);
-            color: #ffffff;
-            transform: translateX(5px);
-        }
-
-        /* ===== CAROUSEL BUKU STYLES UNTUK PARALLAX SECTION ===== */
-        .book-carousel-full {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .book-carousel-track {
             display: flex;
-            gap: 30px;
-            height: 100%;
-            width: max-content;
-            animation: scrollBooks 40s linear infinite;
-            padding: 0 20px;
-        }
-
-        .book-carousel-track:hover {
-            animation-play-state: paused;
-        }
-
-        @keyframes scrollBooks {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(-50%);
-            }
-        }
-
-        .book-card-large {
-            width: 280px;
-            height: 380px;
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(12px);
-            border-radius: 24px;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
             overflow: hidden;
-            border: 1px solid rgba(99, 102, 241, 0.4);
-            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            flex-shrink: 0;
-            position: relative;
         }
 
-        .book-card-large:hover {
-            transform: translateY(-10px) scale(1.03);
-            border-color: rgba(99, 102, 241, 0.8);
-            box-shadow: 0 25px 40px -15px rgba(99, 102, 241, 0.4);
-        }
-
-        .book-cover-large {
+        .logo-img img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
+            border-radius: 50%;
         }
 
-        .book-card-large:hover .book-cover-large {
-            transform: scale(1.05);
-        }
-
-        .book-info-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 16px;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-
-        .book-card-large:hover .book-info-overlay {
-            transform: translateY(0);
-        }
-
-        .book-title-large {
+        .logo-text h1 {
+            font-size: 0.95rem;
             font-weight: 700;
-            font-size: 0.9rem;
+            text-transform: uppercase;
+            line-height: 1.2;
+            color: var(--text-dark);
+        }
+
+        .logo-text span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 5px;
+        }
+
+        nav ul li {
+            position: relative;
+        }
+
+        nav ul li a {
+            padding: 10px 12px;
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: 0.3s;
+            color: var(--text-dark);
+        }
+
+        nav ul li a:hover,
+        nav ul li>a.active {
+            color: var(--primary-color);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #ffffff;
+            min-width: 220px;
+            box-shadow: 0 8px 20px rgba(15, 74, 49, 0.12);
+            border-radius: 8px;
+            display: none;
+            z-index: 100;
+            border-top: 3px solid var(--accent-green);
+        }
+
+        .dropdown-menu li {
+            width: 100%;
+        }
+
+        .dropdown-menu li a {
+            color: var(--text-dark) !important;
+            padding: 10px 15px;
+            border-bottom: 1px solid #f0f5f2;
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+
+        .dropdown-menu li a:hover {
+            background-color: #f0f9f4;
+            color: var(--primary-color) !important;
+            padding-left: 20px;
+        }
+
+        nav ul li:hover>.dropdown-menu {
+            display: block;
+        }
+
+        /* LOGIN BUTTON — Hijau solid */
+        .login-btn {
+            background-color: var(--primary-color);
+            color: #fff !important;
+            padding: 9px 22px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            border: 2px solid var(--primary-color);
+        }
+
+        .login-btn:hover {
+            background-color: var(--deep-green);
+            border-color: var(--deep-green);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(15, 74, 49, 0.25);
+        }
+
+        /* FOOTER — Hijau gelap */
+        footer {
+            background-color: var(--deep-green);
+            color: rgba(200, 235, 218, 0.85);
+            padding: 4rem 5% 2rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-col h4 {
             color: white;
-            margin-bottom: 4px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--accent-green);
+            padding-left: 10px;
+            font-size: 1rem;
+            font-weight: 700;
         }
 
-        .book-author-large {
-            font-size: 0.7rem;
-            color: #cbd5e1;
+        .footer-col ul {
+            list-style: none;
         }
 
-        /* Responsif */
-        @media (max-width: 768px) {
-            .book-card-large {
-                width: 220px;
-                height: 300px;
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            color: rgba(200, 235, 218, 0.80);
+            transition: 0.3s;
+            font-size: 0.88rem;
+        }
+
+        .footer-col ul li a:hover {
+            color: white;
+            padding-left: 4px;
+        }
+
+        .footer-col p {
+            font-size: 0.88rem;
+            line-height: 1.8;
+        }
+
+        .footer-col p i {
+            color: var(--accent-green);
+            margin-right: 6px;
+        }
+
+        .copyright {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            text-align: center;
+            font-size: 0.82rem;
+            color: rgba(200, 235, 218, 0.6);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1100px) {
+            nav ul {
+                gap: 2px;
+            }
+
+            nav ul li a {
+                font-size: 0.75rem;
+                padding: 10px 8px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .koleksi-mini-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .koleksi-unggulan-header {
+                flex-direction: column;
+                align-items: flex-start;
             }
         }
     </style>
+
     @stack('styles')
 </head>
 <body>
 
-<!-- Background blobs -->
-<div class="blob top-0 left-0"></div>
-<div class="blob bottom-0 right-0"></div>
+    {{-- Header --}}
 
-<!-- Cursor glow -->
-<div class="cursor-glow" id="cursorGlow"></div>
-@include('user.component.navbars')
+    @include('user.component.navbars')
 
-<!-- LOGIN MODAL -->
-<div id="loginModal"
-    class="fixed inset-0 bg-black/60 backdrop-blur-md hidden z-[9999]
-           items-center justify-center opacity-0 transition duration-300">
 
-    <div id="loginCard"
-        class="max-w-md w-full glass p-8 rounded-3xl relative
-               transform scale-90 opacity-0 transition duration-300">
+    {{-- Hero Section (optional, bisa diisi oleh child) --}}
+    @yield('hero')
 
-        <!-- CLOSE -->
-        <button onclick="closeLogin()"
-            class="absolute top-4 right-4 text-white text-xl">
-            ✕
-        </button>
+    {{-- Main Content --}}
+    <main>
+        @yield('content')
+    </main>
 
-        <h2 class="text-2xl font-bold text-center mb-6">
-            Login Account
-        </h2>
-
-        <!-- FORM -->
-        <form id="loginForm" class="space-y-6">
-
-            <input type="text" id="name"
-                placeholder="NIDN/NPM"
-                class="w-full p-3 rounded-xl bg-white/5 border border-gray-700 focus:ring-2 focus:ring-indigo-500">
-
-            <input type="password" id="password"
-                placeholder="Password"
-                class="w-full p-3 rounded-xl bg-white/5 border border-gray-700 focus:ring-2 focus:ring-indigo-500">
-
-            <button type="button"
-                onclick="submitLogin()"
-                class="magnetic w-full bg-indigo-500 py-3 rounded-full hover:scale-105 transition">
-                Login
-            </button>
-
-        </form>
-
-        <!-- SUCCESS -->
-<div id="successState" class="hidden mt-6 text-center">
-
-    <div class="glass p-6 rounded-2xl relative overflow-hidden">
-
-        <!-- GLOW BACKGROUND -->
-        <div class="absolute inset-0 bg-indigo-500/10 blur-2xl"></div>
-
-        <!-- ICON -->
-        <div class="text-5xl mb-3 animate-bounce">
-            🎉
+    {{-- Footer --}}
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col" data-aos="fade-right" data-aos-delay="200">
+                <h4>Sekolah Keperawatan HKBP Balige</h4>
+                <p><i class="fas fa-hospital"></i> Kompleks HKBP, Jl. Keperawatan No. 1<br>Sumatera Utara, Indonesia.</p>
+                <p><i class="fas fa-phone"></i> (061) 1234567</p>
+                <p><i class="fas fa-envelope"></i> library@akperhkbp.ac.id</p>
+            </div>
+            <div class="footer-col" data-aos="fade-up" data-aos-delay="400">
+                <h4>Sumber Daya</h4>
+                <ul>
+                    <li><a href="#"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i> Jurnal Keperawatan</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i> Panduan Sitasi APA</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i> Cek Kemiripan Teks</a></li>
+                </ul>
+            </div>
+            <div class="footer-col" data-aos="fade-left" data-aos-delay="600">
+                <h4>Akses Cepat</h4>
+                <ul>
+                    <li><a href="#"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i> Pendaftaran Anggota</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i> Bebas Pustaka</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i> Usulan Buku Baru</a></li>
+                </ul>
+            </div>
         </div>
+        <div class="copyright">&copy; {{ date('Y') }} Perpustakaan Sekolah Keperawatan HKBP. Semua Hak Dilindungi.</div>
+    </footer>
 
-        <h3 class="text-2xl font-bold mb-2">
-            Welcome!
-        </h3>
-
-        <p class="text-gray-400 mb-6">
-            Login berhasil 🚀
-        </p>
-
-        <button onclick="closeLogin()"
-            class="magnetic bg-indigo-500 px-6 py-2 rounded-full hover:scale-105 transition">
-            Continue
-        </button>
-
-    </div>
-
-</div>
-
-    </div>
-</div>
-
-{{-- ============================================
-    MAIN CONTENT SECTION
-============================================ --}}
-<main>
-    @yield('content')
-</main>
-
-<script>
-// ==========================
-// GLOBAL STATE
-// ==========================
-const state = {
-    mouse: { x: 0, y: 0 },
-    cart: [],
-    cartOpen: false
-};
-
-// ==========================
-// MOUSE TRACKING
-// ==========================
-document.addEventListener("mousemove", (e) => {
-    state.mouse.x = e.clientX;
-    state.mouse.y = e.clientY;
-});
+    {{-- Scripts --}}
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Inisialisasi AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
 
 
-// ==========================
-// FADE ANIMATION
-// ==========================
-const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('show');
+        // Search Function (global, jika ada form dengan class search-container)
+        function handleSearch(event) {
+            event.preventDefault();
+            const input = document.querySelector('.search-container input');
+            if (input && input.value.trim() === "") {
+                alert("Mohon masukkan kata kunci!");
+            } else if (input) {
+                alert("Mencari: " + input.value);
+            }
         }
-    });
-});
 
-document.querySelectorAll('.fade-up')
-    .forEach(el => observer.observe(el));
+        // Testimonial Slider (jika ada elemen terkait)
+        let currentTranslate = 0;
+        let slider = null;
 
+        function initTestimonialSlider() {
+            slider = document.getElementById('testimonialSlider');
+            if (!slider) return;
+            const containerBox = document.querySelector('.testimonial-container-box');
+            if (!containerBox) return;
+            const cards = document.querySelectorAll('.testimonial-card');
+            if (cards.length === 0) return;
+            const cardWidth = 380;
+            const maxTranslate = (cards.length - Math.floor(containerBox.offsetWidth / cardWidth)) * cardWidth;
+            window.moveSlide = function(direction) {
+                currentTranslate -= (direction * cardWidth);
+                if (currentTranslate > 0) currentTranslate = 0;
+                if (Math.abs(currentTranslate) > maxTranslate) currentTranslate = -maxTranslate;
+                slider.style.transform = `translateX(${currentTranslate}px)`;
+            };
+        }
 
-// ==========================
-// 3D CARD EFFECT
-// ==========================
-document.querySelectorAll('.card3d, .tilt').forEach(card => {
+        // Tilt Effect
+        function initTiltEffect() {
+            const newsCards = document.querySelectorAll('.tilt-effect');
+            newsCards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const rotateX = ((y - rect.height / 2) / rect.height / 2) * -10;
+                    const rotateY = ((x - rect.width / 2) / rect.width / 2) * 10;
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+                });
+            });
+        }
 
-    card.addEventListener('mousemove', (e) => {
+        // Canvas Particle (untuk halaman yang memiliki #matrix-canvas-layanan)
+        function initCanvasParticle() {
+            const canvas = document.getElementById('matrix-canvas-layanan');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            const mouse = { x: null, y: null, radius: 180 };
 
-        const rect = card.getBoundingClientRect();
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = canvas.parentElement ? canvas.parentElement.offsetHeight : 400;
+            }
 
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+            });
 
-        const rotateX = -(y - rect.height/2) / 12;
-        const rotateY = (x - rect.width/2) / 12;
+            window.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                mouse.x = e.clientX - rect.left;
+                mouse.y = e.clientY - rect.top;
+            });
 
-        card.style.transform = `
-            rotateX(${rotateX}deg)
-            rotateY(${rotateY}deg)
-            scale(1.05)
-        `;
-    });
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 1;
+                    this.speedX = Math.random() * 1.5 - 0.75;
+                    this.speedY = Math.random() * 1.5 - 0.75;
+                    this.density = (Math.random() * 30) + 5;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+                    if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < mouse.radius) {
+                        let force = (mouse.radius - distance) / mouse.radius;
+                        this.x -= (dx / distance) * force * this.density;
+                        this.y -= (dy / distance) * force * this.density;
+                    }
+                }
+                draw() {
+                    ctx.fillStyle = 'rgba(26, 107, 71, 0.20)';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
 
-    card.addEventListener('mouseleave', () => {
-        card.style.transform = `rotateX(0) rotateY(0) scale(1)`;
-    });
+            const vertices = [
+                { x: -1, y: 0.618, z: 0 }, { x: 1, y: 0.618, z: 0 }, { x: -1, y: -0.618, z: 0 }, { x: 1, y: -0.618, z: 0 },
+                { x: 0, y: -1, z: 0.618 }, { x: 0, y: 1, z: 0.618 }, { x: 0, y: -1, z: -0.618 }, { x: 0, y: 1, z: -0.618 },
+                { x: 0.618, y: 0, z: -1 }, { x: 0.618, y: 0, z: 1 }, { x: -0.618, y: 0, z: -1 }, { x: -0.618, y: 0, z: 1 }
+            ];
 
-});
-// ==========================
-// MAGNETIC BUTTON + RIPPLE
-// ==========================
-document.querySelectorAll('.magnetic').forEach(btn => {
+            const structs = [
+                { posX: 0.15, posY: 0.25, size: 140, rotX: 0, rotY: 0, rotZ: 0, speedX: 0.005, speedY: 0.007 },
+                { posX: 0.85, posY: 0.35, size: 170, rotX: 0, rotY: 0, rotZ: 0, speedX: -0.004, speedY: 0.006 },
+                { posX: 0.20, posY: 0.80, size: 150, rotX: 0, rotY: 0, rotZ: 0, speedX: 0.006, speedY: -0.005 },
+                { posX: 0.80, posY: 0.85, size: 160, rotX: 0, rotY: 0, rotZ: 0, speedX: -0.005, speedY: -0.004 }
+            ];
 
-    btn.addEventListener('mousemove', (e) => {
+            function rotate3D(v, rotX, rotY, rotZ) {
+                let x = v.x, y = v.y, z = v.z;
+                let cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+                let y1 = y * cosX - z * sinX;
+                let z1 = y * sinX + z * cosX;
+                let cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+                let x2 = x * cosY + z1 * sinY;
+                let z2 = -x * sinY + z1 * cosY;
+                let cosZ = Math.cos(rotZ), sinZ = Math.sin(rotZ);
+                let x3 = x2 * cosZ - y1 * sinZ;
+                let y3 = x2 * sinZ + y1 * cosZ;
+                return { x: x3, y: y3, z: z2 };
+            }
 
-        const rect = btn.getBoundingClientRect();
+            function draw3DStructs() {
+                structs.forEach(st => {
+                    st.rotX += st.speedX;
+                    st.rotY += st.speedY;
+                    st.rotZ += 0.002;
+                    const centerX = st.posX * canvas.width;
+                    const centerY = st.posY * canvas.height;
+                    const projected = vertices.map(v => {
+                        let r = rotate3D(v, st.rotX, st.rotY, st.rotZ);
+                        return { x: centerX + r.x * st.size, y: centerY + r.y * st.size };
+                    });
+                    ctx.beginPath();
+                    ctx.strokeStyle = 'rgba(26, 107, 71, 0.30)';
+                    ctx.lineWidth = 2;
+                    for (let i = 0; i < projected.length; i++) {
+                        for (let j = i + 1; j < projected.length; j++) {
+                            let d = Math.hypot(vertices[i].x - vertices[j].x, vertices[i].y - vertices[j].y, vertices[i].z - vertices[j].z);
+                            if (d < 1.5) {
+                                ctx.moveTo(projected[i].x, projected[i].y);
+                                ctx.lineTo(projected[j].x, projected[j].y);
+                            }
+                        }
+                    }
+                    ctx.stroke();
+                });
+            }
 
-        const x = e.clientX - rect.left - rect.width/2;
-        const y = e.clientY - rect.top - rect.height/2;
+            function animate() {
+                if (!canvas || !ctx) return;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                draw3DStructs();
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                requestAnimationFrame(animate);
+            }
 
-        btn.style.transform = `
-            translate(${x * 0.3}px, ${y * 0.3}px)
-            scale(1.05)
-        `;
-    });
+            resizeCanvas();
+            for (let i = 0; i < 90; i++) particles.push(new Particle());
+            animate();
+        }
 
-    btn.addEventListener('mouseleave', () => {
-        btn.style.transform = `translate(0,0) scale(1)`;
-    });
+        // Jalankan inisialisasi setelah DOM siap
+        document.addEventListener('DOMContentLoaded', () => {
+            initTestimonialSlider();
+            initTiltEffect();
+            initCanvasParticle();
+        });
+    </script>
 
-    // ripple
-    btn.addEventListener('click', function(e) {
-
-        const ripple = document.createElement("span");
-        ripple.classList.add("ripple");
-
-        const rect = this.getBoundingClientRect();
-
-        ripple.style.left = (e.clientX - rect.left) + "px";
-        ripple.style.top = (e.clientY - rect.top) + "px";
-
-        this.appendChild(ripple);
-
-        setTimeout(() => ripple.remove(), 600);
-    });
-
-});
-// ==========================
-// CURSOR GLOW
-// ==========================
-const cursor = document.getElementById('cursorGlow');
-
-if (cursor) {
-    document.addEventListener('mousemove', (e) => {
-        cursor.style.left = e.clientX + 'px';
-        cursor.style.top = e.clientY + 'px';
-    });
-}
-
-// ==========================
-// PARTICLE ENGINE - GENTLE & LIBRARY THEME
-// ==========================
-const canvas = document.createElement("canvas");
-document.body.appendChild(canvas);
-
-const ctx = canvas.getContext("2d");
-
-canvas.style.position = "fixed";
-canvas.style.top = 0;
-canvas.style.left = 0;
-canvas.style.zIndex = "-1";
-canvas.style.pointerEvents = "none"; // biar tidak mengganggu klik
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let particles = [];
-
-// KURANGI JUMLAH PARTIKEL (40-50 cukup) dan perkecil ukuran
-const PARTICLE_COUNT = 45;
-// WARNA soft: abu-abu kebiruan dengan opacity rendah
-const PARTICLE_COLOR = "rgba(165, 180, 252, 0.25)"; // indigo-300 dengan alpha 0.25
-// GERAKAN lebih lambat (faktor 0.3-0.5 dari sebelumnya)
-const SPEED_FACTOR = 0.4;
-
-for (let i = 0; i < PARTICLE_COUNT; i++) {
-    particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        dx: (Math.random() - 0.5) * SPEED_FACTOR,
-        dy: (Math.random() - 0.5) * SPEED_FACTOR,
-        r: Math.random() * 1.8 + 0.5 // radius kecil: 0.5 - 2.3 px
-    });
-}
-
-function drawParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    particles.forEach(p => {
-        // update posisi
-        p.x += p.dx;
-        p.y += p.dy;
-
-        // pantul di batas canvas (soft boundary)
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
-
-        // gambar partikel dengan shadow lembut
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = PARTICLE_COLOR;
-        ctx.shadowBlur = 0; // tidak perlu shadow agar tidak terlalu mencolok
-        ctx.fill();
-    });
-
-    requestAnimationFrame(drawParticles);
-}
-
-drawParticles();
-
-// Resize handler biar partikel tetap proporsional (opsional tambahan)
-window.addEventListener("resize", () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    // reset posisi partikel agar sesuai dengan ukuran baru
-    for (let i = 0; i < particles.length; i++) {
-        particles[i].x = Math.random() * canvas.width;
-        particles[i].y = Math.random() * canvas.height;
-    }
-});
-
-// ==========================
-// LOGIN MODAL
-// ==========================
-function openLogin() {
-    const modal = document.getElementById("loginModal");
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
-}
-
-function closeLogin() {
-    const modal = document.getElementById("loginModal");
-    modal.classList.add("hidden");
-    modal.classList.remove("flex");
-}
-
-
-// ==========================
-// NOTIFICATION SYSTEM
-// ==========================
-function showNotif(text, type="success") {
-
-    const notif = document.createElement("div");
-
-    notif.className = `notif ${type}`;
-    notif.innerHTML = `<span>✨</span>${text}`;
-
-    document.body.appendChild(notif);
-
-    setTimeout(() => notif.classList.add("show"), 50);
-
-    setTimeout(() => {
-        notif.classList.remove("show");
-        setTimeout(() => notif.remove(), 400);
-    }, 2500);
-}
-
-
-// ==========================
-// NAV ACTIVE
-// ==========================
-document.querySelectorAll(".nav-item").forEach(item => {
-
-    item.addEventListener("click", () => {
-
-        document.querySelectorAll(".nav-item")
-            .forEach(i => i.classList.remove("active"));
-
-        item.classList.add("active");
-
-    });
-
-});
-
-</script>
-
-@stack('scripts')
+    @stack('scripts')
 </body>
 </html>
-
-
-
-

@@ -1,307 +1,264 @@
+{{-- resources/views/profileAkun/menu.blade.php --}}
 @extends('user.component.master')
 
-@section('title', 'Profil Mahasiswa - AKPER HKBP Balige')
+@section('title', 'Profil Saya - AKPER HKBP')
 
 @push('styles')
 <style>
-    /* ===== KHUSUS UNTUK HALAMAN PROFIL ===== */
-    .profile-card {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(12px);
-        border-radius: 1.5rem;
-        border: 1px solid rgba(99, 102, 241, 0.3);
-        overflow: hidden;
-        transition: all 0.3s ease;
+    .profile-wrapper {
+        max-width: 850px;
+        margin: 40px auto;
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 30px;
+        align-items: start;
     }
 
-    .profile-avatar {
-        width: 100px;
-        height: 100px;
+    /* --- KARTU INFORMASI (KIRI) --- */
+    .info-card {
+        background: var(--card-bg);
+        border-radius: 24px;
+        padding: 30px 20px;
+        text-align: center;
+        box-shadow: 0 12px 28px rgba(15, 74, 49, 0.06);
+        border: 1px solid var(--border-color);
+        position: sticky;
+        top: 110px;
+    }
+
+    .avatar-circle {
+        width: 96px;
+        height: 96px;
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-green));
         border-radius: 50%;
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
         display: flex;
         align-items: center;
         justify-content: center;
+        margin: 0 auto 20px;
         font-size: 2.5rem;
-        margin: 0 auto;
-        box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
-    }
-
-    .profile-info-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.75rem 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .profile-label {
-        color: #94a3b8;
-        font-size: 0.85rem;
-    }
-
-    .profile-value {
-        color: #c7d2fe;
-        font-weight: 500;
-        font-size: 0.9rem;
-    }
-
-    .stat-card-mini {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(12px);
-        border-radius: 1rem;
-        padding: 0.75rem;
-        text-align: center;
-        border: 1px solid rgba(99, 102, 241, 0.3);
-        transition: all 0.3s ease;
-    }
-
-    .stat-card-mini:hover {
-        transform: translateY(-3px);
-        border-color: rgba(99, 102, 241, 0.6);
-    }
-
-    .menu-card {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(12px);
-        border-radius: 1.25rem;
-        padding: 1.5rem;
-        text-align: center;
-        transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-        border: 1px solid rgba(99, 102, 241, 0.3);
-        height: 100%;
-        cursor: pointer;
-    }
-
-    .menu-card:hover {
-        transform: translateY(-8px);
-        border-color: rgba(99, 102, 241, 0.7);
-        box-shadow: 0 20px 35px -12px rgba(99, 102, 241, 0.4);
-    }
-
-    .menu-icon {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-        display: inline-block;
-    }
-
-    .menu-title {
-        font-weight: 700;
-        font-size: 1.1rem;
-        margin-bottom: 0.5rem;
-        background: linear-gradient(135deg, #c7d2fe, #a5b4fc);
-        background-clip: text;
-        -webkit-background-clip: text;
-        color: transparent;
-    }
-
-    .menu-desc {
-        font-size: 0.75rem;
-        color: #94a3b8;
-    }
-
-    .badge-notif {
-        background: #ef4444;
         color: white;
-        border-radius: 20px;
-        padding: 2px 8px;
-        font-size: 0.7rem;
-        font-weight: 600;
-        margin-left: 8px;
-        animation: pulse 1.5s infinite;
+        box-shadow: 0 8px 20px rgba(26, 107, 71, 0.25);
     }
 
-    @keyframes pulse {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.7; transform: scale(1.05); }
+    .info-name {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin-bottom: 4px;
+    }
+
+    .info-detail {
+        background: #f6faf8;
+        border-radius: 14px;
+        padding: 16px 14px;
+        margin-top: 20px;
+        text-align: left;
+    }
+
+    .info-detail .row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .info-detail .row:last-child {
+        border-bottom: none;
+    }
+
+    .info-detail .row i {
+        width: 20px;
+        color: var(--primary-color);
+        font-size: 0.9rem;
+        text-align: center;
+    }
+
+    /* --- KARTU FORM (KANAN) --- */
+    .form-card {
+        background: var(--card-bg);
+        border-radius: 24px;
+        padding: 35px 30px;
+        box-shadow: 0 12px 28px rgba(15, 74, 49, 0.06);
+        border: 1px solid var(--border-color);
+        border-top: 4px solid var(--accent-yellow);
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        margin-bottom: 22px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-title i {
+        color: var(--accent-yellow);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: var(--text-dark);
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 13px 18px;
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        font-size: 0.95rem;
+        background: #fafbf9;
+        transition: 0.25s;
+    }
+
+    .form-group input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(26, 107, 71, 0.08);
+        outline: none;
+        background: white;
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 13px 26px;
+        border-radius: 40px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.25s;
+        font-size: 0.95rem;
+    }
+
+    .btn-primary:hover {
+        background: var(--deep-green);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(15, 74, 49, 0.2);
+    }
+
+    .alert {
+        padding: 14px 18px;
+        border-radius: 14px;
+        margin-bottom: 22px;
+        font-size: 0.88rem;
+        font-weight: 600;
+    }
+
+    .alert-success {
+        background: #e3f5ec;
+        color: #0f4a31;
+        border: 1px solid #b7dfc9;
+    }
+
+    .alert-danger {
+        background: #ffe8e8;
+        color: #842029;
+        border: 1px solid #f5c2c7;
+    }
+
+    hr {
+        border: none;
+        border-top: 1px solid var(--border-color);
+        margin: 30px 0 24px;
+    }
+
+    @media (max-width: 768px) {
+        .profile-wrapper {
+            grid-template-columns: 1fr;
+            padding: 0 15px;
+        }
+        .info-card {
+            position: static;
+        }
     }
 </style>
 @endpush
 
 @section('content')
-<div class="main-content">
+<div class="profile-wrapper">
 
-    <!-- HERO SECTION -->
-    <section class="pt-28 pb-8 text-center px-5">
-        <div class="inline-block glass-card px-5 py-2 rounded-full mb-5 fade-up">
-            <span class="text-indigo-300 text-sm font-medium tracking-wide">👤 AKPER HKBP BALIGE</span>
+    {{-- KOLOM KIRI: INFORMASI STATIS --}}
+    <div class="info-card">
+        <div class="avatar-circle">
+            <i class="fas fa-user"></i>
         </div>
-        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight title-main fade-up">
-            Profil Mahasiswa
-        </h1>
-        <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
-            Kelola informasi akun Anda.
-        </p>
-    </section>
-
-    <!-- KONTEN UTAMA -->
-    <section class="section max-w-6xl mx-auto px-5">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-            <!-- SIDEBAR KIRI: INFORMASI PROFIL -->
-            <div class="lg:col-span-1">
-                <div class="profile-card p-6">
-                    <div class="profile-avatar">
-                        👨‍🎓
-                    </div>
-                    <h2 class="text-center text-xl font-bold text-indigo-200 mt-4">{{ session('user')['name'] ?? ''}}</h2>
-                    <p class="text-center text-xs text-indigo-300/70">{{ session('user')['role']['name'] ?? 'Mahasiswa'}}</p>
-
-                    <div class="mt-6 space-y-2">
-                        <div class="profile-info-item">
-                            <span class="profile-label">📧 Email</span>
-                            <span class="profile-value">{{ session('user')['email'] ?? '' }}</span>
-                        </div>
-                        <div class="profile-info-item">
-                            <span class="profile-label">🆔 NPM / NIDN</span>
-                            <span class="profile-value">{{ session('user')['npm'] ?? '-' }}</span>
-                        </div>
-                        <div class="profile-info-item">
-                            <span class="profile-label">🎓 Program Studi</span>
-                            <span class="profile-value">{{ session('user')['study_program'] ?? 'D3 Keperawatan' }}</span>
-                        </div>
-                        <div class="profile-info-item">
-                            <span class="profile-label">📅 Angkatan</span>
-                            <span class="profile-value">{{ session('user')['angkatan'] ?? '-'}}</span>
-                        </div>
-                        <div class="profile-info-item">
-                            <span class="profile-label">📱 No. Telepon</span>
-                            <span class="profile-value">{{session('user')['phone'] ?? '-'}}</span>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 pt-4 border-t border-white/10 text-center">
-                        <button onclick="editProfile()" class="btn-outline w-full text-sm py-2">
-                            ✏️ Edit Profil
-                        </button>
-                    </div>
-                </div>
+        <div class="info-name">{{ $user['name'] ?? 'User' }}</div>
+        <div class="info-detail">
+            <div class="row">
+                <i class="fas fa-id-card"></i>
+                <span><strong>NPM</strong><br>{{ $user['npm'] ?? '-' }}</span>
             </div>
-
-            <!-- SISI KANAN: STATISTIK + MENU -->
-            <div class="lg:col-span-2">
-                <!-- Statistik Ringkas -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-                    <div class="stat-card-mini">
-                        <div class="text-2xl font-bold text-indigo-300">{{ $totalPinjam ?? 0 }}</div>
-                        <div class="text-xs text-gray-400">Total Peminjaman</div>
-                    </div>
-                    <div class="stat-card-mini">
-                        <div class="text-2xl font-bold text-yellow-400">{{ $aktifPinjam ?? 0 }}</div>
-                        <div class="text-xs text-gray-400">Sedang Dipinjam</div>
-                    </div>
-                    <div class="stat-card-mini">
-                        <div class="text-2xl font-bold text-green-400">{{ $totalKti ?? 0 }}</div>
-                        <div class="text-xs text-gray-400">KTI Terupload</div>
-                    </div>
-                    <div class="stat-card-mini">
-                        <div class="text-2xl font-bold text-purple-400">{{ $point ?? 0 }}</div>
-                        <div class="text-xs text-gray-400">Poin Aktivitas</div>
-                    </div>
-                </div>
-
-                <!-- Menu-Menu Utama (Card) -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-                    <!-- Menu History Peminjaman -->
-                    <a href="{{ route('user.history') }}" class="no-underline block">
-                        <div class="menu-card">
-                            <div class="menu-icon">📚</div>
-                            <h3 class="menu-title">History Peminjaman</h3>
-                            <p class="menu-desc">Lihat riwayat peminjaman buku, status, dan denda</p>
-                            <div class="mt-3 text-indigo-400 text-sm">Lihat detail →</div>
-                        </div>
-                    </a>
-
-                    <!-- Menu Inbox (Notifikasi) -->
-                    <a href="{{ route('user.inbox') }}" class="no-underline block">
-                        <div class="menu-card">
-                            <div class="menu-icon">📥</div>
-                            <h3 class="menu-title">
-                                Inbox
-                                @if(($unreadNotif ?? 0) > 0)
-                                    <span class="badge-notif">{{ $unreadNotif }}</span>
-                                @endif
-                            </h3>
-                            <p class="menu-desc">Pesan dan notifikasi dari sistem perpustakaan</p>
-                            <div class="mt-3 text-indigo-400 text-sm">Buka kotak masuk →</div>
-                        </div>
-                    </a>
-
-                    <!-- Menu Pengaturan -->
-                    <div class="menu-card" onclick="settings()">
-                        <div class="menu-icon">⚙️</div>
-                        <h3 class="menu-title">Pengaturan</h3>
-                        <p class="menu-desc">Atur preferensi akun, notifikasi, dan keamanan</p>
-                        <div class="mt-3 text-indigo-400 text-sm">Kelola →</div>
-                    </div>
-
-                    <!-- Menu Logout -->
-                    <div class="menu-card" onclick="logout()">
-                        <div class="menu-icon">🚪</div>
-                        <h3 class="menu-title">Logout</h3>
-                        <p class="menu-desc">Keluar dari akun Anda</p>
-                        <div class="mt-3 text-red-400 text-sm">Logout →</div>
-                    </div>
-
-                </div>
+            <div class="row">
+                <i class="fas fa-envelope"></i>
+                <span><strong>Email</strong><br>{{ $user['email'] ?? '-' }}</span>
             </div>
         </div>
-    </section>
+    </div>
+
+    {{-- KOLOM KANAN: FORM YANG DAPAT DIUBAH --}}
+    <div>
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+        @if(session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+
+        {{-- Form Ganti Nama --}}
+        <div class="form-card">
+            <div class="section-title">
+                <i class="fas fa-user-edit"></i> Ubah Nama Lengkap
+            </div>
+            <form action="{{ route('profile.update') }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" name="name" value="{{ old('name', $user['name'] ?? '') }}" required>
+                </div>
+                <button type="submit" class="btn-primary">Simpan Nama</button>
+            </form>
+
+            <hr>
+
+            {{-- Form Ganti Password --}}
+            <div class="section-title">
+                <i class="fas fa-lock"></i> Ubah Password
+            </div>
+            <form action="{{ route('profile.password.update') }}" method="POST">
+                @csrf
+                @method('PUT')
+
+                <div class="form-group">
+                    <label>Password Saat Ini</label>
+                    <input type="password" name="current_password" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password Baru</label>
+                    <input type="password" name="new_password" required minlength="8">
+                </div>
+
+                <div class="form-group">
+                    <label>Konfirmasi Password Baru</label>
+                    <input type="password" name="new_password_confirmation" required minlength="8">
+                </div>
+
+                <button type="submit" class="btn-primary">Simpan Password</button>
+            </form>
+        </div>
+    </div>
+
 </div>
 @endsection
-
-@push('scripts')
-<script>
-    function editProfile() {
-        showNotification('✏️ Fitur edit profil akan segera tersedia', 'info');
-    }
-
-    function settings() {
-        showNotification('⚙️ Halaman pengaturan sedang dalam pengembangan', 'info');
-
-    }
-
-    function logout() {
-        if (confirm('Apakah Anda yakin ingin keluar?')) {
-            document.getElementById('logout-form')?.submit();
-        }
-    }
-
-    function showNotification(message, type = 'success') {
-        if (typeof showNotif === 'function') {
-            showNotif(message, type);
-        } else {
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.innerHTML = `
-                <div class="flex items-center gap-2">
-                    <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
-                    <span>${message}</span>
-                </div>
-            `;
-            document.body.appendChild(notification);
-            setTimeout(() => notification.classList.add('show'), 10);
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
-    }
-
-    // Form logout tersembunyi (gunakan jika belum ada)
-    if (!document.getElementById('logout-form')) {
-        const form = document.createElement('form');
-        form.id = 'logout-form';
-        form.method = 'POST';
-        form.action = '{{ route("logout") }}';
-        form.style.display = 'none';
-        form.innerHTML = '@csrf';
-        document.body.appendChild(form);
-    }
-</script>
-@endpush
-
-
-
-

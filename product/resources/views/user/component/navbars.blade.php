@@ -1,241 +1,300 @@
-<style>
-    .animate-pulse {
-    animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
-</style>
-
-
-<!-- NAVBAR MODERN FUTURISTIC (SEMUA RUTE SUDAH DIPERBAIKI) -->
-<header class="fixed top-0 left-0 w-full z-[999] px-6 py-4">
-    <div class="navbar-container flex items-center justify-between">
-
-        <!-- LOGO SECTION -->
-        <div class="flex items-center gap-3">
-            <div class="flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-400/30">
-                <img src="{{ asset('assets/img/logo akper.png') }}"
-                    alt="Logo AKPER"
-                    class="w-14 h-14 object-contain">
-                    <!-- Ubah w-7 h-7 menjadi w-14 h-14 di atas agar gambar membesar -->
-            </div>
-            <div>
-                <span class="nav-logo">AKPER HKBP</span>
-                <div class="text-[10px] text-indigo-300/60 tracking-wider">BALIGE</div>
-            </div>
+{{-- resources/views/user/component/navbars.blade.php --}}
+<header>
+    <div class="logo-container">
+        <div class="logo-img">
+            <img src="{{ asset('assets/img/logo akper.png') }}" alt="Logo Perpustakaan AKPER HKBP">
         </div>
-
-        <!-- DESKTOP MENU -->
-        <ul class="desktop-menu flex items-center gap-1 lg:gap-2">
-            <!-- HOME -->
-            <li class="nav-item-modern">
-                <a href="{{ route('user.dashboard') }}" class="px-3 py-2 block">Home</a>
-            </li>
-
-            <!-- PROFILE DROPDOWN -->
-            <li class="dropdown-modern nav-item-modern">
-                <button class="flex items-center gap-1 px-3 py-2">
-                    Profile
-                    <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </button>
-                <ul class="dropdown-menu-modern">
-                    <li><a href="{{ route('user.profile.visi_misi') }}" class="dropdown-item-modern">Visi Misi</a></li>
-                    <li><a href="{{ route('user.profile.kerjasama') }}" class="dropdown-item-modern">Kerjasama</a></li>
-                    <li><a href="{{ route('user.profile.struktur') }}" class="dropdown-item-modern">Struktur</a></li>
-                    <li><a href="{{ route('user.profile.tugas_fungsi') }}" class="dropdown-item-modern">Tugas & Fungsi</a></li>
+        <div class="logo-text">
+            <h1>Perpustakaan AKPER HKBP</h1>
+            <span>Sekolah Keperawatan HKBP Balige</span>
+        </div>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="{{ route('user.dashboard') }}">Home</a></li>
+            <li>
+                <a href="#">Profile <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ route('user.profile.visi_misi') }}">Visi Misi</a></li>
+                    <li><a href="{{ route('user.profile.kerjasama') }}">Kerjasama</a></li>
+                    <li><a href="{{ route('user.profile.struktur') }}">Struktur Pengurus</a></li>
+                    <li><a href="{{ route('user.profile.tugas_fungsi') }}">Tugas, Fungsi, Tujuan</a></li>
                 </ul>
             </li>
-
-            <!-- LAYANAN DROPDOWN -->
-            <li class="dropdown-modern nav-item-modern">
-                <button class="flex items-center gap-1 px-3 py-2">
-                    Layanan <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <ul class="dropdown-menu-modern">
-                    <li><a href="{{ route('user.pinbal.index') }}" class="dropdown-item-modern">Pinjam Buku</a></li>
-                    <li><a href="{{ route('user.waktu.layanan') }}" class="dropdown-item-modern">Waktu Layanan</a></li>
+            <li>
+                <a href="#">Layanan <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ route('user.pinbal.index') }}">Pinjam Buku</a></li>
+                    <li><a href="{{ route('user.waktu.layanan') }}">Waktu Layanan</a></li>
                 </ul>
             </li>
-
-            <!-- KOLEKSI DROPDOWN (Rute koleksi elektronik diperbaiki) -->
-            <li class="dropdown-modern nav-item-modern">
-                <button class="flex items-center gap-1 px-3 py-2">
-                    Koleksi <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <ul class="dropdown-menu-modern" style="min-width: 240px;">
-                    <!-- Koleksi Tercetak -->
-                    <li class="submenu-modern">
-                        <a href="#" class="dropdown-item-modern flex justify-between items-center">
-                            Koleksi Tercetak <span class="text-indigo-400 text-xs">▶</span>
-                        </a>
-                        <ul class="submenu-menu-modern">
-                            <li><a href="{{ route('user.koleksi.jurnal') }}" class="dropdown-item-modern">Jurnal</a></li>
-                            <li><a href="{{ route('user.koleksi.buku_pengayaan') }}" class="dropdown-item-modern">Buku Pengayaan</a></li>
-                            <li><a href="{{ route('user.koleksi.buku_referensi') }}" class="dropdown-item-modern">Buku Referensi</a></li>
-                            <li><a href="{{ route('user.koleksi.majalah') }}" class="dropdown-item-modern">Majalah</a></li>
-                        </ul>
-                    </li>
-                    <!-- Koleksi Elektronik (perbaikan: pakai final_project.koleksi) -->
-                    <li class="submenu-modern">
-                        <a href="#" class="dropdown-item-modern flex justify-between items-center">
-                            Koleksi Elektronik <span class="text-indigo-400 text-xs">▶</span>
-                        </a>
-                        <ul class="submenu-menu-modern">
-                            <li><a href="{{ route('final_project.koleksi', 'ebook') }}" class="dropdown-item-modern">E-book</a></li>
-                            <li><a href="{{ route('final_project.koleksi', 'e-article') }}" class="dropdown-item-modern">E-article</a></li>
-                            <li><a href="{{ route('final_project.koleksi', 'cd') }}" class="dropdown-item-modern">CD/DVD</a></li>
-                            <li><a href="{{ route('final_project.koleksi', 'video') }}" class="dropdown-item-modern">Video Edukasi</a></li>
-                            <li><a href="{{ route('final_project.kti') }}" class="dropdown-item-modern">KTI Digital</a></li>
-                        </ul>
-                    </li>
+            <li>
+                <a href="#">Koleksi Tercetak <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ route('user.koleksi.jurnal') }}">Jurnal</a></li>
+                    <li><a href="{{ route('user.koleksi.buku_pengayaan') }}">Buku Pengayaan</a></li>
+                    <li><a href="{{ route('user.koleksi.buku_referensi') }}">Buku Referensi</a></li>
+                    <li><a href="{{ route('user.koleksi.majalah') }}">Majalah</a></li>
                 </ul>
             </li>
-
-            <!-- BERITA -->
-            <li class="nav-item-modern">
-                <a href="{{ route('user.berita') }}" class="px-3 py-2 block">Berita</a>
+            <li>
+                <a href="#">Koleksi Elektronik <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ route('final_project.koleksi', 'ebook') }}">E-book</a></li>
+                    <li><a href="{{ route('final_project.koleksi', 'e-article') }}">E-article</a></li>
+                    <li><a href="{{ route('final_project.koleksi', 'cd') }}">CD/DVD</a></li>
+                    <li><a href="{{ route('final_project.koleksi', 'video') }}">Video Edukasi</a></li>
+                    <li><a href="{{ route('final_project.kti') }}">KTI Digital</a></li>
+                </ul>
             </li>
-
-            <!-- INFORMASI DROPDOWN -->
-            <li class="dropdown-modern nav-item-modern">
-                <button class="flex items-center gap-1 px-3 py-2">
-                    Informasi <svg class="chevron w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <ul class="dropdown-menu-modern">
-                    <li><a href="{{ route('user.panduan') }}" class="dropdown-item-modern">Panduan</a></li>
+            <li><a href="{{ route('user.berita') }}">Berita</a></li>
+            <li>
+                <a href="#">Informasi <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ route('user.panduan') }}">Panduan</a></li>
                 </ul>
             </li>
         </ul>
+    </nav>
 
-        <!-- AREA LOGIN / PROFIL + MOBILE MENU BUTTON -->
-<!-- AREA LOGIN / PROFIL + MOBILE MENU BUTTON -->
-<div class="flex items-center gap-3">
-@if(session()->has('user'))
-    {{-- NOTIFIKASI --}}
-    @php
-        $unreadNotif = \App\Models\Notification::where('user_id', session('user_id'))
-            ->where('is_read', false)
-            ->count();
-    @endphp
-    
-    <a href="{{ route('user.inbox') }}" 
-       class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300">
-        <svg class="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-        </svg>
-        @if($unreadNotif > 0)
-            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
-                {{ $unreadNotif > 9 ? '9+' : $unreadNotif }}
-            </span>
+    {{-- Bagian kanan: notifikasi + login/profil dinamis --}}
+    <div style="display: flex; align-items: center; gap: 15px;">
+        @if(session()->has('user'))
+            @php
+                $userId = session('user_id') ?? session('user')['id'] ?? 0;
+                $unreadNotif = \App\Models\Notification::where('user_id', $userId)
+                    ->where('is_read', false)
+                    ->count();
+                $allNotifications = \App\Models\Notification::where('user_id', $userId)
+                    ->orderBy('created_at', 'desc')
+                    ->take(20)
+                    ->get()
+                    ->groupBy(function($item) {
+                        return \Carbon\Carbon::parse($item->created_at)->isToday() ? 'HARI INI' : 'SEBELUMNYA';
+                    });
+            @endphp
+
+            {{-- Tombol Notifikasi (POPUP) --}}
+            <div class="notification-icon-wrapper" id="notificationBell" onclick="openNotifModal()">
+                <i class="fas fa-bell"></i>
+                @if($unreadNotif > 0)
+                    <span class="notification-badge" id="notifBadge">
+                        {{ $unreadNotif > 9 ? '9+' : $unreadNotif }}
+                    </span>
+                @endif
+            </div>
+
+            {{-- Tombol Profil --}}
+            <div class="profile-dropdown-wrapper">
+                <button class="profile-btn" aria-label="Menu Profil">
+                    <span class="profile-avatar"><i class="fas fa-user"></i></span>
+                    <span class="user-name">{{ session('user')['name'] ?? 'Profil' }}</span>
+                    <i class="fas fa-caret-down profile-caret"></i>
+                </button>
+                <ul class="profile-dropdown-menu">
+                    <li><a href="{{ route('profile.menu') }}"><i class="fas fa-user-circle"></i> Menu Profile</a></li>
+                    <li class="logout-item">
+                        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        @else
+            <a href="{{ route('login') }}" class="login-btn"><i class="fas fa-sign-in-alt"></i> LOGIN</a>
         @endif
-    </a>
-    
-    <a href="{{ route('profile.menu') }}"
-       class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 group">
-        <svg class="w-5 h-5 text-indigo-300 group-hover:text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-        </svg>
-        <span class="text-sm font-medium text-indigo-200 truncate max-w-[120px]">
-            {{ session('user')['name'] ?? 'User' }}
-        </span>
-    </a>
-@else
-    <button onclick="window.location.href='{{ route('login') }}'" class="btn-login-modern">
-        <span class="hidden sm:inline">Login</span>
-    </button>
-@endif
-
-    <div class="mobile-menu-btn" id="mobileMenuBtn">
-        <svg class="w-6 h-6 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-    </div>
-</div>
     </div>
 </header>
 
-<!-- FORM LOGOUT TERSEMBUNYI (POST + CSRF) -->
+{{-- Form Logout Tersembunyi --}}
 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
     @csrf
 </form>
 
-<!-- CSS DAN SCRIPT (tambahan) -->
-@push('styles')
+{{-- MODAL NOTIFIKASI POPUP --}}
+<div id="notificationModal" class="notification-modal" style="display: none;">
+    <div class="notification-panel">
+        <div class="notif-header">
+            <h3><i class="fas fa-inbox"></i> Inbox Notifikasi</h3>
+            <span class="close-notif" onclick="closeNotifModal()">&times;</span>
+        </div>
+        <div class="notif-body">
+            @if(session()->has('user'))
+                @forelse($allNotifications as $group => $items)
+                    <div class="notif-group">
+                        <div class="group-title">{{ $group }} · {{ $items->count() }} PESAN</div>
+                        @foreach($items as $notif)
+                            <div class="notif-item {{ $notif->is_read ? 'read' : '' }}"
+                                 data-id="{{ $notif->id }}"
+                                 onclick="markAsRead({{ $notif->id }})">
+                                <div class="notif-icon">
+                                    <i class="fas {{ $notif->icon ?? 'fa-bell' }}"></i>
+                                </div>
+                                <div class="notif-content">
+                                    <div class="notif-title">{{ $notif->title }}</div>
+                                    <div class="notif-desc">{{ $notif->message }}</div>
+                                    <div class="notif-time">{{ $notif->created_at->diffForHumans() }}</div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @empty
+                    <div style="text-align: center; padding: 40px 20px; color: #5a7060;">
+                        <i class="fas fa-bell-slash" style="font-size: 3rem; margin-bottom: 15px; display: block;"></i>
+                        <p>Belum ada notifikasi</p>
+                    </div>
+                @endforelse
+            @endif
+        </div>
+        <div class="notif-footer" onclick="markAllAsRead()">
+            Tandai semua telah dibaca
+        </div>
+    </div>
+</div>
+
 <style>
-    /* ===== DROPDOWN & SUBMENU STYLES ===== */
-    .dropdown-modern { position: relative; }
-    .dropdown-modern .dropdown-menu-modern {
-        position: absolute; top: 100%; left: 0;
-        background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px);
-        border-radius: 1rem; border: 1px solid rgba(99, 102, 241, 0.4);
-        padding: 0.5rem 0; min-width: 180px;
-        opacity: 0; visibility: hidden; transform: translateY(-10px);
-        transition: all 0.2s ease; z-index: 1000;
+    /* =============== NAVBAR STYLE (PUTIH) =============== */
+    header {
+        background-color: #ffffff;
+        color: var(--text-dark);
+        padding: 0.8rem 3%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 12px rgba(15, 74, 49, 0.10);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 2px solid #e6f0ea;
     }
-    .dropdown-modern:hover .dropdown-menu-modern {
-        opacity: 1; visibility: visible; transform: translateY(0);
-    }
-    .dropdown-item-modern {
-        display: block; padding: 0.5rem 1.2rem;
-        color: #c7d2fe; transition: all 0.2s; font-size: 0.9rem;
-    }
-    .dropdown-item-modern:hover { background: rgba(99, 102, 241, 0.3); color: white; }
-    .submenu-modern { position: relative; }
-    .submenu-menu-modern {
-        position: absolute; left: 100%; top: 0;
-        background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px);
-        border-radius: 1rem; border: 1px solid rgba(99, 102, 241, 0.4);
-        padding: 0.5rem 0; min-width: 180px;
-        opacity: 0; visibility: hidden; transform: translateX(-10px);
-        transition: all 0.2s ease; z-index: 1001;
-    }
-    .submenu-modern:hover .submenu-menu-modern {
-        opacity: 1; visibility: visible; transform: translateX(0);
-    }
-    .glass-card {
-        background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px);
-        border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 1rem;
-    }
-    .btn-outline {
-        background: transparent; border: 1px solid #6366f1;
-        color: #c7d2fe; padding: 0.5rem 1rem; border-radius: 0.75rem;
-        transition: all 0.2s;
-    }
-    .btn-outline:hover { background: rgba(99, 102, 241, 0.2); }
-    .btn-login-modern {
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        padding: 0.5rem 1.2rem; border-radius: 2rem; color: white;
-        font-weight: 500; transition: all 0.2s; border: none; cursor: pointer;
-    }
-    .btn-login-modern:hover { transform: scale(1.02); box-shadow: 0 0 10px rgba(99, 102, 241, 0.5); }
-    .nav-item-modern a, .nav-item-modern button {
-        color: #c7d2fe; font-weight: 500; transition: all 0.2s;
-        background: transparent; border: none;
-    }
-    .nav-item-modern:hover a, .nav-item-modern:hover button { color: white; text-shadow: 0 0 5px #6366f1; }
-    .mobile-menu-btn { display: none; cursor: pointer; }
-    @media (max-width: 1024px) {
-        .desktop-menu { display: none; }
-        .mobile-menu-btn { display: block; }
-    }
+
+    .logo-container { display: flex; align-items: center; gap: 12px; }
+    .logo-img { width: 50px; height: 50px; background-color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .logo-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .logo-text h1 { font-size: 0.95rem; font-weight: 700; text-transform: uppercase; line-height: 1.2; color: var(--text-dark); }
+    .logo-text span { font-size: 0.75rem; color: var(--text-muted); }
+
+    nav ul { list-style: none; display: flex; gap: 5px; }
+    nav ul li { position: relative; }
+    nav ul li a { padding: 10px 12px; display: block; font-size: 0.85rem; font-weight: 600; transition: 0.3s; color: var(--text-dark); }
+    nav ul li a:hover, nav ul li > a.active { color: var(--primary-color); }
+
+    .dropdown-menu { position: absolute; top: 100%; left: 0; background-color: #ffffff; min-width: 220px; box-shadow: 0 8px 20px rgba(15,74,49,0.12); border-radius: 8px; display: none; z-index: 100; border-top: 3px solid var(--accent-green); }
+    .dropdown-menu li { width: 100%; }
+    .dropdown-menu li a { color: var(--text-dark) !important; padding: 10px 15px; border-bottom: 1px solid #f0f5f2; font-weight: 500; font-size: 0.8rem; }
+    .dropdown-menu li a:hover { background-color: #f0f9f4; color: var(--primary-color) !important; padding-left: 20px; }
+    nav ul li:hover > .dropdown-menu { display: block; }
+
+    .login-btn { background: linear-gradient(135deg, var(--primary-color) 0%, #1f7d54 100%); color: #fff !important; padding: 9px 22px; border-radius: 50px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; border: none; box-shadow: 0 4px 10px rgba(26,107,71,0.3); }
+    .login-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(15,74,49,0.4); }
+
+    /* ========== PROFILE BUTTON & DROPDOWN ========== */
+    .profile-dropdown-wrapper { position: relative; }
+    .profile-btn { display: flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #1a6b47 0%, #219150 100%); color: #fff; border: none; padding: 6px 16px 6px 6px; border-radius: 50px; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(26,107,71,0.35); }
+    .profile-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(15,74,49,0.45); }
+    .profile-avatar { width: 32px; height: 32px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: white; }
+    .user-name { max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .profile-caret { font-size: 0.7rem; opacity: 0.9; transition: transform 0.3s; }
+    .profile-dropdown-wrapper:hover .profile-caret { transform: rotate(180deg); }
+    .profile-dropdown-menu { position: absolute; top: calc(100% + 10px); right: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); min-width: 200px; border-radius: 12px; box-shadow: 0 10px 30px rgba(15,74,49,0.2); border: 1px solid rgba(26,107,71,0.15); padding: 8px 0; list-style: none; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.25s ease; z-index: 200; }
+    .profile-dropdown-menu::before { content: ''; position: absolute; top: -8px; right: 20px; width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 8px solid rgba(255,255,255,0.85); filter: drop-shadow(0 -2px 2px rgba(15,74,49,0.05)); }
+    .profile-dropdown-wrapper:hover .profile-dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+    .profile-dropdown-menu li a { display: flex; align-items: center; gap: 10px; padding: 10px 20px; color: #1a3b2f !important; font-weight: 500; font-size: 0.85rem; transition: all 0.2s; text-decoration: none; }
+    .profile-dropdown-menu li a i { width: 18px; text-align: center; color: var(--primary-color); }
+    .profile-dropdown-menu li a:hover { background: rgba(26,107,71,0.08); padding-left: 25px; }
+    .logout-item a { color: #c0392b !important; }
+    .logout-item a i { color: #c0392b !important; }
+
+    /* ========== NOTIFICATION ICON ========== */
+    .notification-icon-wrapper { position: relative; cursor: pointer; font-size: 1.2rem; color: var(--text-dark); transition: 0.2s; background: rgba(0,0,0,0.04); width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+    .notification-icon-wrapper:hover { background: rgba(26,107,71,0.1); color: var(--primary-color); }
+    .notification-badge { position: absolute; top: -5px; right: -5px; background: #e74c3c; color: white; font-size: 0.6rem; font-weight: 800; padding: 2px 6px; border-radius: 30px; min-width: 18px; text-align: center; }
+
+    /* ========== MODAL NOTIFIKASI ========== */
+    .notification-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; }
+    .notification-panel { background: #fff; max-width: 480px; width: 90%; border-radius: 32px; box-shadow: 0 25px 45px rgba(0,0,0,0.25); overflow: hidden; animation: fadeSlideUp 0.3s ease; border-top: 4px solid #f1c40f; }
+    @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .notif-header { padding: 20px 24px; background: white; border-bottom: 1px solid #d4e5d9; display: flex; justify-content: space-between; align-items: center; }
+    .notif-header h3 { font-size: 1.3rem; font-weight: 800; color: #0d2137; display: flex; align-items: center; gap: 8px; }
+    .notif-header h3 i { color: #f1c40f; }
+    .close-notif { font-size: 1.5rem; cursor: pointer; color: #9aa6b5; transition: 0.2s; line-height: 1; }
+    .close-notif:hover { color: #e74c3c; }
+    .notif-body { max-height: 500px; overflow-y: auto; padding: 8px 0; }
+    .notif-group { margin: 16px 0; }
+    .group-title { padding: 8px 24px; font-size: 0.7rem; font-weight: 800; color: #5a7060; text-transform: uppercase; letter-spacing: 1px; background: #f8fbf9; border-top: 1px solid #d4e5d9; border-bottom: 1px solid #d4e5d9; }
+    .notif-item { display: flex; gap: 14px; padding: 16px 24px; border-bottom: 1px solid #d4e5d9; transition: 0.2s; cursor: pointer; }
+    .notif-item:hover { background: #fafdfb; }
+    .notif-item.read { opacity: 0.7; background: #fcfdfc; }
+    .notif-icon { width: 40px; height: 40px; background: rgba(26,107,71,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #1a6b47; font-size: 1rem; }
+    .notif-content { flex: 1; }
+    .notif-title { font-weight: 700; color: #0d2137; font-size: 0.9rem; margin-bottom: 4px; }
+    .notif-desc { font-size: 0.75rem; color: #5a7060; line-height: 1.4; }
+    .notif-time { font-size: 0.65rem; color: #5a7060; margin-top: 6px; }
+    .notif-footer { padding: 16px 24px; border-top: 1px solid #d4e5d9; text-align: center; font-size: 0.8rem; color: #1a6b47; font-weight: 600; cursor: pointer; }
+    .notif-footer:hover { background: #f0f7f3; }
+
+    @media (max-width: 1100px) { nav ul { gap: 2px; } nav ul li a { font-size: 0.75rem; padding: 10px 8px; } }
+    @media (max-width: 800px) { nav { overflow-x: auto; white-space: nowrap; } nav ul { display: inline-flex; } .logo-text h1 { font-size: 0.8rem; } .profile-btn { padding: 6px 12px 6px 6px; } .user-name { max-width: 70px; } }
 </style>
-@endpush
 
 @push('scripts')
 <script>
-    window.logout = function() {
-        if (confirm('Apakah Anda yakin ingin keluar?')) {
-            document.getElementById('logout-form').submit();
+    function openNotifModal() {
+        document.getElementById('notificationModal').style.display = 'flex';
+    }
+
+    function closeNotifModal() {
+        document.getElementById('notificationModal').style.display = 'none';
+    }
+
+    function markAsRead(id) {
+        fetch('/notifications/' + id + '/read', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json'
+            }
+        }).then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  const item = document.querySelector(`.notif-item[data-id="${id}"]`);
+                  if (item) item.classList.add('read');
+                  updateBadge();
+              }
+          });
+    }
+
+    function markAllAsRead() {
+        fetch('/notifications/read-all', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json'
+            }
+        }).then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  document.querySelectorAll('.notif-item').forEach(item => item.classList.add('read'));
+                  updateBadge();
+              }
+          });
+    }
+
+    function updateBadge() {
+        const badge = document.getElementById('notifBadge');
+        if (!badge) return;
+        const unreadItems = document.querySelectorAll('.notif-item:not(.read)').length;
+        if (unreadItems === 0) {
+            badge.style.display = 'none';
+        } else {
+            badge.textContent = unreadItems > 9 ? '9+' : unreadItems;
+            badge.style.display = 'inline-block';
         }
-    };
+    }
+
+    window.addEventListener('click', function(e) {
+        const modal = document.getElementById('notificationModal');
+        if (e.target === modal) closeNotifModal();
+    });
 </script>
 @endpush
-
-
-
-

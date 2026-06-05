@@ -1,80 +1,86 @@
 <?php
+    namespace App\Http\Controllers;
 
-namespace App\Http\Controllers;
+    use Illuminate\Http\Request;
+    use Illuminate\Support\Facades\Http;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use App\Models\Order;
-use App\Models\FinalProject;
-use App\Models\User;
-
-class ProfileMenuController extends Controller
-{
-    /**
-     * Halaman menu profil (setelah klik ikon profil)
-     */
-    public function index()
+    class ProfileMenuController extends Controller
     {
-        return view('profileAkun.menu');
-    }
+        /**
+         * Halaman profil user (hanya bisa diakses jika sudah login)
+         */
+        public function index()
+        {
+            // Pastikan user sudah login (session 'user' ada)
+            if (!session()->has('user')) {
+                return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
+            }
 
-    /**
-     * Tampilkan form edit profil
-     */
-    public function editProfile()
-    {
-        $user = User::find(session('user_id'));
-        return view('user.profile.edit', compact('user'));
-    }
+            $user = session('user');
 
-    /**
-     * Update data profil user
-     */
-    public function updateProfile(Request $request)
-    {
-        $user = User::find(session('user_id'));
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'phone' => 'nullable|string|max:15',
-            'npm' => 'nullable|string|max:20',
-            'study_program' => 'nullable|string|max:100',
-            'angkatan' => 'nullable|string|max:4',
-            'password' => 'nullable|min:6|confirmed',
-        ]);
-
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->phone = $request->phone;
-        $user->npm = $request->npm;
-        $user->study_program = $request->study_program;
-        $user->angkatan = $request->angkatan;
-
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
+            return view('profileAkun.menu', compact('user'));
         }
 
-        $user->save();
+        /**
+         * Update nama user melalui API service
+         */
+        public function updateProfile(Request $request)
+        {
+            $request->validate([
+                'name' => 'required|string|max:255',
+            ]);
 
-        return redirect()->route('user.profile.show')->with('success', 'Profil berhasil diperbarui.');
+            $token = session('auth_token');
+            if (!$token) {
+                return back()->with('error', 'Sesi habis, silakan login ulang.');
+            }
+
+            $response = Http::withToken($token)
+                ->put(env('AUTH_SERVICE_URL') . '/user/profile', [
+                    'name' => $request->name,
+                ]);
+
+            $data = $response->json();
+
+            if ($response->successful() && ($data['success'] ?? false)) {
+                // Perbarui session user
+                $user = session('user');
+                $user['name'] = $request->name;
+                session(['user' => $user]);
+
+                return back()->with('success', 'Nama berhasil diperbarui.');
+            }
+
+            return back()->with('error', $data['message'] ?? 'Gagal memperbarui nama.');
+        }
+
+        /**
+         * Update password user melalui API service
+         */
+        public function updatePassword(Request $request)
+        {
+            $request->validate([
+                'current_password' => 'required|string',
+                'new_password'     => 'required|string|min:8|confirmed',
+            ]);
+
+            $token = session('auth_token');
+            if (!$token) {
+                return back()->with('error', 'Sesi habis, silakan login ulang.');
+            }
+
+            $response = Http::withToken($token)
+                ->put(env('AUTH_SERVICE_URL') . '/user/password', [
+                    'current_password' => $request->current_password,
+                    'new_password'     => $request->new_password,
+                ]);
+
+            $data = $response->json();
+
+            if ($response->successful() && ($data['success'] ?? false)) {
+                return back()->with('success', 'Password berhasil diubah.');
+            }
+
+            return back()->with('error', $data['message'] ?? 'Gagal mengubah password.');
+        }
     }
-
-    /**
-     * Tampilkan halaman profil (detail)
-     */
-    public function show()
-    {
-        $user = User::find(session('user_id'));
-        $unreadNotif = $user->unreadNotifications->count();
-        $totalPinjam = Order::where('user_id', $user->id)->count();
-        $aktifPinjam = Order::where('user_id', $user->id)
-                        ->where('status', 'approved')
-                        ->whereNull('returned_at')
-                        ->count();
-        $totalKti = FinalProject::where('user_id', $user->id)->count();
-        $point = 0; // sesuaikan jika ada sistem poin
-
-        return view('user.profile.show', compact('user', 'unreadNotif', 'totalPinjam', 'aktifPinjam', 'totalKti', 'point'));
-    }
-}

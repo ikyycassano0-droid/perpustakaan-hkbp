@@ -217,6 +217,3 @@
 </script>
 
 @endsection
-
-
-

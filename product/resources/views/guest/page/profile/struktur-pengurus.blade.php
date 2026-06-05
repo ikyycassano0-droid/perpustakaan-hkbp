@@ -1,1301 +1,445 @@
+{{-- resources/views/guest/page/profile/struktur-pengurus.blade.php --}}
 @extends('guest.component.master')
 
-@section('title', 'Struktur Pengurus - AKPER HKBP Balige')
+@section('title', 'Struktur Pengurus - Perpustakaan Sekolah Keperawatan HKBP')
 
 @push('styles')
 <style>
     /* ============================================
-       CSS KHUSUS UNTUK HALAMAN STRUKTUR
-       Hanya CSS yang BELUM ADA di master blade
+       STYLE (sama seperti sebelumnya)
     ============================================ */
-
-    /* Glass card untuk struktur */
-    .glass-card {
-        background: rgba(30, 41, 59, 0.5);
-        backdrop-filter: blur(14px);
-        border: 1px solid rgba(99, 102, 241, 0.25);
+    :root {
+        --primary-color: #1a6b47;
+        --deep-green: #0f4a31;
+        --accent-green: #2daa6e;
+        --accent-yellow: #f1c40f;
+        --text-dark: #0d2137;
+        --text-muted: #5a7060;
+        --light-bg: #f4f7f5;
+        --card-bg: #ffffff;
+        --border-color: #d4e5d9;
     }
 
-    /* Glow text */
-    .glow-text {
-        text-shadow: 0 0 12px rgba(99, 102, 241, 0.7);
+    .page-banner {
+        background: linear-gradient(rgba(15, 74, 49, 0.85), rgba(26, 107, 71, 0.85)),
+                    url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1500&q=80');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 70px 5% 80px;
+        text-align: center;
     }
 
-    /* Tambahkan di style Visi Misi */
-    .depth-2 { transform: translateZ(24px); }
-
-    /* Title utama */
-    .title-main {
-        font-weight: 800;
-        background: linear-gradient(135deg, #ffffff, #a5b4fc, #6366f1);
-        background-clip: text;
-        -webkit-background-clip: text;
-        color: transparent;
-        text-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+    .page-banner h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.4rem;
+        margin-bottom: 10px;
+        font-weight: 900;
     }
 
-    /* Neon border efek */
-    .neon-border {
-        position: relative;
-        border-radius: 1.5rem;
-        transition: all 0.3s ease;
-        cursor: pointer;
+    .page-banner p {
+        font-size: 1.05rem;
+        opacity: 0.92;
     }
 
-    .neon-border::before {
-        content: "";
-        position: absolute;
-        inset: -1px;
-        border-radius: 1.5rem;
-        background: linear-gradient(130deg, #6366f1, #8b5cf6, #3b82f6);
-        opacity: 0;
-        transition: 0.3s ease;
-        z-index: -1;
-    }
-
-    .neon-border:hover::before {
-        opacity: 0.35;
-    }
-
-    .neon-border:hover {
-        transform: translateY(-3px);
-    }
-
-    /* Hover card effect */
-    .hover-card {
-        transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    }
-
-    .hover-card:hover {
-        transform: translateY(-5px);
-        border-color: rgba(99, 102, 241, 0.5);
-        box-shadow: 0 15px 30px -12px rgba(99, 102, 241, 0.25);
-    }
-
-    /* Line connector */
-    .line {
-        width: 2px;
-        height: 50px;
-        background: linear-gradient(to bottom, #6366f1, rgba(99,102,241,0.15));
-        margin: 0 auto;
-    }
-
-    /* Statistik card */
-    .stat-card {
-        background: rgba(15, 23, 42, 0.5);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 1.25rem;
-        transition: all 0.3s ease;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-5px);
-        border-color: rgba(99, 102, 241, 0.4);
-        box-shadow: 0 10px 25px -10px rgba(99, 102, 241, 0.2);
-    }
-
-    .stat-number {
-        font-size: 2rem;
-        font-weight: 800;
-        background: linear-gradient(135deg, #c7d2fe, #a5b4fc);
-        background-clip: text;
-        -webkit-background-clip: text;
-        color: transparent;
-    }
-
-    /* Timeline dot */
-    .timeline-dot {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    .main-layout {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+        max-width: 1300px;
+        margin: 40px auto 80px;
+        padding: 0 20px;
+        gap: 30px;
+        position: relative;
         z-index: 10;
     }
 
-    /* Profile card */
-    .profile-card {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(12px);
-        border-radius: 1.5rem;
-        border: 1px solid rgba(99, 102, 241, 0.25);
-        transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    .content-area {
+        flex: 1;
+        background: var(--card-bg);
+        padding: 50px 30px;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(15, 74, 49, 0.08);
+        text-align: center;
+        border-top: 4px solid var(--accent-yellow);
     }
 
-    .profile-card:hover {
-        transform: translateY(-5px);
-        border-color: rgba(99, 102, 241, 0.5);
-        box-shadow: 0 20px 30px -12px rgba(99, 102, 241, 0.2);
+    .org-header {
+        color: var(--primary-color);
+        font-weight: 800;
+        margin-bottom: 50px;
+        font-size: 1.8rem;
+        letter-spacing: 1px;
+        font-family: 'Playfair Display', serif;
     }
 
-    /* Delay utilities */
-    .delay-1 { transition-delay: 0.1s; }
-    .delay-2 { transition-delay: 0.2s; }
-    .delay-3 { transition-delay: 0.3s; }
-
-    /* Avatar placeholder */
-    .avatar-placeholder {
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        color: white;
-    }
-
-    /* Responsive timeline */
-    @media (max-width: 768px) {
-        .timeline-dot {
-            width: 40px;
-            height: 40px;
-            font-size: 1rem;
-        }
-    }
-/* ===== RESET & BASE ===== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* ===== PARTICLE CANVAS ===== */
-#particleCanvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 0;
-}
-
-/* ===== BLOB ORNAMENT ===== */
-.blob {
-    position: absolute;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, #6366f1, transparent);
-    filter: blur(120px);
-    opacity: 0.4;
-    z-index: -1;
-}
-
-.blob-1 { top: -200px; left: -150px; }
-.blob-2 { bottom: -250px; right: -200px; background: radial-gradient(circle, #6366f1, transparent); }
-
-/* ===== CURSOR GLOW ORGANIK ===== */
-.cursor-glow {
-    position: fixed;
-    width: 100px;
-    height: 100px;
-    pointer-events: none;
-    transform: translate(-50%, -50%);
-    z-index: 9999;
-    border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
-    background: radial-gradient(circle at 30% 30%, rgba(99, 107, 185, 0.5), transparent 60%),
-                radial-gradient(circle at 70% 70%, rgba(99,102,241,0.4), transparent 70%),
-                radial-gradient(circle at 50% 50%, rgba(59,130,246,0.3), transparent 80%);
-    filter: blur(55px);
-    transition: opacity 0.2s;
-    animation: blobMove 8s ease-in-out infinite, pulseGlow 4s ease-in-out infinite;
-}
-
-@keyframes blobMove {
-    0% { border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; }
-    25% { border-radius: 50% 60% 40% 60% / 60% 40% 60% 40%; }
-    50% { border-radius: 70% 30% 60% 40% / 40% 70% 30% 60%; }
-    75% { border-radius: 40% 60% 50% 50% / 60% 30% 70% 40%; }
-    100% { border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; }
-}
-
-@keyframes pulseGlow {
-    0%, 100% { filter: blur(55px) brightness(1); }
-    50% { filter: blur(70px) brightness(1.15); }
-}
-
-/* ===== MAIN CONTENT ===== */
-.main-content {
-    position: relative;
-    z-index: 10;
-}
-
-/* ===== GLASS CARD MODERN ===== */
-.glass-card {
-    background: rgba(15, 23, 42, 0.55);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 1.5rem;
-    transition: all 0.3s ease;
-}
-
-/* ===== TITLE ===== */
-.title-main {
-    font-weight: 800;
-    background: linear-gradient(135deg, #ffffff);
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    text-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
-}
-
-/* ===== FADE UP ANIMATION ===== */
-.fade-up {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: 0.9s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-}
-
-.fade-up.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* ===== 3D TILT EFFECT ===== */
-.tilt-card {
-    transform-style: preserve-3d;
-    perspective: 1200px;
-    transition: transform 0.15s ease-out;
-}
-
-/* ===== LINE CONNECTOR ===== */
-.line {
-    width: 2px;
-    height: 50px;
-    background: linear-gradient(to bottom, #6366f1, rgba(99,102,241,0.15));
-    margin: 0 auto;
-}
-
-/* ===== STATISTIK CARD ===== */
-.stat-card {
-    background: rgba(15, 23, 42, 0.5);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 1.25rem;
-    transition: all 0.3s ease;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-    border-color: rgba(99, 102, 241, 0.4);
-    box-shadow: 0 10px 25px -10px rgba(99, 102, 241, 0.2);
-}
-
-.stat-number {
-    font-size: 2rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #c7d2fe, #a5b4fc);
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-}
-
-/* ===== TIMELINE STYLE ===== */
-.timeline-dot {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
-    z-index: 10;
-}
-
-/* ===== PROFILE CARD ===== */
-.profile-card {
-    background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(12px);
-    border-radius: 1.5rem;
-    border: 1px solid rgba(99, 102, 241, 0.25);
-    transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-}
-
-.profile-card:hover {
-    transform: translateY(-5px);
-    border-color: rgba(99, 102, 241, 0.5);
-    box-shadow: 0 20px 30px -12px rgba(99, 102, 241, 0.2);
-}
-
-/* ===== FLOATING ELEMENTS ===== */
-.float {
-    animation: floatAnim 6s ease-in-out infinite;
-}
-
-@keyframes floatAnim {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-15px); }
-    100% { transform: translateY(0px); }
-}
-
-/* ===== CUSTOM SCROLLBAR ===== */
-::-webkit-scrollbar {
-    width: 6px;
-}
-::-webkit-scrollbar-track {
-    background: #0f172a;
-}
-::-webkit-scrollbar-thumb {
-    background: #6366f1;
-    border-radius: 8px;
-}
-
-/* ===== DELAY UTILITY ===== */
-.delay-1 { transition-delay: 0.1s; }
-.delay-2 { transition-delay: 0.2s; }
-.delay-3 { transition-delay: 0.3s; }
-
-/* Glass card untuk halaman visi misi */
-     .library-footer {
+    .org-section {
+        margin-bottom: 60px;
         position: relative;
-        overflow: hidden;
-
-        padding: 3.5rem 3rem 2rem;
-
-        border-radius: 32px;
-
-        background:
-            linear-gradient(
-                145deg,
-                rgba(15, 23, 42, 0.92),
-                rgba(17, 24, 39, 0.96)
-            );
-
-        border: 1px solid rgba(255, 255, 255, 0.06);
-
-        backdrop-filter: blur(18px);
-
-        box-shadow:
-            0 10px 40px rgba(0, 0, 0, 0.35);
     }
 
-    /* soft glow */
-    .library-footer::before {
-        content: "";
-
-        position: absolute;
-
-        width: 320px;
-        height: 320px;
-
-        top: -140px;
-        right: -100px;
-
-        border-radius: 999px;
-
-        background: rgba(99, 102, 241, 0.08);
-
-        filter: blur(80px);
-    }
-
-    /* grid */
-    .footer-grid {
-        position: relative;
-        z-index: 2;
-
-        display: grid;
-        grid-template-columns: 1.6fr 1fr 1fr 1fr;
-        gap: 3rem;
-    }
-
-    /* logo */
-    .footer-logo {
-        width: 58px;
-        height: 58px;
-
-        border-radius: 18px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        font-size: 1.5rem;
-
-        background:
-            linear-gradient(
-                135deg,
-                rgba(99, 102, 241, 0.25),
-                rgba(139, 92, 246, 0.15)
-            );
-
-        border: 1px solid rgba(99, 102, 241, 0.2);
-    }
-
-    /* description */
-    .footer-desc {
-        margin-top: 1rem;
-
-        color: #94a3b8;
-
-        line-height: 1.9;
-
-        font-size: 0.95rem;
-
-        max-width: 340px;
-    }
-
-    /* section title */
-    .footer-title {
+    .category-label {
+        background-color: var(--primary-color);
         color: white;
-
-        font-size: 1rem;
-        font-weight: 600;
-
-        margin-bottom: 1.3rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 25px;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 35px;
+        box-shadow: 0 4px 10px rgba(15, 74, 49, 0.2);
     }
 
-    /* links */
-    .footer-links {
+    .category-label i {
+        color: var(--accent-yellow);
+    }
+
+    .cards-container {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 30px;
+    }
+
+    .member-item {
+        width: 160px;
         display: flex;
         flex-direction: column;
-        gap: 0.9rem;
+        align-items: center;
+        transition: transform 0.3s;
     }
 
-    .footer-links a {
-        color: #94a3b8;
-
-        font-size: 0.92rem;
-
-        transition: all .25s ease;
+    .member-item:hover {
+        transform: translateY(-5px);
     }
 
-    .footer-links a:hover {
-        color: #c7d2fe;
-
-        transform: translateX(4px);
+    .image-box {
+        position: relative;
+        margin-bottom: 15px;
+        line-height: 0;
+        border: 3px solid #000000;
+        padding: 3px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
 
-    .footer-social {
-        width: 44px;
-        height: 44px;
+    .member-item img {
+        width: 140px;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
 
+    .image-box::after {
+        content: '';
+        position: absolute;
+        bottom: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 3px;
+        background: var(--accent-yellow);
+        border-radius: 2px;
+    }
+
+    .member-item .m-name {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        line-height: 1.3;
+        margin-top: 10px;
+        min-height: 40px;
+    }
+
+    .member-item .m-role {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        line-height: 1.2;
+        font-weight: 500;
+    }
+
+    /* Ukuran khusus untuk Direktur */
+    .section-top .member-item {
+        width: 220px;
+    }
+
+    .section-top .image-box {
+        border-width: 4px;
+    }
+
+    .section-top .member-item img {
+        width: 200px;
+        height: 260px;
+    }
+
+    .section-top .member-item .m-name {
+        font-size: 1rem;
+    }
+
+    .sidebar {
+        flex: 0 0 320px;
+        background: var(--card-bg);
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(15, 74, 49, 0.08);
+        padding: 25px;
+        height: fit-content;
+        position: sticky;
+        top: 100px;
+        border: 1px solid var(--border-color);
+        transition: 0.3s;
+    }
+
+    .sidebar:hover {
+        box-shadow: 0 16px 36px rgba(15, 74, 49, 0.12);
+        border-color: var(--accent-green);
+    }
+
+    .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-brand .logo-img-small {
+        width: 45px;
+        height: 45px;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-
-        border-radius: 14px;
-
-        background: rgba(255, 255, 255, 0.04);
-
-        border: 1px solid rgba(255, 255, 255, 0.06);
-
-        color: #cbd5e1;
-
-        backdrop-filter: blur(10px);
-
-        transition: all .3s ease;
+        font-size: 1.2rem;
     }
 
-    .footer-social:hover {
-        transform: translateY(-4px);
-
-        background:
-            linear-gradient(
-                135deg,
-                rgba(99, 102, 241, 0.18),
-                rgba(139, 92, 246, 0.12)
-            );
-
-        border-color: rgba(99, 102, 241, 0.28);
-
-        color: white;
-
-        box-shadow:
-            0 10px 24px rgba(99, 102, 241, 0.18);
+    .sidebar-brand h3 {
+        font-size: 0.9rem;
+        color: var(--text-dark);
+        line-height: 1.3;
+        font-weight: 700;
     }
 
-    /* contact */
-    .footer-contact {
+    .sidebar-menu {
+        list-style: none;
+        padding: 0;
+    }
+
+    .sidebar-menu li {
+        margin-bottom: 10px;
+    }
+
+    .sidebar-menu li a {
         display: flex;
-        gap: 12px;
-
-        color: #94a3b8;
-
-        line-height: 1.7;
-    }
-
-    /* divider */
-    .footer-divider {
-        height: 1px;
-
-        margin: 2.5rem 0 1.5rem;
-
-        background:
-            linear-gradient(
-                to right,
-                transparent,
-                rgba(255, 255, 255, 0.1),
-                transparent
-            );
-    }
-
-    /* bottom */
-    .footer-bottom {
-        position: relative;
-        z-index: 2;
-
-        display: flex;
-        justify-content: space-between;
         align-items: center;
-
-        gap: 1rem;
-
-        color: #64748b;
-
-        font-size: 0.85rem;
+        gap: 12px;
+        padding: 12px 15px;
+        border-radius: 10px;
+        color: var(--text-muted);
+        font-weight: 600;
+        transition: 0.3s;
+        font-size: 0.9rem;
+        text-decoration: none;
     }
 
-    .footer-bottom-links {
-        display: flex;
-        gap: 1.5rem;
+    .sidebar-menu li a i {
+        font-size: 1.1rem;
+        color: #9cb5a8;
+        width: 20px;
+        text-align: center;
     }
 
-    .footer-bottom-links a {
-        transition: .25s ease;
+    .sidebar-menu li a.active {
+        background-color: #e0f0e8;
+        color: var(--primary-color);
     }
 
-    .footer-bottom-links a:hover {
-        color: #c7d2fe;
+    .sidebar-menu li a.active i {
+        color: var(--primary-color);
     }
 
-    /* responsive */
-    @media (max-width: 992px) {
-
-        .footer-grid {
-            grid-template-columns: 1fr 1fr;
-        }
-
+    .sidebar-menu li a:hover:not(.active) {
+        background-color: #f0f7f3;
+        color: var(--primary-color);
     }
 
-    @media (max-width: 640px) {
-
-        .library-footer {
-            padding: 2rem;
-            border-radius: 24px;
-        }
-
-        .footer-grid {
-            grid-template-columns: 1fr;
-            gap: 2.5rem;
-        }
-
-        .footer-bottom {
+    @media (max-width: 1100px) {
+        .main-layout {
             flex-direction: column;
-            align-items: flex-start;
         }
-
-        .footer-bottom-links {
-            flex-wrap: wrap;
-            gap: 1rem;
+        .sidebar {
+            position: static;
+            width: 100%;
+            order: 2;
         }
-
+        .content-area {
+            order: 1;
+        }
     }
 </style>
 @endpush
 
 @section('content')
-<!-- Particle Canvas -->
-<canvas id="particleCanvas"></canvas>
-
-<!-- Background Blobs -->
-<div class="blob blob-1"></div>
-<div class="blob blob-2"></div>
-
-<!-- Cursor Glow Organik -->
-<div class="cursor-glow" id="cursorGlow"></div>
-
-<!-- Floating Decorative Elements -->
-<div class="fixed top-40 left-10 text-indigo-400 float opacity-30 pointer-events-none z-0 text-2xl">✦</div>
-<div class="fixed top-60 right-20 text-indigo-300 float opacity-30 pointer-events-none z-0 text-2xl">✧</div>
-<div class="fixed bottom-40 left-20 text-indigo-500 float opacity-30 pointer-events-none z-0 text-2xl">✦</div>
-
-<div class="main-content">
-
-
-<!-- HERO SECTION -->
-<section class="pt-28 pb-12 text-center px-5">
-    <div class="inline-block glass-card px-5 py-1.5 rounded-full mb-5 fade-up">
-        <span class="text-indigo-300 text-sm font-medium tracking-wide">👥 STRUKTUR ORGANISASI</span>
+    <div class="page-banner" data-aos="fade-up">
+        <h1>Struktur Organisasi</h1>
+        <p>Arah dan Kepemimpinan Perpustakaan AKPER HKBP</p>
     </div>
-    <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight depth-2 fade-up">
-    Kepemimpinan <br>
-    <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-300 bg-clip-text text-transparent glow-text">& Dedikasi</span>
-</h1>
-    <h2 class="text-2xl md:text-3xl text-indigo-400 font-bold mt-3 fade-up">
-        Akademik
-    </h2>
-    <p class="text-gray-400 mt-5 max-w-2xl mx-auto fade-up">
-        Membangun ekosistem literasi berkualitas yang unggul melalui tata kelola perpustakaan profesional.
-    </p>
-</section>
-    <!-- ================= FILTER DATA ================= -->
-    @php
-        // Filter Direktur (jabatan mengandung kata "direktur")
-        $direktur = $struktur->filter(function($item) {
-            return str_contains(strtolower($item->jabatan ?? ''), 'direktur');
-        })->first();
 
-        // Filter Kepala Perpustakaan
-        $kepala = $struktur->filter(function($item) {
-            return str_contains(strtolower($item->jabatan ?? ''), 'kepala perpustakaan');
-        })->first();
-
-        // Staff lainnya (tanpa gambar)
-        $staff = $struktur->filter(function($item) use ($direktur, $kepala) {
-            if($direktur && $item->id == $direktur->id) return false;
-            if($kepala && $item->id == $kepala->id) return false;
-            return true;
-        });
-    @endphp
-
-    <!-- STATISTIK SECTION -->
-    <section class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-5 px-5 max-w-5xl mx-auto fade-up">
-        <div class="stat-card p-5 rounded-xl text-center hover-card">
-            <div class="stat-number">{{ $staff->count() }}</div>
-            <p class="text-gray-400 text-sm mt-1">Staff Perpustakaan</p>
-        </div>
-        <div class="stat-card p-5 rounded-xl text-center hover-card">
-            <div class="stat-number">45K+</div>
-            <p class="text-gray-400 text-sm mt-1">Koleksi Digital</p>
-        </div>
-        <div class="stat-card p-5 rounded-xl text-center hover-card">
-            <div class="stat-number">A</div>
-            <p class="text-gray-400 text-sm mt-1">Akreditasi</p>
-        </div>
-        <div class="stat-card p-5 rounded-xl text-center hover-card">
-            <div class="stat-number">{{ $struktur->count() }}</div>
-            <p class="text-gray-400 text-sm mt-1">Total Pengurus</p>
-        </div>
-    </section>
-
-    <!-- ================= DIREKTUR (GAMBAR BESAR) ================= -->
-    @if($direktur)
-    <section class="mt-20 text-center px-5 fade-up">
-        <div class="profile-card inline-block w-[320px] mx-auto tilt-card">
-            <div class="p-6">
-                @if($direktur->image)
-                    <img src="{{ asset('storage/' . $direktur->image) }}" class="w-28 h-28 rounded-xl mx-auto mb-4 shadow-lg object-cover">
-                @else
-                    <div class="w-28 h-28 rounded-xl mx-auto mb-4 bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-4xl shadow-lg">
-                        👩‍⚕️
-                    </div>
-                @endif
-                <h3 class="font-bold text-xl text-white">{{ $direktur->title }}</h3>
-                <p class="text-indigo-300 text-sm mt-1">{{ $direktur->jabatan }}</p>
-                @if($direktur->description)
-                    <div class="mt-3 text-xs text-gray-400">{{ $direktur->description }}</div>
-                @endif
-            </div>
-        </div>
-        <div class="line mt-6"></div>
-    </section>
-    @endif
-
-    <!-- ================= KEPALA PERPUSTAKAAN (GAMBAR BESAR) ================= -->
-    @if($kepala)
-    <section class="mt-8 text-center px-5 fade-up">
-        <div class="profile-card inline-block w-[320px] mx-auto tilt-card">
-            <div class="p-6">
-                @if($kepala->image)
-                    <img src="{{ asset('storage/' . $kepala->image) }}" class="w-24 h-24 rounded-lg mx-auto mb-4 shadow-lg object-cover">
-                @else
-                    <div class="w-24 h-24 rounded-lg mx-auto mb-4 bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-3xl shadow-lg">
-                        📚
-                    </div>
-                @endif
-                <h3 class="font-semibold text-xl text-white">{{ $kepala->title }}</h3>
-                <p class="text-indigo-300 text-sm mt-1">{{ $kepala->jabatan }}</p>
-                @if($kepala->description)
-                    <div class="mt-3 text-xs text-gray-400">{{ $kepala->description }}</div>
-                @endif
-            </div>
-        </div>
-        <div class="line mt-6"></div>
-    </section>
-    @endif
-
-    <!-- ================= STAFF GRID (TANPA GAMBAR - HANYA NAMA & JABATAN) ================= -->
-    @if($staff->count() > 0)
-    <section class="mt-12 px-5 fade-up">
-        <div class="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto">
-            @foreach($staff as $item)
-            <div class="profile-card p-4 rounded-xl flex items-center gap-4 tilt-card">
-                <!-- Icon kecil sebagai pengganti gambar -->
-                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500/50 to-purple-500/50 flex items-center justify-center text-white text-sm font-bold shadow-md">
-                    👤
-                </div>
-                <div>
-                    <h4 class="font-semibold text-white">{{ $item->title }}</h4>
-                    <p class="text-gray-400 text-sm">{{ $item->jabatan }}</p>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </section>
-    @endif
-
-    <!-- TIMELINE STRUKTUR -->
-    <section class="mt-28 px-5">
-        <div class="text-center mb-12">
-            <div class="inline-flex items-center gap-2 glass-card px-4 py-2 rounded-full mb-3 fade-up">
-                <span class="text-indigo-400 text-sm">📋</span>
-                <span class="text-indigo-300 text-sm font-medium">Hierarki Organisasi</span>
-            </div>
-            <h3 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent fade-up">
-                Struktur Kepemimpinan
-            </h3>
-        </div>
-
-        <div class="max-w-4xl mx-auto relative">
-            <!-- GARIS TENGAH VERTIKAL -->
-            <div class="absolute left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-indigo-500/40 via-indigo-400/20 to-transparent hidden md:block"></div>
-
-            <!-- ITEM 1 - DIREKTUR (kiri) -->
-            <div class="mb-16 flex flex-col md:flex-row items-center justify-start fade-up">
-                <div class="md:w-1/2 md:pr-10 text-center md:text-right mb-4 md:mb-0">
-                    <div class="profile-card p-4 rounded-xl inline-block tilt-card">
-                        <div class="flex items-center gap-3">
-                            <div class="text-2xl">👑</div>
-                            <div>
-                                <h4 class="text-indigo-400 font-bold">Direktur</h4>
-                                <p class="text-gray-400 text-sm">{{ $direktur->title ?? 'Belum tersedia' }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="timeline-dot relative z-10 mx-4">👑</div>
-                <div class="md:w-1/2"></div>
-            </div>
-
-            <!-- ITEM 2 - KEPALA PERPUSTAKAAN (kanan) -->
-            <div class="mb-16 flex flex-col md:flex-row items-center justify-end fade-up">
-                <div class="md:w-1/2"></div>
-                <div class="timeline-dot relative z-10 mx-4">📚</div>
-                <div class="md:w-1/2 md:pl-10 text-center md:text-left mt-4 md:mt-0">
-                    <div class="profile-card p-4 rounded-xl inline-block tilt-card">
-                        <div class="flex items-center gap-3">
-                            <div class="text-2xl">📚</div>
-                            <div>
-                                <h4 class="text-indigo-400 font-bold">Kepala Perpustakaan</h4>
-                                <p class="text-gray-400 text-sm">{{ $kepala->title ?? 'Belum tersedia' }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ITEM 3 - TIM PERPUSTAKAAN (kiri) -->
-            <div class="mb-16 flex flex-col md:flex-row items-center justify-start fade-up">
-                <div class="md:w-1/2 md:pr-10 text-center md:text-right mb-4 md:mb-0">
-                    <div class="profile-card p-4 rounded-xl inline-block tilt-card">
-                        <div class="flex items-center gap-3">
-                            <div class="text-2xl">👥</div>
-                            <div>
-                                <h4 class="text-indigo-400 font-bold">Tim Perpustakaan</h4>
-                                <p class="text-gray-400 text-sm">{{ $staff->count() }} Staff</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="timeline-dot relative z-10 mx-4">👥</div>
-                <div class="md:w-1/2"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- TIM PERPUSTAKAAN GRID (TANPA GAMBAR) -->
-    @if($staff->count() > 0)
-    <section class="mt-20 mb-24 px-5">
-        <div class="text-center mb-12">
-            <div class="inline-flex items-center gap-2 glass-card px-4 py-2 rounded-full mb-3 fade-up">
-                <span class="text-indigo-400 text-sm">👥</span>
-                <span class="text-indigo-300 text-sm font-medium">Pengurus Harian</span>
-            </div>
-            <h3 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent fade-up">
-                Tim Perpustakaan
-            </h3>
-        </div>
-
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            @foreach($staff as $index => $item)
-            <div class="profile-card p-5 rounded-xl text-center tilt-card fade-up delay-{{ ($index % 3) + 1 }}">
-                <!-- Icon bulat sebagai pengganti gambar -->
-                <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br from-indigo-500/60 to-purple-500/60 flex items-center justify-center text-2xl text-white shadow-lg">
-                    👤
-                </div>
-                <h4 class="font-semibold text-white">{{ $item->title }}</h4>
-                <p class="text-indigo-300 text-sm">{{ $item->jabatan }}</p>
-            </div>
-            @endforeach
-        </div>
-    </section>
-    @endif
-
-    <!-- ================= FOOTER ================= -->
-    <footer class="px-10 pb-12 pt-6">
-
-        <div class="max-w-9xl mx-auto">
-
-            <div class="library-footer fade-up">
-
-                <div class="footer-grid">
-
-                    <!-- BRAND -->
-                    <div>
-
-                        <div class="flex items-center gap-4">
-
-                            <div class="footer-logo">
-                                📚
-                            </div>
-
-                            <div>
-
-                                <h3 class="text-white font-semibold text-lg">
-                                    Perpustakaan Digital
-                                </h3>
-
-                                <p class="text-indigo-300 text-sm">
-                                    AKPER HKBP Balige
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                        <p class="footer-desc">
-                            Menyediakan akses e-book, jurnal,
-                            repository ilmiah, dan literatur digital
-                            modern untuk mendukung pembelajaran mahasiswa.
-                        </p>
-
-                        <!-- SOCIAL MEDIA -->
-                        <div class="flex items-center gap-3 mt-6">
-
-                            <a
-                                href="#"
-                                class="footer-social"
-                                aria-label="Website"
-                            >
-                                <i class="fas fa-globe"></i>
-                            </a>
-
-                            <a
-                                href="#"
-                                class="footer-social"
-                                aria-label="Facebook"
-                            >
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-
-                            <a
-                                href="#"
-                                class="footer-social"
-                                aria-label="YouTube"
-                            >
-                                <i class="fab fa-youtube"></i>
-                            </a>
-
-                            <a
-                                href="#"
-                                class="footer-social"
-                                aria-label="Instagram"
-                            >
-                                <i class="fab fa-instagram"></i>
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                    <!-- NAVIGATION -->
-                    <div>
-
-                        <h4 class="footer-title">
-                            Navigasi
-                        </h4>
-
-                        <ul class="footer-links">
-
-                            <li>
-                                <a href="{{ route('home') }}">
-                                    Beranda
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="{{ route('guest.profile.tugas-fungsi') }}">
-                                    E-Book
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#">
-                                    E-Journal
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#">
-                                    Repository
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#">
-                                    Katalog
-                                </a>
-                            </li>
-
-                        </ul>
-
-                    </div>
-
-                    <!-- SERVICES -->
-                    <div>
-
-                        <h4 class="footer-title">
-                            Layanan
-                        </h4>
-
-                        <ul class="footer-links">
-
-                            <li>
-                                <a href="{{ route('user.pinjam') }}">
-                                    Peminjaman
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="{{ route('final_project.upload.kti') }}">
-                                    Upload KTI
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="{{ route('panduan') }}">
-                                    Literasi Digital
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="{{ route('user.profile.struktur') }}">
-                                    Keanggotaan
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#">
-                                    Bantuan
-                                </a>
-                            </li>
-
-                        </ul>
-
-                    </div>
-
-                    <!-- CONTACT -->
-                    <div>
-
-                        <h4 class="footer-title">
-                            Kontak
-                        </h4>
-
-                        <div class="space-y-4 text-sm">
-
-                            <div class="footer-contact">
-
-                                <span>
-                                    📍
-                                </span>
-
-                                <p>
-                                    AKPER HKBP Balige,
-                                    Sumatera Utara
-                                </p>
-
-                            </div>
-
-                            <div class="footer-contact">
-
-                                <span>
-                                    📧
-                                </span>
-
-                                <p>
-                                    library@akperhkbp.ac.id
-                                </p>
-
-                            </div>
-
-                            <div class="footer-contact">
-
-                                <span>
-                                    📞
-                                </span>
-
-                                <p>
-                                    +62 812 xxxx xxxx
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- divider -->
-                <div class="footer-divider"></div>
-
-                <!-- bottom -->
-                <div class="footer-bottom">
-
-                    <p>
-                        © 2026 Perpustakaan Digital AKPER HKBP Balige.
-                    </p>
-
-                    <div class="footer-bottom-links">
-
-                        <a href="#">
-                            Privacy
-                        </a>
-
-                        <a href="#">
-                            Terms
-                        </a>
-
-                        <a href="#">
-                            Support
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </footer>
-</div>
-@endsection
-
-@push('scripts')
-<script>
-// ==========================
-// 1. PARTICLE ENGINE
-// ==========================
-const canvas = document.getElementById('particleCanvas');
-let ctx = canvas.getContext('2d');
-let particles = [];
-let animationId = null;
-
-document.addEventListener('DOMContentLoaded'), function() {
-
-    // 1. Tilt 3D effect untuk profile cards
-    const tiltCards = document.querySelectorAll('.profile-card');
-    tiltCards.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            const rotateX = (y - centerY) / 25;
-            const rotateY = (x - centerX) / 25;
-            card.style.transform = `perspective(1200px) rotateX(${-rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
-        });
-
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = `perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)`;
-        });
-    });
-
-    // 2. Parallax efek untuk hero title
-    const heroTitle = document.querySelector('.title-main');
-    if (heroTitle) {
-        window.addEventListener('scroll', () => {
-            const scrollY = window.scrollY;
-            if (scrollY < 400) {
-                heroTitle.style.transform = `translateY(${scrollY * 0.03}px)`;
-            }
-        });
-    }
-
-    // 3. Counter animasi untuk statistik (opsional)
-    const statNumbers = document.querySelectorAll('.stat-number');
-    const hasAnimated = new Map();
-
-    const counterObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && !hasAnimated.get(entry.target)) {
-                hasAnimated.set(entry.target, true);
-                const element = entry.target;
-                const targetText = element.innerText;
-
-                if (targetText.includes('K+')) {
-                    const number = parseInt(targetText);
-                    animateNumber(element, number, 0, 2000, 'K+');
-                } else if (!isNaN(parseInt(targetText))) {
-                    const number = parseInt(targetText);
-                    animateNumber(element, number, 0, 2000, '');
+    <div class="main-layout">
+        <main class="content-area" data-aos="fade-up" data-aos-delay="100">
+            <h2 class="org-header">Organisasi Perpustakaan</h2>
+
+            @php
+                use Illuminate\Support\Facades\Storage;
+
+                $strukturData = isset($struktur) ? $struktur->sortBy('order') : collect();
+                $hasData = $strukturData->count() > 0;
+
+                $direktur = null;
+                $kepalaPengurus = null;
+                $anggota = collect();
+
+                if ($hasData) {
+                    // Clone karena kita akan shift data asli
+                    $temp = clone $strukturData;
+                    $direktur = $temp->shift();
+                    $kepalaPengurus = $temp->shift();
+                    $anggota = $temp;
                 }
-            }
-        });
-    }, { threshold: 0.5 });
+            @endphp
 
-    statNumbers.forEach(el => counterObserver.observe(el));
+            @if($hasData)
+                {{-- DIREKTUR --}}
+                @if($direktur)
+                <div class="org-section section-top">
+                    <div class="category-label"><i class="fas fa-crown"></i> Direktur</div>
+                    <div class="cards-container">
+                        <div class="member-item">
+                            <div class="image-box">
+                                @php
+                                    $imgUrl = null;
+                                    if ($direktur->image && Storage::disk('public')->exists($direktur->image)) {
+                                        $imgUrl = asset('storage/' . $direktur->image);
+                                    }
+                                @endphp
+                                @if($imgUrl)
+                                    <img src="{{ $imgUrl }}" alt="{{ $direktur->title }}">
+                                @else
+                                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80" alt="Direktur">
+                                @endif
+                            </div>
+                            <div class="m-name">{{ $direktur->title ?? '-' }}</div>
+                            <div class="m-role">{{ $direktur->jabatan ?? '-' }}</div>
+                        </div>
+                    </div>
+                </div>
+                @endif
 
-    function animateNumber(element, target, current, duration, suffix) {
-        const increment = target / (duration / 16);
-        let start = current;
+                {{-- KEPALA PENGURUS --}}
+                @if($kepalaPengurus)
+                <div class="org-section">
+                    <div class="category-label"><i class="fas fa-user-tie"></i> Kepala Pengurus</div>
+                    <div class="cards-container">
+                        <div class="member-item">
+                            <div class="image-box">
+                                @php
+                                    $imgUrl = null;
+                                    if ($kepalaPengurus->image && Storage::disk('public')->exists($kepalaPengurus->image)) {
+                                        $imgUrl = asset('storage/' . $kepalaPengurus->image);
+                                    }
+                                @endphp
+                                @if($imgUrl)
+                                    <img src="{{ $imgUrl }}" alt="{{ $kepalaPengurus->title }}">
+                                @else
+                                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80" alt="Kepala Pengurus">
+                                @endif
+                            </div>
+                            <div class="m-name">{{ $kepalaPengurus->title }}</div>
+                            <div class="m-role">{{ $kepalaPengurus->jabatan }}</div>
+                        </div>
+                    </div>
+                </div>
+                @endif
 
-        function updateNumber() {
-            start += increment;
-            if (start < target) {
-                element.innerText = Math.floor(start) + suffix;
-                requestAnimationFrame(updateNumber);
-            } else {
-                element.innerText = target + suffix;
-            }
-        }
+                {{-- ANGGOTA --}}
+                @if($anggota->count() > 0)
+                <div class="org-section">
+                    <div class="category-label"><i class="fas fa-users"></i> Anggota</div>
+                    <div class="cards-container">
+                        @foreach($anggota as $member)
+                        <div class="member-item">
+                            <div class="image-box">
+                                @php
+                                    $imgUrl = null;
+                                    if ($member->image && Storage::disk('public')->exists($member->image)) {
+                                        $imgUrl = asset('storage/' . $member->image);
+                                    }
+                                @endphp
+                                @if($imgUrl)
+                                    <img src="{{ $imgUrl }}" alt="{{ $member->title }}">
+                                @else
+                                    <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=400&q=80" alt="Anggota">
+                                @endif
+                            </div>
+                            <div class="m-name">{{ $member->title }}</div>
+                            <div class="m-role">{{ $member->jabatan }}</div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
 
-        updateNumber();
-    }
+            @else
+                {{-- FALLBACK STATIS (sama seperti sebelumnya) --}}
+                <div class="org-section section-top">
+                    <div class="category-label"><i class="fas fa-crown"></i> Direktur</div>
+                    <div class="cards-container">
+                        <div class="member-item">
+                            <div class="image-box"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80" alt="Direktur"></div>
+                            <div class="m-name">Prof. Dr. Ryadni Efendi, S.Si., M.I.T.</div>
+                            <div class="m-role">Direktur Perpustakaan</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="org-section">
+                    <div class="category-label"><i class="fas fa-user-tie"></i> Kepala Pengurus</div>
+                    <div class="cards-container">
+                        <div class="member-item">
+                            <div class="image-box"><img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80" alt="Kepala Pengurus"></div>
+                            <div class="m-name">Bandari, S.Sos., M.Si.</div>
+                            <div class="m-role">Kepala Pengurus & Sekretaris</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="org-section">
+                    <div class="category-label"><i class="fas fa-users"></i> Anggota</div>
+                    <div class="cards-container">
+                        <div class="member-item"><div class="image-box"><img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=400&q=80" alt="Anggota"></div><div class="m-name">Murniaty, S.Sos.</div><div class="m-role">Pengelola Koleksi</div></div>
+                        <div class="member-item"><div class="image-box"><img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=400&q=80" alt="Anggota"></div><div class="m-name">Suparlan, S.Sos.</div><div class="m-role">Pengadaan Pustaka</div></div>
+                        <div class="member-item"><div class="image-box"><img src="https://images.unsplash.com/photo-1559839734-2b71f1536b8a?auto=format&fit=crop&w=400&q=80" alt="Anggota"></div><div class="m-name">Helly Gailam, S.Sos.</div><div class="m-role">Layanan Teknis</div></div>
+                        <div class="member-item"><div class="image-box"><img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=400&q=80" alt="Anggota"></div><div class="m-name">Windi Sri Rahayu</div><div class="m-role">Layanan Pemustaka</div></div>
+                        <div class="member-item"><div class="image-box"><img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80" alt="Anggota"></div><div class="m-name">Adelia Lubis, S.T.</div><div class="m-role">Pengelola IT</div></div>
+                        <div class="member-item"><div class="image-box"><img src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&w=400&q=80" alt="Anggota"></div><div class="m-name">Doni Sinaga, S.Kom.</div><div class="m-role">Software Developer</div></div>
+                    </div>
+                </div>
+            @endif
+        </main>
 
-    // 4. Staggered animation untuk timeline items
-    const timelineItems = document.querySelectorAll('.timeline-container > div');
-    timelineItems.forEach((item, idx) => {
-        item.style.transitionDelay = `${idx * 0.15}s`;
-    });
-}
-
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-
-function initParticles() {
-    const particleCount = 80;
-    particles = [];
-    for (let i = 0; i < particleCount; i++) {
-        particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            dx: (Math.random() - 0.5) * 0.6,
-            dy: (Math.random() - 0.5) * 0.6,
-            r: Math.random() * 2.5 + 1,
-            opacity: Math.random() * 0.5 + 0.2
-        });
-    }
-}
-
-function drawParticles() {
-    if (!ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    particles.forEach(p => {
-        p.x += p.dx;
-        p.y += p.dy;
-
-        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(99, 102, 241, ${p.opacity * 0.8})`;
-        ctx.fill();
-    });
-
-    animationId = requestAnimationFrame(drawParticles);
-}
-
-function startParticles() {
-    if (animationId) cancelAnimationFrame(animationId);
-    resizeCanvas();
-    initParticles();
-    drawParticles();
-}
-
-window.addEventListener('resize', () => {
-    resizeCanvas();
-    initParticles();
-});
-
-startParticles();
-
-// ==========================
-// 2. CURSOR GLOW ORGANIK
-// ==========================
-const cursorGlow = document.getElementById('cursorGlow');
-if (cursorGlow) {
-    document.addEventListener('mousemove', (e) => {
-        cursorGlow.style.left = e.clientX + 'px';
-        cursorGlow.style.top = e.clientY + 'px';
-    });
-    document.addEventListener('mouseleave', () => {
-        cursorGlow.style.opacity = '0';
-    });
-    document.addEventListener('mouseenter', () => {
-        cursorGlow.style.opacity = '1';
-    });
-}
-
-// ==========================
-// 3. FADE-UP INTERSECTION OBSERVER
-// ==========================
-const fadeElements = document.querySelectorAll('.fade-up');
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('show');
-            observer.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
-fadeElements.forEach(el => observer.observe(el));
-
-// ==========================
-// 4. 3D TILT EFFECT
-// ==========================
-const tiltCards = document.querySelectorAll('.tilt-card');
-tiltCards.forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const rotateX = (y - centerY) / 20;
-        const rotateY = (x - centerX) / 20;
-        card.style.transform = `perspective(1200px) rotateX(${-rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
-    });
-    card.addEventListener('mouseleave', () => {
-        card.style.transform = `perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)`;
-    });
-});
-
-// ==========================
-// 5. PARALLAX MINOR
-// ==========================
-window.addEventListener('scroll', () => {
-    const heroTitle = document.querySelector('.title-main');
-    if (heroTitle) {
-        const scrollY = window.scrollY;
-        heroTitle.style.transform = `translateY(${scrollY * 0.03}px)`;
-    }
-});
-
-console.log('Struktur Pengurus Page siap!');
-</script>
-@endpush
-
-
-
-
+        <aside class="sidebar" data-aos="fade-left" data-aos-delay="200">
+            <div class="sidebar-brand">
+                <div class="logo-img-small"><i class="fas fa-plus-square"></i></div>
+                <h3>Perpustakaan<br>AKPER HKBP</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="{{ route('guest.profile.visi-misi') }}"><i class="fas fa-lightbulb"></i> Visi, Misi, & Sasaran</a></li>
+                <li><a href="{{ route('guest.profile.kerjasama') }}"><i class="fas fa-handshake"></i> Kerjasama</a></li>
+                <li><a href="{{ route('guest.profile.struktur') }}" class="active"><i class="fas fa-users"></i> Struktur Pengurus</a></li>
+                <li><a href="{{ route('guest.profile.tugas-fungsi') }}"><i class="fas fa-tasks"></i> Tugas, Fungsi, Tujuan</a></li>
+            </ul>
+        </aside>
+    </div>
+@endsection

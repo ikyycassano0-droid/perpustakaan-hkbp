@@ -27,12 +27,19 @@ class NewsController extends Controller
         $search   = $request->search;
         $category = $request->category;
 
-        $query = News::published();
+        // 🔥 Query untuk featured
+        $featured = News::published()
+            ->where('is_featured', true)
+            ->latest()
+            ->first();
+
+        // 🔥 Query untuk semua berita
+        $query = News::published()->latest();
 
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%$search%")
-                  ->orWhere('excerpt', 'like', "%$search%");
+                ->orWhere('excerpt', 'like', "%$search%");
             });
         }
 
@@ -40,17 +47,9 @@ class NewsController extends Controller
             $query->where('category', $category);
         }
 
-        $featured = (clone $query)
-            ->where('is_featured', true)
-            ->latest()
-            ->first();
-
-        $berita = (clone $query)
-            ->when($featured, function ($q) use ($featured) {
-                $q->where('id', '!=', $featured->id);
-            })
-            ->latest()
-            ->paginate(6);
+        // 🔥 Ambil SEMUA berita (jangan exclude featured)
+        // Nanti di blade, featured dikasih badge khusus
+        $berita = $query->paginate(6);
 
         return view($view, compact('berita', 'featured'));
     }
@@ -106,9 +105,15 @@ class NewsController extends Controller
             'image'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $imagePath = $request->file('image')
-            ? $request->file('image')->store('berita', 'public')
-            : null;
+        $imagePath = null;
+
+        if ($request->hasFile('image')) {
+            if (!Storage::disk('public')->exists('berita')) {
+                Storage::disk('public')->makeDirectory('berita');
+            }
+
+            $imagePath = $request->file('image')->store('berita', 'public');
+        }
 
         News::create([
             'title'       => $request->title,
@@ -132,29 +137,34 @@ class NewsController extends Controller
     {
         $request->validate([
             'title'    => 'required',
-            'content'  => 'required',
             'category' => 'required',
             'status'   => 'required|in:draft,publish',
+            'image'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $data = [
             'title'       => $request->title,
-
-            // 🔥 FIX SLUG
             'slug'        => Str::slug($request->title) . '-' . time(),
-
             'excerpt'     => $request->excerpt,
-            'content'     => $request->content,
             'category'    => $request->category,
             'is_featured' => $request->boolean('is_featured'),
             'status'      => $request->status,
-            'active'      => $request->boolean('active'),
+            'active'      => true,
             'updated_by'  => session('user_id'),
         ];
 
-        if ($request->file('image')) {
-            if ($news->image) {
+        
+        if ($request->filled('content')) {
+            $data['content'] = $request->content;
+        }
+
+        if ($request->hasFile('image')) {
+            if ($news->image && Storage::disk('public')->exists($news->image)) {
                 Storage::disk('public')->delete($news->image);
+            }
+
+            if (!Storage::disk('public')->exists('berita')) {
+                Storage::disk('public')->makeDirectory('berita');
             }
 
             $data['image'] = $request->file('image')->store('berita', 'public');

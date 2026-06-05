@@ -212,7 +212,7 @@ public function login(Request $request): JsonResponse
             'npm' => $request->npm,
             'password' => $request->password,
             'active' => true,
-            'email_verified_at' => now(),  
+            'email_verified_at' => now(),
         ]);
 
         return response()->json(['success' => true, 'user_id' => $user->id], 201);

@@ -1,306 +1,81 @@
-<style>
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-}
-
-/* Basic navbar styling */
-.navbar {
-    position: sticky;
-    top: 0;
-    width: 100%;
-    background: rgba(2, 30, 105);
-    color: white;
-    padding: 5px 10px;
-    font-size: 0.75rem;
-    z-index: 1000;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.navbar .logo-container {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.navbar nav ul {
-    display: flex;
-    gap: 10px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    flex-wrap: wrap;
-}
-
-.navbar nav ul li {
-    position: relative;
-}
-
-.navbar nav ul li a {
-    color: white;
-    text-decoration: none;
-    padding: 5px 8px;
-    display: block;
-}
-
-.navbar nav ul li a:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.navbar nav ul li ul.dropdown-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: rgba(2,30,105);
-    list-style: none;
-    padding: 5px 0;
-    min-width: 150px;
-    z-index: 1000;
-}
-
-.navbar nav ul li:hover > ul.dropdown-menu {
-    display: block;
-}
-
-.navbar nav ul li ul.submenu {
-    left: 100%;
-    top: 0;
-}
-
-/* Search form */
-.navbar form {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-}
-
-.navbar form input, .navbar form select {
-    padding: 3px 5px;
-    font-size: 0.7rem;
-}
-
-.navbar form button {
-    padding: 3px 6px;
-    font-size: 0.7rem;
-    cursor: pointer;
-}
-
-/* USER AREA */
-.user-area button {
-    background: none;
-    border: none;
-    color: #ffc107;
-    cursor: pointer;
-}
-
-/* Pulse animation for notification */
-#notif-badge {
-    animation: pulse 1s infinite;
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-    .navbar {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .navbar nav ul {
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .navbar form {
-        width: 100%;
-        margin-top: 5px;
-        flex-wrap: wrap;
-    }
-
-    .navbar form input, .navbar form select, .navbar form button {
-        width: 48%;
-    }
-
-    .navbar form button {
-        width: 100%;
-        margin-top: 3px;
-    }
-
-    .navbar nav ul li ul.dropdown-menu {
-        position: relative;
-    }
-
-    .navbar nav ul li ul.submenu {
-        left: 0;
-    }
-}
-</style>
-
-<div class="navbar">
-    <!-- LOGO -->
-    <div class="logo-container">
-        <div class="logo-img"><i class="fas fa-plus-square"></i></div>
-        <div class="logo-text">
-            <h1 style="font-size:0.9rem; margin:0;">Perpustakaan AKPER HKBP</h1>
-            <span style="font-size:0.7rem;">Sekolah Keperawatan HKBP</span>
+<footer>
+    <div class="footer-content">
+        <div class="footer-col" data-aos="fade-right" data-aos-delay="200">
+            <h4>Sekolah Keperawatan HKBP Balige</h4>
+            <p><i class="fas fa-hospital"></i> Kompleks HKBP, Jl. Keperawatan No. 1<br>Sumatera Utara, Indonesia.</p>
+            <p><i class="fas fa-phone"></i> (061) 1234567</p>
+            <p><i class="fas fa-envelope"></i> library@akperhkbp.ac.id</p>
         </div>
-    </div>
-
-    <!-- MENU & SEARCH -->
-    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-        <!-- MENU -->
-        <nav>
+        <div class="footer-col" data-aos="fade-up" data-aos-delay="400">
+            <h4>Sumber Daya</h4>
             <ul>
-                <li><a href="{{ route('user.dashboard') }}">Home</a></li>
-                <li>
-                    <a href="#">Profile <i class="fas fa-caret-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ route('user.profile.visi_misi') }}">Visi Misi</a></li>
-                        <li><a href="{{ route('user.profile.tugas_fungsi') }}">Tugas & Fungsi</a></li>
-                        <li><a href="{{ route('user.profile.struktur') }}">Struktur Pengurus</a></li>
-                        <li><a href="{{ route('user.profile.kerjasama') }}">Kerjasama</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">Layanan <i class="fas fa-caret-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ route('user.pinjam') }}">Pinbal</a></li>
-                        <li><a href="#">Upload TA</a></li>
-                        <li><a href="#">Waktu Layanan</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">Koleksi <i class="fas fa-caret-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a href="#">Koleksi Tercetak <i class="fas fa-caret-right" style="float:right;"></i></a>
-                            <ul class="dropdown-menu submenu">
-                                <li><a href="{{ route('user.koleksi.jurnal') }}">Jurnal</a></li>
-                                <li><a href="{{ route('user.koleksi.buku_pengayaan') }}">Buku Pengayaan</a></li>
-                                <li><a href="{{ route('user.koleksi.buku_referensi') }}">Buku Referensi</a></li>
-                                <li><a href="{{ route('user.koleksi.majalah') }}">Majalah</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
- <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ request()->is('user/final-project/*') ? 'active' : '' }}"
-                       href="#" role="button" data-bs-toggle="dropdown">Koleksi Elektronik</a>
-                    <ul class="dropdown-menu">
-                        <!-- KTI (user upload) -->
-                        <li><a class="dropdown-item" href="{{ route('final_project.kti') }}">KTI</a></li>
-
-                        <!-- Admin Upload -->
-                        <li><a class="dropdown-item" href="{{ route('final_project.koleksi', 'ebook') }}">E-Book</a></li>
-                        <li><a class="dropdown-item" href="{{ route('final_project.koleksi', 'e-article') }}">E-Article</a></li>
-                        <li><a class="dropdown-item" href="{{ route('final_project.koleksi', 'cd') }}">CD</a></li>
-                        <li><a class="dropdown-item" href="{{ route('final_project.koleksi', 'video') }}">Video</a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="#">Berita</a></li>
-                <li>
-                    <a href="#">Informasi <i class="fas fa-caret-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Panduan</a></li>
-                    </ul>
-                </li>
+                <li><a href="#"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i> Jurnal Keperawatan</a></li>
+                <li><a href="#"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i> Panduan Sitasi APA</a></li>
+                <li><a href="#"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i> Cek Kemiripan Teks</a></li>
             </ul>
-        </nav>
-
-        <!-- SEARCH FORM -->
-        <form action="{{ route('user.global_search') }}" method="GET">
-            <input type="text" name="keyword" placeholder="Cari koleksi..." required>
-            <select name="category">
-                <option value="">Semua</option>
-                <option value="collection">Koleksi Tercetak</option>
-                <option value="cd">CD</option>
-                <option value="e_book">E-Book</option>
-                <option value="e_article">E-Article</option>
-                <option value="video">Video</option>
-            </select>
-            <button type="submit">🔍</button>
-        </form>
-    </div>
-
-    <!-- USER AREA -->
-    <div class="user-area">
-        @auth
-        <button class="user-name btn btn-link text-warning text-decoration-none"
-            data-bs-toggle="offcanvas" data-bs-target="#sidebarUser">
-            <i class="fas fa-user-circle"></i>
-            {{ session('user')['name'] ?? '' }}
-        </button>
-        @endauth
-    </div>
-</div>
-
-<!-- SIDEBAR -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="sidebarUser">
-
-    <div class="offcanvas-header">
-        <h5>Menu Mahasiswa</h5>
-        <button class="btn-close" data-bs-dismiss="offcanvas"></button>
-    </div>
-
-    <div class="offcanvas-body">
-
-        <div class="mb-3">
-            <strong>
-                <i class="fas fa-user"></i>
-                {{ session('user')['name'] ?? 'Mahasiswa AKPER' }}
-            </strong>
         </div>
-
-        <hr>
-
-        <ul class="list-group">
-
-            <!-- HISTORY -->
-            <li class="list-group-item">
-                <a href="{{ route('user.history') }}" class="text-decoration-none">
-                    📚 History Peminjaman
-                </a>
-            </li>
-
-            <!-- INBOX -->
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-
-                <a href="{{ route('user.inbox') }}" class="text-decoration-none">
-                    📥 Inbox
-                </a>
-
-                @auth
-                    @if(($unreadNotif ?? 0) > 0)
-                        <span id="notif-badge" class="badge bg-danger rounded-pill" style="animation: pulse 1s infinite;">
-                            {{ $unreadNotif }}
-                        </span>
-                    @endif
-                @endauth
-
-            </li>
-
-            <!-- PENGATURAN -->
-            <li class="list-group-item">
-                <a href="#" class="text-decoration-none">
-                    ⚙️ Pengaturan
-                </a>
-            </li>
-
-        </ul>
-
-        <hr>
-
-        <a href="{{ route('home') }}" class="btn btn-danger w-100">
-            Logout
-        </a>
-
+        <div class="footer-col" data-aos="fade-left" data-aos-delay="600">
+            <h4>Akses Cepat</h4>
+            <ul>
+                <li><a href="#"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i> Pendaftaran Anggota</a></li>
+                <li><a href="#"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i> Bebas Pustaka</a></li>
+                <li><a href="#"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i> Usulan Buku Baru</a></li>
+            </ul>
+        </div>
     </div>
-</div>
+    <div class="copyright">&copy; 2024 Perpustakaan Sekolah Keperawatan HKBP. Semua Hak Dilindungi.</div>
+</footer>
 
-
+<style>
+    footer {
+        background-color: var(--deep-green);
+        color: rgba(200, 235, 218, 0.85);
+        padding: 4rem 5% 2rem;
+    }
+    .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 3rem;
+    }
+    .footer-col h4 {
+        color: white;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid var(--accent-green);
+        padding-left: 10px;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+    .footer-col ul {
+        list-style: none;
+    }
+    .footer-col ul li {
+        margin-bottom: 10px;
+    }
+    .footer-col ul li a {
+        color: rgba(200, 235, 218, 0.80);
+        transition: 0.3s;
+        font-size: 0.88rem;
+    }
+    .footer-col ul li a:hover {
+        color: white;
+        padding-left: 4px;
+    }
+    .footer-col p {
+        font-size: 0.88rem;
+        line-height: 1.8;
+    }
+    .footer-col p i {
+        color: var(--accent-green);
+        margin-right: 6px;
+    }
+    .copyright {
+        margin-top: 3rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        text-align: center;
+        font-size: 0.82rem;
+        color: rgba(200, 235, 218, 0.6);
+    }
+</style>
