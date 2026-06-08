@@ -8,7 +8,6 @@
     <h2 data-aos="fade-down" data-aos-delay="300">Gerbang Literasi Keperawatan HKBP</h2>
     <p data-aos="fade-up" data-aos-delay="500">Akses menyeluruh ke ribuan koleksi literatur medis, jurnal klinis terakreditasi, dan arsip penelitian eksklusif untuk mendukung keunggulan akademik di Akper HKBP Balige.</p>
 
-    {{-- FORM PENCARIAN --}}
     <form class="search-container" method="GET" action="{{ route('user.global_search') }}" data-aos="zoom-in" data-aos-delay="800">
         <input type="text" name="keyword" placeholder="Cari referensi medis, buku, atau artikel ilmiah...">
         <button type="submit" class="search-btn"><i class="fas fa-search"></i> Cari Katalog</button>
@@ -131,9 +130,7 @@
         box-shadow: 0 16px 36px rgba(15, 74, 49, 0.12);
         border-color: var(--accent-green);
     }
-    .animate-float {
-        animation: floating 3s ease-in-out infinite;
-    }
+    .animate-float { animation: floating 3s ease-in-out infinite; }
     .feature-card i {
         color: var(--primary-color);
         font-size: 3rem;
@@ -208,12 +205,8 @@
     }
     #matrix-canvas-layanan {
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-        pointer-events: none;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: 1; pointer-events: none;
     }
     .section-container {
         padding: 40px 5%;
@@ -256,11 +249,7 @@
         box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.1);
         border-color: var(--accent-green);
     }
-    .card-layanan i {
-        font-size: 2.2rem;
-        color: var(--accent-green);
-        margin-bottom: 5px;
-    }
+    .card-layanan i { font-size: 2.2rem; color: var(--accent-green); margin-bottom: 5px; }
     .card-layanan h3 { font-size: 1rem; font-weight: 700; color: var(--text-dark); }
     .card-layanan p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
     .card-layanan:nth-child(5), .card-layanan:nth-child(6) { grid-column: span 2; }
@@ -314,32 +303,18 @@
         gap: 20px;
     }
     .koleksi-unggulan-header-left .subtitle-label {
-        font-size: 0.78rem;
-        font-weight: 800;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        color: var(--primary-color);
-        margin-bottom: 8px;
+        font-size: 0.78rem; font-weight: 800; letter-spacing: 2px;
+        text-transform: uppercase; color: var(--primary-color); margin-bottom: 8px;
     }
     .koleksi-unggulan-header-left h2 {
-        font-size: 2.6rem;
-        font-weight: 900;
-        color: var(--text-dark);
-        line-height: 1.1;
-        font-family: 'Playfair Display', serif;
+        font-size: 2.6rem; font-weight: 900; color: var(--text-dark);
+        line-height: 1.1; font-family: 'Playfair Display', serif;
     }
     .koleksi-lihat-semua {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.88rem;
-        font-weight: 800;
-        color: var(--primary-color);
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        transition: gap 0.3s;
-        text-decoration: none;
-        border-bottom: 2px solid var(--primary-color);
+        display: flex; align-items: center; gap: 8px;
+        font-size: 0.88rem; font-weight: 800; color: var(--primary-color);
+        text-transform: uppercase; letter-spacing: 1.5px; transition: gap 0.3s;
+        text-decoration: none; border-bottom: 2px solid var(--primary-color);
         padding-bottom: 2px;
     }
     .koleksi-lihat-semua:hover { gap: 14px; color: var(--deep-green); border-color: var(--deep-green); }
@@ -352,91 +327,59 @@
         margin: 0 auto;
     }
     .koleksi-hero-card {
-        grid-column: 1;
-        grid-row: 1 / 3;
-        border-radius: 28px;
-        overflow: hidden;
-        position: relative;
-        min-height: 520px;
-        cursor: pointer;
-        background: var(--deep-green);
+        grid-column: 1; grid-row: 1 / 3;
+        border-radius: 28px; overflow: hidden; position: relative;
+        min-height: 520px; cursor: pointer; background: var(--deep-green);
     }
     .koleksi-hero-card img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0.70;
-        transition: transform 0.6s ease, opacity 0.6s ease;
-        display: block;
+        width: 100%; height: 100%; object-fit: cover;
+        opacity: 0.70; transition: transform 0.6s ease, opacity 0.6s ease; display: block;
     }
     .koleksi-hero-card:hover img { transform: scale(1.05); opacity: 0.55; }
     .koleksi-hero-overlay {
-        position: absolute;
-        inset: 0;
+        position: absolute; inset: 0;
         background: linear-gradient(to top, rgba(10, 45, 28, 0.94) 40%, transparent 75%);
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        padding: 40px;
+        display: flex; flex-direction: column; justify-content: flex-end; padding: 40px;
     }
     .koleksi-hero-badge {
-        display: inline-block;
-        background: var(--accent-green);
-        color: white;
-        font-size: 0.7rem;
-        font-weight: 800;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        padding: 6px 14px;
-        border-radius: 50px;
-        margin-bottom: 18px;
-        width: fit-content;
+        display: inline-block; background: var(--accent-green); color: white;
+        font-size: 0.7rem; font-weight: 800; letter-spacing: 1.5px;
+        text-transform: uppercase; padding: 6px 14px; border-radius: 50px;
+        margin-bottom: 18px; width: fit-content;
     }
     .koleksi-hero-overlay h3 {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.2rem;
-        font-weight: 900;
-        color: white;
-        line-height: 1.15;
-        margin-bottom: 16px;
+        font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 900;
+        color: white; line-height: 1.15; margin-bottom: 16px;
     }
-    .koleksi-hero-overlay p { font-size: 1rem; color: rgba(255,255,255,0.78); line-height: 1.6; margin-bottom: 30px; max-width: 480px; }
+    .koleksi-hero-overlay p {
+        font-size: 1rem; color: rgba(255,255,255,0.78); line-height: 1.6;
+        margin-bottom: 30px; max-width: 480px;
+    }
     .koleksi-hero-btn {
-        display: inline-block;
-        background: white;
-        color: var(--deep-green);
-        font-weight: 800;
-        font-size: 0.92rem;
-        padding: 13px 30px;
-        border-radius: 50px;
-        transition: background 0.3s, transform 0.3s;
-        width: fit-content;
+        display: inline-block; background: white; color: var(--deep-green);
+        font-weight: 800; font-size: 0.92rem; padding: 13px 30px; border-radius: 50px;
+        transition: background 0.3s, transform 0.3s; width: fit-content;
     }
     .koleksi-hero-btn:hover { background: #a8f0c8; transform: translateY(-2px); }
     .koleksi-riset-card {
-        grid-column: 2;
-        grid-row: 1;
-        border: 1px solid #d4e5d9;
-        border-radius: 28px;
-        padding: 30px;
-        display: flex;
-        gap: 24px;
-        align-items: flex-start;
-        background: white;
-        transition: box-shadow 0.3s, transform 0.3s;
-        cursor: pointer;
+        grid-column: 2; grid-row: 1;
+        border: 1px solid #d4e5d9; border-radius: 28px; padding: 30px;
+        display: flex; gap: 24px; align-items: flex-start; background: white;
+        transition: box-shadow 0.3s, transform 0.3s; cursor: pointer;
     }
-    .koleksi-riset-card:hover { box-shadow: 0 12px 35px rgba(15,74,49,0.1); transform: translateY(-4px); border-color: var(--accent-green); }
+    .koleksi-riset-card:hover {
+        box-shadow: 0 12px 35px rgba(15,74,49,0.1);
+        transform: translateY(-4px); border-color: var(--accent-green);
+    }
     .koleksi-riset-book-cover {
         min-width: 110px; width: 110px; height: 155px;
         border-radius: 12px; overflow: hidden;
-        box-shadow: 0 8px 20px rgba(15, 74, 49, 0.15);
-        flex-shrink: 0;
+        box-shadow: 0 8px 20px rgba(15, 74, 49, 0.15); flex-shrink: 0;
     }
     .koleksi-riset-book-cover img { width: 100%; height: 100%; object-fit: cover; }
     .koleksi-riset-book-cover.illustrated {
-        background: var(--primary-color);
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        background: var(--primary-color); display: flex;
+        flex-direction: column; align-items: center; justify-content: center;
         padding: 14px 12px; gap: 8px;
     }
     .koleksi-riset-book-cover.illustrated .book-title-mini {
@@ -446,8 +389,8 @@
         font-size: 0.55rem; color: rgba(255,255,255,0.75); text-align: center;
     }
     .koleksi-riset-info .riset-label {
-        font-size: 0.72rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
-        color: var(--primary-color); margin-bottom: 10px;
+        font-size: 0.72rem; font-weight: 800; letter-spacing: 1.5px;
+        text-transform: uppercase; color: var(--primary-color); margin-bottom: 10px;
     }
     .koleksi-riset-info h3 {
         font-family: 'Playfair Display', serif; font-size: 1.45rem; font-weight: 900;
@@ -457,7 +400,8 @@
     .koleksi-akses-link {
         display: inline-flex; align-items: center; gap: 6px;
         font-size: 0.88rem; font-weight: 800; color: var(--primary-color);
-        border-bottom: 2px solid var(--primary-color); padding-bottom: 2px; transition: color 0.3s, border-color 0.3s; text-decoration: none;
+        border-bottom: 2px solid var(--primary-color); padding-bottom: 2px;
+        transition: color 0.3s, border-color 0.3s; text-decoration: none;
     }
     .koleksi-akses-link:hover { color: var(--deep-green); border-color: var(--deep-green); }
     .koleksi-mini-grid {
@@ -469,7 +413,10 @@
         background: white; text-align: center; cursor: pointer;
         transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
     }
-    .koleksi-mini-card:hover { box-shadow: 0 12px 35px rgba(15,74,49,0.1); transform: translateY(-4px); border-color: var(--accent-green); }
+    .koleksi-mini-card:hover {
+        box-shadow: 0 12px 35px rgba(15,74,49,0.1);
+        transform: translateY(-4px); border-color: var(--accent-green);
+    }
     .koleksi-mini-icon {
         width: 64px; height: 64px; margin: 0 auto 20px;
         display: flex; align-items: center; justify-content: center;
@@ -555,86 +502,88 @@
     }
     .read-more-btn:hover { color: var(--deep-green); gap: 10px; }
 
-    /* ===== TESTIMONIAL ===== */
-    .testimonials-wrapper {
+    /* ===== REWARD (Top Peminjam) ===== */
+    .reward-wrapper {
         padding: 60px 0;
         background-color: #edf5f0;
-        position: relative;
     }
-    .testimonial-header {
+    .reward-header {
         text-align: center;
         margin-bottom: 40px;
     }
-    .testimonial-header h2 {
+    .reward-header h2 {
         font-family: 'Playfair Display', serif;
-        color: var(--text-dark);
+        color: #1a3b2e;
         font-size: 2.4rem;
         margin-bottom: 10px;
     }
-    .testimonial-header p { color: var(--text-muted); max-width: 540px; margin: 0 auto; }
-    .testimonial-container-box {
-        overflow: hidden;
-        width: 100%;
+    .reward-header p {
+        color: #6b7280;
+        max-width: 540px;
+        margin: 0 auto;
+    }
+    .reward-container {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
         max-width: 1140px;
         margin: 0 auto;
-        padding: 10px 0 40px;
-        position: relative;
+        padding: 0 20px;
     }
-    .testimonial-slider {
-        display: flex;
-        transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-        width: max-content;
-    }
-    .testimonial-card {
+    .reward-card {
         background: white;
-        width: 350px;
-        min-width: 350px;
-        margin: 0 15px;
+        width: 300px;
         padding: 35px 25px;
         border-radius: 28px;
         box-shadow: 0 8px 28px rgba(15, 74, 49, 0.08);
         text-align: center;
-        position: relative;
         border: 1px solid #e0ece6;
         transition: 0.4s;
     }
-    .testimonial-card:hover { transform: translateY(-10px); border-color: var(--accent-green); }
-    .profile-wrapper {
-        width: 90px; height: 90px;
+    .reward-card:hover {
+        transform: translateY(-10px);
+        border-color: #27ae60;
+    }
+    .reward-avatar {
+        width: 90px;
+        height: 90px;
         margin: 0 auto 20px;
         border-radius: 50%;
         padding: 5px;
-        border: 2px solid var(--accent-green);
+        border: 2px solid #27ae60;
     }
-    .profile-wrapper img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-    .stars { color: #f5a623; margin-bottom: 15px; font-size: 0.9rem; }
-    .testimonial-text { font-style: italic; color: var(--text-muted); font-size: 0.92rem; margin-bottom: 25px; line-height: 1.7; }
-    .user-info h4 { color: var(--text-dark); font-size: 1.05rem; margin-bottom: 5px; font-weight: 700; }
-    .user-info span { font-size: 0.78rem; color: var(--primary-color); font-weight: 700; text-transform: uppercase; }
-    .control-btn {
-        position: absolute; top: 50%; transform: translateY(-50%);
-        background-color: white; color: var(--primary-color);
-        border: 2px solid var(--border-color); width: 48px; height: 48px; border-radius: 50%;
-        cursor: pointer; display: flex; align-items: center; justify-content: center;
-        font-size: 1.1rem; transition: 0.3s;
-        box-shadow: 0 4px 14px rgba(15, 74, 49, 0.12); z-index: 10;
+    .reward-avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
     }
-    .control-btn:hover { background-color: var(--primary-color); color: white; border-color: var(--primary-color); transform: translateY(-50%) scale(1.1); }
-    .prev-btn { left: 10px; }
-    .next-btn { right: 10px; }
-
-    @media (max-width: 1100px) {
-        .koleksi-unggulan-grid { grid-template-columns: 1fr; }
-        .koleksi-hero-card { grid-column: 1; grid-row: 1; min-height: 400px; }
-        .koleksi-riset-card { grid-column: 1; grid-row: 2; }
-        .koleksi-mini-grid { grid-column: 1; grid-row: 3; }
-        .grid-layanan-modern { grid-template-columns: repeat(2, 1fr); }
+    .reward-stars {
+        color: #f5a623;
+        margin-bottom: 15px;
+        font-size: 0.9rem;
     }
-    @media (max-width: 640px) {
-        .koleksi-mini-grid { grid-template-columns: 1fr; }
-        .grid-layanan-modern { grid-template-columns: 1fr; }
-        .card-layanan:nth-child(5), .card-layanan:nth-child(6) { grid-column: span 1; }
-        .hero h2 { font-size: 2.2rem; }
+    .reward-text {
+        font-size: 0.92rem;
+        color: #4b5563;
+        margin-bottom: 20px;
+        line-height: 1.7;
+    }
+    .reward-text strong {
+        color: #1a3b2e;
+    }
+    .reward-user h4 {
+        color: #1a3b2e;
+        font-size: 1.05rem;
+        margin-bottom: 5px;
+        font-weight: 700;
+    }
+    .reward-user span {
+        font-size: 0.78rem;
+        color: #2d6a4f;
+        font-weight: 700;
+        text-transform: uppercase;
     }
 </style>
 @endpush
@@ -681,7 +630,7 @@
     </div>
 </section>
 
-{{-- Matrix / Layanan --}}
+{{-- Layanan --}}
 <div class="matrix-wrapper-layanan">
     <canvas id="matrix-canvas-layanan"></canvas>
     <section class="section-container">
@@ -712,47 +661,84 @@
 </div>
 
 <section class="section-container" style="background: #f4f7f5;">
+    {{-- ================= PERPUSTAKAAN DALAM ANGKA ================= --}}
     <div class="label-header" data-aos="fade-right">
         <i class="fas fa-chart-pie"></i> Perpustakaan Dalam Angka
     </div>
     <div class="stats-grid">
         <div class="stat-item" data-aos="zoom-in" data-aos-delay="100">
-            <div class="stat-info"><span>3.200+</span><p>Mahasiswa Terdaftar</p></div>
+            <div class="stat-info">
+                <span>{{ number_format($totalVerifiedUsers ?? 0, 0, ',', '.') }}+</span>
+                <p>Mahasiswa Terverifikasi</p>
+            </div>
             <i class="fas fa-user-graduate"></i>
         </div>
         <div class="stat-item" data-aos="zoom-in" data-aos-delay="200">
-            <div class="stat-info"><span>12.500</span><p>Buku Dipinjam</p></div>
+            <div class="stat-info">
+                <span>{{ number_format($totalLoans ?? 0, 0, ',', '.') }}</span>
+                <p>Buku Dipinjam (Aktif)</p>
+            </div>
             <i class="fas fa-book-reader"></i>
         </div>
         <div class="stat-item" data-aos="zoom-in" data-aos-delay="300">
-            <div class="stat-info"><span>8.000+</span><p>Koleksi Medis</p></div>
+            <div class="stat-info">
+                <span>{{ number_format($totalUniqueTitles ?? 0, 0, ',', '.') }}+</span>
+                <p>Total Judul Unik</p>
+            </div>
             <i class="fas fa-notes-medical"></i>
         </div>
         <div class="stat-item" data-aos="zoom-in" data-aos-delay="400">
-            <div class="stat-info"><span>250</span><p>Pengunjung Harian</p></div>
+            <div class="stat-info">
+                <span>{{ number_format($totalPrintedCollections ?? 0, 0, ',', '.') }}</span>
+                <p>Koleksi Tercetak</p>
+            </div>
             <i class="fas fa-users-cog"></i>
         </div>
     </div>
 
-    {{-- Koleksi Unggulan --}}
+    {{-- ================= KOLEKSI UNGGULAN (1 BUKU TERPOPULER) ================= --}}
     <section class="koleksi-unggulan-section">
         <div class="koleksi-unggulan-header" data-aos="fade-up">
             <div class="koleksi-unggulan-header-left">
                 <div class="subtitle-label">Kurasi Pustakawan</div>
                 <h2>Koleksi Unggulan</h2>
             </div>
-            <a href="#" class="koleksi-lihat-semua">Lihat Semua Koleksi <i class="fas fa-arrow-right"></i></a>
+            <a href="{{ route('user.koleksi.buku_pengayaan') }}" class="koleksi-lihat-semua">
+                Lihat Semua Koleksi <i class="fas fa-arrow-right"></i>
+            </a>
         </div>
+
+        @php
+            $topBook = $topBooks->first() ?? null;
+        @endphp
+
         <div class="koleksi-unggulan-grid">
+            @if($topBook)
             <div class="koleksi-hero-card" data-aos="fade-right" data-aos-duration="800">
-                <img src="https://images.unsplash.com/photo-1532012197367-2d5970d7b5c3?q=80&w=800&auto=format&fit=crop" alt="Jurnal Medis Klasik">
+                <img src="{{ $topBook->cover_image ? asset('storage/'.$topBook->cover_image) : asset('assets/img/placeholder-book.jpg') }}"
+                     alt="{{ $topBook->title }}">
                 <div class="koleksi-hero-overlay">
-                    <span class="koleksi-hero-badge">Jurnal Medis</span>
-                    <h3>Jurnal Medis Klasik</h3>
-                    <p>Koleksi langka catatan medis dan perkembangan kedokteran dari masa kolonial hingga awal kemerdekaan Indonesia.</p>
-                    <a href="#" class="koleksi-hero-btn">Pelajari Sejarah</a>
+                    <span class="koleksi-hero-badge">Paling Diminati</span>
+                    <h3>{{ $topBook->title }}</h3>
+                    <p>{{ \Str::limit($topBook->description ?? 'Koleksi unggulan perpustakaan.', 120) }}</p>
+                    <a href="{{ route('user.koleksi.detail', $topBook->id) }}" class="koleksi-hero-btn">
+                        Lihat Detail
+                    </a>
                 </div>
             </div>
+            @else
+            <div class="koleksi-hero-card" data-aos="fade-right" data-aos-duration="800">
+                <img src="https://images.unsplash.com/photo-1532012197367-2d5970d7b5c3?q=80&w=800&auto=format&fit=crop"
+                     alt="Belum ada data">
+                <div class="koleksi-hero-overlay">
+                    <span class="koleksi-hero-badge">Segera Hadir</span>
+                    <h3>Belum ada peminjaman</h3>
+                    <p>Buku terpopuler akan muncul setelah ada aktivitas peminjaman.</p>
+                    <a href="{{ route('user.koleksi.buku_pengayaan') }}" class="koleksi-hero-btn">Lihat Katalog</a>
+                </div>
+            </div>
+            @endif
+
             <div class="koleksi-riset-card" data-aos="fade-left" data-aos-duration="800" data-aos-delay="100">
                 <div class="koleksi-riset-book-cover illustrated">
                     <i class="fas fa-plus" style="font-size:1.4rem;color:rgba(255,255,255,0.35);"></i>
@@ -803,128 +789,83 @@
         </div>
     </section>
 
+    {{-- ================= BERITA TERBARU ================= --}}
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;" data-aos="fade-up">
         <div class="label-header" style="margin-bottom:0;"><i class="fas fa-bullhorn"></i> Berita & Kegiatan</div>
-        <a href="{{ route('guest.berita.index') }}" style="color:var(--primary-color);font-weight:800;font-size:0.9rem;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--primary-color);padding-bottom:2px;">Semua Berita <i class="fas fa-arrow-right"></i></a>
+        <a href="{{ route('user.berita') }}" style="color:var(--primary-color);font-weight:800;font-size:0.9rem;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--primary-color);padding-bottom:2px;">
+            Semua Berita <i class="fas fa-arrow-right"></i>
+        </a>
     </div>
     <div class="berita-grid">
-        <div class="news-card tilt-effect" data-aos="fade-up" data-aos-delay="100">
-            <div class="news-image-wrapper"><span class="news-badge">Workshop</span><img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=500&q=60" alt="News 1"></div>
+        @forelse($berita_terbaru as $berita)
+        <div class="news-card tilt-effect" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
+            <div class="news-image-wrapper">
+                <span class="news-badge">{{ $berita->category }}</span>
+                <img src="{{ $berita->image ? asset('storage/'.$berita->image) : 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=500&q=60' }}"
+                     alt="{{ $berita->title }}">
+            </div>
             <div class="news-body">
-                <div class="news-meta"><span><i class="far fa-calendar-alt"></i> 12 Okt 2024</span><span><i class="far fa-user"></i> Admin</span></div>
-                <h4 class="news-title">Workshop Literasi Medis: Cara Mengakses Jurnal Internasional</h4>
-                <p class="news-excerpt">Tingkatkan kemampuan riset Anda dengan mempelajari teknik pencarian database jurnal internasional seperti EBSCO dan Scopus bersama ahli perpustakaan.</p>
-                <div class="news-footer"><a href="#" class="read-more-btn">Baca Selengkapnya <i class="fas fa-chevron-right"></i></a></div>
+                <div class="news-meta">
+                    <span><i class="far fa-calendar-alt"></i> {{ $berita->created_at->format('d M Y') }}</span>
+                    <span><i class="far fa-user"></i> {{ $berita->created_by ?? 'Admin' }}</span>
+                </div>
+                <h4 class="news-title">{{ $berita->title }}</h4>
+                <p class="news-excerpt">{{ $berita->excerpt ?? \Str::limit(strip_tags($berita->content), 100) }}</p>
+                <div class="news-footer">
+                    <a href="{{ route('user.berita.show', $berita->slug) }}" class="read-more-btn">
+                        Baca Selengkapnya <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
             </div>
         </div>
-        <div class="news-card tilt-effect" data-aos="fade-up" data-aos-delay="200">
-            <div class="news-image-wrapper"><span class="news-badge">Koleksi</span><img src="https://images.unsplash.com/photo-1581056771107-24ca5f033842?auto=format&fit=crop&w=500&q=60" alt="News 2"></div>
-            <div class="news-body">
-                <div class="news-meta"><span><i class="far fa-calendar-alt"></i> 08 Okt 2024</span><span><i class="far fa-user"></i> Pustakawan</span></div>
-                <h4 class="news-title">Penambahan Koleksi Buku Keperawatan Gawat Darurat Edisi Terbaru</h4>
-                <p class="news-excerpt">Perpustakaan AKPER HKBP baru saja menambah 50 judul buku terbaru mengenai penanganan gawat darurat dan intensif untuk mendukung kurikulum terbaru.</p>
-                <div class="news-footer"><a href="#" class="read-more-btn">Baca Selengkapnya <i class="fas fa-chevron-right"></i></a></div>
-            </div>
+        @empty
+        <div class="col-span-full text-center text-slate-400 py-10">
+            <i class="fas fa-newspaper text-4xl mb-2"></i>
+            <p>Belum ada berita terbaru.</p>
         </div>
-        <div class="news-card tilt-effect" data-aos="fade-up" data-aos-delay="300">
-            <div class="news-image-wrapper"><span class="news-badge">Event</span><img src="https://images.unsplash.com/photo-1527613426441-4da17471b66d?auto=format&fit=crop&w=500&q=60" alt="News 3"></div>
-            <div class="news-body">
-                <div class="news-meta"><span><i class="far fa-calendar-alt"></i> 17 Sep 2024</span><span><i class="far fa-user"></i> Humas</span></div>
-                <h4 class="news-title">Perayaan Hari Perawat Nasional di Lingkungan AKPER HKBP</h4>
-                <p class="news-excerpt">Rayakan kebersamaan dalam memperingati Hari Perawat Nasional dengan rangkaian seminar kesehatan dan lomba edukasi literasi keperawatan.</p>
-                <div class="news-footer"><a href="#" class="read-more-btn">Baca Selengkapnya <i class="fas fa-chevron-right"></i></a></div>
-            </div>
-        </div>
-        <div class="news-card tilt-effect" data-aos="fade-up" data-aos-delay="400">
-            <div class="news-image-wrapper"><span class="news-badge">Sosial</span><img src="https://images.unsplash.com/photo-1505751172676-43ad3358c38c?auto=format&fit=crop&w=500&q=60" alt="News 4"></div>
-            <div class="news-body">
-                <div class="news-meta"><span><i class="far fa-calendar-alt"></i> 05 Sep 2024</span><span><i class="far fa-user"></i> Admin</span></div>
-                <h4 class="news-title">Program Pengabdian Masyarakat: Literasi Kesehatan di Panti Asuhan</h4>
-                <p class="news-excerpt">Mahasiswa dan Pustakawan AKPER HKBP berkolaborasi memberikan edukasi kesehatan dasar dan donasi buku bacaan ke panti asuhan sekitar.</p>
-                <div class="news-footer"><a href="#" class="read-more-btn">Baca Selengkapnya <i class="fas fa-chevron-right"></i></a></div>
-            </div>
-        </div>
+        @endforelse
     </div>
 </section>
 
-{{-- Testimonial --}}
-<section class="testimonials-wrapper">
-    <div class="testimonial-header" data-aos="fade-up">
-        <h2>Testimonials</h2>
+{{-- ================= REWARD TOP 3 PEMINJAM ================= --}}
+<section class="reward-wrapper">
+    <div class="reward-header" data-aos="fade-up">
+        <h2>Peminjam Teraktif</h2>
         <div style="width:80px;height:3px;background:var(--primary-color);margin:10px auto;border-radius:2px;"></div>
-        <p>Apa kata mereka tentang pengalaman menggunakan layanan perpustakaan digital Sekolah Keperawatan HKBP Balige.</p>
+        <p>Apresiasi kepada pengguna dengan total peminjaman terbanyak dan paling beragam.</p>
     </div>
-    <div class="testimonial-container-box" data-aos="fade-up">
-        <button class="control-btn prev-btn" onclick="moveSlide(-1)"><i class="fas fa-chevron-left"></i></button>
-        <button class="control-btn next-btn" onclick="moveSlide(1)"><i class="fas fa-chevron-right"></i></button>
-        <div class="testimonial-slider" id="testimonialSlider">
-            <div class="testimonial-card">
-                <div class="profile-wrapper"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&auto=format&fit=crop" alt="User"></div>
-                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                <p class="testimonial-text">Layanan jurnal elektroniknya sangat membantu saya dalam menyusun Tugas Akhir. Koleksinya sangat update dan relevan dengan dunia medis saat ini.</p>
-                <div class="user-info"><h4>Amanda Wilson</h4><span>Mahasiswa Keperawatan</span></div>
+    <div class="reward-container" data-aos="fade-up">
+        @forelse($topBorrowers as $index => $borrower)
+        <div class="reward-card">
+            <div class="reward-avatar">
+                <img src="{{ $borrower->avatar }}" alt="{{ $borrower->name }}">
             </div>
-            <div class="testimonial-card">
-                <div class="profile-wrapper"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop" alt="User"></div>
-                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                <p class="testimonial-text">Ruang baca yang tenang dan sistem pinjam buku online-nya sangat praktis. Sebagai dosen, saya sangat dimudahkan dalam mencari referensi pengajaran.</p>
-                <div class="user-info"><h4>Ryan Thompson</h4><span>Dosen Medis</span></div>
+            <div class="reward-stars">
+                @for($i = 1; $i <= 3; $i++)
+                    <i class="fas fa-star{{ $index + 1 >= $i ? '' : '-o' }}"></i>
+                @endfor
             </div>
-            <div class="testimonial-card">
-                <div class="profile-wrapper"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop" alt="User"></div>
-                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                <p class="testimonial-text">Akses E-Book 24 jam memungkinkan saya belajar kapan saja, bahkan saat praktek lapangan. Perpustakaan ini benar-benar mendukung kompetensi kami.</p>
-                <div class="user-info"><h4>Rachel Chen</h4><span>Alumni Perawat</span></div>
+            <div class="reward-text">
+                <strong>{{ $borrower->total_borrowed }}</strong> total peminjaman<br>
+                <strong>{{ $borrower->distinct_titles }}</strong> judul berbeda dipinjam
             </div>
-            <div class="testimonial-card">
-                <div class="profile-wrapper"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&auto=format&fit=crop" alt="User"></div>
-                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                <p class="testimonial-text">Pengalaman meminjam buku jadi jauh lebih modern. Katalog online-nya sangat membantu saya mencari buku dalam hitungan detik.</p>
-                <div class="user-info"><h4>Budi Santoso</h4><span>Mahasiswa</span></div>
+            <div class="reward-user">
+                <h4>{{ $borrower->name }}</h4>
+                <span>{{ $borrower->role->name ?? 'Anggota' }}</span>
             </div>
         </div>
+        @empty
+        <div class="text-center text-slate-400 py-10">
+            <i class="fas fa-users text-4xl mb-2"></i>
+            <p>Belum ada data peminjam.</p>
+        </div>
+        @endforelse
     </div>
 </section>
 @endsection
 
 @push('scripts')
 <script>
-    // Fungsi untuk slider testimonial (tetap dipertahankan dari desain asli)
-    let currentIndex = 0;
-    const slides = document.querySelectorAll('.testimonial-card');
-    const slider = document.getElementById('testimonialSlider');
-    const totalSlides = slides.length;
-    let slidesPerView = getSlidesPerView();
-
-    function getSlidesPerView() {
-        if (window.innerWidth >= 1100) return 3;
-        if (window.innerWidth >= 768) return 2;
-        return 1;
-    }
-
-    function updateSlider() {
-        slidesPerView = getSlidesPerView();
-        const maxIndex = Math.max(0, totalSlides - slidesPerView);
-        if (currentIndex > maxIndex) currentIndex = maxIndex;
-        const translateX = -currentIndex * (350 + 30); // width 350 + margin 30
-        slider.style.transform = `translateX(${translateX}px)`;
-    }
-
-    window.moveSlide = function(direction) {
-        const maxIndex = Math.max(0, totalSlides - slidesPerView);
-        currentIndex += direction;
-        if (currentIndex < 0) currentIndex = 0;
-        if (currentIndex > maxIndex) currentIndex = maxIndex;
-        updateSlider();
-    };
-
-    window.addEventListener('resize', () => {
-        updateSlider();
-    });
-
-    updateSlider();
-
-    // Efek matrix canvas (opsional, dari desain asli)
     const canvas = document.getElementById('matrix-canvas-layanan');
     if (canvas) {
         const ctx = canvas.getContext('2d');

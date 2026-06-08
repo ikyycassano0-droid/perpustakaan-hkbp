@@ -783,6 +783,63 @@
         <button class="btn-nav-reader" onclick="nextPage()">SELANJUTNYA</button>
     </div>
 </div>
+
+<!-- READER OVERLAY -->
+<div id="reader-overlay">
+    <div class="reader-nav-top">
+        <div>
+            <i class="fas fa-book-open" style="color: var(--accent-yellow);"></i>
+            <span style="margin-left: 10px;">E-READER: {{ $item->title }}</span>
+        </div>
+        <div>
+            <div class="search-box-reader" id="search-container">
+                <input type="text" id="reader-search-input" placeholder="Cari kata..." onkeyup="doSearch(event)">
+            </div>
+            <i class="fas fa-search" onclick="toggleSearch()" style="cursor: pointer;"></i>
+            <i class="fas fa-moon" id="darkmode-btn" onclick="toggleDarkMode()" style="cursor: pointer; margin-left: 20px;"></i>
+            <i class="fas fa-times-circle" onclick="closeReader()" style="cursor: pointer; margin-left: 20px; color: #e74c3c;"></i>
+        </div>
+    </div>
+    <div class="reader-main">
+        <div class="reader-page" id="reader-text-content">
+            <div id="pdf-viewer-container" style="width:100%;">
+                <iframe id="pdf-frame" src="" style="width:100%; height:800px; border:none;"></iframe>
+            </div>
+            <div id="preview-content" style="display:none;">
+                <h2 style="color: var(--primary-color);">Pratinjau Konten</h2>
+                <p>{{ Str::limit($item->abstract ?? 'Konten lengkap dapat diakses melalui tombol baca online atau unduh PDF.', 500) }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="reader-footer">
+        <button class="btn-nav-reader" onclick="closeReader()">Tutup</button>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-content">
+        <div class="footer-col">
+            <h4>Sekolah Keperawatan HKBP</h4>
+            <p><i class="fas fa-hospital"></i> Sumatera Utara</p>
+            <p><i class="fas fa-envelope"></i> library@akperhkbp.ac.id</p>
+        </div>
+        <div class="footer-col">
+            <h4>Sumber Daya</h4>
+            <ul>
+                <li><a href="#">Jurnal Keperawatan</a></li>
+                <li><a href="#">Panduan Sitasi APA</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Akses Cepat</h4>
+            <ul>
+                <li><a href="panduan.html">Pendaftaran Anggota</a></li>
+                <li><a href="upload-ta.html">Bebas Pustaka</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="copyright">&copy; 2024 Perpustakaan Sekolah Keperawatan HKBP.</div>
+</footer>
 @endsection
 
 @push('scripts')

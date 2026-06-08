@@ -506,6 +506,7 @@
         <a href="{{ route('login') }}" class="login-btn"><i class="fas fa-sign-in-alt"></i> LOGIN</a>
     </header>
 
+    @include('guest.component.navbars')
     {{-- Hero Section (optional, bisa diisi oleh child) --}}
     @yield('hero')
 

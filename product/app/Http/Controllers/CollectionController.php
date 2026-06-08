@@ -221,44 +221,44 @@ class CollectionController extends Controller
     }
 
     // ================= SHOW DETAIL =================
-public function show($id)
-{
-    $collection = Collection::with([
-        'classifications:id,name',
-        'categories:id,name',
-        'location:id,name'
-    ])->findOrFail($id);
+    public function show($id)
+    {
+        $collection = Collection::with([
+            'classifications:id,name',
+            'categories:id,name',
+            'location:id,name'
+        ])->findOrFail($id);
 
-    // Ambil status peminjaman untuk koleksi ini oleh user yang sedang login
-    $borrowStatus = null;
-    if (is_logged_in()) {
-        $activeOrder = Order::where('user_id', user_id())
-            ->whereHas('details', function ($q) use ($id) {
-                $q->where('collection_id', $id);
-            })
-            ->whereIn('status', ['PENDING', 'APPROVED', 'REJECTED'])
-            ->first();
-        if ($activeOrder) {
-            $borrowStatus = [
-                'status' => $activeOrder->status,
-                'order_id' => $activeOrder->id,
-                'status_text' => $this->getStatusText($activeOrder->status)
-            ];
+        // Ambil status peminjaman untuk koleksi ini oleh user yang sedang login
+        $borrowStatus = null;
+        if (is_logged_in()) {
+            $activeOrder = Order::where('user_id', user_id())
+                ->whereHas('details', function ($q) use ($id) {
+                    $q->where('collection_id', $id);
+                })
+                ->whereIn('status', ['PENDING', 'APPROVED', 'REJECTED'])
+                ->first();
+            if ($activeOrder) {
+                $borrowStatus = [
+                    'status' => $activeOrder->status,
+                    'order_id' => $activeOrder->id,
+                    'status_text' => $this->getStatusText($activeOrder->status)
+                ];
+            }
         }
+
+        $viewMap = [
+            'jurnal' => 'user.page.Koleksi.Koleksi_Tercetak.detail_jurnal',
+            'buku_pengayaan' => 'user.page.Koleksi.Koleksi_Tercetak.detail_buku_pengayaan',
+            'buku_referensi' => 'user.page.Koleksi.Koleksi_Tercetak.detail_buku_referensi',
+            'majalah' => 'user.page.Koleksi.Koleksi_Tercetak.detail_majalah',
+        ];
+
+        return view(
+            $viewMap[$collection->menu_type] ?? $viewMap['buku_pengayaan'],
+            compact('collection', 'borrowStatus')
+        );
     }
-
-    $viewMap = [
-        'jurnal' => 'user.page.Koleksi.Koleksi_Tercetak.detail_jurnal',
-        'buku_pengayaan' => 'user.page.Koleksi.Koleksi_Tercetak.detail_buku_pengayaan',
-        'buku_referensi' => 'user.page.Koleksi.Koleksi_Tercetak.detail_buku_referensi',
-        'majalah' => 'user.page.Koleksi.Koleksi_Tercetak.detail_majalah',
-    ];
-
-    return view(
-        $viewMap[$collection->menu_type] ?? $viewMap['buku_pengayaan'],
-        compact('collection', 'borrowStatus')
-    );
-}
 
 
     public function pinbal()

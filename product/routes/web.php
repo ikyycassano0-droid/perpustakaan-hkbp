@@ -18,6 +18,7 @@
     use Illuminate\Http\Request;
     use App\Models\User;
     use App\Http\Controllers\ServiceScheduleController;
+    
 
     Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
 
@@ -213,12 +214,9 @@ Route::prefix('admin')->name('admin.')->middleware(['admin'])->group(function ()
 Route::prefix('user')->group(function () {
 
         // Dashboard
-        Route::get('/dashboard', function() {
-            return view('user.page.home');
-        })->name('user.dashboard');
-
-    Route::get('/panduan', [ArchiveController::class, 'indexPanduan'])
-    ->name('user.panduan');
+        Route::get('/dashboard', [HomeController::class, 'index_user'])->name('user.dashboard');
+    
+        Route::get('/panduan', [ArchiveController::class, 'indexPanduan'])->name('user.panduan');
 
         // ================= ORDERS =================
         Route::post('/orders', [OrderController::class, 'store'])

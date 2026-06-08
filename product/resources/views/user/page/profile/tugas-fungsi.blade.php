@@ -7,7 +7,6 @@
 <style>
     /* ============================================
        STYLE KHUSUS HALAMAN TUGAS, FUNGSI, TUJUAN
-       (mempertahankan desain asli: border kuning, card putih)
     ============================================ */
 
     /* Banner Halaman */
@@ -201,6 +200,32 @@
         color: var(--primary-color);
     }
 
+    /* ============================
+       STYLE KHUSUS SAAT DATA KOSONG
+    ============================ */
+    .empty-state {
+        padding: 40px 20px;
+        text-align: center;
+    }
+
+    .empty-state i {
+        font-size: 3.5rem;
+        color: var(--primary-color);
+        opacity: 0.25;
+        margin-bottom: 15px;
+    }
+
+    .empty-state h4 {
+        font-size: 1.2rem;
+        color: var(--text-dark);
+        margin-bottom: 5px;
+    }
+
+    .empty-state p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+
     /* Responsive */
     @media (max-width: 992px) {
         .main-layout {
@@ -235,20 +260,13 @@
                 @forelse($tugas ?? [] as $item)
                     <div class="item">
                         <i class="fas fa-check-circle"></i>
-                        <p>{{ $item->deskripsi ?? $item->description ?? '' }}</p>
+                        <p>{{ $item->description ?? $item->deskripsi ?? '' }}</p>
                     </div>
                 @empty
-                    <div class="item">
-                        <i class="fas fa-check-circle"></i>
-                        <p>Mengumpulkan, mengolah, dan menyajikan informasi medis keperawatan secara sistematis untuk mendukung kurikulum pendidikan.</p>
-                    </div>
-                    <div class="item">
-                        <i class="fas fa-check-circle"></i>
-                        <p>Merawat dan melestarikan koleksi pustaka baik cetak maupun digital guna menjamin ketersediaan referensi jangka panjang.</p>
-                    </div>
-                    <div class="item">
-                        <i class="fas fa-check-circle"></i>
-                        <p>Memberikan layanan prima kepada sivitas akademika dalam pencarian sumber informasi ilmiah.</p>
+                    <div class="empty-state">
+                        <i class="fas fa-tasks"></i>
+                        <h4>Belum Ada Data Tugas</h4>
+                        <p>Data tugas pokok perpustakaan belum tersedia. Silakan hubungi administrator.</p>
                     </div>
                 @endforelse
             </div>
@@ -259,20 +277,18 @@
                 @forelse($fungsi ?? [] as $item)
                     <div class="item">
                         <i class="fas fa-check-circle"></i>
-                        <p><b>{{ $item->nama ?? $item->judul ?? '' }}:</b> {{ $item->deskripsi ?? $item->description ?? '' }}</p>
+                        <p>
+                            @if($item->title)
+                                <b>{{ $item->title }}:</b> 
+                            @endif
+                            {{ $item->description ?? $item->deskripsi ?? '' }}
+                        </p>
                     </div>
                 @empty
-                    <div class="item">
-                        <i class="fas fa-check-circle"></i>
-                        <p><b>Fungsi Edukasi:</b> Menjadi laboratorium intelektual mahasiswa untuk memperdalam ilmu keperawatan di luar kelas.</p>
-                    </div>
-                    <div class="item">
-                        <i class="fas fa-check-circle"></i>
-                        <p><b>Fungsi Informasi:</b> Menyediakan referensi data yang akurat, mutakhir, dan valid untuk penelitian kesehatan.</p>
-                    </div>
-                    <div class="item">
-                        <i class="fas fa-check-circle"></i>
-                        <p><b>Fungsi Riset:</b> Memfasilitasi dosen dan mahasiswa dalam menemukan jurnal-jurnal terakreditasi nasional maupun internasional.</p>
+                    <div class="empty-state">
+                        <i class="fas fa-cogs"></i>
+                        <h4>Belum Ada Data Fungsi</h4>
+                        <p>Data fungsi perpustakaan belum tersedia. Silakan hubungi administrator.</p>
                     </div>
                 @endforelse
             </div>
@@ -280,19 +296,16 @@
             <!-- Tujuan -->
             <div class="section-box" data-aos="fade-up" data-aos-delay="300">
                 <h2><i class="fas fa-bullseye"></i> Tujuan</h2>
-                @forelse($tujuan ?? [] as $index => $item)
+                @forelse($tujuan ?? [] as $item)
                     <div class="item">
                         <i class="fas fa-check-circle"></i>
-                        <p>{{ $item->deskripsi ?? $item->description ?? '' }}</p>
+                        <p>{{ $item->description ?? $item->deskripsi ?? '' }}</p>
                     </div>
                 @empty
-                    <div class="item">
-                        <i class="fas fa-check-circle"></i>
-                        <p>Mendukung tercapainya Tri Dharma Perguruan Tinggi (Pendidikan, Penelitian, dan Pengabdian Masyarakat) di lingkungan AKPER HKBP.</p>
-                    </div>
-                    <div class="item">
-                        <i class="fas fa-check-circle"></i>
-                        <p>Melahirkan lulusan perawat yang literat, kritis, dan berwawasan luas berdasarkan bukti ilmiah (Evidence-Based Nursing).</p>
+                    <div class="empty-state">
+                        <i class="fas fa-bullseye"></i>
+                        <h4>Belum Ada Data Tujuan</h4>
+                        <p>Data tujuan perpustakaan belum tersedia. Silakan hubungi administrator.</p>
                     </div>
                 @endforelse
             </div>
