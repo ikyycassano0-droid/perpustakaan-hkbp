@@ -92,7 +92,6 @@
                     <i class="fas fa-caret-down profile-caret"></i>
                 </button>
                 <ul class="profile-dropdown-menu">
-                    <li><a href="{{ route('profile.menu') }}"><i class="fas fa-user-circle"></i> Menu Profile</a></li>
                     <li class="logout-item">
                         <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             <i class="fas fa-sign-out-alt"></i> Logout
