@@ -31,6 +31,7 @@
     }
 
     .cd-cover-wrapper {
+        /* Positioning dipertahankan untuk menjaga tata letak */
         position: relative;
         width: 220px;
         height: 220px;
@@ -43,28 +44,10 @@
         object-fit: cover;
         border-radius: 12px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        position: relative;
-        z-index: 2;
+        /* Hanya gambar cover yang tampil */
     }
 
-    .cd-disc-effect {
-        position: absolute;
-        top: 5px;
-        right: -40px;
-        width: 210px;
-        height: 210px;
-        background: repeating-conic-gradient(from 0deg, #2d3e2d 0deg 20deg, #1a2b1a 20deg 40deg);
-        border-radius: 50%;
-        z-index: 1;
-        border: 2px solid #1a2b1a;
-        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-        animation: rotateDisc 10s linear infinite;
-    }
-
-    @keyframes rotateDisc {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
+    /* Elemen efek CD di belakang telah dihapus sesuai permintaan */
 
     .status-badge {
         display: inline-block;
@@ -269,7 +252,7 @@
             @else
                 <img src="https://via.placeholder.com/220x220?text=CD+Cover" class="cd-image" alt="Cover">
             @endif
-            <div class="cd-disc-effect"></div>
+            <!-- Elemen gambar CD di belakang telah dihapus sesuai permintaan -->
         </div>
 
         <div class="status-badge {{ ($item->available_stock ?? 0) > 0 ? 'status-available' : 'status-borrowed' }}">

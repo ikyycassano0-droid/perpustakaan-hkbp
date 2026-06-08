@@ -6,8 +6,8 @@
 @push('styles')
 <style>
     /* ============================================
-       CSS KHUSUS HALAMAN E-BOOK (GAYA KLASIK HIJAU)
-       Tidak mengganggu master layout
+       CSS KHUSUS HALAMAN E-BOOK GUEST (GAYA KLASIK HIJAU)
+       + Penambahan metadata & perapian card seperti versi User
     ============================================ */
 
     .main-container {
@@ -220,9 +220,9 @@
         border-radius: 50px;
         font-size: 0.65rem;
         font-weight: 800;
+        z-index: 2;
     }
 
-    /* Badge tambahan */
     .badge-available {
         background-color: #2daa6e;
         color: white;
@@ -237,6 +237,29 @@
         flex-grow: 1;
         display: flex;
         flex-direction: column;
+    }
+
+    /* Metadata tambahan (tahun, jenis) - SAMA DENGAN VERSI USER */
+    .book-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 10px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+    .book-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #f0f7f3;
+        padding: 3px 10px;
+        border-radius: 40px;
+    }
+    .book-meta i {
+        font-size: 0.65rem;
+        color: var(--primary-color);
     }
 
     .book-cat {
@@ -263,6 +286,14 @@
         font-size: 0.8rem;
         color: var(--text-muted);
         margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .book-author i {
+        color: var(--primary-color);
+        width: 16px;
     }
 
     .book-footer {
@@ -318,7 +349,7 @@
         }
     }
 
-    /* === TOMBOL SERAGAM DENGAN E-ARTICLE === */
+    /* === TOMBOL SERAGAM === */
     .btn-read {
         background: var(--primary-color);
         color: white;
@@ -404,11 +435,17 @@
             </div>
         </form>
 
-        {{-- Chips tidak digunakan --}}
-
         <!-- Book Grid -->
         <div class="book-grid">
             @forelse($ebooks as $book)
+                @php
+                    // Tentukan tahun (prioritas year, fallback ke created_at)
+                    $tahun = $book->year ?? (isset($book->created_at) ? date('Y', strtotime($book->created_at)) : null);
+                    // Nama penulis
+                    $penulis = $book->student_name ?? ($book->user->name ?? null);
+                    // Jenis koleksi
+                    $jenisKoleksi = 'Ebook';
+                @endphp
                 <div class="book-card">
                     <div class="book-thumb">
                         <span class="badge-status {{ $book->status == 'Approved' ? 'badge-available' : 'badge-pending' }}">
@@ -421,11 +458,24 @@
                         @endif
                     </div>
                     <div class="book-info">
+                        <!-- Metadata: Tahun & Jenis Koleksi -->
+                        <div class="book-meta">
+                            @if($tahun)
+                                <span><i class="far fa-calendar-alt"></i> {{ $tahun }}</span>
+                            @endif
+                            <span><i class="fas fa-tag"></i> {{ $jenisKoleksi }}</span>
+                        </div>
+
                         <span class="book-cat">{{ $book->category->name ?? 'Umum' }}</span>
                         <h4 class="book-title">{{ $book->title }}</h4>
-                        <p class="book-author">{{ $book->student_name ?? ($book->user->name ?? 'Penulis tidak diketahui') }}</p>
 
-                        {{-- TOMBOL AKSI (PERSIS SEPERTI E-ARTICLE) --}}
+                        @if($penulis)
+                            <p class="book-author"><i class="far fa-user"></i> {{ $penulis }}</p>
+                        @else
+                            <p class="book-author"><i class="far fa-user"></i> Penulis tidak diketahui</p>
+                        @endif
+
+                        <!-- Tombol Aksi -->
                         <div class="book-footer">
                             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                                 {{-- Detail (outline) --}}
@@ -443,7 +493,7 @@
                                             : $fileUrl;
                                     @endphp
                                     <a href="{{ $bacaUrl }}" target="_blank" class="btn-read">
-                                        Baca
+                                        <i class="fas fa-book"></i> Baca
                                     </a>
                                     {{-- Download (outline) --}}
                                     <a href="{{ route('final_project.download', $book->id) }}" class="btn-outline-read">

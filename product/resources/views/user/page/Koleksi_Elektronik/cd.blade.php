@@ -1,4 +1,4 @@
-\@extends('user.component.master')
+@extends('user.component.master')
 
 @section('title', 'CD & DVD Koleksi - Perpustakaan Sekolah Keperawatan HKBP')
 
@@ -6,7 +6,7 @@
 <style>
     /* ============================================
        CSS KHUSUS HALAMAN CD (GAYA KLASIK HIJAU)
-       Tidak mengganggu master layout
+       + Penambahan metadata & perapian card seperti versi lain
     ============================================ */
 
     .main-container {
@@ -19,10 +19,10 @@
     }
 
     .sidebar {
-        width: 260px;
+        width: 250px;
         flex-shrink: 0;
         background: var(--card-bg);
-        padding: 25px 15px;
+        padding: 20px;
         border-radius: 16px;
         box-shadow: 0 8px 24px rgba(15, 74, 49, 0.08);
         border: 1px solid var(--border-color);
@@ -37,8 +37,7 @@
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 1px;
-        margin-bottom: 20px;
-        padding-left: 15px;
+        margin-bottom: 15px;
     }
 
     .side-menu {
@@ -48,9 +47,9 @@
     .side-menu li a {
         display: flex;
         align-items: center;
-        gap: 15px;
-        padding: 12px 18px;
-        font-size: 0.95rem;
+        gap: 12px;
+        padding: 12px;
+        font-size: 0.9rem;
         font-weight: 600;
         color: var(--text-muted);
         border-radius: 10px;
@@ -59,21 +58,15 @@
         text-decoration: none;
     }
 
-    .side-menu li a i {
-        width: 20px;
-        text-align: center;
-    }
-
-    .side-menu li a:hover {
+    .side-menu li a:hover,
+    .side-menu li a.active {
         background-color: #f0f7f3;
         color: var(--primary-color);
     }
 
     .side-menu li a.active {
         background-color: #e0f0e8;
-        color: var(--primary-color);
         border-left: 4px solid var(--primary-color);
-        border-radius: 4px 12px 12px 4px;
     }
 
     .content-section {
@@ -355,55 +348,78 @@
         border-radius: 50px;
         font-size: 0.65rem;
         font-weight: 800;
-    }
-
-    .badge-status.available {
-        background: var(--success);
+        background: #2daa6e;
         color: white;
+        z-index: 2;
     }
 
-    .badge-status.used {
-        background: #fee2e2;
-        color: #991b1b;
+    /* Metadata tambahan (tahun, jenis) */
+    .cd-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 10px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+    .cd-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #f0f7f3;
+        padding: 3px 10px;
+        border-radius: 40px;
+    }
+    .cd-meta i {
+        font-size: 0.65rem;
+        color: var(--primary-color);
     }
 
-    .cd-body {
-        padding: 15px 5px;
+    .cd-cat {
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
     }
 
     .cd-title {
         font-size: 1rem;
         font-weight: 700;
-        color: var(--primary-color);
+        color: var(--text-dark);
+        margin-bottom: 8px;
+        line-height: 1.4;
         height: 2.8rem;
         overflow: hidden;
-        margin-top: 5px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .cd-author {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+    .cd-author i {
+        color: var(--primary-color);
+        width: 14px;
     }
 
     .cd-footer {
-        padding-top: 15px;
+        margin-top: auto;
+        padding-top: 12px;
         border-top: 1px solid var(--border-color);
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        justify-content: flex-start;
         gap: 8px;
         flex-wrap: wrap;
-    }
-
-    .detail-link {
-        color: var(--primary-color);
-        font-weight: 800;
-        font-size: 0.8rem;
-        transition: 0.3s;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        text-decoration: none;
-    }
-
-    .detail-link:hover {
-        color: var(--accent-green);
-        gap: 8px;
     }
 
     /* Tombol seragam */
@@ -412,7 +428,7 @@
         color: white;
         padding: 8px 16px;
         border-radius: 50px;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         font-weight: 700;
         text-decoration: none;
         display: inline-flex;
@@ -431,7 +447,7 @@
         border: 1px solid var(--primary-color);
         padding: 8px 16px;
         border-radius: 50px;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         font-weight: 600;
         text-decoration: none;
         display: inline-flex;
@@ -498,10 +514,11 @@
     <aside class="sidebar">
         <h3 class="sidebar-title">Katalog Digital</h3>
         <ul class="side-menu">
-<li><a href="{{ route('final_project.koleksi', 'ebook') }}" class="active"><i class="fas fa-book"></i> E-book</a></li>
-<li><a href="{{ route('final_project.koleksi', 'e-article') }}"><i class="fas fa-file-alt"></i> E-Article</a></li>
-<li><a href="{{ route('final_project.koleksi', 'cd') }}"><i class="fas fa-compact-disc"></i> CD</a></li>
-<li><a href="{{ route('final_project.koleksi', 'video') }}"><i class="fas fa-video"></i> Video</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'ebook') }}" {{ request()->route('category') == 'ebook' ? 'class=active' : '' }}><i class="fas fa-book"></i> E-book</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'e-article') }}" {{ request()->route('category') == 'e-article' ? 'class=active' : '' }}><i class="fas fa-file-alt"></i> E-Article</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'cd') }}" {{ request()->route('category') == 'cd' ? 'class=active' : '' }}><i class="fas fa-compact-disc"></i> CD</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'video') }}" {{ request()->route('category') == 'video' ? 'class=active' : '' }}><i class="fas fa-video"></i> Video</a></li>
+            <li><a href="{{ route('final_project.kti') }}" {{ request()->route('category') == 'kti' ? 'class=active' : '' }}><i class="fas fa-chart-line"></i> KTI</a></li>
         </ul>
     </aside>
 
@@ -513,7 +530,7 @@
         </div>
 
         <!-- Form Search & Filter (server-side) -->
-        <form method="GET" action="{{ route('guest.koleksi_elektronik.cd') }}" class="filter-row">
+        <form method="GET" action="{{ route('final_project.koleksi', 'cd') }}" class="filter-row">
             <div class="filter-item">
                 <i class="fas fa-search"></i>
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari CD, topik, atau media pembelajaran...">
@@ -546,6 +563,9 @@
                         <p>{{ Str::limit($featured->abstract, 150) }}</p>
                         <div class="meta-boxes">
                             <div class="meta-item"><span>KATEGORI</span><strong>{{ $featured->category->name ?? 'Umum' }}</strong></div>
+                            @if($featured->year)
+                            <div class="meta-item"><span>TAHUN</span><strong>{{ $featured->year }}</strong></div>
+                            @endif
                         </div>
                         <div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
                             <a href="{{ route('final_project.detail', $featured->id) }}"
@@ -586,6 +606,11 @@
         <!-- CD Grid -->
         <div class="cd-grid">
             @forelse($data ?? [] as $item)
+                @php
+                    $tahun = $item->year ?? (isset($item->created_at) ? date('Y', strtotime($item->created_at)) : null);
+                    $penulis = $item->student_name ?? ($item->user->name ?? null);
+                    $jenisKoleksi = 'CD';
+                @endphp
                 <div class="cd-card">
                     <div class="cd-thumb">
                         @if($item->cover_image && file_exists(public_path('storage/' . $item->cover_image)))
@@ -593,36 +618,46 @@
                         @else
                             <img src="https://via.placeholder.com/300x180?text=CD+Cover" alt="Cover">
                         @endif
-                        <span class="badge-status {{ $item->status == 'Approved' ? 'available' : 'used' }}">
+                        <span class="badge-status">
                             {{ $item->status == 'Approved' ? 'TERSEDIA' : strtoupper($item->status) }}
                         </span>
                     </div>
                     <div class="cd-body">
-                        <span style="font-size:0.7rem; font-weight:800; color:var(--text-muted);">
-                            {{ $item->category->name ?? 'Koleksi CD' }} • {{ $item->created_at->format('Y') }}
-                        </span>
+                        <!-- Metadata: Tahun & Jenis -->
+                        <div class="cd-meta">
+                            @if($tahun)
+                                <span><i class="far fa-calendar-alt"></i> {{ $tahun }}</span>
+                            @endif
+                            <span><i class="fas fa-tag"></i> {{ $jenisKoleksi }}</span>
+                        </div>
+
+                        <div class="cd-cat">{{ $item->category->name ?? 'Koleksi CD' }}</div>
                         <h4 class="cd-title">{{ $item->title }}</h4>
+
+                        @if($penulis)
+                            <div class="cd-author"><i class="far fa-user"></i> {{ $penulis }}</div>
+                        @else
+                            <div class="cd-author"><i class="far fa-user"></i> Penulis tidak diketahui</div>
+                        @endif
+
+                        <!-- Tombol Aksi -->
                         <div class="cd-footer">
-                            <div style="display: flex; gap: 8px;">
-                                {{-- Detail --}}
-                                <a href="{{ route('final_project.detail', $item->id) }}" class="btn-outline-read">
-                                    <i class="fas fa-info-circle"></i> Detail
+                            {{-- Detail --}}
+                            <a href="{{ route('final_project.detail', $item->id) }}" class="btn-outline-read">
+                                <i class="fas fa-info-circle"></i> Detail
+                            </a>
+                            {{-- Akses (Baca) --}}
+                            @if($item->file_url)
+                                <a href="{{ asset('storage/' . $item->file_url) }}" target="_blank" class="btn-read">
+                                    <i class="fas fa-play-circle"></i> Akses
                                 </a>
-                                {{-- Dengarkan/Akses --}}
-                                @if($item->file_url)
-                                    <a href="{{ asset('storage/' . $item->file_url) }}" target="_blank" class="btn-read">
-                                        <i class="fas fa-play-circle"></i> Akses
-                                    </a>
-                                @else
-                                    <span class="btn-read" style="opacity:0.5;">Tidak tersedia</span>
-                                @endif
                                 {{-- Download --}}
-                                @if($item->file_url)
-                                    <a href="{{ asset('storage/' . $item->file_url) }}" download class="btn-outline-read">
-                                        <i class="fas fa-download"></i> Download
-                                    </a>
-                                @endif
-                            </div>
+                                <a href="{{ route('final_project.download', $item->id) }}" class="btn-outline-read">
+                                    <i class="fas fa-download"></i> Download
+                                </a>
+                            @else
+                                <span class="btn-read" style="opacity:0.5;">Tidak tersedia</span>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -633,7 +668,7 @@
                     @elseif(request('search'))
                         Tidak ada hasil untuk pencarian "{{ request('search') }}"
                     @else
-                        Tidak ada koleksi {{ ucfirst($categoryType) }} yang ditemukan
+                        Tidak ada koleksi CD/DVD yang ditemukan
                     @endif
                 </div>
             @endforelse

@@ -46,25 +46,6 @@
         z-index: 2;
     }
 
-    .cd-disc-effect {
-        position: absolute;
-        top: 5px;
-        right: -40px;
-        width: 210px;
-        height: 210px;
-        background: repeating-conic-gradient(from 0deg, #2d3e2d 0deg 20deg, #1a2b1a 20deg 40deg);
-        border-radius: 50%;
-        z-index: 1;
-        border: 2px solid #1a2b1a;
-        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-        animation: rotateDisc 10s linear infinite;
-    }
-
-    @keyframes rotateDisc {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
     .status-badge {
         display: inline-block;
         padding: 6px 20px;
@@ -250,11 +231,11 @@
     <aside class="cd-visual-card">
         <div class="cd-cover-wrapper">
             @if($item->cover_image && file_exists(public_path('storage/' . $item->cover_image)))
-                <img src="{{ asset('storage/' . $item->cover_image) }}" alt="{{ $item->title }}" class="cd-image">
+                <img src="{{ asset('storage/' . $item->cover_image) }}" class="cd-image" alt="Cover CD">
             @else
-                <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=500&q=80" alt="Cover" class="cd-image">
+                <img src="https://via.placeholder.com/220x220?text=CD+Cover" class="cd-image" alt="Cover">
             @endif
-            <div class="cd-disc-effect"></div>
+            <!-- Elemen gambar CD di belakang telah dihapus sesuai permintaan -->
         </div>
 
         <div class="status-badge status-available">
