@@ -46,8 +46,14 @@
         }
 
         @keyframes cardIn {
-            from { opacity: 0; transform: translateY(18px); }
-            to   { opacity: 1; transform: translateY(0);    }
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* ============================================================
@@ -105,12 +111,24 @@
             margin-bottom: 16px;
             animation: fieldIn 0.3s ease both;
         }
-        .form-group:nth-child(2) { animation-delay: 0.10s; }
-        .form-group:nth-child(3) { animation-delay: 0.18s; }
+
+        .form-group:nth-child(2) {
+            animation-delay: 0.10s;
+        }
+
+        .form-group:nth-child(3) {
+            animation-delay: 0.18s;
+        }
 
         @keyframes fieldIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to   { opacity: 1; transform: translateY(0);   }
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .form-group label {
@@ -143,12 +161,12 @@
         /* state error dari server (ditambahkan class via JS atau inline) */
         .form-group input.is-error {
             border-color: #d9534f;
-            box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px rgba(217,83,79,.4);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px rgba(217, 83, 79, .4);
         }
 
         .form-group input:focus {
             border-color: #66afe9;
-            box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
         }
 
         .error-msg {
@@ -158,11 +176,20 @@
             color: #d9534f;
             animation: errIn 0.2s ease both;
         }
-        .error-msg.visible { display: block; }
+
+        .error-msg.visible {
+            display: block;
+        }
 
         @keyframes errIn {
-            from { opacity: 0; transform: translateY(-4px); }
-            to   { opacity: 1; transform: translateY(0);    }
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* toggle password */
@@ -180,13 +207,27 @@
             align-items: center;
             transition: color 0.15s ease;
         }
-        .toggle-password:hover { color: #555; }
 
-        .icon-eye, .icon-eye-off { width: 16px; height: 16px; }
-        .icon-eye-off             { display: none; }
+        .toggle-password:hover {
+            color: #555;
+        }
 
-        .toggle-password.active .icon-eye     { display: none;  }
-        .toggle-password.active .icon-eye-off { display: block; }
+        .icon-eye, .icon-eye-off {
+            width: 16px;
+            height: 16px;
+        }
+
+        .icon-eye-off {
+            display: none;
+        }
+
+        .toggle-password.active .icon-eye {
+            display: none;
+        }
+
+        .toggle-password.active .icon-eye-off {
+            display: block;
+        }
 
         /* footer (remember & button) */
         .login-footer {
@@ -206,6 +247,7 @@
             cursor: pointer;
             user-select: none;
         }
+
         .remember-me input[type="checkbox"] {
             width: 14px;
             height: 14px;
@@ -228,17 +270,32 @@
             white-space: nowrap;
             min-width: 80px;
         }
-        .btn-signin:hover:not(:disabled) { background-color: #196644; }
-        .btn-signin:active:not(:disabled){ background-color: #155436; }
+
+        .btn-signin:hover:not(:disabled) {
+            background-color: #196644;
+        }
+
+        .btn-signin:active:not(:disabled) {
+            background-color: #155436;
+        }
+
         .btn-signin:disabled {
             cursor: not-allowed;
             opacity: 0.75;
         }
 
-        .btn-signin .btn-text    { transition: opacity 0.15s; }
-        .btn-signin .btn-spinner { display: none; }
+        .btn-signin .btn-text {
+            transition: opacity 0.15s;
+        }
 
-        .btn-signin.loading .btn-text    { opacity: 0; }
+        .btn-signin .btn-spinner {
+            display: none;
+        }
+
+        .btn-signin.loading .btn-text {
+            opacity: 0;
+        }
+
         .btn-signin.loading .btn-spinner {
             display: flex;
             align-items: center;
@@ -252,7 +309,12 @@
             height: 16px;
             animation: spin 0.7s linear infinite;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
         /* Alert global (pesan dari server) */
         .login-alert {
@@ -264,12 +326,17 @@
             line-height: 1.4;
             animation: errIn 0.25s ease both;
         }
-        .login-alert.visible       { display: block; }
+
+        .login-alert.visible {
+            display: block;
+        }
+
         .login-alert.alert-success {
             background: #dff0d8;
             border: 1px solid #d6e9c6;
             color: #3c763d;
         }
+
         .login-alert.alert-error {
             background: #f2dede;
             border: 1px solid #ebccd1;
@@ -277,9 +344,18 @@
         }
 
         @media (max-width: 480px) {
-            body { padding: 30px 12px; }
-            .login-card { padding: 24px 24px 28px; }
-            .login-divider { margin-left: -24px; margin-right: -24px; }
+            body {
+                padding: 30px 12px;
+            }
+
+            .login-card {
+                padding: 24px 24px 28px;
+            }
+
+            .login-divider {
+                margin-left: -24px;
+                margin-right: -24px;
+            }
         }
     </style>
 </head>
@@ -377,7 +453,7 @@
     // ==================== TOGGLE PASSWORD ====================
     const toggleBtn = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('password');
-    toggleBtn.addEventListener('click', function () {
+    toggleBtn.addEventListener('click', function() {
         const show = passwordInput.type === 'password';
         passwordInput.type = show ? 'text' : 'password';
         this.classList.toggle('active', show);

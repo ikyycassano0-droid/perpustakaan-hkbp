@@ -615,39 +615,35 @@ document.addEventListener('DOMContentLoaded', function() {
     var searchQuery = '';
 
     function getStatusBadge(status) {
-        if (status === 'Approved') return '<span class="kti-status status-approved">✅ Disetujui</span>';
+        if (status === 'Approved') return '<span class="kti-status">✅ Disetujui</span>';
         else if (status === 'Pending') return '<span class="kti-status status-pending">⏳ Menunggu Persetujuan</span>';
         else if (status === 'Rejected') return '<span class="kti-status status-rejected">❌ Ditolak</span>';
         return '<span class="kti-status">' + status + '</span>';
     }
 
     function getFilteredData() {
-        var filtered = [];
-        if (currentFilter === 'all') {
-            filtered = [...allApprovedKtis];
-        } else {
-            filtered = [...myKtis];
-        }
+        var filtered = currentFilter === 'all' ? [...allApprovedKtis] : [...myKtis];
+        if (!searchQuery) return filtered;
 
-        if (searchQuery) {
-            filtered = filtered.filter(function(item) {
-                return (item.title && item.title.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                       (item.abstract && item.abstract.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                       (item.student_name && item.student_name.toLowerCase().includes(searchQuery.toLowerCase()));
-            });
-        }
-        return filtered;
+        return filtered.filter(function(item) {
+            return (item.title && item.title.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                   (item.abstract && item.abstract.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                   (item.student_name && item.student_name.toLowerCase().includes(searchQuery.toLowerCase()));
+        });
     }
 
     function renderPagination(totalPages) {
         var container = document.getElementById('paginationButtons');
-        if (!container || totalPages <= 1) { if(container) container.innerHTML = ''; return; }
-        var html = '';
-        html += '<div class="page-box' + (currentPage === 1 ? ' opacity-50' : '') + '" onclick="changePage(' + (currentPage - 1) + ')"><i class="fas fa-chevron-left"></i></div>';
-        for (var i = 1; i <= totalPages; i++) {
-            html += '<div class="page-box' + (i === currentPage ? ' active' : '') + '" onclick="changePage(' + i + ')">' + i + '</div>';
+        if (!container || totalPages <= 1) {
+            if(container) container.innerHTML = '';
+            return;
         }
-        html += '<div class="page-box' + (currentPage === totalPages ? ' opacity-50' : '') + '" onclick="changePage(' + (currentPage + 1) + ')"><i class="fas fa-chevron-right"></i></div>';
+        var html = '';
+        html += `<div class="page-box${currentPage === 1 ? ' opacity-50' : ''}" onclick="changePage(${currentPage - 1})"><i class="fas fa-chevron-left"></i></div>`;
+        for (var i = 1; i <= totalPages; i++) {
+            html += `<div class="page-box${i === currentPage ? ' active' : ''}" onclick="changePage(${i})">${i}</div>`;
+        }
+        html += `<div class="page-box${currentPage === totalPages ? ' opacity-50' : ''}" onclick="changePage(${currentPage + 1})"><i class="fas fa-chevron-right"></i></div>`;
         container.innerHTML = html;
     }
 
@@ -667,15 +663,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // ✅ Fungsi render yang sudah diperbaiki (tidak ada nested function)
     function renderKTI() {
         var container = document.getElementById('ktiList');
         if (!container) return;
+
         var filteredData = getFilteredData();
+        var totalPages = Math.ceil(filteredData.length / itemsPerPage);
         var startIndex = (currentPage - 1) * itemsPerPage;
         var currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
-        // Update stats
-        document.getElementById('totalKti').textContent = allApprovedKtis.length + myKtis.length;
+        // ✅ Hitung total KTI unik (gabungan approved & milik pengguna) tanpa double count
+        var uniqueIds = new Set();
+        allApprovedKtis.forEach(function(item) { uniqueIds.add(item.id); });
+        myKtis.forEach(function(item) { uniqueIds.add(item.id); });
+        document.getElementById('totalKti').textContent = uniqueIds.size;
         document.getElementById('totalApproved').textContent = allApprovedKtis.length;
 
         container.innerHTML = '';
@@ -689,36 +691,36 @@ document.addEventListener('DOMContentLoaded', function() {
             var kti = currentData[i];
             var card = document.createElement('div');
             card.className = 'kti-card';
+
             var downloadUrl = "{{ url('storage') }}/" + (kti.file_url || '');
             var createdDate = kti.created_at ? new Date(kti.created_at).toLocaleDateString('id-ID', {day: '2-digit', month: 'long', year: 'numeric'}) : '-';
-            var abstractText = (kti.abstract && kti.abstract.length > 200) ? kti.abstract.substring(0, 200) + '...' : (kti.abstract || 'Tidak ada abstrak');
 
             var penulisNpm = '';
             if (currentFilter === 'all') {
-                penulisNpm = '<div class="detail-item"><span class="detail-label"><i class="fas fa-user"></i> Penulis</span><span class="detail-value">' + escapeHtml(kti.student_name || '-') + '</span></div>' +
-                             '<div class="detail-item"><span class="detail-label"><i class="fas fa-id-card"></i> NPM</span><span class="detail-value">' + escapeHtml(kti.npm || '-') + '</span></div>';
+                penulisNpm = `<div class="detail-item"><span class="detail-label"><i class="fas fa-user"></i> Penulis</span><span class="detail-value">${escapeHtml(kti.student_name || '-')}</span></div>` +
+                             `<div class="detail-item"><span class="detail-label"><i class="fas fa-id-card"></i> NPM</span><span class="detail-value">${escapeHtml(kti.npm || '-')}</span></div>`;
             }
 
-            card.innerHTML =
-                '<div class="kti-header">' +
-                    '<span class="kti-id">#KTI-' + kti.id + '</span>' +
-                    getStatusBadge(kti.status) +
-                '</div>' +
-                '<div class="kti-judul">' + escapeHtml(kti.title || 'Tanpa Judul') + '</div>' +
-                '<div class="kti-detail">' +
-                    penulisNpm +
-                    '<div class="detail-item"><span class="detail-label"><i class="fas fa-graduation-cap"></i> Prodi</span><span class="detail-value">' + escapeHtml(kti.study_program || '-') + '</span></div>' +
-                    '<div class="detail-item"><span class="detail-label"><i class="fas fa-chalkboard-user"></i> Pembimbing</span><span class="detail-value">' + escapeHtml(kti.first_supervisor ? kti.first_supervisor.name : '-') + (kti.second_supervisor ? ' & ' + escapeHtml(kti.second_supervisor.name) : '') + '</span></div>' +
-                '</div>' +
-                '<div class="kti-footer">' +
-                    '<span class="kti-tanggal"><i class="far fa-calendar-alt"></i> ' + createdDate + '</span>' +
-                    '<div class="kti-aksi">' +
-                        (kti.file_url && kti.status === 'Approved' ? '<a href="' + downloadUrl + '" target="_blank"><i class="fas fa-download"></i> Download</a>' : '') +
-                    '</div>' +
-                '</div>';
+            card.innerHTML = `
+                <div class="kti-header">
+                    <span class="kti-id">#KTI-${kti.id}</span>
+                    ${getStatusBadge(kti.status)}
+                </div>
+                <div class="kti-judul">${escapeHtml(kti.title || 'Tanpa Judul')}</div>
+                <div class="kti-detail">
+                    ${penulisNpm}
+                    <div class="detail-item"><span class="detail-label"><i class="fas fa-graduation-cap"></i> Prodi</span><span class="detail-value">${escapeHtml(kti.study_program || '-')}</span></div>
+                    <div class="detail-item"><span class="detail-label"><i class="fas fa-chalkboard-user"></i> Pembimbing</span><span class="detail-value">${escapeHtml(kti.first_supervisor ? kti.first_supervisor.name : '-')}${kti.second_supervisor ? ' & ' + escapeHtml(kti.second_supervisor.name) : ''}</span></div>
+                </div>
+                <div class="kti-footer">
+                    <span class="kti-tanggal"><i class="far fa-calendar-alt"></i> ${createdDate}</span>
+                    <div class="kti-aksi">
+                        ${kti.file_url && kti.status === 'Approved' ? `<a href="${downloadUrl}" target="_blank"><i class="fas fa-download"></i> Download</a>` : ''}
+                    </div>
+                </div>`;
             container.appendChild(card);
         }
-        renderPagination(Math.ceil(filteredData.length / itemsPerPage));
+        renderPagination(totalPages);
     }
 
     // Event listener dropdown

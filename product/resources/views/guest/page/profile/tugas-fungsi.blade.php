@@ -4,219 +4,221 @@
 @section('title', 'Tugas, Fungsi & Tujuan - Perpustakaan Sekolah Keperawatan HKBP')
 
 @push('styles')
-<style>
-    /* ============================================
-       STYLE KHUSUS HALAMAN TUGAS, FUNGSI, TUJUAN
-       (mempertahankan desain asli: border kuning, card putih)
-    ============================================ */
+    <style>
+        /* ============================================
+           STYLE KHUSUS HALAMAN TUGAS, FUNGSI, TUJUAN
+           (mempertahankan desain asli: border kuning, card putih)
+        ============================================ */
 
-    /* Banner Halaman */
-    .page-banner {
-        background: linear-gradient(rgba(15, 74, 49, 0.85), rgba(26, 107, 71, 0.85)),
-                    url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=1470&auto=format&fit=crop');
-        background-size: cover;
-        background-position: center;
-        color: white;
-        padding: 80px 5% 80px;
-        text-align: center;
-    }
-
-    .page-banner h1 {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.4rem;
-        margin-bottom: 10px;
-        font-weight: 900;
-    }
-
-    .page-banner p {
-        font-size: 1.05rem;
-        opacity: 0.92;
-    }
-
-    /* Layout Utama (Content + Sidebar) */
-    .main-layout {
-        display: flex;
-        max-width: 1200px;
-        margin: 40px auto 50px;
-        padding: 0 20px;
-        gap: 30px;
-        position: relative;
-        z-index: 10;
-    }
-
-    .content-area {
-        flex: 1;
-    }
-
-    /* SECTION BOX (CARD) DENGAN BORDER TOP KUNING */
-    .section-box {
-        background: var(--card-bg);
-        padding: 35px;
-        border-radius: 12px;
-        margin-bottom: 25px;
-        box-shadow: 0 8px 24px rgba(15, 74, 49, 0.08);
-        border: 1px solid var(--border-color);
-        border-top: 4px solid #f1c40f; /* kuning */
-        transition: 0.3s;
-    }
-
-    .section-box:hover {
-        box-shadow: 0 16px 36px rgba(15, 74, 49, 0.12);
-    }
-
-    .section-box h2 {
-        color: var(--primary-color);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        border-bottom: 3px solid #f1c40f;
-        padding-bottom: 12px;
-        margin-bottom: 25px;
-        font-size: 1.4rem;
-        font-family: 'Playfair Display', serif;
-    }
-
-    .item {
-        display: flex;
-        gap: 15px;
-        margin-bottom: 18px;
-        align-items: flex-start;
-    }
-
-    .item i {
-        color: #f1c40f;
-        font-size: 1.1rem;
-        margin-top: 4px;
-    }
-
-    .item p {
-        font-size: 1rem;
-        color: var(--text-dark);
-        line-height: 1.7;
-    }
-
-    .btn-back {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: bold;
-        color: var(--primary-color);
-        margin-top: 10px;
-        transition: 0.3s;
-        text-decoration: none;
-    }
-
-    .btn-back:hover {
-        color: var(--accent-green);
-        gap: 14px;
-    }
-
-    /* Sidebar (konsisten dengan halaman lain) */
-    .sidebar {
-        flex: 0 0 320px;
-        background: var(--card-bg);
-        border-radius: 16px;
-        box-shadow: 0 8px 24px rgba(15, 74, 49, 0.08);
-        padding: 25px;
-        height: fit-content;
-        position: sticky;
-        top: 100px;
-        border: 1px solid var(--border-color);
-        transition: 0.3s;
-    }
-
-    .sidebar:hover {
-        box-shadow: 0 16px 36px rgba(15, 74, 49, 0.12);
-        border-color: var(--accent-green);
-    }
-
-    .sidebar-brand {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 30px;
-        padding-bottom: 20px;
-        border-bottom: 1px solid var(--border-color);
-    }
-
-    .sidebar-brand .logo-img-small {
-        width: 45px;
-        height: 45px;
-        background-color: var(--primary-color);
-        color: white;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-    }
-
-    .sidebar-brand h3 {
-        font-size: 0.9rem;
-        color: var(--text-dark);
-        line-height: 1.3;
-        font-weight: 700;
-    }
-
-    .sidebar-menu {
-        list-style: none;
-        padding: 0;
-    }
-
-    .sidebar-menu li {
-        margin-bottom: 10px;
-    }
-
-    .sidebar-menu li a {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 15px;
-        border-radius: 10px;
-        color: var(--text-muted);
-        font-weight: 600;
-        transition: 0.3s;
-        font-size: 0.9rem;
-        text-decoration: none;
-    }
-
-    .sidebar-menu li a i {
-        font-size: 1.1rem;
-        color: #9cb5a8;
-        width: 20px;
-        text-align: center;
-    }
-
-    .sidebar-menu li a.active {
-        background-color: #e0f0e8;
-        color: var(--primary-color);
-    }
-
-    .sidebar-menu li a.active i {
-        color: var(--primary-color);
-    }
-
-    .sidebar-menu li a:hover:not(.active) {
-        background-color: #f0f7f3;
-        color: var(--primary-color);
-    }
-
-    /* Responsive */
-    @media (max-width: 992px) {
-        .main-layout {
-            flex-direction: column;
-            margin-top: 20px;
+        /* Banner Halaman */
+        .page-banner {
+            background: linear-gradient(rgba(15, 74, 49, 0.85), rgba(26, 107, 71, 0.85)),
+                        url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=1470&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 5% 80px;
+            text-align: center;
         }
-        .sidebar {
-            position: static;
-            order: 2;
+
+        .page-banner h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            margin-bottom: 10px;
+            font-weight: 900;
+        }
+
+        .page-banner p {
+            font-size: 1.05rem;
+            opacity: 0.92;
+        }
+
+        /* Layout Utama (Content + Sidebar) */
+        .main-layout {
+            display: flex;
+            max-width: 1200px;
+            margin: 40px auto 50px;
+            padding: 0 20px;
+            gap: 30px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .content-area {
             flex: 1;
         }
-        .content-area {
-            order: 1;
+
+        /* SECTION BOX (CARD) DENGAN BORDER TOP KUNING */
+        .section-box {
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 24px rgba(15, 74, 49, 0.08);
+            border: 1px solid var(--border-color);
+            border-top: 4px solid #f1c40f; /* kuning */
+            transition: 0.3s;
         }
-    }
-</style>
+
+        .section-box:hover {
+            box-shadow: 0 16px 36px rgba(15, 74, 49, 0.12);
+        }
+
+        .section-box h2 {
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 3px solid #f1c40f;
+            padding-bottom: 12px;
+            margin-bottom: 25px;
+            font-size: 1.4rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 18px;
+            align-items: flex-start;
+        }
+
+        .item i {
+            color: #f1c40f;
+            font-size: 1.1rem;
+            margin-top: 4px;
+        }
+
+        .item p {
+            font-size: 1rem;
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-top: 10px;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-back:hover {
+            color: var(--accent-green);
+            gap: 14px;
+        }
+
+        /* Sidebar (konsisten dengan halaman lain) */
+        .sidebar {
+            flex: 0 0 320px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(15, 74, 49, 0.08);
+            padding: 25px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+            border: 1px solid var(--border-color);
+            transition: 0.3s;
+        }
+
+        .sidebar:hover {
+            box-shadow: 0 16px 36px rgba(15, 74, 49, 0.12);
+            border-color: var(--accent-green);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-brand .logo-img-small {
+            width: 45px;
+            height: 45px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .sidebar-brand h3 {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            line-height: 1.3;
+            font-weight: 700;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 10px;
+            color: var(--text-muted);
+            font-weight: 600;
+            transition: 0.3s;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+
+        .sidebar-menu li a i {
+            font-size: 1.1rem;
+            color: #9cb5a8;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-menu li a.active {
+            background-color: #e0f0e8;
+            color: var(--primary-color);
+        }
+
+        .sidebar-menu li a.active i {
+            color: var(--primary-color);
+        }
+
+        .sidebar-menu li a:hover:not(.active) {
+            background-color: #f0f7f3;
+            color: var(--primary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .main-layout {
+                flex-direction: column;
+                margin-top: 20px;
+            }
+
+            .sidebar {
+                position: static;
+                order: 2;
+                flex: 1;
+            }
+
+            .content-area {
+                order: 1;
+            }
+        }
+    </style>
 @endpush
 
 @section('content')

@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Classification;
 use App\Models\CategoryCollection;
 use App\Models\Notification;
+use Illuminate\Support\Facades\Validator;
 
 class FinalProjectController extends Controller
 {
@@ -69,54 +70,71 @@ public function index(Request $request, $category = 'kti')
     }
 
     // Store user (upload KTI)
-    public function store(Request $request)
-        {
-            $request->validate([
-                'npm' => 'required|string|max:50',
-                'study_program' => 'required|string|max:255',
-                'title' => 'required|string|max:255',
-                'first_supervisor_id' => 'required|exists:users,id',
-                'second_supervisor_id' => 'nullable|exists:users,id|different:first_supervisor_id',
-                'abstract' => 'nullable|string',
-                'file_url' => 'required|file|mimes:pdf,docx|max:10240',
-            ]);
-
-            // Upload file
-            $file = $request->file('file_url');
-            $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
-            $path = $file->storeAs('final_project_files', $filename, 'public');
-
-            // Cari category KTI
-            $category = CategoryFinalProject::where('name', 'kti')->orWhere('slug', 'kti')->first();
-
-            if (!$category) {
-                // Buat category jika belum ada
-                $category = CategoryFinalProject::create([
-                    'name' => 'kti',
-                    'slug' => 'kti',
-                    'description' => 'Karya Tulis Ilmiah'
-                ]);
-            }
-
-            // Simpan data
-            $kti = FinalProject::create([
-                'user_id' => user_id(),
-                'student_name' => current_user()->name,
-                'npm' => $request->npm,
-                'study_program' => $request->study_program,
-                'title' => $request->title,
-                'abstract' => $request->abstract,
-                'first_supervisor_id' => $request->first_supervisor_id,
-                'second_supervisor_id' => $request->second_supervisor_id,
-                'file_url' => $path,
-                'category_final_project_id' => $category->id,
-                'status' => 'Pending',
-            ]);
-
-            // SELALU redirect ke halaman list KTI
-            return redirect('/final-project/kti?t=' . time())
-                ->with('success', 'KTI berhasil diupload! Menunggu persetujuan admin.');
+// Store user (upload KTI)
+public function store(Request $request)
+{
+    // ================= CUSTOM VALIDATION PDF =================
+    \Validator::extend('is_real_pdf', function ($attribute, $value, $parameters, $validator) {
+        if (!$value || !$value->isValid()) {
+            return false;
         }
+
+        try {
+            $handle = fopen($value->getRealPath(), 'rb');
+            $first200bytes = fread($handle, 200);
+            fclose($handle);
+            return strpos($first200bytes, '%PDF') !== false;
+        } catch (\Exception $e) {
+            \Log::error('PDF Validation Error: ' . $e->getMessage());
+            return false;
+        }
+    });
+
+    // ================= VALIDASI =================
+    $request->validate([
+        'npm' => 'required|string|max:50',
+        'study_program' => 'required|string|max:255',
+        'title' => 'required|string|max:255',
+        'first_supervisor_id' => 'required|exists:users,id',
+        'second_supervisor_id' => 'nullable|exists:users,id|different:first_supervisor_id',
+        'abstract' => 'nullable|string',
+        'file_url' => 'required|file|is_real_pdf|max:10240', // ← GANTI mimes:pdf,docx jadi is_real_pdf
+    ]);
+
+    // Upload file
+    $file = $request->file('file_url');
+    $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
+    $path = $file->storeAs('final_project_files', $filename, 'public');
+
+    // Cari category KTI
+    $category = CategoryFinalProject::where('name', 'kti')->orWhere('slug', 'kti')->first();
+
+    if (!$category) {
+        $category = CategoryFinalProject::create([
+            'name' => 'kti',
+            'slug' => 'kti',
+            'description' => 'Karya Tulis Ilmiah'
+        ]);
+    }
+
+    // Simpan data
+    $kti = FinalProject::create([
+        'user_id' => user_id(),
+        'student_name' => current_user()->name,
+        'npm' => $request->npm,
+        'study_program' => $request->study_program,
+        'title' => $request->title,
+        'abstract' => $request->abstract,
+        'first_supervisor_id' => $request->first_supervisor_id,
+        'second_supervisor_id' => $request->second_supervisor_id,
+        'file_url' => $path,
+        'category_final_project_id' => $category->id,
+        'status' => 'Pending',
+    ]);
+
+    return redirect('/final-project/kti?t=' . time())
+        ->with('success', 'KTI berhasil diupload! Menunggu persetujuan admin.');
+}
 
 
 
@@ -224,22 +242,44 @@ public function index(Request $request, $category = 'kti')
     // Store & update Koleksi Elektronik admin
     public function store_admin(Request $request)
     {
+        // =======================================================
+        // TAMBAHAN: Custom Validation Rule untuk PDF
+        // =======================================================
+        \Validator::extend('is_real_pdf', function ($attribute, $value, $parameters, $validator) {
+            if (!$value || !$value->isValid()) {
+                return false;
+            }
+
+            try {
+                // Baca 200 byte pertama file
+                $handle = fopen($value->getRealPath(), 'rb');
+                $first200bytes = fread($handle, 200);
+                fclose($handle);
+
+                // Cek apakah ada string '%PDF' di mana pun dalam 200 byte pertama
+                return strpos($first200bytes, '%PDF') !== false;
+            } catch (\Exception $e) {
+                \Log::error('PDF Validation Error: ' . $e->getMessage());
+                return false;
+            }
+        });
+
+        // =======================================================
+        // VALIDASI (diubah: mimes:pdf diganti is_real_pdf)
+        // =======================================================
         $request->validate([
             'title' => 'required|string|max:255',
             'abstract' => 'nullable|string',
             'keywords' => 'nullable|string',
             'year' => 'nullable|integer|min:1900|max:2099',
             'isbn' => 'nullable|string|max:100',
-            'category_final_project_id'
-                => 'required|exists:category_final_projects,id',
-            'file_url'
-                => 'required|file|mimes:pdf,docx,mp3,mp4|max:10240',
-            'cover_image'
-                => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'category_final_project_id' => 'required|exists:category_final_projects,id',
+            'file_url' => 'required|file|is_real_pdf|max:10240', // ← GANTI mimes:pdf jadi is_real_pdf
+            'cover_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'classification_id' => 'nullable|array',
             'classification_id.*' => 'exists:classifications,id',
             'category_collection_id' => 'nullable|array',
-            'category_collection_id.*'=> 'exists:category_collections,id',
+            'category_collection_id.*' => 'exists:category_collections,id',
         ]);
 
         $data = $request->only([
@@ -252,14 +292,12 @@ public function index(Request $request, $category = 'kti')
 
         // ================= FILE =================
         if ($request->hasFile('file_url')) {
-
             $data['file_url'] = $request->file('file_url')
                 ->store('final_project_files', 'public');
         }
 
         // ================= COVER =================
         if ($request->hasFile('cover_image')) {
-
             $data['cover_image'] = $request->file('cover_image')
                 ->store('final_project_covers', 'public');
         }
@@ -276,18 +314,10 @@ public function index(Request $request, $category = 'kti')
         $item = FinalProject::create($data);
 
         // ================= SYNC RELATION =================
-        $item->classifications()->sync(
-            $request->classification_id ?? []
-        );
+        $item->classifications()->sync($request->classification_id ?? []);
+        $item->categoriesMany()->sync($request->category_collection_id ?? []);
 
-        $item->categoriesMany()->sync(
-            $request->category_collection_id ?? []
-        );
-
-        return back()->with(
-            'success',
-            'Berhasil ditambahkan'
-        );
+        return back()->with('success', 'Berhasil ditambahkan');
     }
 
     public function update_admin(Request $request, $id)

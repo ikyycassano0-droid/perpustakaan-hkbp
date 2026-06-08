@@ -303,7 +303,7 @@
 
         .footer-col ul li a:hover {
             color: white;
-            text-shadow: 0 0 2px rgba(255,255,255,0.3);
+            text-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
         }
 
         .footer-col ul li a:hover i {
@@ -379,6 +379,7 @@
                 gap: 2rem;
                 text-align: center;
             }
+
             .footer-col h4 {
                 text-align: center;
                 border-left: none;
@@ -387,18 +388,23 @@
                 padding-bottom: 8px;
                 display: inline-block;
             }
+
             .footer-col h4::after {
                 display: none;
             }
+
             .footer-col p {
                 justify-content: center;
             }
+
             .social-links {
                 justify-content: center;
             }
+
             .footer-col ul li {
                 text-align: center;
             }
+
             .footer-col ul li a {
                 justify-content: center;
             }
@@ -457,6 +463,7 @@
 
     {{-- Header --}}
     @include('guest.component.navbars')
+
     {{-- Hero Section (optional, bisa diisi oleh child) --}}
     @yield('hero')
 

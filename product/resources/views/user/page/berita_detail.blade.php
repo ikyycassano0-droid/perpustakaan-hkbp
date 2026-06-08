@@ -45,7 +45,6 @@
 
         <!-- SIDEBAR (hanya kategori dan pencarian) -->
         <aside>
-
             <div class="sidebar-card">
                 <h4>Kategori Berita</h4>
                 <ul class="category-list">
@@ -67,7 +66,7 @@
         /* CSS spesifik untuk halaman detail berita (tidak mengganggu master) */
         .page-header {
             background: linear-gradient(rgba(15, 74, 49, 0.85), rgba(26, 107, 71, 0.85)),
-                url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1200&q=80');
+                        url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1200&q=80');
             background-size: cover;
             background-position: center;
             padding: 60px 5%;
@@ -81,9 +80,11 @@
             font-weight: 300;
             opacity: 0.85;
         }
+
         .breadcrumb a {
-            color: rgba(255,255,255,0.8);
+            color: rgba(255, 255, 255, 0.8);
         }
+
         .breadcrumb a:hover {
             color: var(--accent-yellow);
         }
@@ -199,6 +200,7 @@
             position: relative;
             display: flex;
         }
+
         .search-container input {
             flex: 1;
             padding: 12px 15px;
@@ -208,9 +210,11 @@
             font-size: 0.9rem;
             background: white;
         }
+
         .search-container input:focus {
             border-color: var(--primary-color);
         }
+
         .search-container button {
             background: var(--primary-color);
             border: none;
@@ -220,6 +224,7 @@
             cursor: pointer;
             transition: 0.3s;
         }
+
         .search-container button:hover {
             background: var(--accent-green);
         }
@@ -228,15 +233,18 @@
             list-style: none;
             padding: 0;
         }
+
         .category-list li {
             padding: 10px 0;
             border-bottom: 1px solid var(--border-color);
         }
+
         .category-list li a {
             display: block;
             color: var(--text-muted);
             transition: 0.2s;
         }
+
         .category-list li a:hover {
             color: var(--primary-color);
             padding-left: 5px;
@@ -248,6 +256,7 @@
                 margin-top: 20px;
             }
         }
+
         @media (max-width: 640px) {
             article.news-detail {
                 padding: 25px;
