@@ -6,6 +6,7 @@
 <style>
     /* ============================================
        CSS KHUSUS HALAMAN VIDEO (GAYA KLASIK HIJAU)
+       + Penambahan metadata & perapian card seperti versi lain
     ============================================ */
 
     .main-container {
@@ -18,10 +19,10 @@
     }
 
     .sidebar {
-        width: 260px;
+        width: 250px;
         flex-shrink: 0;
         background: var(--card-bg);
-        padding: 25px 15px;
+        padding: 20px;
         border-radius: 16px;
         box-shadow: 0 8px 24px rgba(15, 74, 49, 0.08);
         border: 1px solid var(--border-color);
@@ -36,8 +37,7 @@
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 1px;
-        margin-bottom: 20px;
-        padding-left: 15px;
+        margin-bottom: 15px;
     }
 
     .side-menu {
@@ -47,9 +47,9 @@
     .side-menu li a {
         display: flex;
         align-items: center;
-        gap: 15px;
-        padding: 12px 18px;
-        font-size: 0.95rem;
+        gap: 12px;
+        padding: 12px;
+        font-size: 0.9rem;
         font-weight: 600;
         color: var(--text-muted);
         border-radius: 10px;
@@ -58,21 +58,15 @@
         text-decoration: none;
     }
 
-    .side-menu li a i {
-        width: 20px;
-        text-align: center;
-    }
-
-    .side-menu li a:hover {
+    .side-menu li a:hover,
+    .side-menu li a.active {
         background-color: #f0f7f3;
         color: var(--primary-color);
     }
 
     .side-menu li a.active {
         background-color: #e0f0e8;
-        color: var(--primary-color);
         border-left: 4px solid var(--primary-color);
-        border-radius: 4px 12px 12px 4px;
     }
 
     .content-area {
@@ -252,6 +246,29 @@
         flex-direction: column;
     }
 
+    /* Metadata tambahan (tahun, jenis) */
+    .v-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 10px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+    .v-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #f0f7f3;
+        padding: 3px 10px;
+        border-radius: 40px;
+    }
+    .v-meta i {
+        font-size: 0.65rem;
+        color: var(--primary-color);
+    }
+
     .v-cat {
         font-size: 0.75rem;
         color: var(--primary-color);
@@ -264,16 +281,27 @@
         font-size: 1rem;
         font-weight: 700;
         color: var(--text-dark);
-        margin-bottom: 12px;
+        margin-bottom: 8px;
         line-height: 1.4;
         height: 2.8rem;
         overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
     }
 
     .v-author {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         color: var(--text-muted);
-        margin-bottom: 15px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+    .v-author i {
+        color: var(--primary-color);
+        width: 14px;
     }
 
     .v-footer {
@@ -281,8 +309,7 @@
         padding-top: 12px;
         border-top: 1px solid var(--border-color);
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        justify-content: flex-start;
         gap: 8px;
         flex-wrap: wrap;
     }
@@ -293,7 +320,7 @@
         color: white;
         padding: 8px 16px;
         border-radius: 50px;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         font-weight: 700;
         text-decoration: none;
         display: inline-flex;
@@ -312,7 +339,7 @@
         border: 1px solid var(--primary-color);
         padding: 8px 16px;
         border-radius: 50px;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         font-weight: 600;
         text-decoration: none;
         display: inline-flex;
@@ -377,10 +404,11 @@
     <aside class="sidebar">
         <h3 class="sidebar-title">Katalog Digital</h3>
         <ul class="side-menu">
-            <li><a href="{{ route('final_project.koleksi', 'ebook') }}" class="active"><i class="fas fa-book"></i> E-book</a></li>
-            <li><a href="{{ route('final_project.koleksi', 'e-article') }}"><i class="fas fa-file-alt"></i> E-Article</a></li>
-            <li><a href="{{ route('final_project.koleksi', 'cd') }}"><i class="fas fa-compact-disc"></i> CD</a></li>
-            <li><a href="{{ route('final_project.koleksi', 'video') }}"><i class="fas fa-video"></i> Video</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'ebook') }}" {{ request()->route('category') == 'ebook' ? 'class=active' : '' }}><i class="fas fa-book"></i> E-book</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'e-article') }}" {{ request()->route('category') == 'e-article' ? 'class=active' : '' }}><i class="fas fa-file-alt"></i> E-Article</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'cd') }}" {{ request()->route('category') == 'cd' ? 'class=active' : '' }}><i class="fas fa-compact-disc"></i> CD</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'video') }}" {{ request()->route('category') == 'video' ? 'class=active' : '' }}><i class="fas fa-video"></i> Video</a></li>
+            <li><a href="{{ route('final_project.kti') }}" {{ request()->route('category') == 'kti' ? 'class=active' : '' }}><i class="fas fa-chart-line"></i> KTI</a></li>
         </ul>
     </aside>
 
@@ -395,7 +423,7 @@
         </div>
 
         <!-- Search & Filter Form -->
-        <form method="GET" action="{{ route('guest.koleksi_elektronik.video') }}" class="filter-row">
+        <form method="GET" action="{{ route('final_project.koleksi', 'video') }}" class="filter-row">
             <div class="filter-input">
                 <i class="fas fa-search"></i>
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari prosedur atau topik simulasi...">
@@ -403,7 +431,6 @@
             <div class="filter-input">
                 <select name="category">
                     <option value="">Semua Kategori</option>
-                    {{-- Gunakan $filterCategories dari controller --}}
                     @foreach($filterCategories as $cat)
                         <option value="{{ $cat->name }}" {{ request('category') == $cat->name ? 'selected' : '' }}>{{ $cat->name }}</option>
                     @endforeach
@@ -457,6 +484,11 @@
         <!-- Video Grid -->
         <div class="video-grid">
             @forelse($videos as $video)
+                @php
+                    $tahun = $video->year ?? (isset($video->created_at) ? date('Y', strtotime($video->created_at)) : null);
+                    $penulis = $video->student_name ?? ($video->user->name ?? null);
+                    $jenisKoleksi = 'Video';
+                @endphp
                 <div class="v-card">
                     <div class="v-thumb">
                         @if($video->cover_image && file_exists(public_path('storage/' . $video->cover_image)))
@@ -471,34 +503,47 @@
                         @endif
                     </div>
                     <div class="v-info">
+                        <!-- Metadata: Tahun & Jenis -->
+                        <div class="v-meta">
+                            @if($tahun)
+                                <span><i class="far fa-calendar-alt"></i> {{ $tahun }}</span>
+                            @endif
+                            <span><i class="fas fa-tag"></i> {{ $jenisKoleksi }}</span>
+                        </div>
+
                         <span class="v-cat">{{ $video->category->name ?? 'Keperawatan' }}</span>
                         <h4 class="v-title">{{ Str::limit($video->title, 50) }}</h4>
-                        <p class="v-author"><i class="far fa-user"></i> {{ $video->student_name ?? ($video->user->name ?? 'Administrator') }}</p>
+
+                        @if($penulis)
+                            <div class="v-author"><i class="far fa-user"></i> {{ $penulis }}</div>
+                        @else
+                            <div class="v-author"><i class="far fa-user"></i> Penulis tidak diketahui</div>
+                        @endif
+
+                        <!-- Tombol Aksi -->
                         <div class="v-footer">
-                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                                {{-- Tombol Detail --}}
-                                <a href="{{ route('final_project.detail', $video->id) }}" class="btn-outline-read">
-                                    <i class="fas fa-info-circle"></i> Detail
-                                </a>
-                                {{-- Tombol Putar (jika file video) --}}
-                                @if($video->file_url)
-                                    @php
-                                        $fileExt = strtolower(pathinfo($video->file_url, PATHINFO_EXTENSION));
-                                        $videoExts = ['mp4', 'webm', 'ogg', 'mov'];
-                                    @endphp
-                                    @if(in_array($fileExt, $videoExts))
-                                        <a href="{{ asset('storage/' . $video->file_url) }}" target="_blank" class="btn-outline-read">
-                                            ▶ Putar
-                                        </a>
-                                    @endif
-                                @endif
-                                {{-- Tombol Download (harus login) --}}
-                                @if($video->file_url)
-                                    <a href="{{ asset('storage/' . $video->file_url) }}" download class="btn-outline-read">
-                                        ⬇️ Download
+                            {{-- Detail --}}
+                            <a href="{{ route('final_project.detail', $video->id) }}" class="btn-outline-read">
+                                <i class="fas fa-info-circle"></i> Detail
+                            </a>
+                            {{-- Putar --}}
+                            @if($video->file_url)
+                                @php
+                                    $fileExt = strtolower(pathinfo($video->file_url, PATHINFO_EXTENSION));
+                                    $videoExts = ['mp4', 'webm', 'ogg', 'mov'];
+                                @endphp
+                                @if(in_array($fileExt, $videoExts))
+                                    <a href="{{ asset('storage/' . $video->file_url) }}" target="_blank" class="btn-read">
+                                        <i class="fas fa-play"></i> Putar
                                     </a>
                                 @endif
-                            </div>
+                            @endif
+                            {{-- Download --}}
+                            @if($video->file_url)
+                                <a href="{{ route('final_project.download', $video->id) }}" class="btn-outline-read">
+                                    <i class="fas fa-download"></i> Download
+                                </a>
+                            @endif
                         </div>
                     </div>
                 </div>

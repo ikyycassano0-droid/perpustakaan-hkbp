@@ -6,8 +6,8 @@
 @push('styles')
 <style>
     /* ============================================
-       CSS KHUSUS HALAMAN E-ARTICLE (GAYA KLASIK HIJAU)
-       Tidak mengganggu master layout
+       CSS KHUSUS HALAMAN E-ARTICLE GUEST
+       + Penambahan metadata & perapian card seperti versi lain
     ============================================ */
 
     .main-container {
@@ -219,37 +219,62 @@
         position: absolute;
         top: 12px;
         left: 12px;
-        background: var(--success);
+        background: #2daa6e;
         color: white;
         padding: 4px 10px;
         border-radius: 50px;
         font-size: 0.65rem;
         font-weight: 800;
         text-transform: uppercase;
+        z-index: 2;
     }
 
     .article-info {
-        padding: 20px;
+        padding: 18px;
         flex-grow: 1;
         display: flex;
         flex-direction: column;
+    }
+
+    /* Metadata tambahan (tahun, jenis) - SAMA DENGAN VERSI LAIN */
+    .article-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 10px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+    .article-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #f0f7f3;
+        padding: 3px 10px;
+        border-radius: 40px;
+    }
+    .article-meta i {
+        font-size: 0.65rem;
+        color: var(--primary-color);
     }
 
     .article-cat {
         font-size: 0.75rem;
         color: var(--primary-color);
         font-weight: 700;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
         text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
     .article-title {
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: 700;
         color: var(--text-dark);
-        margin-bottom: 12px;
+        margin-bottom: 10px;
         line-height: 1.4;
-        height: 3rem;
+        height: 2.8rem;
         overflow: hidden;
         display: -webkit-box;
         -webkit-line-clamp: 2;
@@ -257,29 +282,28 @@
     }
 
     .article-author {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         color: var(--text-muted);
         margin-bottom: 15px;
         display: flex;
         align-items: center;
         gap: 8px;
+        flex-wrap: wrap;
+    }
+    .article-author i {
+        color: var(--primary-color);
+        width: 16px;
     }
 
     .article-footer {
         margin-top: auto;
-        padding-top: 15px;
+        padding-top: 12px;
         border-top: 1px solid var(--border-color);
         display: flex;
         justify-content: space-between;
         align-items: center;
         gap: 10px;
         flex-wrap: wrap;
-    }
-
-    .meta-text {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        font-weight: 600;
     }
 
     .btn-read {
@@ -295,10 +319,10 @@
         align-items: center;
         gap: 4px;
     }
-
     .btn-read:hover {
         background: var(--accent-green);
         transform: translateY(-2px);
+        color: white;
     }
 
     .btn-outline-read {
@@ -315,7 +339,6 @@
         align-items: center;
         gap: 4px;
     }
-
     .btn-outline-read:hover {
         background: var(--primary-color);
         color: white;
@@ -363,26 +386,6 @@
         .filter-row {
             grid-template-columns: 1fr;
         }
-    }
-
-    .btn-download {
-        background: #fef9e7;
-        color: #b7950b;
-        border: 1px solid #f1c40f;
-        padding: 8px 16px;
-        border-radius: 50px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        transition: 0.3s;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-    }
-    .btn-download:hover {
-        background: #f1c40f;
-        color: white;
-        transform: translateY(-2px);
     }
 </style>
 @endpush
@@ -432,13 +435,20 @@
             </div>
         </form>
 
-        {{-- Category Chips dihapus --}}
-
         <!-- Article Grid -->
         <div class="article-grid">
             @forelse($ebooks as $article)
+                @php
+                    // Tentukan tahun (prioritas year, fallback ke created_at)
+                    $tahun = $article->year ?? (isset($article->created_at) ? date('Y', strtotime($article->created_at)) : null);
+                    // Nama penulis
+                    $penulis = $article->student_name ?? ($article->user->name ?? null);
+                    // Jenis koleksi
+                    $jenisKoleksi = 'E-Article';
+                @endphp
                 <div class="article-card">
                     <div class="article-thumb">
+                        <span class="badge-status">TERSEDIA</span>
                         @if($article->cover_image && file_exists(public_path('storage/' . $article->cover_image)))
                             <img src="{{ asset('storage/' . $article->cover_image) }}" alt="{{ $article->title }}">
                         @else
@@ -446,11 +456,24 @@
                         @endif
                     </div>
                     <div class="article-info">
-                        <span class="article-cat">{{ $article->category->name ?? 'E-Article' }}</span>
-                        <h4 class="article-title">{{ $article->title }}</h4>
-                        <p class="article-author"><i class="far fa-user"></i> {{ $article->student_name ?? ($article->user->name ?? 'Penulis') }}</p>
+                        <!-- Metadata: Tahun & Jenis -->
+                        <div class="article-meta">
+                            @if($tahun)
+                                <span><i class="far fa-calendar-alt"></i> {{ $tahun }}</span>
+                            @endif
+                            <span><i class="fas fa-tag"></i> {{ $jenisKoleksi }}</span>
+                        </div>
 
-                        {{-- TOMBOL AKSI (DETAIL + BACA) --}}
+                        <span class="article-cat">{{ $article->category->name ?? 'Jurnal Ilmiah' }}</span>
+                        <h4 class="article-title">{{ $article->title }}</h4>
+
+                        @if($penulis)
+                            <p class="article-author"><i class="far fa-user"></i> {{ $penulis }}</p>
+                        @else
+                            <p class="article-author"><i class="far fa-user"></i> Penulis tidak diketahui</p>
+                        @endif
+
+                        <!-- Tombol Aksi (Detail + Baca + Download) -->
                         <div class="article-footer">
                             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                                 {{-- Tombol Detail --}}
@@ -468,7 +491,7 @@
                                             : $fileUrl;
                                     @endphp
                                     <a href="{{ $bacaUrl }}" target="_blank" class="btn-read">
-                                        Baca
+                                        <i class="fas fa-book"></i> Baca
                                     </a>
                                     {{-- Tombol Download --}}
                                     <a href="{{ route('final_project.download', $article->id) }}" class="btn-outline-read">

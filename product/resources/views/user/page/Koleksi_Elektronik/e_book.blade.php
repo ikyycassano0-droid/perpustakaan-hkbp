@@ -7,6 +7,7 @@
     /* ============================================
        CSS KHUSUS HALAMAN E-BOOK (GAYA KLASIK HIJAU)
        Tidak mengganggu master layout
+       + Perbaikan tampilan card agar lebih informatif
     ============================================ */
 
     .main-container {
@@ -221,7 +222,6 @@
         font-weight: 800;
     }
 
-    /* Badge tambahan */
     .badge-available {
         background-color: #2daa6e;
         color: white;
@@ -236,6 +236,29 @@
         flex-grow: 1;
         display: flex;
         flex-direction: column;
+    }
+
+    /* Metadata tambahan (tahun, jenis) */
+    .book-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 8px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+    .book-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #f0f7f3;
+        padding: 3px 10px;
+        border-radius: 40px;
+    }
+    .book-meta i {
+        font-size: 0.65rem;
+        color: var(--primary-color);
     }
 
     .book-cat {
@@ -262,6 +285,14 @@
         font-size: 0.8rem;
         color: var(--text-muted);
         margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+    .book-author i {
+        color: var(--primary-color);
+        width: 16px;
     }
 
     .book-footer {
@@ -365,10 +396,11 @@
     <aside class="sidebar">
         <h3 class="sidebar-title">Katalog Digital</h3>
         <ul class="side-menu">
-            <li><a href="{{ route('final_project.koleksi', 'ebook') }}" class="active"><i class="fas fa-book"></i> E-book</a></li>
-            <li><a href="{{ route('final_project.koleksi', 'e-article') }}"><i class="fas fa-file-alt"></i> E-Article</a></li>
-            <li><a href="{{ route('final_project.koleksi', 'cd') }}"><i class="fas fa-compact-disc"></i> CD</a></li>
-            <li><a href="{{ route('final_project.koleksi', 'video') }}"><i class="fas fa-video"></i> Video</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'ebook') }}" {{ request()->route('category') == 'ebook' ? 'class=active' : '' }}><i class="fas fa-book"></i> E-book</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'e-article') }}" {{ request()->route('category') == 'e-article' ? 'class=active' : '' }}><i class="fas fa-file-alt"></i> E-Article</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'cd') }}" {{ request()->route('category') == 'cd' ? 'class=active' : '' }}><i class="fas fa-compact-disc"></i> CD</a></li>
+            <li><a href="{{ route('final_project.koleksi', 'video') }}" {{ request()->route('category') == 'video' ? 'class=active' : '' }}><i class="fas fa-video"></i> Video</a></li>
+            <li><a href="{{ route('final_project.kti') }}" {{ request()->route('category') == 'kti' ? 'class=active' : '' }}><i class="fas fa-chart-line"></i> KTI</a></li>
         </ul>
     </aside>
 
@@ -381,7 +413,7 @@
         </div>
 
         <!-- Form Search & Filter (server-side) -->
-        <form method="GET" action="{{ route('guest.koleksi_elektronik.ebook') }}" class="filter-row">
+        <form method="GET" action="{{ route('final_project.koleksi', 'ebook') }}" class="filter-row">
             <div class="filter-item">
                 <i class="fas fa-search"></i>
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari judul buku, penulis, atau ISBN...">
@@ -403,11 +435,17 @@
             </div>
         </form>
 
-        {{-- Chips tidak digunakan --}}
-
         <!-- Book Grid -->
         <div class="book-grid">
             @forelse($ebooks as $book)
+                @php
+                    // Tentukan tahun terbit (prioritas year, fallback ke created_at)
+                    $tahun = $book->year ?? (isset($book->created_at) ? date('Y', strtotime($book->created_at)) : null);
+                    // Nama penulis yang lebih informatif
+                    $penulis = $book->student_name ?? ($book->user->name ?? null);
+                    // Jenis koleksi (selalu Ebook untuk halaman ini, namun bisa dinamis jika diperlukan)
+                    $jenisKoleksi = 'Ebook';
+                @endphp
                 <div class="book-card">
                     <div class="book-thumb">
                         <span class="badge-status {{ $book->status == 'Approved' ? 'badge-available' : 'badge-pending' }}">
@@ -420,18 +458,31 @@
                         @endif
                     </div>
                     <div class="book-info">
-                        <span class="book-cat">{{ $book->category->name ?? 'Umum' }}</span>
-                        <h4 class="book-title">{{ $book->title }}</h4>
-                        <p class="book-author">{{ $book->student_name ?? ($book->user->name ?? 'Penulis tidak diketahui') }}</p>
+                        <!-- Metadata: Tahun & Jenis Koleksi (seperti contoh gambar) -->
+                        <div class="book-meta">
+                            @if($tahun)
+                                <span><i class="far fa-calendar-alt"></i> {{ $tahun }}</span>
+                            @endif
+                            <span><i class="fas fa-tag"></i> {{ $jenisKoleksi }}</span>
+                        </div>
 
-                        {{-- TOMBOL AKSI (PERSIS SEPERTI E-ARTICLE) --}}
+                        <h4 class="book-title">{{ $book->title }}</h4>
+
+                        <!-- Penulis (jika ada) -->
+                        @if($penulis)
+                            <p class="book-author"><i class="far fa-user"></i> {{ $penulis }}</p>
+                        @else
+                            <p class="book-author"><i class="far fa-user"></i> Penulis tidak diketahui</p>
+                        @endif
+
+                        <!-- Tombol Aksi -->
                         <div class="book-footer">
                             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                                {{-- Detail (outline) --}}
+                                <!-- Detail (outline) -->
                                 <a href="{{ route('final_project.detail', $book->id) }}" class="btn-outline-read">
                                     <i class="fas fa-info-circle"></i> Detail
                                 </a>
-                                {{-- Baca (solid) --}}
+                                <!-- Baca (solid) -->
                                 @if($book->file_url)
                                     @php
                                         $fileUrl  = asset('storage/' . $book->file_url);
@@ -442,11 +493,11 @@
                                             : $fileUrl;
                                     @endphp
                                     <a href="{{ $bacaUrl }}" target="_blank" class="btn-read">
-                                        📖 Baca
+                                        <i class="fas fa-book"></i> Baca
                                     </a>
-                                    {{-- Download (outline) --}}
+                                    <!-- Download (outline) -->
                                     <a href="{{ asset('storage/' . $book->file_url) }}" download class="btn-outline-read">
-                                        ⬇️ Download
+                                        <i class="fas fa-download"></i> Download
                                     </a>
                                 @else
                                     <span class="btn-read" style="opacity:0.5;">Tidak tersedia</span>

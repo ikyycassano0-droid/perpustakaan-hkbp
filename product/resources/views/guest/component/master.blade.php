@@ -82,116 +82,126 @@
            HEADER / NAVBAR — PUTIH
         =========================== */
         header {
-            background-color: #ffffff;
-            color: var(--text-dark);
-            padding: 0.8rem 3%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 12px rgba(15, 74, 49, 0.10);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 2px solid #e6f0ea;
-        }
+      background-color: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      color: var(--text-dark);
+      padding: 0.6rem 3%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-        .logo-img {
-            width: 50px;
-            height: 50px;
-            background-color: var(--primary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            overflow: hidden;
-        }
+    .logo-img {
+      width: 45px;
+      height: 45px;
+      background-color: var(--primary-color);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
 
-        .logo-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-        }
+    .logo-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+    }
 
-        .logo-text h1 {
-            font-size: 0.95rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            line-height: 1.2;
-            color: var(--text-dark);
-        }
+    .logo-text h1 {
+      font-size: 1rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 1.2;
+      color: var(--text-dark);
+      letter-spacing: -0.3px;
+    }
 
-        .logo-text span {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
+    .logo-text span {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
 
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 5px;
-        }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 8px;
+    }
 
-        nav ul li {
-            position: relative;
-        }
+    nav ul li {
+      position: relative;
+    }
 
-        nav ul li a {
-            padding: 10px 12px;
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: 0.3s;
-            color: var(--text-dark);
-        }
+    nav ul li a {
+      padding: 8px 14px;
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: 0.2s;
+      color: var(--text-dark);
+      border-radius: 30px;
+    }
 
-        nav ul li a:hover,
-        nav ul li>a.active {
-            color: var(--primary-color);
-        }
+    nav ul li a:hover,
+    nav ul li>a.active {
+      color: var(--primary-color);
+      background-color: rgba(26, 107, 71, 0.08);
+    }
 
-        .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background-color: #ffffff;
-            min-width: 220px;
-            box-shadow: 0 8px 20px rgba(15, 74, 49, 0.12);
-            border-radius: 8px;
-            display: none;
-            z-index: 100;
-            border-top: 3px solid var(--accent-green);
-        }
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(12px);
+      min-width: 220px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      display: none;
+      z-index: 100;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      padding: 8px 0;
+    }
 
-        .dropdown-menu li {
-            width: 100%;
-        }
+    .dropdown-menu li {
+      width: 100%;
+    }
 
-        .dropdown-menu li a {
-            color: var(--text-dark) !important;
-            padding: 10px 15px;
-            border-bottom: 1px solid #f0f5f2;
-            font-weight: 500;
-            font-size: 0.8rem;
-        }
+    .dropdown-menu li a {
+      color: var(--text-dark) !important;
+      padding: 10px 18px;
+      border-bottom: none;
+      font-weight: 500;
+      font-size: 0.8rem;
+      border-radius: 0;
+    }
 
-        .dropdown-menu li a:hover {
-            background-color: #f0f9f4;
-            color: var(--primary-color) !important;
-            padding-left: 20px;
-        }
+    .dropdown-menu li a:hover {
+      background-color: rgba(26, 107, 71, 0.08);
+      color: var(--primary-color) !important;
+      padding-left: 24px;
+    }
 
-        nav ul li:hover>.dropdown-menu {
-            display: block;
-        }
+    nav ul li:hover>.dropdown-menu {
+      display: block;
+    }
 
         /* LOGIN BUTTON — Hijau solid */
         .login-btn {
@@ -217,67 +227,200 @@
 
         /* FOOTER — Hijau gelap */
         footer {
-            background-color: var(--deep-green);
-            color: rgba(200, 235, 218, 0.85);
-            padding: 4rem 5% 2rem;
+            background: linear-gradient(135deg, var(--deep-green) 0%, #0a3b2a 100%);
+            color: rgba(220, 240, 230, 0.9);
+            padding: 3rem 5% 1.5rem;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            border-top: 5px solid var(--accent-green);
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.05);
         }
 
         .footer-content {
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 2.5rem;
         }
 
         .footer-col h4 {
-            color: white;
+            color: #ffffff;
             margin-bottom: 1.5rem;
             border-left: 4px solid var(--accent-green);
-            padding-left: 10px;
-            font-size: 1rem;
+            padding-left: 12px;
+            font-size: 1.1rem;
             font-weight: 700;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+
+        .footer-col h4::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--accent-green);
+            border-radius: 2px;
         }
 
         .footer-col ul {
             list-style: none;
+            padding-left: 0;
         }
 
         .footer-col ul li {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            transition: transform 0.2s ease;
+        }
+
+        .footer-col ul li:hover {
+            transform: translateX(5px);
         }
 
         .footer-col ul li a {
-            color: rgba(200, 235, 218, 0.80);
-            transition: 0.3s;
-            font-size: 0.88rem;
+            color: rgba(210, 235, 220, 0.85);
+            transition: 0.25s;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-col ul li a i {
+            font-size: 0.7rem;
+            color: var(--accent-green);
+            transition: 0.2s;
         }
 
         .footer-col ul li a:hover {
             color: white;
-            padding-left: 4px;
+            text-shadow: 0 0 2px rgba(255,255,255,0.3);
+        }
+
+        .footer-col ul li a:hover i {
+            transform: translateX(3px);
+            color: #f1c40f;
         }
 
         .footer-col p {
             font-size: 0.88rem;
-            line-height: 1.8;
+            line-height: 1.7;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .footer-col p i {
+            width: 20px;
             color: var(--accent-green);
-            margin-right: 6px;
+            font-size: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+            margin-top: 0.5rem;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: #e0f0e5;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            background: var(--accent-green);
+            color: var(--deep-green);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         }
 
         .copyright {
+            text-align: center;
             margin-top: 3rem;
             padding-top: 1.5rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.12);
-            text-align: center;
-            font-size: 0.82rem;
-            color: rgba(200, 235, 218, 0.6);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            font-size: 0.85rem;
         }
 
-        /* RESPONSIVE */
+        .copyright p {
+            margin: 5px 0;
+        }
+
+        .copyright .tagline {
+            font-size: 0.8rem;
+            color: var(--accent-green);
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .footer-content {
+                gap: 2rem;
+                text-align: center;
+            }
+            .footer-col h4 {
+                text-align: center;
+                border-left: none;
+                border-bottom: 2px solid var(--accent-green);
+                padding-left: 0;
+                padding-bottom: 8px;
+                display: inline-block;
+            }
+            .footer-col h4::after {
+                display: none;
+            }
+            .footer-col p {
+                justify-content: center;
+            }
+            .social-links {
+                justify-content: center;
+            }
+            .footer-col ul li {
+                text-align: center;
+            }
+            .footer-col ul li a {
+                justify-content: center;
+            }
+
+            .social-links {
+                display: flex;
+                gap: 24px;
+                margin-top: 0.5rem;
+            }
+
+            .social-links a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 42px;
+                height: 42px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 50%;
+                color: #e0f0e5;
+                font-size: 1.3rem;
+                transition: all 0.3s;
+                text-decoration: none;
+            }
+
+            .social-links a:not(:last-child) {
+                margin-right: 4px;
+            }
+        }
+
         @media (max-width: 1100px) {
             nav ul {
                 gap: 2px;
@@ -307,51 +450,51 @@
 
     {{-- Header --}}
     <header>
-        <div class="logo-container">
-            <div class="logo-img">
-                <img src="{{ asset('assets/img/logo akper.png') }}" alt="Logo Perpustakaan AKPER HKBP">
-            </div>
-            <div class="logo-text">
-                <h1>Perpustakaan AKPER HKBP</h1>
-                <span>Sekolah Keperawatan HKBP Balige</span>
-            </div>
+    <div class="logo-container">
+        <div class="logo-img">
+            <img src="{{ asset('assets/img/logo akper.png') }}" alt="Logo Perpustakaan AKPER HKBP">
         </div>
-        <nav>
-            <ul>
-                <li><a href="{{ url('/') }}">Home</a></li>
-                <li>
-                    <a href="#">Profile <i class="fas fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ route('guest.profile.visi-misi') }}">Visi Misi</a></li>
-                        <li><a href="{{ route('guest.profile.kerjasama') }}">Kerjasama</a></li>
-                        <li><a href="{{ route('guest.profile.struktur') }}">Struktur Pengurus</a></li>
-                        <li><a href="{{ route('guest.profile.tugas-fungsi') }}">Tugas, Fungsi, Tujuan</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">Layanan <i class="fas fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ route('waktu.layanan') }}">Waktu Layanan</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">Koleksi Elektronik <i class="fas fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ route('guest.koleksi_elektronik.ebook') }}">E-book</a></li>
-                        <li><a href="{{ route('guest.koleksi_elektronik.earticle') }}">E-article</a></li>
-                        <li><a href="{{ route('guest.koleksi_elektronik.cd') }}">CD</a></li>
-                        <li><a href="{{ route('guest.koleksi_elektronik.video') }}">Video</a></li>
-                    </ul>
-                </li>
-                <li><a href="{{ route('guest.berita.index') }}">Berita</a></li>
-                <li>
-                    <a href="#">Informasi <i class="fas fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ route('panduan') }}">Panduan</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
+        <div class="logo-text">
+            <h1>Perpustakaan AKPER HKBP</h1>
+            <span>Sekolah Keperawatan HKBP Balige</span>
+        </div>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a></li>
+            <li>
+                <a href="#">Profile <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ route('guest.profile.visi-misi') }}">Visi Misi</a></li>
+                    <li><a href="{{ route('guest.profile.kerjasama') }}">Kerjasama</a></li>
+                    <li><a href="{{ route('guest.profile.struktur') }}">Struktur Pengurus</a></li>
+                    <li><a href="{{ route('guest.profile.tugas-fungsi') }}">Tugas, Fungsi, Tujuan</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="{{ route('waktu.layanan') }}">Layanan <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ route('waktu.layanan') }}">Waktu Layanan</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">Koleksi Elektronik <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ route('guest.koleksi_elektronik.ebook') }}">E-book</a></li>
+                    <li><a href="{{ route('guest.koleksi_elektronik.earticle') }}">E-article</a></li>
+                    <li><a href="{{ route('guest.koleksi_elektronik.cd') }}">CD</a></li>
+                    <li><a href="{{ route('guest.koleksi_elektronik.video') }}">Video</a></li>
+                </ul>
+            </li>
+            <li><a href="{{ url('/berita') }}" class="{{ request()->is('berita*') ? 'active' : '' }}">Berita</a></li>
+            <li>
+                <a href="#">Informasi <i class="fas fa-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ route('panduan') }}">Panduan</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
         <a href="{{ route('login') }}" class="login-btn"><i class="fas fa-sign-in-alt"></i> LOGIN</a>
     </header>
 
@@ -368,28 +511,46 @@
         <div class="footer-content">
             <div class="footer-col" data-aos="fade-right" data-aos-delay="200">
                 <h4>Sekolah Keperawatan HKBP Balige</h4>
-                <p><i class="fas fa-hospital"></i> Kompleks HKBP, Jl. Keperawatan No. 1<br>Sumatera Utara, Indonesia.</p>
-                <p><i class="fas fa-phone"></i> (061) 1234567</p>
+                <p><i class="fas fa-map-marker-alt"></i> Kompleks HKBP, Jl. Keperawatan No. 1<br>Sumatera Utara, Indonesia.</p>
+                <p><i class="fas fa-phone-alt"></i> (061) 1234567</p>
                 <p><i class="fas fa-envelope"></i> library@akperhkbp.ac.id</p>
             </div>
             <div class="footer-col" data-aos="fade-up" data-aos-delay="400">
                 <h4>Sumber Daya</h4>
                 <ul>
-                    <li><a href="#"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i> Jurnal Keperawatan</a></li>
-                    <li><a href="#"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i> Panduan Sitasi APA</a></li>
-                    <li><a href="#"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i> Cek Kemiripan Teks</a></li>
+                    {{-- Jurnal Keperawatan (butuh login) --}}
+                    <li><a href="{{ route('user.koleksi.jurnal') }}"><i class="fas fa-chevron-right"></i> Jurnal Keperawatan</a></li>
+                    {{-- Panduan Sitasi APA (butuh login) --}}
+                    <li><a href="{{ route('user.panduan') }}"><i class="fas fa-chevron-right"></i> Panduan Sitasi APA</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Cek Kemiripan Teks</a></li>
+                    {{-- Koleksi Tugas Akhir (butuh login) --}}
+                    <li><a href="{{ route('final_project.kti') }}"><i class="fas fa-chevron-right"></i> Koleksi Tugas Akhir</a></li>
                 </ul>
             </div>
             <div class="footer-col" data-aos="fade-left" data-aos-delay="600">
                 <h4>Akses Cepat</h4>
                 <ul>
-                    <li><a href="#"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i> Pendaftaran Anggota</a></li>
-                    <li><a href="#"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i> Bebas Pustaka</a></li>
-                    <li><a href="#"><i class="fas fa-chevron-right" style="font-size:0.7rem;"></i> Usulan Buku Baru</a></li>
+                    <li><a href="{{ route('login') }}"><i class="fas fa-chevron-right"></i> Pendaftaran Anggota</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Bebas Pustaka</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Usulan Buku Baru</a></li>
+                    <li><a href="{{ route('guest.profile.kerjasama') }}"><i class="fas fa-chevron-right"></i> Hubungi Pustakawan</a></li>
                 </ul>
             </div>
+            <div class="footer-col" data-aos="fade-left" data-aos-delay="600">
+                <h4>Ikuti Kami</h4>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+                <p style="margin-top: 20px; font-size: 0.85rem;">Temukan informasi terbaru dan kegiatan perpustakaan di media sosial kami.</p>
+            </div>
         </div>
-        <div class="copyright">&copy; {{ date('Y') }} Perpustakaan Sekolah Keperawatan HKBP. Semua Hak Dilindungi.</div>
+        <div class="copyright">
+            <p>&copy; {{ date('Y') }} Perpustakaan Sekolah Keperawatan HKBP. All Rights Reserved.</p>
+            <p class="tagline">Melayani untuk Generasi Sehat dan Berilmu</p>
+        </div>
     </footer>
 
     {{-- Scripts --}}
@@ -400,7 +561,6 @@
             duration: 800,
             once: true
         });
-
 
         // Search Function (global, jika ada form dengan class search-container)
         function handleSearch(event) {

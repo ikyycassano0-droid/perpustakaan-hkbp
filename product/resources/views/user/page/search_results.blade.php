@@ -6,12 +6,18 @@
 <style>
     /* ============================================
        LAYOUT KHUSUS HALAMAN PENCARIAN
-       (CSS manual tanpa Tailwind)
+       (CSS manual tanpa Tailwind) - VERSI DIPERINDAH
     ============================================ */
 
+    /* Global reset tambahan untuk konsistensi */
+    .main-content * {
+        box-sizing: border-box;
+    }
+
+    /* ===== HERO SECTION ===== */
     .search-hero {
-        background: linear-gradient(135deg, rgba(26, 107, 71, 0.08), rgba(45, 170, 110, 0.04));
-        border-bottom: 1px solid rgba(26, 107, 71, 0.15);
+        background: linear-gradient(135deg, rgba(26, 107, 71, 0.05), rgba(45, 170, 110, 0.02));
+        border-bottom: 1px solid rgba(26, 107, 71, 0.12);
         padding: 3rem 5% 2rem;
         position: relative;
         overflow: hidden;
@@ -20,25 +26,35 @@
     .search-hero::before {
         content: '';
         position: absolute;
-        top: -50%;
-        right: -20%;
+        top: -30%;
+        right: -10%;
         width: 80%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(26, 107, 71, 0.08), transparent);
-        border-radius: 50%;
+        height: 150%;
+        background: radial-gradient(circle, rgba(26, 107, 71, 0.05), transparent 70%);
         pointer-events: none;
+        border-radius: 50%;
     }
 
     .result-stats {
         display: inline-flex;
         align-items: center;
         gap: 0.75rem;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(12px);
-        padding: 0.5rem 1.25rem;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(8px);
+        padding: 0.6rem 1.5rem;
+        border-radius: 60px;
+        border: 1px solid rgba(26, 107, 71, 0.25);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        font-size: 0.9rem;
+    }
+
+    .keyword-chip {
+        background: rgba(26, 107, 71, 0.12);
+        padding: 0.2rem 0.9rem;
         border-radius: 40px;
-        border: 1px solid rgba(26, 107, 71, 0.2);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        font-weight: 700;
+        color: #1a6b47;
+        letter-spacing: -0.2px;
     }
 
     /* ===== LAYOUT UTAMA GRID ===== */
@@ -51,221 +67,162 @@
         align-items: flex-start;
     }
 
-    /* ============================================
-       SIDEBAR (GAYA SEPERTI KATALOG DIGITAL)
-    ============================================ */
+    /* ===== SIDEBAR (GAYA KATALOG DIGITAL) ===== */
     .sidebar {
-        width: 260px;
+        width: 280px;
         flex-shrink: 0;
-        background: var(--card-bg);
-        padding: 20px 15px;
-        border-radius: 20px;
-        box-shadow: 0 8px 24px rgba(15, 74, 49, 0.08);
-        border: 1px solid var(--border-color);
+        background: #ffffff;
+        padding: 1.5rem 1.2rem;
+        border-radius: 28px;
+        box-shadow: 0 12px 30px rgba(15, 74, 49, 0.08);
+        border: 1px solid #e2f0e8;
         position: sticky;
         top: 100px;
         z-index: 10;
+        transition: all 0.2s;
     }
 
     .sidebar-title {
-        font-size: 0.75rem;
-        color: var(--text-muted);
+        font-size: 0.7rem;
+        color: #5a7060;
         font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 20px;
-        padding-left: 10px;
+        letter-spacing: 1.5px;
+        margin-bottom: 1.2rem;
+        padding-left: 0.5rem;
+        border-left: 3px solid #1a6b47;
     }
 
-    /* Menu item seperti pada gambar (E-book, E-Article, dll) */
-    .side-menu {
-        list-style: none;
-    }
-
-    .side-menu li {
-        margin-bottom: 5px;
-    }
-
-    .side-menu li a {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 10px 15px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: var(--text-muted);
-        border-radius: 12px;
-        transition: all 0.3s ease;
-    }
-
-    .side-menu li a i {
-        width: 20px;
-        text-align: center;
-        color: var(--primary-color);
-    }
-
-    .side-menu li a:hover {
-        background-color: #f0f7f3;
-        color: var(--primary-color);
-        transform: translateX(4px);
-    }
-
-    /* Pemisah antar grup filter (agar terlihat rapi seperti menu) */
     .filter-group-item {
-        margin-top: 20px;
-        border-top: 1px solid var(--border-color);
-        padding-top: 15px;
+        margin-top: 0.5rem;
     }
 
     .filter-label {
         display: flex;
         align-items: center;
         gap: 10px;
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         font-weight: 700;
-        color: var(--text-dark);
-        margin-bottom: 10px;
-        padding-left: 5px;
+        color: #0d2137;
+        margin-bottom: 12px;
+        padding-left: 6px;
     }
 
     .filter-label i {
-        color: var(--primary-color);
+        color: #1a6b47;
         width: 20px;
+        font-size: 0.9rem;
     }
 
-    .filter-options {
-        padding-left: 30px;
-        margin-bottom: 12px;
-    }
-
-    .filter-option {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 6px 0;
-        font-size: 0.85rem;
-        color: var(--text-muted);
-        cursor: pointer;
-        transition: 0.2s;
-    }
-
-    .filter-option:hover {
-        color: var(--primary-color);
-        padding-left: 4px;
-    }
-
-    .filter-option input {
-        accent-color: var(--primary-color);
-        width: 16px;
-        height: 16px;
-        cursor: pointer;
-    }
-
-    .sort-select, .filter-select {
+    .filter-select, .sort-select, .year-input {
         width: 100%;
-        padding: 8px 12px;
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        background: #fcfdfc;
+        padding: 10px 14px;
+        border: 1.5px solid #e0ece4;
+        border-radius: 18px;
+        background: #fcfefd;
         font-size: 0.85rem;
-        color: var(--text-dark);
-        margin-bottom: 10px;
-        transition: 0.3s;
+        color: #0d2137;
+        margin-bottom: 14px;
+        transition: all 0.2s;
+        font-weight: 500;
     }
 
-    .sort-select:focus, .filter-select:focus {
-        border-color: var(--primary-color);
+    .filter-select:focus, .sort-select:focus, .year-input:focus {
+        border-color: #1a6b47;
         outline: none;
-        box-shadow: 0 0 0 2px rgba(26, 107, 71, 0.1);
+        box-shadow: 0 0 0 3px rgba(26, 107, 71, 0.1);
+        background: white;
     }
 
-    .year-input {
-        width: 100%;
-        padding: 8px 12px;
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        font-size: 0.85rem;
+    .year-input::placeholder {
+        color: #b0c4bb;
+        font-weight: 400;
     }
 
     .sidebar-actions {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-top: 15px;
-        padding-top: 10px;
-        border-top: 1px solid var(--border-color);
+        gap: 12px;
+        margin-top: 20px;
+        padding-top: 12px;
+        border-top: 1px solid #e0ece4;
+    }
+
+    .btn-filter-apply, .btn-filter-reset {
+        padding: 10px 8px;
+        border-radius: 40px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        text-align: center;
+        border: none;
     }
 
     .btn-filter-apply {
-        background: var(--primary-color);
+        background: #1a6b47;
         color: white;
-        border: none;
-        padding: 8px 12px;
-        border-radius: 40px;
-        font-weight: 600;
-        font-size: 0.8rem;
-        cursor: pointer;
-        transition: 0.3s;
+        box-shadow: 0 2px 6px rgba(26, 107, 71, 0.2);
     }
     .btn-filter-apply:hover {
-        background: var(--deep-green);
+        background: #0f4a31;
         transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(15, 74, 49, 0.15);
     }
 
     .btn-filter-reset {
-        background: #f1f5f2;
-        color: #0d2137;
-        border: 1px solid var(--border-color);
-        padding: 8px 12px;
-        border-radius: 40px;
-        font-weight: 600;
-        font-size: 0.8rem;
-        cursor: pointer;
-        transition: 0.3s;
+        background: #f4f8f6;
+        color: #2c5a47;
+        border: 1px solid #d4e5d9;
     }
     .btn-filter-reset:hover {
-        background: #e2e8e6;
+        background: #eaf3ef;
+        transform: translateY(-1px);
     }
 
     /* ===== HASIL GRID (KARTU) ===== */
     .content-section {
         flex-grow: 1;
-        min-width: 300px;
+        min-width: 0;
     }
 
     .search-results-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+        gap: 1.8rem;
         margin-bottom: 2rem;
     }
 
     .search-card {
         background: #ffffff;
-        border-radius: 1.25rem;
-        border: 1px solid #d4e5d9;
-        transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        border-radius: 1.5rem;
+        border: 1px solid #e0ece4;
+        transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         overflow: hidden;
         display: flex;
         flex-direction: column;
         height: 100%;
-        box-shadow: 0 4px 12px rgba(15, 74, 49, 0.04);
+        box-shadow: 0 6px 14px rgba(15, 74, 49, 0.04);
     }
 
     .search-card:hover {
-        transform: translateY(-5px);
-        border-color: var(--accent-green, #2daa6e);
-        box-shadow: 0 16px 28px -8px rgba(15, 74, 49, 0.15);
+        transform: translateY(-6px);
+        border-color: #2daa6e;
+        box-shadow: 0 20px 30px -12px rgba(26, 107, 71, 0.2);
     }
 
-    /* ===== GAMBAR THUMBNAIL ===== */
+    /* Thumbnail gambar */
     .card-thumb {
-        height: 160px;
+        height: 170px;
         background-size: cover;
         background-position: center;
         position: relative;
-        background-color: #e2e8f0;
-        transition: all 0.3s ease;
+        background-color: #eef3f0;
+        transition: all 0.3s;
+    }
+
+    .search-card:hover .card-thumb {
+        filter: brightness(0.98);
     }
 
     .card-badge {
@@ -274,88 +231,59 @@
         left: 12px;
         display: inline-flex;
         align-items: center;
-        gap: 0.25rem;
-        padding: 0.25rem 0.75rem;
-        border-radius: 9999px;
+        gap: 6px;
+        padding: 4px 12px;
+        border-radius: 40px;
         font-size: 0.7rem;
-        font-weight: 700;
-        backdrop-filter: blur(4px);
+        font-weight: 800;
+        backdrop-filter: blur(6px);
+        background: rgba(0,0,0,0.65);
+        color: white;
+        letter-spacing: 0.3px;
     }
 
     .badge-collection {
-        background: var(--primary-color, #1a6b47);
-        color: white;
+        background: rgba(26, 107, 71, 0.9);
+        backdrop-filter: blur(4px);
     }
-
     .badge-final {
-        background: var(--accent-green, #2daa6e);
-        color: white;
+        background: rgba(45, 170, 110, 0.9);
     }
 
     .restricted-badge {
         position: absolute;
         bottom: 12px;
         left: 12px;
-        background: #e74c3c;
+        background: #e67e22;
         backdrop-filter: blur(4px);
-        padding: 0.25rem 0.75rem;
-        border-radius: 9999px;
+        padding: 4px 10px;
+        border-radius: 40px;
         font-size: 0.65rem;
         font-weight: 700;
         color: white;
         display: flex;
         align-items: center;
-        gap: 0.25rem;
+        gap: 5px;
     }
 
     .highlight {
         background: rgba(241, 196, 15, 0.25);
-        color: var(--primary-color, #1a6b47);
+        color: #1a6b47;
         padding: 0 2px;
-        border-radius: 4px;
-        font-weight: 600;
+        border-radius: 5px;
+        font-weight: 700;
     }
 
-    /* ===== TOMBOL DETAIL ===== */
-    .btn-detail {
-        background: var(--primary-color, #1a6b47);
-        padding: 0.5rem 1rem;
-        border-radius: 40px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: white;
-        transition: all 0.3s ease;
-        display: inline-block;
-        text-align: center;
-        border: none;
-        cursor: pointer;
-        text-decoration: none;
-    }
-
-    .btn-detail:hover {
-        background: var(--deep-green, #0f4a31);
-        transform: scale(1.02);
-        box-shadow: 0 4px 12px rgba(26, 107, 71, 0.3);
-        color: white;
-    }
-
-    .bg-accent {
-        background-color: var(--accent-green, #2daa6e);
-    }
-    .bg-accent:hover {
-        background-color: var(--primary-color, #1a6b47);
-    }
-
-    /* ===== CONTENT CARD ===== */
+    /* Content card */
     .card-content {
-        padding: 1rem 1.25rem;
+        padding: 1.2rem 1.2rem 1.2rem;
         display: flex;
         flex-direction: column;
         flex: 1;
     }
 
     .card-title {
-        font-weight: 700;
+        font-weight: 800;
         font-size: 1rem;
         margin-bottom: 0.5rem;
         line-height: 1.4;
@@ -370,10 +298,32 @@
         font-size: 0.85rem;
         color: #5a7060;
         margin-bottom: 1rem;
+        line-height: 1.45;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
+    }
+
+    .card-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 0.9rem;
+        font-size: 0.7rem;
+        font-weight: 500;
+        color: #6c8b7c;
+    }
+    .card-meta span {
+        background: #f4f9f6;
+        padding: 3px 8px;
+        border-radius: 30px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .card-meta i {
+        font-size: 0.65rem;
     }
 
     .card-footer {
@@ -381,132 +331,149 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 0.8rem;
     }
 
-    .card-footer .meta {
+    /* Tombol seragam */
+    .btn-detail {
+        background: #1a6b47;
+        padding: 0.5rem 1.2rem;
+        border-radius: 40px;
         font-size: 0.75rem;
-        color: #5a7060;
+        font-weight: 700;
+        color: white;
+        transition: 0.25s;
+        display: inline-block;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        letter-spacing: 0.3px;
+    }
+    .btn-detail:hover {
+        background: #0f4a31;
+        transform: scale(1.02);
+        box-shadow: 0 4px 10px rgba(26, 107, 71, 0.3);
+        color: white;
     }
 
-    /* ===== EMPTY STATE ===== */
+    .bg-accent {
+        background-color: #2daa6e;
+    }
+    .bg-accent:hover {
+        background-color: #1f8b56;
+    }
+
+    /* Empty state */
     .empty-state {
         text-align: center;
-        padding: 3rem;
+        padding: 3rem 2rem;
         background: #ffffff;
-        border-radius: 1.5rem;
-        border: 1px solid #d4e5d9;
-        box-shadow: 0 4px 12px rgba(15, 74, 49, 0.04);
+        border-radius: 2rem;
+        border: 1px solid #e0ece4;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.02);
     }
 
-    /* ===== PAGINATION ===== */
+    /* Pagination */
     .pagination-custom {
         display: flex;
         justify-content: center;
-        gap: 0.5rem;
+        gap: 0.6rem;
         margin-top: 2rem;
         flex-wrap: wrap;
     }
-
     .pagination-custom .page-item {
         list-style: none;
     }
-
     .pagination-custom .page-link {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 40px;
-        height: 40px;
-        background: #ffffff;
-        border: 1px solid #d4e5d9;
-        border-radius: 10px;
-        color: #0d2137;
-        transition: all 0.3s ease;
-        font-size: 0.85rem;
+        width: 42px;
+        height: 42px;
+        background: white;
+        border: 1px solid #deeae3;
+        border-radius: 14px;
+        color: #2c5a47;
+        transition: 0.2s;
+        font-weight: 600;
         text-decoration: none;
     }
-
     .pagination-custom .page-link:hover {
-        background: rgba(26, 107, 71, 0.08);
-        border-color: var(--primary-color, #1a6b47);
+        background: #eef5f1;
+        border-color: #1a6b47;
         transform: translateY(-2px);
     }
-
     .pagination-custom .active .page-link {
-        background: var(--primary-color, #1a6b47);
-        border-color: var(--primary-color, #1a6b47);
+        background: #1a6b47;
+        border-color: #1a6b47;
         color: white;
-        box-shadow: 0 4px 12px rgba(26, 107, 71, 0.3);
+        box-shadow: 0 4px 10px rgba(26,107,71,0.2);
     }
 
-    .pagination-custom .disabled .page-link {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 1024px) {
-        .sidebar {
-            display: none; /* Sidebar hilang di tablet/mobile, filter bisa diakses via tombol atau di atas */
-        }
-        .search-results-grid {
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        }
-    }
-
-    @media (max-width: 640px) {
-        .search-results-grid {
-            grid-template-columns: 1fr;
-        }
-        .result-stats {
-            font-size: 0.8rem;
-            padding: 0.35rem 1rem;
-        }
-    }
-
-    /* ===== ANIMASI FADE-UP ===== */
+    /* Animasi fade-up */
     .fade-up {
         opacity: 0;
-        transform: translateY(20px);
-        transition: all 0.6s ease;
+        transform: translateY(18px);
+        transition: all 0.55s ease;
     }
     .fade-up.show {
         opacity: 1;
         transform: translateY(0);
     }
 
-    /* ===== LOADING SKELETON ===== */
+    /* Loading skeleton (diperhalus) */
     @keyframes shimmer {
         0% { background-position: -200% 0; }
         100% { background-position: 200% 0; }
     }
-
     .loading-skeleton-card {
-        background: #f8fbf9;
-        border-radius: 1.25rem;
+        background: #fafefb;
+        border-radius: 1.5rem;
         overflow: hidden;
-        border: 1px solid #e2e8e6;
+        border: 1px solid #e2ece6;
     }
-
     .skeleton-thumb {
-        height: 160px;
-        background: linear-gradient(90deg, #e2e8e6 25%, #f0f5f2 50%, #e2e8e6 75%);
+        height: 170px;
+        background: linear-gradient(90deg, #e0ece4 25%, #f0f7f3 50%, #e0ece4 75%);
         background-size: 200% 100%;
-        animation: shimmer 1.5s infinite;
+        animation: shimmer 1.4s infinite;
     }
-
     .skeleton-line {
         height: 12px;
-        background: linear-gradient(90deg, #e2e8e6 25%, #f0f5f2 50%, #e2e8e6 75%);
+        background: linear-gradient(90deg, #e0ece4 25%, #f0f7f3 50%, #e0ece4 75%);
         background-size: 200% 100%;
-        animation: shimmer 1.5s infinite;
-        border-radius: 6px;
-        margin: 0.75rem 1rem;
+        animation: shimmer 1.4s infinite;
+        border-radius: 8px;
+        margin: 1rem 1.2rem;
     }
-
     .skeleton-line-sm {
         width: 60%;
         height: 10px;
+    }
+
+    /* Responsif */
+    @media (max-width: 1024px) {
+        .sidebar {
+            display: none;
+        }
+        .search-results-grid {
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        }
+    }
+    @media (max-width: 640px) {
+        .search-results-grid {
+            grid-template-columns: 1fr;
+        }
+        .result-stats {
+            font-size: 0.75rem;
+            padding: 0.4rem 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .search-hero h1 {
+            font-size: 1.8rem;
+        }
     }
 </style>
 @endpush
@@ -517,38 +484,33 @@
     <!-- HERO SECTION PENCARIAN -->
     <section class="search-hero">
         <div class="max-w-7xl mx-auto" style="max-width:1200px; margin:0 auto; text-align:center;">
-            <div class="inline-block bg-white/80 backdrop-blur-sm px-5 py-2 rounded-full mb-4 shadow-sm border border-[#d4e5d9]">
-                <span style="color:var(--primary-color); font-size:0.85rem; font-weight:600;">🔍 PENCARIAN DIGITAL</span>
+            <div class="inline-block bg-white/70 backdrop-blur-sm px-5 py-2 rounded-full mb-4 shadow-sm border border-[#d4e5d9]">
+                <span style="color:var(--primary-color, #1a6b47); font-size:0.85rem; font-weight:600;">🔍 PENCARIAN DIGITAL</span>
             </div>
             <h1 style="font-size:2.5rem; font-weight:700; color:#0d2137; margin-bottom:0.5rem;">
                 Hasil Pencarian
             </h1>
-            <div class="result-stats" style="display:inline-flex; align-items:center; gap:0.75rem; background:rgba(255,255,255,0.9); backdrop-filter:blur(12px); padding:0.5rem 1.25rem; border-radius:40px; border:1px solid rgba(26,107,71,0.2); box-shadow:0 2px 8px rgba(0,0,0,0.02);">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" style="color:var(--primary-color);"></path>
+            <div class="result-stats">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" style="color:#1a6b47;"></path>
                 </svg>
-                <span style="color:#5a7060;">Menampilkan <span style="color:var(--primary-color); font-weight:600;">
+                <span>Menampilkan <strong style="color:#1a6b47;">
                     {{ method_exists($results, 'total') ? number_format($results->total()) : number_format($results->count()) }}
-                </span> hasil untuk</span>
-                <span style="color:var(--primary-color); font-weight:600; background:rgba(26,107,71,0.1); padding:0.1rem 0.75rem; border-radius:40px;">"{{ $keyword }}"</span>
+                </strong> hasil untuk</span>
+                <span class="keyword-chip">“{{ $keyword }}”</span>
             </div>
         </div>
     </section>
 
-    <!-- KONTEN UTAMA: FILTER + HASIL (Menggunakan struktur main-container seperti E-Book) -->
+    <!-- KONTEN UTAMA: FILTER + HASIL -->
     <div class="main-container">
 
         <!-- SIDEBAR (GAYA KATALOG DIGITAL + FILTER) -->
         <aside class="sidebar fade-up">
-            <h3 class="sidebar-title">HASIL PENCARIAN</h3>
+            <h3 class="sidebar-title">FILTER PENCARIAN</h3>
 
-            <!-- FILTER PENCARIAN (TETAP DIPERTAHANKAN) -->
             <div class="filter-group-item">
-                <div class="filter-label"><i class="fas fa-sliders-h"></i> Filter Pencarian</div>
-
-                <!-- Tipe Konten -->
-
-                <!-- Klasifikasi -->
+                <div class="filter-label"><i class="fas fa-tag"></i> Klasifikasi</div>
                 <select id="filterClassification" class="filter-select">
                     <option value="">🏷️ Semua Klasifikasi</option>
                     @foreach($classifications ?? [] as $c)
@@ -558,7 +520,7 @@
                     @endforeach
                 </select>
 
-                <!-- Kategori -->
+                <div class="filter-label"><i class="fas fa-folder"></i> Kategori</div>
                 <select id="filterCategory" class="filter-select">
                     <option value="">📁 Semua Kategori</option>
                     @foreach($categories ?? [] as $cat)
@@ -568,10 +530,10 @@
                     @endforeach
                 </select>
 
-                <!-- Tahun -->
-                <input type="number" id="filterYear" class="year-input" placeholder="📅 Tahun (contoh: 2023)" value="{{ request('year') }}">
+                <div class="filter-label"><i class="fas fa-calendar-alt"></i> Tahun</div>
+                <input type="number" id="filterYear" class="year-input" placeholder="contoh: 2023" value="{{ request('year') }}">
 
-                <!-- Urutkan -->
+                <div class="filter-label"><i class="fas fa-sort-amount-down-alt"></i> Urutkan</div>
                 <select id="sortBy" class="sort-select">
                     <option value="relevance" {{ request('sort') == 'relevance' ? 'selected' : '' }}>🔄 Relevansi</option>
                     <option value="title_asc" {{ request('sort') == 'title_asc' ? 'selected' : '' }}>📖 Judul (A-Z)</option>
@@ -580,7 +542,6 @@
                     <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>🕰️ Terlama</option>
                 </select>
 
-                <!-- Tombol -->
                 <div class="sidebar-actions">
                     <button id="applyFilterBtn" class="btn-filter-apply">
                         🔍 Terapkan
@@ -610,12 +571,12 @@
             <div id="resultsContainer">
                 @if($results->count() == 0)
                     <div class="empty-state fade-up">
-                        <div style="font-size:4rem; margin-bottom:1rem; opacity:0.5;">🔍</div>
-                        <h3 style="font-size:1.25rem; font-weight:600; color:#0d2137; margin-bottom:0.5rem;">Tidak ditemukan hasil</h3>
-                        <p style="color:#5a7060;">Coba kata kunci lain atau gunakan filter yang berbeda.</p>
-                        <div style="display:flex; justify-content:center; gap:1rem; margin-top:1.5rem;">
+                        <div style="font-size:4rem; margin-bottom:1rem; opacity:0.6;">🔍</div>
+                        <h3 style="font-size:1.3rem; font-weight:700; color:#0d2137;">Tidak ditemukan hasil</h3>
+                        <p style="color:#5a7060; margin-top:0.5rem;">Coba kata kunci lain atau gunakan filter yang berbeda.</p>
+                        <div style="display:flex; justify-content:center; gap:1rem; margin-top:1.8rem;">
                             <a href="{{ url('/') }}" class="btn-detail">Kembali ke Beranda</a>
-                            <button onclick="resetFilters()" style="background:#f1f5f2; color:#0d2137; border:1px solid #d4e5d9; padding:0.5rem 1.5rem; border-radius:40px; cursor:pointer; transition:0.3s;">Reset Filter</button>
+                            <button onclick="resetFilters()" style="background:#f1f5f2; color:#0d2137; border:1px solid #d4e5d9; padding:0.5rem 1.5rem; border-radius:40px; cursor:pointer;">Reset Filter</button>
                         </div>
                     </div>
                 @else
@@ -628,10 +589,11 @@
                                 $descClean = strip_tags($description);
                                 $highlightedDesc = preg_replace('/(' . preg_quote($keyword, '/') . ')/i', '<span class="highlight">$1</span>', Str::limit($descClean, 120));
                                 $itemType = $item->type ?? 'collection';
+                                $year = $item->year ?? ($item->created_at ? date('Y', strtotime($item->created_at)) : null);
                             @endphp
                             <div class="search-card fade-up" data-type="{{ $itemType }}">
                                 @if($itemType == 'collection')
-                                    <div class="card-thumb" style="background-image: url('{{ ($item->cover ?? false) ? asset('storage/'.$item->cover) : 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=160&fit=crop' }}')">
+                                    <div class="card-thumb" style="background-image: url('{{ ($item->cover ?? false) ? asset('storage/'.$item->cover) : 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=170&fit=crop' }}')">
                                         <span class="card-badge badge-collection">
                                             <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                                             Koleksi
@@ -645,14 +607,18 @@
                                     </div>
                                     <div class="card-content">
                                         <h3 class="card-title">{!! $highlightedTitle !!}</h3>
+                                        <div class="card-meta">
+                                            @if($year)<span><i class="far fa-calendar-alt"></i> {{ $year }}</span>@endif
+                                            <span><i class="fas fa-layer-group"></i> Koleksi</span>
+                                        </div>
                                         <p class="card-desc">{!! $highlightedDesc !!}</p>
                                         <div class="card-footer">
-                                            <span class="meta">📚 Perpustakaan</span>
+                                            <span class="meta" style="font-size:0.7rem;">📚 Perpustakaan</span>
                                             <a href="{{ url('/collections/'.$item->id) }}" class="btn-detail">Lihat Detail →</a>
                                         </div>
                                     </div>
                                 @else
-                                    <div class="card-thumb" style="background-image: url('{{ ($item->cover_image ?? $item->thumbnail ?? false) ? asset('storage/'.($item->cover_image ?? $item->thumbnail)) : 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=160&fit=crop' }}')">
+                                    <div class="card-thumb" style="background-image: url('{{ ($item->cover_image ?? $item->thumbnail ?? false) ? asset('storage/'.($item->cover_image ?? $item->thumbnail)) : 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=170&fit=crop' }}')">
                                         <span class="card-badge badge-final">
                                             <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                             KTI
@@ -660,17 +626,21 @@
                                     </div>
                                     <div class="card-content">
                                         <h3 class="card-title">{!! $highlightedTitle !!}</h3>
+                                        <div class="card-meta">
+                                            @if($year)<span><i class="far fa-calendar-alt"></i> {{ $year }}</span>@endif
+                                            <span><i class="fas fa-graduation-cap"></i> Tugas Akhir</span>
+                                        </div>
                                         <p class="card-desc">{!! $highlightedDesc !!}</p>
-                                        <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+                                        <div style="display:flex; gap:0.6rem; margin-top:0.5rem;">
                                             @if($item->file_url)
                                                 <a href="{{ asset('storage/'.$item->file_url) }}" class="btn-detail" style="flex:1; text-align:center;" target="_blank">
-                                                    📖 Baca
+                                                    <i class="fas fa-book-open"></i> Baca
                                                 </a>
                                                 <a href="{{ asset('storage/'.$item->file_url) }}" download class="btn-detail bg-accent" style="flex:1; text-align:center;">
-                                                    ⬇️ Download
+                                                    <i class="fas fa-download"></i> Download
                                                 </a>
                                             @else
-                                                <span style="color:#5a7060; font-size:0.85rem; text-align:center; width:100%;">File tidak tersedia</span>
+                                                <span style="color:#6c8b7c; font-size:0.75rem; width:100%; text-align:center;">File tidak tersedia</span>
                                             @endif
                                         </div>
                                     </div>
