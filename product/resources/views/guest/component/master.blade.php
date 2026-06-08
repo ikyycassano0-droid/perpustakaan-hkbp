@@ -82,126 +82,133 @@
            HEADER / NAVBAR — PUTIH
         =========================== */
         header {
-      background-color: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(8px);
-      color: var(--text-dark);
-      padding: 0.6rem 3%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-      transition: all 0.3s ease;
-    }
+            background-color: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(8px);
+            color: var(--text-dark);
+            padding: 0.6rem 3%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
 
-    .logo-container {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-    .logo-img {
-      width: 45px;
-      height: 45px;
-      background-color: var(--primary-color);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: bold;
-      overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    }
+        .logo-img {
+            width: 45px;
+            height: 45px;
+            background-color: var(--primary-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
 
-    .logo-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 12px;
-    }
+        .logo-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
 
-    .logo-text h1 {
-      font-size: 1rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      line-height: 1.2;
-      color: var(--text-dark);
-      letter-spacing: -0.3px;
-    }
+        .logo-text h1 {
+            font-size: 1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 1.2;
+            color: var(--text-dark);
+            letter-spacing: -0.3px;
+        }
 
-    .logo-text span {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
+        .logo-text span {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
 
-    nav ul {
-      list-style: none;
-      display: flex;
-      gap: 8px;
-    }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 8px;
+        }
 
-    nav ul li {
-      position: relative;
-    }
+        nav ul li {
+            position: relative;
+        }
 
-    nav ul li a {
-      padding: 8px 14px;
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 600;
-      transition: 0.2s;
-      color: var(--text-dark);
-      border-radius: 30px;
-    }
+        nav ul li a {
+            padding: 8px 14px;
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: 0.2s;
+            color: var(--text-dark);
+            border-radius: 30px;
+        }
 
-    nav ul li a:hover,
-    nav ul li>a.active {
-      color: var(--primary-color);
-      background-color: rgba(26, 107, 71, 0.08);
-    }
+        nav ul li a:hover,
+        nav ul li > a.active {
+            color: var(--primary-color);
+            background-color: rgba(26, 107, 71, 0.08);
+        }
 
-    .dropdown-menu {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      background-color: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(12px);
-      min-width: 220px;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
-      border-radius: 16px;
-      display: none;
-      z-index: 100;
-      border: 1px solid rgba(0, 0, 0, 0.05);
-      padding: 8px 0;
-    }
+        /* CSS untuk indikator active yang lebih jelas */
+        nav ul li a.active {
+            color: var(--primary-color);
+            background-color: rgba(26, 107, 71, 0.12);
+            font-weight: 700;
+        }
 
-    .dropdown-menu li {
-      width: 100%;
-    }
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            min-width: 220px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            display: none;
+            z-index: 100;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 8px 0;
+        }
 
-    .dropdown-menu li a {
-      color: var(--text-dark) !important;
-      padding: 10px 18px;
-      border-bottom: none;
-      font-weight: 500;
-      font-size: 0.8rem;
-      border-radius: 0;
-    }
+        .dropdown-menu li {
+            width: 100%;
+        }
 
-    .dropdown-menu li a:hover {
-      background-color: rgba(26, 107, 71, 0.08);
-      color: var(--primary-color) !important;
-      padding-left: 24px;
-    }
+        .dropdown-menu li a {
+            color: var(--text-dark) !important;
+            padding: 10px 18px;
+            border-bottom: none;
+            font-weight: 500;
+            font-size: 0.8rem;
+            border-radius: 0;
+        }
 
-    nav ul li:hover>.dropdown-menu {
-      display: block;
-    }
+        .dropdown-menu li a:hover {
+            background-color: rgba(26, 107, 71, 0.08);
+            color: var(--primary-color) !important;
+            padding-left: 24px;
+        }
+
+        nav ul li:hover > .dropdown-menu {
+            display: block;
+        }
 
         /* LOGIN BUTTON — Hijau solid */
         .login-btn {
@@ -450,51 +457,52 @@
 
     {{-- Header --}}
     <header>
-    <div class="logo-container">
-        <div class="logo-img">
-            <img src="{{ asset('assets/img/logo akper.png') }}" alt="Logo Perpustakaan AKPER HKBP">
+        <div class="logo-container">
+            <div class="logo-img">
+                <img src="{{ asset('assets/img/logo akper.png') }}" alt="Logo Perpustakaan AKPER HKBP">
+            </div>
+            <div class="logo-text">
+                <h1>Perpustakaan AKPER HKBP</h1>
+                <span>Sekolah Keperawatan HKBP Balige</span>
+            </div>
         </div>
-        <div class="logo-text">
-            <h1>Perpustakaan AKPER HKBP</h1>
-            <span>Sekolah Keperawatan HKBP Balige</span>
-        </div>
-    </div>
-    <nav>
-        <ul>
-            <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Home</a></li>
-            <li>
-                <a href="#">Profile <i class="fas fa-chevron-down"></i></a>
-                <ul class="dropdown-menu">
-                    <li><a href="{{ route('guest.profile.visi-misi') }}">Visi Misi</a></li>
-                    <li><a href="{{ route('guest.profile.kerjasama') }}">Kerjasama</a></li>
-                    <li><a href="{{ route('guest.profile.struktur') }}">Struktur Pengurus</a></li>
-                    <li><a href="{{ route('guest.profile.tugas-fungsi') }}">Tugas, Fungsi, Tujuan</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="{{ route('waktu.layanan') }}">Layanan <i class="fas fa-chevron-down"></i></a>
-                <ul class="dropdown-menu">
-                    <li><a href="{{ route('waktu.layanan') }}">Waktu Layanan</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#">Koleksi Elektronik <i class="fas fa-chevron-down"></i></a>
-                <ul class="dropdown-menu">
-                    <li><a href="{{ route('guest.koleksi_elektronik.ebook') }}">E-book</a></li>
-                    <li><a href="{{ route('guest.koleksi_elektronik.earticle') }}">E-article</a></li>
-                    <li><a href="{{ route('guest.koleksi_elektronik.cd') }}">CD</a></li>
-                    <li><a href="{{ route('guest.koleksi_elektronik.video') }}">Video</a></li>
-                </ul>
-            </li>
-            <li><a href="{{ url('/berita') }}" class="{{ request()->is('berita*') ? 'active' : '' }}">Berita</a></li>
-            <li>
-                <a href="#">Informasi <i class="fas fa-chevron-down"></i></a>
-                <ul class="dropdown-menu">
-                    <li><a href="{{ route('panduan') }}">Panduan</a></li>
-                </ul>
-            </li>
-        </ul>
-    </nav>
+        <nav>
+            <ul>
+                {{-- MENU HOME dengan active class yang diperbaiki --}}
+                <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') || request()->is('/') ? 'active' : '' }}">Home</a></li>
+                <li>
+                    <a href="#" class="{{ request()->routeIs('guest.profile.*') ? 'active' : '' }}">Profile <i class="fas fa-chevron-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ route('guest.profile.visi-misi') }}">Visi Misi</a></li>
+                        <li><a href="{{ route('guest.profile.kerjasama') }}">Kerjasama</a></li>
+                        <li><a href="{{ route('guest.profile.struktur') }}">Struktur Pengurus</a></li>
+                        <li><a href="{{ route('guest.profile.tugas-fungsi') }}">Tugas, Fungsi, Tujuan</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="{{ route('waktu.layanan') }}" class="{{ request()->routeIs('waktu.layanan') ? 'active' : '' }}">Layanan <i class="fas fa-chevron-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ route('waktu.layanan') }}">Waktu Layanan</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="{{ request()->routeIs('guest.koleksi_elektronik.*') ? 'active' : '' }}">Koleksi Elektronik <i class="fas fa-chevron-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ route('guest.koleksi_elektronik.ebook') }}">E-book</a></li>
+                        <li><a href="{{ route('guest.koleksi_elektronik.earticle') }}">E-article</a></li>
+                        <li><a href="{{ route('guest.koleksi_elektronik.cd') }}">CD</a></li>
+                        <li><a href="{{ route('guest.koleksi_elektronik.video') }}">Video</a></li>
+                    </ul>
+                </li>
+                <li><a href="{{ url('/berita') }}" class="{{ request()->is('berita*') ? 'active' : '' }}">Berita</a></li>
+                <li>
+                    <a href="#" class="{{ request()->routeIs('panduan') ? 'active' : '' }}">Informasi <i class="fas fa-chevron-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ route('panduan') }}">Panduan</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
         <a href="{{ route('login') }}" class="login-btn"><i class="fas fa-sign-in-alt"></i> LOGIN</a>
     </header>
 
