@@ -16,78 +16,220 @@
     }
 
     .sidebar {
-        width: 220px;
+        width: 260px;
         flex-shrink: 0;
         background: var(--card-bg);
-        padding: 20px;
-        border-radius: 16px;
-        box-shadow: 0 8px 24px rgba(15, 74, 49, 0.08);
+        padding: 16px;
+        border-radius: 14px;
+        box-shadow: 0 4px 16px rgba(15, 74, 49, 0.06);
         border: 1px solid var(--border-color);
         position: sticky;
         top: 100px;
     }
 
     .sidebar h3 {
-        font-size: 1.1rem;
-        margin-bottom: 20px;
+        font-size: 0.85rem;
+        margin-bottom: 14px;
         color: var(--text-dark);
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 15px;
-        font-weight: 800;
+        padding-bottom: 10px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        border-bottom: 1.5px solid #e2e8f0;
     }
 
     .filter-group {
-        margin-bottom: 25px;
+        margin-bottom: 20px;
     }
 
     .filter-group h4 {
-        font-size: 0.95rem;
+        font-size: 0.7rem;
         color: var(--text-muted);
-        margin-bottom: 15px;
-        font-weight: 700;
+        margin-bottom: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
     }
 
-    .year-input-wrapper {
+    /* === GAYA MINIMALIS RENTANG TAHUN === */
+    .range-wrapper {
+        background: #fafcfb;
+        border-radius: 10px;
+        padding: 12px 10px;
+        border: 1px solid #eef2f0;
+    }
+
+    .range-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 14px;
+    }
+
+    .range-header-item {
+        text-align: center;
+        flex: 1;
+    }
+
+    .range-header-label {
+        font-size: 0.6rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 3px;
+    }
+
+    .range-header-value {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        font-family: monospace;
+        background: #eef3f0;
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 16px;
+    }
+
+    .double-range-container {
+        position: relative;
+        height: 32px;
+        margin: 4px 0 8px;
+    }
+
+    .range-track {
+        position: absolute;
+        top: 14px;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: #e2e8f0;
+        border-radius: 3px;
+    }
+
+    .range-fill {
+        position: absolute;
+        top: 14px;
+        height: 3px;
+        background: var(--primary-color);
+        border-radius: 3px;
+        pointer-events: none;
+    }
+
+    .range-input {
+        position: absolute;
+        top: 6px;
+        left: 0;
+        width: 100%;
+        height: 20px;
+        background: transparent;
+        pointer-events: none;
+    }
+
+    .range-input input {
+        position: absolute;
+        width: 100%;
+        height: 20px;
+        background: transparent;
+        -webkit-appearance: none;
+        pointer-events: auto;
+    }
+
+    .range-input input:focus {
+        outline: none;
+    }
+
+    .range-input input::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 12px;
+        height: 12px;
+        background: white;
+        border: 2px solid var(--primary-color);
+        border-radius: 50%;
+        cursor: pointer;
+        pointer-events: auto;
+        transition: all 0.15s ease;
+    }
+
+    .range-input input::-webkit-slider-thumb:hover {
+        transform: scale(1.2);
+        background: var(--primary-color);
+    }
+
+    .range-input input::-moz-range-thumb {
+        width: 12px;
+        height: 12px;
+        background: white;
+        border: 2px solid var(--primary-color);
+        border-radius: 50%;
+        cursor: pointer;
+        pointer-events: auto;
+    }
+
+    .range-values {
         display: flex;
         gap: 8px;
-        align-items: center;
+        margin: 12px 0 10px;
     }
 
-    .year-input {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid var(--border-color);
+    .range-value-box {
+        flex: 1;
+        text-align: center;
+        background: #ffffff;
         border-radius: 8px;
-        font-size: 0.9rem;
-        outline: none;
-        transition: 0.3s;
-        background: var(--card-bg);
-        color: var(--text-dark);
+        padding: 6px 4px;
+        border: 1px solid #edf2f0;
     }
 
-    .year-input:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(26, 107, 71, 0.1);
+    .range-value-box label {
+        font-size: 0.6rem;
+        color: #94a3b8;
+        display: block;
+        margin-bottom: 3px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .range-value-box span {
+        display: inline-block;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        font-family: monospace;
     }
 
     .btn-reset-tahun {
         margin-top: 10px;
-        padding: 8px 14px;
-        background: var(--border-color);
-        color: var(--text-dark);
-        border: none;
-        border-radius: 8px;
-        font-size: 0.8rem;
+        padding: 6px 10px;
+        background: transparent;
+        color: #94a3b8;
+        border: 1px solid #e2e8f0;
+        border-radius: 30px;
+        font-size: 0.65rem;
         cursor: pointer;
         width: 100%;
-        transition: 0.3s;
+        transition: 0.2s;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
     }
 
     .btn-reset-tahun:hover {
-        background: var(--text-muted);
-        color: white;
+        background: #f1f5f9;
+        color: var(--primary-color);
+        border-color: var(--primary-color);
     }
 
+    .filter-active-indicator {
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px solid #eef2f0;
+        font-size: 0.6rem;
+        color: var(--primary-color);
+        text-align: center;
+        font-weight: 500;
+    }
+
+    /* ================= SISANYA SAMA ================= */
     .content-section {
         flex-grow: 1;
         min-width: 0;
@@ -213,6 +355,7 @@
         margin-top: 15px;
         display: flex;
         gap: 8px;
+        flex-wrap: wrap;
     }
 
     .tag {
@@ -331,7 +474,7 @@
         font-size: 0.9rem;
     }
 
-    /* === MODAL PEMINJAMAN (GAYA HIJAU) === */
+    /* === MODAL PEMINJAMAN === */
     .modal-overlay {
         position: fixed;
         inset: 0;
@@ -454,21 +597,55 @@
 
 @section('content')
 <div class="main-container">
-    {{-- SIDEBAR STICKY --}}
+    {{-- SIDEBAR MINIMALIS --}}
     <aside class="sidebar">
         <h3>Ditapis dengan</h3>
         <div class="filter-group">
             <h4>Tahun Penerbitan</h4>
-            <input type="number"
-                   id="yearInput"
-                   class="year-input"
-                   placeholder="Masukkan tahun"
-                   value="{{ request('year') }}"
-                   min="2000"
-                   max="{{ date('Y') }}">
-            <button class="btn-reset-tahun" id="resetYearBtn">
-                <i class="fas fa-sync-alt"></i> Reset Tahun
-            </button>
+
+            <div class="range-wrapper">
+                <div class="range-header">
+                    <div class="range-header-item">
+                        <div class="range-header-label">Dari</div>
+                        <div class="range-header-value" id="rangeMinLabel">{{ $currentMinYear ?? ($minYear ?? 2000) }}</div>
+                    </div>
+                    <div class="range-header-item">
+                        <div class="range-header-label">Sampai</div>
+                        <div class="range-header-value" id="rangeMaxLabel">{{ $currentMaxYear ?? ($maxYear ?? date('Y')) }}</div>
+                    </div>
+                </div>
+
+                <div class="double-range-container">
+                    <div class="range-track"></div>
+                    <div class="range-fill" id="rangeFill"></div>
+                    <div class="range-input">
+                        <input type="range" id="minYearSlider" min="{{ $minYear ?? 2000 }}" max="{{ $maxYear ?? date('Y') }}" value="{{ $currentMinYear ?? ($minYear ?? 2000) }}" step="1">
+                        <input type="range" id="maxYearSlider" min="{{ $minYear ?? 2000 }}" max="{{ $maxYear ?? date('Y') }}" value="{{ $currentMaxYear ?? ($maxYear ?? date('Y')) }}" step="1">
+                    </div>
+                </div>
+
+                <div class="range-values">
+                    <div class="range-value-box">
+                        <label>Min</label>
+                        <span id="minYearValue">{{ $currentMinYear ?? ($minYear ?? 2000) }}</span>
+                    </div>
+                    <div class="range-value-box">
+                        <label>Max</label>
+                        <span id="maxYearValue">{{ $currentMaxYear ?? ($maxYear ?? date('Y')) }}</span>
+                    </div>
+                </div>
+
+                <button class="btn-reset-tahun" id="resetYearBtn">
+                    <i class="fas fa-undo-alt"></i> Reset
+                </button>
+
+                @if(request('year_min') || request('year_max'))
+                <div class="filter-active-indicator">
+                    <i class="fas fa-filter"></i>
+                    {{ request('year_min', $minYear ?? 2000) }} — {{ request('year_max', $maxYear ?? date('Y')) }}
+                </div>
+                @endif
+            </div>
         </div>
     </aside>
 
@@ -581,7 +758,7 @@
                     <i class="fas fa-search"></i>
                     <h3>Tidak ada jurnal ditemukan</h3>
                     <p>
-                        @if(request('year') || request('category') || request('search'))
+                        @if(request('year_min') || request('year_max') || request('category') || request('search'))
                             Maaf, tidak ada jurnal yang sesuai dengan filter yang dipilih.
                             <br>Coba ubah atau <a href="{{ route('user.koleksi.jurnal') }}" style="color: var(--primary-color); text-decoration: underline;">reset filter</a>.
                         @else
@@ -630,7 +807,87 @@
 
 @push('scripts')
 <script>
-    // ================= FUNGSI FILTER (TETAP) =================
+    // ================= FILTER RENTANG TAHUN =================
+    const minSlider = document.getElementById('minYearSlider');
+    const maxSlider = document.getElementById('maxYearSlider');
+    const minValueSpan = document.getElementById('minYearValue');
+    const maxValueSpan = document.getElementById('maxYearValue');
+    const rangeFill = document.getElementById('rangeFill');
+    const minLabel = document.getElementById('rangeMinLabel');
+    const maxLabel = document.getElementById('rangeMaxLabel');
+
+    const globalMin = parseInt(minSlider.min);
+    const globalMax = parseInt(maxSlider.max);
+
+    function updateRangeFill() {
+        const minVal = parseInt(minSlider.value);
+        const maxVal = parseInt(maxSlider.value);
+        const percentMin = ((minVal - globalMin) / (globalMax - globalMin)) * 100;
+        const percentMax = ((maxVal - globalMin) / (globalMax - globalMin)) * 100;
+        rangeFill.style.left = percentMin + '%';
+        rangeFill.style.width = (percentMax - percentMin) + '%';
+
+        minValueSpan.innerText = minVal;
+        maxValueSpan.innerText = maxVal;
+        minLabel.innerText = minVal;
+        maxLabel.innerText = maxVal;
+    }
+
+    function applyYearFilter() {
+        const minYear = parseInt(minSlider.value);
+        const maxYear = parseInt(maxSlider.value);
+
+        const url = new URL(window.location.href);
+        if (minYear > globalMin) {
+            url.searchParams.set('year_min', minYear);
+        } else {
+            url.searchParams.delete('year_min');
+        }
+
+        if (maxYear < globalMax) {
+            url.searchParams.set('year_max', maxYear);
+        } else {
+            url.searchParams.delete('year_max');
+        }
+
+        window.location.href = url.toString();
+    }
+
+    if (minSlider && maxSlider) {
+        minSlider.addEventListener('input', function() {
+            let minVal = parseInt(minSlider.value);
+            let maxVal = parseInt(maxSlider.value);
+            if (minVal > maxVal) {
+                minSlider.value = maxVal;
+                minVal = maxVal;
+            }
+            updateRangeFill();
+        });
+
+        maxSlider.addEventListener('input', function() {
+            let minVal = parseInt(minSlider.value);
+            let maxVal = parseInt(maxSlider.value);
+            if (maxVal < minVal) {
+                maxSlider.value = minVal;
+                maxVal = minVal;
+            }
+            updateRangeFill();
+        });
+
+        minSlider.addEventListener('change', applyYearFilter);
+        maxSlider.addEventListener('change', applyYearFilter);
+
+        updateRangeFill();
+    }
+
+    document.getElementById('resetYearBtn')?.addEventListener('click', function() {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('year_min');
+        url.searchParams.delete('year_max');
+        window.location.href = url.toString();
+    });
+
+    // ================= FUNGSI FILTER LAINNYA =================
     function updateFilter(param, value) {
         const url = new URL(window.location.href);
         if (value) {
@@ -645,37 +902,17 @@
         updateFilter('category', this.value);
     });
 
-    const yearInput = document.getElementById('yearInput');
-    if (yearInput) {
-        yearInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                const year = this.value.trim();
-                if (/^\d{4}$/.test(year) && year >= 2000 && year <= new Date().getFullYear()) {
-                    updateFilter('year', year);
-                } else {
-                    updateFilter('year', null);
-                }
-            }
-        });
-    }
-
-    document.getElementById('resetYearBtn')?.addEventListener('click', () => {
-        updateFilter('year', null);
-    });
-
     document.getElementById('sortOrder')?.addEventListener('change', function() {
         updateFilter('sort', this.value);
     });
 
+    let searchTimeout;
     const searchInput = document.getElementById('searchInput');
     searchInput?.addEventListener('keyup', function() {
-        const keyword = this.value.toLowerCase();
-        document.querySelectorAll('.book-card').forEach(card => {
-            const title = card.querySelector('h2')?.textContent.toLowerCase() || '';
-            const authors = card.querySelector('p')?.textContent.toLowerCase() || '';
-            card.style.display = (title.includes(keyword) || authors.includes(keyword)) ? 'flex' : 'none';
-        });
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            updateFilter('search', this.value);
+        }, 500);
     });
 
     // ================= MODAL PEMINJAMAN =================

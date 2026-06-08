@@ -491,6 +491,28 @@
         background: var(--accent-green);
     }
 
+    /* Tombol Kembali */
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: var(--primary-color, #1a6b47);
+        color: white;
+        padding: 10px 24px;
+        border-radius: 40px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-back:hover {
+        background: var(--accent-green, #0f4a31);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
     @media (max-width: 1024px) {
         .main-wrapper {
             grid-template-columns: 1fr;
@@ -618,7 +640,7 @@
                                 <div class="pulse-dot"></div>
                                 Tersedia (Open Access)
                             </div>
-                         </td>
+                          </td>
                     </tr>
                 </tbody>
             </table>
@@ -718,8 +740,18 @@
             {{ $item->abstract }}
         </div>
         @endif
-    </div>
-</div>
+
+        {{-- Tombol Kembali ke Koleksi (dalam card detail, ditengah) --}}
+        <div style="margin-top: 40px; text-align: center;">
+            <a href="{{ url()->previous() !== url()->current() ? url()->previous() : route('guest.koleksi_elektronik.index') }}"
+               class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+                Kembali ke Koleksi {{ ucfirst($item->category->name ?? 'Elektronik') }}
+            </a>
+        </div>
+
+    </div> {{-- penutup .detail-box --}}
+</div> {{-- penutup .main-wrapper --}}
 
 <!-- READER OVERLAY -->
 <div id="reader-overlay">
