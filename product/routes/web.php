@@ -340,9 +340,7 @@ Route::prefix('user')->group(function () {
     //Guest
 
 Route::middleware(['web'])->group(function () {
-    Route::get('/', function () {
-        return view('guest.page.home'); // path Blade tetap: guest.page.home
-    })->name('home');
+        Route::get('/', [HomeController::class, 'index'])->name('home');
 
         Route::get('/collections/{id}', [CollectionController::class, 'show'])
         ->name('collections.show');
