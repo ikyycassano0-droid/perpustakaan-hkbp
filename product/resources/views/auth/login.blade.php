@@ -26,7 +26,10 @@
             display: flex;
             align-items: flex-start;
             justify-content: center;
-            padding: 60px 16px 40px;
+            padding-top: 120px;
+            padding-bottom: 40px;
+            padding-left: 16px;
+            padding-right: 16px;
         }
 
         /* ============================================================
@@ -56,7 +59,7 @@
         }
 
         .login-logo img {
-            width: 72px;
+            width: 90px;
             height: auto;
             display: block;
             margin: 0 auto 8px;

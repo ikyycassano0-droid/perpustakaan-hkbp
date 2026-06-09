@@ -11,9 +11,9 @@
     </div>
     <nav>
         <ul>
-            <li><a href="{{ route('user.dashboard') }}">Home</a></li>
+            <li><a href="{{ route('user.dashboard') }}" class="{{ request()->routeIs('user.dashboard') ? 'active' : '' }}">Home</a></li>
             <li>
-                <a href="#">Profile <i class="fas fa-chevron-down"></i></a>
+                <a href="#" class="{{ request()->routeIs('user.profile.*') ? 'active' : '' }}">Profile <i class="fas fa-chevron-down"></i></a>
                 <ul class="dropdown-menu">
                     <li><a href="{{ route('user.profile.visi_misi') }}">Visi Misi</a></li>
                     <li><a href="{{ route('user.profile.kerjasama') }}">Kerjasama</a></li>
@@ -22,14 +22,14 @@
                 </ul>
             </li>
             <li>
-                <a href="#">Layanan <i class="fas fa-chevron-down"></i></a>
+                <a href="#" class="{{ request()->routeIs('user.pinbal.index') || request()->routeIs('user.waktu.layanan') ? 'active' : '' }}">Layanan <i class="fas fa-chevron-down"></i></a>
                 <ul class="dropdown-menu">
                     <li><a href="{{ route('user.pinbal.index') }}">Pinjam Buku</a></li>
                     <li><a href="{{ route('user.waktu.layanan') }}">Waktu Layanan</a></li>
                 </ul>
             </li>
             <li>
-                <a href="#">Koleksi Tercetak <i class="fas fa-chevron-down"></i></a>
+                <a href="#" class="{{ request()->routeIs('user.koleksi.*') ? 'active' : '' }}">Koleksi Tercetak <i class="fas fa-chevron-down"></i></a>
                 <ul class="dropdown-menu">
                     <li><a href="{{ route('user.koleksi.jurnal') }}">Jurnal</a></li>
                     <li><a href="{{ route('user.koleksi.buku_pengayaan') }}">Buku Pengayaan</a></li>
@@ -38,7 +38,7 @@
                 </ul>
             </li>
             <li>
-                <a href="#">Koleksi Elektronik <i class="fas fa-chevron-down"></i></a>
+                <a href="#" class="{{ request()->routeIs('final_project.koleksi') || request()->routeIs('final_project.kti') ? 'active' : '' }}">Koleksi Elektronik <i class="fas fa-chevron-down"></i></a>
                 <ul class="dropdown-menu">
                     <li><a href="{{ route('final_project.koleksi', 'ebook') }}">E-book</a></li>
                     <li><a href="{{ route('final_project.koleksi', 'e-article') }}">E-article</a></li>
@@ -47,9 +47,9 @@
                     <li><a href="{{ route('final_project.kti') }}">KTI Digital</a></li>
                 </ul>
             </li>
-            <li><a href="{{ route('user.berita') }}">Berita</a></li>
+            <li><a href="{{ route('user.berita') }}" class="{{ request()->routeIs('user.berita') ? 'active' : '' }}">Berita</a></li>
             <li>
-                <a href="#">Informasi <i class="fas fa-chevron-down"></i></a>
+                <a href="#" class="{{ request()->routeIs('user.panduan') ? 'active' : '' }}">Informasi <i class="fas fa-chevron-down"></i></a>
                 <ul class="dropdown-menu">
                     <li><a href="{{ route('user.panduan') }}">Panduan</a></li>
                 </ul>
@@ -237,6 +237,13 @@
       background-color: rgba(26, 107, 71, 0.08);
     }
 
+    /* CSS untuk indikator active yang lebih jelas */
+    nav ul li a.active {
+        color: var(--primary-color);
+        background-color: rgba(26, 107, 71, 0.12);
+        font-weight: 700;
+    }
+
     .dropdown-menu {
       position: absolute;
       top: 100%;
@@ -301,7 +308,7 @@
     .notification-badge { position: absolute; top: -5px; right: -5px; background: #e74c3c; color: white; font-size: 0.6rem; font-weight: 800; padding: 2px 6px; border-radius: 30px; min-width: 18px; text-align: center; }
 
     /* ========== MODAL NOTIFIKASI ========== */
-    .notification-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; }
+    .notification-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; display: none; }
     .notification-panel { background: #fff; max-width: 480px; width: 90%; border-radius: 32px; box-shadow: 0 25px 45px rgba(0,0,0,0.25); overflow: hidden; animation: fadeSlideUp 0.3s ease; border-top: 4px solid #f1c40f; }
     @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     .notif-header { padding: 20px 24px; background: white; border-bottom: 1px solid #d4e5d9; display: flex; justify-content: space-between; align-items: center; }
