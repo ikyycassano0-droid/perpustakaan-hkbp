@@ -452,13 +452,7 @@
         <h3>Ditapis dengan</h3>
         <div class="filter-group">
             <h4>Tahun Penerbitan</h4>
-            <input type="number"
-                   id="yearInput"
-                   class="year-input"
-                   placeholder="Masukkan tahun"
-                   value="{{ request('year') }}"
-                   min="2000"
-                   max="{{ date('Y') }}">
+<input type="number"id="yearInput" class="year-input" placeholder="Masukkan tahun" value="{{ request('year', date('Y')) }}" min="2000" max="{{ date('Y') }}">
             <button class="btn-reset-tahun" id="resetYearBtn">
                 <i class="fas fa-sync-alt"></i> Reset Tahun
             </button>

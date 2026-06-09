@@ -1,4 +1,3 @@
-{{-- resources/views/user/page/koleksi_elektronik/detail.blade.php --}}
 @extends('user.component.master')
 
 @section('title', $item->title . ' - Perpustakaan AKPER HKBP')

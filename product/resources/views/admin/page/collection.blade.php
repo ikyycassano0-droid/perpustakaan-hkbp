@@ -390,16 +390,10 @@
                     </select>
                 </div>
 
-                {{-- FILES --}}
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Cover Image</label>
-                        <input type="file" name="cover_image" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 transition text-sm text-slate-700 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">File Koleksi (PDF/DOC)</label>
-                        <input type="file" name="file_url" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 transition text-sm text-slate-700 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100">
-                    </div>
+                {{-- COVER IMAGE (FULL WIDTH) --}}
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Cover Image</label>
+                    <input type="file" name="cover_image" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 transition text-sm text-slate-700 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100">
                 </div>
             </div>
 

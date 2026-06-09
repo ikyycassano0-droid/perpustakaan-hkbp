@@ -29,7 +29,7 @@ class Profile extends Model
         'active' => 'boolean'
     ];
 
-        public function getImageUrlAttribute()
+    public function getImageUrlAttribute()
     {
         if ($this->image) {
             return asset('storage/' . $this->image);
@@ -40,19 +40,19 @@ class Profile extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
+        // Hanya validasi untuk visi (satu record aktif)
         static::creating(function ($model) {
-            if ($model->type == 'visi_misi' && in_array($model->sub_type, ['visi', 'about'])) {
+            if ($model->type == 'visi_misi' && $model->sub_type == 'visi') {
                 $exists = static::where('type', $model->type)
                     ->where('sub_type', $model->sub_type)
                     ->where('active', true)
                     ->exists();
-                
+
                 if ($exists) {
-                    throw new \Exception(ucfirst($model->sub_type) . ' sudah ada, tidak bisa membuat baru.');
+                    throw new \Exception('Visi sudah ada, tidak bisa membuat baru.');
                 }
             }
         });
     }
-
 }
