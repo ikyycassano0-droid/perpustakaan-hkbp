@@ -14,7 +14,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\DashboardExport;
 use App\Models\Home;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;  
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {

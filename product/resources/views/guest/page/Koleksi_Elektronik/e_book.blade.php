@@ -429,7 +429,7 @@
             <form method="GET" action="{{ route('guest.koleksi_elektronik.ebook') }}" class="filter-row">
                 <div class="filter-item">
                     <i class="fas fa-search"></i>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari judul buku, penulis, atau ISBN...">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari judul buku...">
                 </div>
                 <div class="filter-item">
                     <select name="category">

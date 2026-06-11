@@ -18,7 +18,7 @@
     use Illuminate\Http\Request;
     use App\Models\User;
     use App\Http\Controllers\ServiceScheduleController;
-    
+
 
     Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
 
@@ -215,7 +215,7 @@ Route::prefix('user')->group(function () {
 
         // Dashboard
         Route::get('/dashboard', [HomeController::class, 'index_user'])->name('user.dashboard');
-    
+
         Route::get('/panduan', [ArchiveController::class, 'indexPanduan'])->name('user.panduan');
 
         // ================= ORDERS =================

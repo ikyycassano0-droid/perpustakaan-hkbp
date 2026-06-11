@@ -486,7 +486,7 @@
         <div class="filter-row">
             <div class="filter-item">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Cari judul KTI, penulis, atau kata kunci riset...">
+                <input type="text" id="searchInput" placeholder="Cari judul KTI...">
             </div>
             <div class="filter-item">
                 <select>

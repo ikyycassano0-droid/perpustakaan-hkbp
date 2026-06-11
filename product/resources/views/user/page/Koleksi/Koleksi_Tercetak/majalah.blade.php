@@ -625,11 +625,11 @@
                     <div class="range-header">
                         <div class="range-header-item">
                             <div class="range-header-label">Dari</div>
-                            <div class="range-header-value" id="rangeMinLabel">{{ $currentMinYear ?? ($minYear ?? 2000) }}</div>
+                            <div class="range-header-value" id="rangeMinLabel">{{ $currentMinYear }}</div>
                         </div>
                         <div class="range-header-item">
                             <div class="range-header-label">Sampai</div>
-                            <div class="range-header-value" id="rangeMaxLabel">{{ $currentMaxYear ?? ($maxYear ?? date('Y')) }}</div>
+                            <div class="range-header-value" id="rangeMaxLabel">{{ $currentMaxYear }}</div>
                         </div>
                     </div>
 
@@ -637,19 +637,27 @@
                         <div class="range-track"></div>
                         <div class="range-fill" id="rangeFill"></div>
                         <div class="range-input">
-                            <input type="range" id="minYearSlider" min="{{ $minYear ?? 2000 }}" max="{{ $maxYear ?? date('Y') }}" value="{{ $currentMinYear ?? ($minYear ?? 2000) }}" step="1">
-                            <input type="range" id="maxYearSlider" min="{{ $minYear ?? 2000 }}" max="{{ $maxYear ?? date('Y') }}" value="{{ $currentMaxYear ?? ($maxYear ?? date('Y')) }}" step="1">
+                            <input type="range" id="minYearSlider"
+                                min="{{ $minYearGlobal }}"
+                                max="{{ $maxYearGlobal }}"
+                                value="{{ $currentMinYear }}"
+                                step="1">
+                            <input type="range" id="maxYearSlider"
+                                min="{{ $minYearGlobal }}"
+                                max="{{ $maxYearGlobal }}"
+                                value="{{ $currentMaxYear }}"
+                                step="1">
                         </div>
                     </div>
 
                     <div class="range-values">
                         <div class="range-value-box">
                             <label>Min</label>
-                            <span id="minYearValue">{{ $currentMinYear ?? ($minYear ?? 2000) }}</span>
+                            <span id="minYearValue">{{ $currentMinYear }}</span>
                         </div>
                         <div class="range-value-box">
                             <label>Max</label>
-                            <span id="maxYearValue">{{ $currentMaxYear ?? ($maxYear ?? date('Y')) }}</span>
+                            <span id="maxYearValue">{{ $currentMaxYear }}</span>
                         </div>
                     </div>
 
@@ -660,7 +668,7 @@
                     @if(request('year_min') || request('year_max'))
                         <div class="filter-active-indicator">
                             <i class="fas fa-filter"></i>
-                            {{ request('year_min', $minYear ?? 2000) }} — {{ request('year_max', $maxYear ?? date('Y')) }}
+                            {{ request('year_min', $minYearGlobal) }} — {{ request('year_max', $maxYearGlobal) }}
                         </div>
                     @endif
                 </div>
@@ -677,7 +685,7 @@
             <div class="filter-row">
                 <div class="search-item">
                     <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Cari judul majalah, penulis, atau ISSN..."
+                    <input type="text" placeholder="Cari judul majalah..."
                            id="searchInput" value="{{ request('search') }}">
                 </div>
                 <div class="search-item">

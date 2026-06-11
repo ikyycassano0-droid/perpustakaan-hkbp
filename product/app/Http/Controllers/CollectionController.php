@@ -311,89 +311,91 @@ class CollectionController extends Controller
 
     // ================= USER MENU =================
     public function showUserMenu(Request $request, $menu_type)
-    {
-        // ================= COLLECTION DATA =================
-        $collections = Collection::query()
-            ->select(
-                'id',
-                'title',
-                'author',
-                'publisher',
-                'menu_type',
-                'location_id',
-                'cover_image',
-                'stock',
-                'available_stock',
-                'publication_year',
-                'edition',
-                'description',
-                'created_at',
-                'updated_at'
-            )
-            ->with([
-                'categories:id,name',
-                'location:id,name',
-                'classifications:id,name'
-            ])
-             ->where('menu_type', $menu_type)
-            ->where('active', 1)
-            ->when($request->filled('search'), function ($q) use ($request) {
-                $search = $request->search;
-                $q->where(function ($q2) use ($search) {
-                    $q2->where('title', 'like', "%$search%")
-                        ->orWhere('publisher', 'like', "%$search%")
-                        ->orWhere('author', 'like', "%$search%")
-                        ->orWhere('keywords', 'like', "%$search%");
-                });
-            })
-             ->when($request->filled('year'), function ($q) use ($request) {
-                $q->where('publication_year', (int) $request->year);
-            })
-            ->when($request->filled('category'), function ($q) use ($request) {
-                $q->whereHas('categories', function ($q2) use ($request) {
-                    $q2->where('name', $request->category);
-                });
-            })
-            ->when($request->sort == 'az', function ($q) {
-                $q->orderBy('title', 'asc');
-            }, function ($q) {
-                $q->latest();
-            })
-            ->paginate(6);
+{
+    // ================= RENTANG TAHUN UNTUK SLIDER =================
+    // Hitung min & max publication_year dari koleksi aktif dengan menu_type yang sama
+    $baseQuery = Collection::where('menu_type', $menu_type)->where('active', 1);
 
-        // ================= USER BORROW STATUS =================
-        $userBorrowStatus = [];
+    $minYearGlobal = (clone $baseQuery)->min('publication_year') ?? 2000;
+    $maxYearGlobal = (clone $baseQuery)->max('publication_year') ?? date('Y');
 
-        if (is_logged_in()) {
-            $activeOrders = Order::where('user_id', user_id())
-                ->whereIn('status', ['PENDING', 'APPROVED', 'REJECTED'])
-                ->with('details')
-                ->get();
+    // Nilai yang sedang difilter (dari request)
+    $currentMinYear = $request->filled('year_min') ? (int)$request->year_min : $minYearGlobal;
+    $currentMaxYear = $request->filled('year_max') ? (int)$request->year_max : $maxYearGlobal;
 
-            foreach ($activeOrders as $order) {
-                foreach ($order->details as $detail) {
-                    $userBorrowStatus[$detail->collection_id] = [
-                        'status' => $order->status,
-                        'order_id' => $order->id,
-                        'status_text' => $this->getStatusText($order->status)
-                    ];
-                }
+    // ================= QUERY DENGAN FILTER RANGE TAHUN =================
+    $collections = Collection::query()
+        ->select(
+            'id','title','author','publisher','menu_type','location_id',
+            'cover_image','stock','available_stock','publication_year',
+            'edition','description','created_at','updated_at'
+        )
+        ->with(['categories:id,name', 'location:id,name', 'classifications:id,name'])
+        ->where('menu_type', $menu_type)
+        ->where('active', 1)
+        // === RANGE TAHUN (baru) ===
+        ->when($request->filled('year_min'), function ($q) use ($request) {
+            $q->where('publication_year', '>=', (int)$request->year_min);
+        })
+        ->when($request->filled('year_max'), function ($q) use ($request) {
+            $q->where('publication_year', '<=', (int)$request->year_max);
+        })
+        // === FILTER LAIN (search, category, sort) ===
+        ->when($request->filled('search'), function ($q) use ($request) {
+            $search = $request->search;
+            $q->where(function ($q2) use ($search) {
+                $q2->where('title', 'like', "%$search%")
+                    ->orWhere('publisher', 'like', "%$search%")
+                    ->orWhere('author', 'like', "%$search%")
+                    ->orWhere('keywords', 'like', "%$search%");
+            });
+        })
+        ->when($request->filled('category'), function ($q) use ($request) {
+            $q->whereHas('categories', function ($q2) use ($request) {
+                $q2->where('name', $request->category);
+            });
+        })
+        ->when($request->sort == 'az', function ($q) {
+            $q->orderBy('title', 'asc');
+        }, function ($q) {
+            $q->latest();
+        })
+        ->paginate(6);
+
+    // ================= STATUS PEMINJAMAN USER =================
+    $userBorrowStatus = [];
+    if (is_logged_in()) {
+        $activeOrders = Order::where('user_id', user_id())
+            ->whereIn('status', ['PENDING', 'APPROVED', 'REJECTED'])
+            ->with('details')
+            ->get();
+        foreach ($activeOrders as $order) {
+            foreach ($order->details as $detail) {
+                $userBorrowStatus[$detail->collection_id] = [
+                    'status' => $order->status,
+                    'order_id' => $order->id,
+                    'status_text' => $this->getStatusText($order->status)
+                ];
             }
         }
-
-        // ================= VIEW MAP =================
-        $viewMap = [
-            'jurnal' => 'user.page.Koleksi.Koleksi_Tercetak.jurnal',
-            'buku_pengayaan' => 'user.page.Koleksi.Koleksi_Tercetak.buku_pengayaan',
-            'buku_referensi' => 'user.page.Koleksi.Koleksi_Tercetak.buku_referensi',
-            'majalah' => 'user.page.Koleksi.Koleksi_Tercetak.majalah',
-        ];
-
-        $view = $viewMap[$menu_type] ?? $viewMap['buku_referensi'];
-        $categories = CategoryCollection::select('id', 'name')->orderBy('name')->get();
-
-        return view($view, compact('collections', 'menu_type', 'userBorrowStatus', 'categories'));
     }
+
+    // ================= VIEW DAN DATA =================
+    $viewMap = [
+        'jurnal' => 'user.page.Koleksi.Koleksi_Tercetak.jurnal',
+        'buku_pengayaan' => 'user.page.Koleksi.Koleksi_Tercetak.buku_pengayaan',
+        'buku_referensi' => 'user.page.Koleksi.Koleksi_Tercetak.buku_referensi',
+        'majalah' => 'user.page.Koleksi.Koleksi_Tercetak.majalah',
+    ];
+
+    $view = $viewMap[$menu_type] ?? $viewMap['buku_referensi'];
+    $categories = CategoryCollection::select('id','name')->orderBy('name')->get();
+
+    return view($view, compact(
+        'collections', 'menu_type', 'userBorrowStatus', 'categories',
+        'minYearGlobal', 'maxYearGlobal', 'currentMinYear', 'currentMaxYear'
+    ));
+}
 
     private function getStatusText($status)
     {

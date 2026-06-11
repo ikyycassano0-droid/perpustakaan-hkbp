@@ -428,7 +428,7 @@
             <form method="GET" action="{{ route('final_project.koleksi', 'e-article') }}" class="filter-row">
                 <div class="filter-item">
                     <i class="fas fa-search"></i>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari artikel, jurnal, atau kata kunci riset...">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari artikel atau kata kunci riset...">
                 </div>
                 <div class="filter-item">
                     <select name="category">
