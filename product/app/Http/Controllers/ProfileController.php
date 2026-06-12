@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class ProfileController extends Controller
 {
+    // ================= ADMIN: LIST DATA =================
     public function index(Request $request)
     {
         $type = $request->type;
@@ -22,8 +23,7 @@ class ProfileController extends Controller
         return view('admin.page.profile.index', compact('profiles'));
     }
 
-    // ================= GUEST =================
-
+    // ================= GUEST VIEWS =================
     public function showVisiMisi()
     {
         $visi = Profile::where('type', 'visi_misi')
@@ -134,34 +134,29 @@ class ProfileController extends Controller
 
     public function showKerjasama()
     {
-        // Ambil data mitra (sub_type = 'mitra')
         $mitra = Profile::where('type', 'kerjasama')
             ->where('sub_type', 'mitra')
             ->where('active', true)
             ->orderBy('order')
             ->get();
 
-        // Ambil data bentuk kerjasama (sub_type = 'bentuk')
         $bentukKerjasama = Profile::where('type', 'kerjasama')
             ->where('sub_type', 'bentuk')
             ->where('active', true)
             ->orderBy('order')
             ->get();
 
-        // Ambil data kolaborasi (sub_type = 'kolaborasi')
         $kolaborasi = Profile::where('type', 'kerjasama')
             ->where('sub_type', 'kolaborasi')
             ->where('active', true)
             ->orderBy('order')
             ->get();
 
-        // Ambil deskripsi umum kerjasama (bisa dari sub_type null atau yang memiliki description)
         $deskripsiKerjasama = Profile::where('type', 'kerjasama')
             ->whereNull('sub_type')
             ->where('active', true)
             ->first();
 
-        // Jika tidak ada deskripsi khusus, ambil dari data pertama yang memiliki description
         if (!$deskripsiKerjasama) {
             $deskripsiKerjasama = Profile::where('type', 'kerjasama')
                 ->where('active', true)
@@ -174,7 +169,6 @@ class ProfileController extends Controller
 
     public function showKerjasamaMahasiswa()
     {
-        // Sama seperti di atas untuk user/mahasiswa
         $mitra = Profile::where('type', 'kerjasama')
             ->where('sub_type', 'mitra')
             ->where('active', true)
@@ -209,7 +203,6 @@ class ProfileController extends Controller
     }
 
     // ================= ADMIN CRUD =================
-
     public function store(Request $request)
     {
         $request->validate([
@@ -223,7 +216,7 @@ class ProfileController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
         ]);
 
-        // CEK DUPLIKAT UNTUK VISI DAN ABOUT - HANYA BOLEH 1
+        // Cek duplikat Visi / About
         if ($request->type == 'visi_misi' && in_array($request->sub_type, ['visi', 'about'])) {
             $existing = Profile::where('type', $request->type)
                 ->where('sub_type', $request->sub_type)
@@ -235,7 +228,7 @@ class ProfileController extends Controller
             }
         }
 
-        // CEK DUPLIKAT UNTUK DESKRIPSI (Jaringan Mitra Strategis) - HANYA BOLEH 1
+        // Cek duplikat Deskripsi Jaringan Mitra Strategis
         if ($request->type == 'kerjasama' && $request->sub_type == 'deskripsi') {
             $existing = Profile::where('type', $request->type)
                 ->where('sub_type', 'deskripsi')
@@ -247,7 +240,7 @@ class ProfileController extends Controller
             }
         }
 
-        // CEK JUMLAH MAKSIMAL UNTUK BENTUK KERJASAMA (maksimal 3)
+        // Maksimal 3 Bentuk Kerjasama
         if ($request->type == 'kerjasama' && $request->sub_type == 'bentuk') {
             $count = Profile::where('type', $request->type)
                 ->where('sub_type', 'bentuk')
@@ -259,7 +252,7 @@ class ProfileController extends Controller
             }
         }
 
-        // VALIDASI KHUSUS UNTUK KOLABORASI - WAJIB ADA GAMBAR
+        // Kolaborasi wajib gambar
         if ($request->type == 'kerjasama' && $request->sub_type == 'kolaborasi') {
             if (!$request->hasFile('image')) {
                 return back()->with('error', 'Kolaborasi wajib menyertakan gambar/logo.')->withInput();
@@ -267,7 +260,7 @@ class ProfileController extends Controller
             $request->merge(['order' => 1]);
         }
 
-        // VALIDASI UNTUK STRUKTUR - WAJIB ADA JABATAN
+        // Struktur wajib jabatan
         if ($request->type == 'struktur' && empty($request->jabatan)) {
             return back()->with('error', 'Jabatan wajib diisi untuk data struktur.')->withInput();
         }
@@ -275,7 +268,7 @@ class ProfileController extends Controller
         $order = (int) $request->order;
         if ($order < 1) $order = 1;
 
-        // Update order untuk data yang lebih besar atau sama (kecuali deskripsi dan kolaborasi)
+        // Update order item di bawahnya (kecuali deskripsi/kolaborasi)
         $skipOrderFor = ['deskripsi', 'kolaborasi'];
         if (!in_array($request->sub_type, $skipOrderFor)) {
             $query = Profile::where('type', $request->type);
@@ -296,13 +289,13 @@ class ProfileController extends Controller
             Log::info('Image uploaded: ' . $imagePath);
         }
 
-        // Set order untuk deskripsi dan kolaborasi
         $finalOrder = $order;
+        // Deskripsi & Kolaborasi selalu di akhir
         if (in_array($request->sub_type, ['deskripsi', 'kolaborasi'])) {
-            $finalOrder = 999; // Taruh di akhir
+            $finalOrder = 999;
         }
 
-        // Set order untuk bentuk kerjasama (berurutan otomatis)
+        // Bentuk kerjasama: order otomatis
         if ($request->type == 'kerjasama' && $request->sub_type == 'bentuk') {
             $maxOrder = Profile::where('type', 'kerjasama')
                 ->where('sub_type', 'bentuk')
@@ -310,7 +303,7 @@ class ProfileController extends Controller
             $finalOrder = ($maxOrder ?? 0) + 1;
         }
 
-        // Set order untuk mitra (bisa banyak, urut berdasarkan input)
+        // Mitra: gunakan order dari input
         if ($request->type == 'kerjasama' && $request->sub_type == 'mitra') {
             $finalOrder = $order;
         }
@@ -343,12 +336,12 @@ class ProfileController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
         ]);
 
-        // VALIDASI UNTUK STRUKTUR - WAJIB ADA JABATAN
+        // Struktur wajib jabatan
         if ($item->type == 'struktur' && empty($request->jabatan)) {
             return back()->with('error', 'Jabatan wajib diisi untuk data struktur.')->withInput();
         }
 
-        // CEK JIKA MENGUBAH KE VISI/ABOUT YANG SUDAH ADA
+        // Cek perubahan type menjadi visi/about yang sudah ada
         if ($request->type != $item->type && $request->type == 'visi_misi' && in_array($request->sub_type, ['visi', 'about'])) {
             $existing = Profile::where('type', $request->type)
                 ->where('sub_type', $request->sub_type)
@@ -361,7 +354,7 @@ class ProfileController extends Controller
             }
         }
 
-        // CEK UNTUK DATA DESKRIPSI - Jangan biarkan ada 2 data deskripsi aktif
+        // Deskripsi hanya boleh satu
         if ($item->type == 'kerjasama' && $item->sub_type == 'deskripsi') {
             $existing = Profile::where('type', 'kerjasama')
                 ->where('sub_type', 'deskripsi')
@@ -374,7 +367,7 @@ class ProfileController extends Controller
             }
         }
 
-        // CEK JUMLAH MAKSIMAL UNTUK BENTUK KERJASAMA (maksimal 3) saat mengaktifkan
+        // Maksimal 3 bentuk kerjasama aktif
         if ($item->type == 'kerjasama' && $item->sub_type == 'bentuk' && $request->has('active') && $request->active) {
             $count = Profile::where('type', 'kerjasama')
                 ->where('sub_type', 'bentuk')
@@ -391,7 +384,6 @@ class ProfileController extends Controller
         $oldOrder = $item->order;
         $skipOrderFor = ['deskripsi', 'kolaborasi'];
 
-        // Update order hanya jika bukan deskripsi atau kolaborasi
         if (!in_array($item->sub_type, $skipOrderFor) && $newOrder != $oldOrder) {
             if ($newOrder < $oldOrder) {
                 Profile::where('type', $item->type)
@@ -432,18 +424,15 @@ class ProfileController extends Controller
             Log::info('Image updated: ' . $imagePath);
         }
 
-        // Set final order untuk deskripsi dan kolaborasi (pertahankan order lama)
         $finalOrder = $newOrder;
         if (in_array($item->sub_type, $skipOrderFor)) {
-            $finalOrder = $item->order;
+            $finalOrder = $item->order; // pertahankan
         }
 
-        // Untuk bentuk kerjasama yang diubah ordernya
         if ($item->type == 'kerjasama' && $item->sub_type == 'bentuk') {
             $finalOrder = $newOrder;
         }
 
-        // Untuk mitra (bisa banyak, update sesuai order baru)
         if ($item->type == 'kerjasama' && $item->sub_type == 'mitra') {
             $finalOrder = $newOrder;
         }
@@ -458,7 +447,7 @@ class ProfileController extends Controller
             'active'      => $request->has('active') ? true : false,
         ]);
 
-        // Jika ada perubahan order pada bentuk kerjasama, reorder ulang
+        // Reorder bentuk kerjasama jika perlu
         if ($item->type == 'kerjasama' && $item->sub_type == 'bentuk' && $newOrder != $oldOrder) {
             $this->reorderBentukKerjasama();
         }
@@ -485,7 +474,6 @@ class ProfileController extends Controller
     {
         $item = Profile::findOrFail($id);
 
-        // Hapus gambar jika ada
         if ($item->image && Storage::disk('public')->exists($item->image)) {
             Storage::disk('public')->delete($item->image);
         }
@@ -494,13 +482,13 @@ class ProfileController extends Controller
         return back()->with('success', 'Data berhasil dihapus');
     }
 
-    // ================= USER (MAHASISWA) =================
+    // ================= USER (MAHASISWA) PROFILE =================
     public function studentProfile()
     {
         $userData = session('user');
 
         if (!$userData) {
-            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu');
+            return redirect()->route('login')->with('error', 'Silakan login terakhir dahulu');
         }
 
         $userId = $userData['id'];
