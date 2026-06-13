@@ -326,7 +326,7 @@
                     <!-- Peminjaman -->
                     <a href="{{ route('admin.orders.index') }}" class="menu-item-minimal {{ request()->is('admin/orders*') ? 'active' : '' }} flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
                         <i class="fas fa-hand-holding-heart w-4 text-base"></i>
-                        <span>Sirkulasi & Peminjaman</span>
+                        <span>Peminjaman</span>
                     </a>
 
                     <!-- Panduan -->

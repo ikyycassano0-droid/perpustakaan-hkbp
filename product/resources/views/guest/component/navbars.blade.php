@@ -9,6 +9,8 @@
         </div>
     </div>
 
+    <button class="hamburger" id="hamburgerBtn">☰</button>
+    
     <nav>
         <ul>
             {{-- MENU HOME dengan active class yang diperbaiki --}}

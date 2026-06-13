@@ -9,7 +9,7 @@
             <span>Sekolah Keperawatan HKBP Balige</span>
         </div>
     </div>
-
+    <button class="hamburger" id="hamburgerBtn">☰</button>
     <nav>
         <ul>
             <li><a href="{{ route('user.dashboard') }}" class="{{ request()->routeIs('user.dashboard') ? 'active' : '' }}">Home</a></li>

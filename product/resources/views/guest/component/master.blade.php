@@ -232,6 +232,74 @@
             box-shadow: 0 4px 12px rgba(15, 74, 49, 0.25);
         }
 
+        /* ========== RESPONSIVE NAVBAR (TAMBAHAN) ========== */
+        .hamburger {
+            display: none;
+            font-size: 1.8rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--primary-color);
+            padding: 0 12px;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-wrap: wrap;
+                padding: 0.6rem 4%;
+            }
+            .hamburger {
+                display: block;
+                order: 2;
+            }
+            nav {
+                width: 100%;
+                order: 3;
+            }
+            nav ul {
+                flex-direction: column;
+                width: 100%;
+                gap: 0;
+                display: none;
+                margin-top: 12px;
+                background: white;
+                border-radius: 12px;
+                overflow: hidden;
+            }
+            nav ul.show {
+                display: flex;
+            }
+            nav ul li {
+                width: 100%;
+                text-align: center;
+                border-bottom: 1px solid #e0e8e2;
+            }
+            nav ul li a {
+                width: 100%;
+                border-radius: 0;
+                padding: 12px;
+            }
+            .dropdown-menu {
+                position: static;
+                box-shadow: none;
+                background-color: #f9fbf9;
+                width: 100%;
+                display: none;
+                border: none;
+                padding-left: 20px;
+            }
+            nav ul li:hover > .dropdown-menu {
+                display: none;
+            }
+            .dropdown-menu.show-dropdown {
+                display: block;
+            }
+            .login-btn {
+                justify-content: center;
+                margin-top: 6px;
+            }
+        }
+
         /* FOOTER — Hijau gelap */
         footer {
             background: linear-gradient(135deg, var(--deep-green) 0%, #0a3b2a 100%);
@@ -707,6 +775,43 @@
             initTestimonialSlider();
             initTiltEffect();
             initCanvasParticle();
+        });
+
+        // Mobile navigation toggle (tambahkan ini)
+        const hamburger = document.getElementById('hamburgerBtn');
+        const navMenu = document.querySelector('nav ul');
+        if (hamburger && navMenu) {
+            hamburger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                navMenu.classList.toggle('show');
+            });
+        }
+
+        // Dropdown toggle on mobile
+        const dropdownParents = document.querySelectorAll('nav > ul > li');
+        dropdownParents.forEach(parent => {
+            const dropdown = parent.querySelector('.dropdown-menu');
+            const link = parent.querySelector('> a');
+            if (dropdown && link) {
+                link.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        e.preventDefault();
+                        dropdown.classList.toggle('show-dropdown');
+                    }
+                });
+            }
+        });
+
+        // Tutup menu saat klik di luar area header
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768) {
+                if (!event.target.closest('header')) {
+                    if (navMenu) navMenu.classList.remove('show');
+                    document.querySelectorAll('.dropdown-menu.show-dropdown').forEach(menu => {
+                        menu.classList.remove('show-dropdown');
+                    });
+                }
+            }
         });
     </script>
 

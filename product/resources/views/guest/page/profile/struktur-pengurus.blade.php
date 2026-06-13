@@ -287,7 +287,7 @@
 
 @section('content')
     <div class="page-banner" data-aos="fade-up">
-        <h1>Struktur Organisasi</h1>
+        <h1>Struktur Kepengurusan</h1>
         <p>Arah dan Kepemimpinan Perpustakaan AKPER HKBP</p>
     </div>
 
