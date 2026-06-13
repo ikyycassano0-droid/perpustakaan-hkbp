@@ -10,12 +10,15 @@
             <h1 class="text-2xl font-bold text-slate-800">Pengelolaan Peminjaman Buku</h1>
             <p class="text-slate-500 text-sm mt-0.5">Kelola peminjaman, persetujuan, pengembalian, dan perpanjangan buku</p>
         </div>
-        <div class="flex gap-2">
-            <div class="relative">
-                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                <input type="text" id="searchOrder" placeholder="Cari peminjaman..."
-                    class="pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-sm w-64 focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition bg-slate-50/30">
-            </div>
+        <div class="flex gap-2 items-center">
+            {{-- Filter Role --}}
+            <select id="filterRole"
+                class="px-4 py-2 rounded-xl border border-slate-200 text-sm bg-slate-50/30 focus:outline-none focus:border-indigo-300">
+                <option value="all">Semua Peran</option>
+                <option value="Member">Member</option>
+                <option value="Dosen">Dosen</option>
+            </select>
+            {{-- Filter Status --}}
             <select id="filterStatus"
                 class="px-4 py-2 rounded-xl border border-slate-200 text-sm bg-slate-50/30 focus:outline-none focus:border-indigo-300">
                 <option value="all">Semua Status</option>
@@ -25,6 +28,12 @@
                 <option value="RETURNED">Returned</option>
                 <option value="LATE">Terlambat (Belum Kembali)</option>
             </select>
+            {{-- Search --}}
+            <div class="relative">
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" id="searchOrder" placeholder="Cari peminjaman..."
+                    class="pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-sm w-64 focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition bg-slate-50/30">
+            </div>
         </div>
     </div>
 
@@ -126,21 +135,32 @@
                     @forelse($orders as $order)
                     @php
                         $isLate = $order->status === 'APPROVED' && $order->due_date && now()->gt($order->due_date);
+                        $roleName = $order->user->role->name ?? 'Unknown';
+                        $isDosen = $roleName === 'Dosen';
+                        $isMember = $roleName === 'Member';
                     @endphp
                     <tr class="order-row border-b border-slate-50 hover:bg-slate-50/30 transition"
                         data-status="{{ $order->status }}"
                         data-is-late="{{ $isLate ? 'true' : 'false' }}"
+                        data-role="{{ $roleName }}"
                         data-order-date="{{ $order->order_date?->format('Y-m-d') ?? '' }}"
                         data-borrow-date="{{ $order->borrow_date?->format('Y-m-d') ?? '' }}">
                         {{-- USER --}}
                         <td class="px-4 py-3">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-xl bg-indigo-100 flex items-center justify-center">
-                                    <i class="fas fa-user text-indigo-500 text-xs"></i>
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center
+                                    {{ $isDosen ? 'bg-violet-100' : 'bg-indigo-100' }}">
+                                    @if($isDosen)
+                                        <i class="fas fa-chalkboard-teacher text-violet-600 text-xs"></i>
+                                    @else
+                                        <i class="fas fa-user-graduate text-indigo-500 text-xs"></i>
+                                    @endif
                                 </div>
                                 <div>
                                     <div class="font-semibold text-slate-800 text-sm">{{ $order->user->name ?? 'User tidak ditemukan' }}</div>
-                                    <div class="text-slate-400 text-[10px] mt-0.5">ID: #{{ $order->id }}</div>
+                                    <div class="text-slate-400 text-[10px] mt-0.5">
+                                        {{ $roleName }} · ID: #{{ $order->id }}
+                                    </div>
                                     @if($order->extension_count > 0)
                                     <div class="text-[9px] text-amber-600 mt-0.5">
                                         <i class="fas fa-calendar-plus"></i> Extend: {{ $order->extension_count }}/3
@@ -218,8 +238,8 @@
                                 @endphp
                                 <div class="text-[10px] text-slate-400 mt-0.5">
                                     Durasi: {{ $diff }} hari
-                                    @if($diff > 3)
-                                    <span class="text-rose-500 ml-1">(MELEBIHI 3 HARI!)</span>
+                                    @if($diff > 3 && !$isDosen)
+                                    <span class="text-rose-500 ml-1">(MELEBIHI BATAS!)</span>
                                     @endif
                                 </div>
                                 @if($order->original_due_date)
@@ -246,15 +266,17 @@
                             @php
                                 $fine = $order->fine ?? 0;
 
-                                // Hitung denda real-time untuk yang masih APPROVED & terlambat
+                                // Hitung denda real-time untuk yang masih APPROVED & terlambat (kecuali dosen)
                                 if ($order->status === 'APPROVED' && $order->due_date && now()->gt($order->due_date)) {
-                                    $dueDate = \Carbon\Carbon::parse($order->due_date)->startOfDay();
-                                    $today = now()->startOfDay();
-                                    $lateDays = $dueDate->diffInDays($today, false);
+                                    if (!$isDosen) {
+                                        $dueDate = \Carbon\Carbon::parse($order->due_date)->startOfDay();
+                                        $today = now()->startOfDay();
+                                        $lateDays = $dueDate->diffInDays($today, false);
 
-                                    $fine = 0;
-                                    for ($i = 1; $i <= $lateDays; $i++) {
-                                        $fine += ($i <= 3) ? 2000 : 5000;
+                                        $fine = 0;
+                                        for ($i = 1; $i <= $lateDays; $i++) {
+                                            $fine += ($i <= 3) ? 2000 : 5000;
+                                        }
                                     }
                                 }
                             @endphp
@@ -295,7 +317,8 @@
                                         </button>
                                     </form>
 
-                                    {{-- Tombol Extend dengan Modal --}}
+                                    {{-- Tombol Extend (hanya untuk Member, bukan Dosen) --}}
+                                    @unless($isDosen)
                                     <button type="button"
                                             onclick="openExtendModal({{ $order->id }})"
                                             class="px-3 py-1.5 text-xs font-medium text-white bg-amber-600 rounded-lg hover:bg-amber-700 transition flex items-center gap-1"
@@ -303,6 +326,7 @@
                                         <i class="fas fa-calendar-plus text-[10px]"></i>
                                         Extend
                                     </button>
+                                    @endunless
 
                                 @else
                                     <span class="text-slate-400 text-xs">Selesai</span>
@@ -416,12 +440,17 @@
     let customEndDate = null;
 
     $(document).ready(function() {
-        // Filter berdasarkan status
+        // Filter role
+        $('#filterRole').change(function() {
+            applyAllFilters();
+        });
+
+        // Filter status
         $('#filterStatus').change(function() {
             applyAllFilters();
         });
 
-        // Search berdasarkan nama user atau judul buku
+        // Search
         $('#searchOrder').on('keyup', function() {
             applyAllFilters();
         });
@@ -430,10 +459,12 @@
 
     function applyAllFilters() {
         let status = $('#filterStatus').val();
+        let role = $('#filterRole').val();
         let searchValue = $('#searchOrder').val().toLowerCase();
 
         $('.order-row').each(function() {
             let showByStatus = true;
+            let showByRole = true;
             let showBySearch = true;
             let showByDate = true;
 
@@ -445,6 +476,12 @@
                 showByStatus = isLate;
             } else if (status !== 'all') {
                 showByStatus = rowStatus === status;
+            }
+
+            // Filter Role
+            let rowRole = $(this).data('role');
+            if (role !== 'all') {
+                showByRole = rowRole === role;
             }
 
             // Filter Search
@@ -482,7 +519,7 @@
                 }
             }
 
-            $(this).toggle(showByStatus && showBySearch && showByDate);
+            $(this).toggle(showByStatus && showByRole && showBySearch && showByDate);
         });
 
         updateStatistics();
@@ -492,10 +529,8 @@
     function setDateFilter(filter) {
         currentDateFilter = filter;
 
-        // Reset active button styles
         $('.date-filter-btn').removeClass('bg-indigo-600 text-white').addClass('bg-slate-100');
 
-        // Set active style and update info text
         if (filter === 'today') {
             $('.date-filter-btn:contains("Hari Ini")').removeClass('bg-slate-100').addClass('bg-indigo-600 text-white');
             $('#activeFilterInfo').html('<i class="fas fa-info-circle"></i> Menampilkan peminjaman hari ini');
@@ -520,7 +555,6 @@
         document.getElementById('customDateModal').classList.remove('hidden');
         document.getElementById('customDateModal').classList.add('flex');
 
-        // Set default values
         let today = new Date().toISOString().split('T')[0];
         let weekAgo = new Date();
         weekAgo.setDate(weekAgo.getDate() - 7);
@@ -558,15 +592,12 @@
 
         $('.order-row:visible').each(function() {
             let isLate = $(this).data('is-late') === 'true';
-            let status = $(this).data('status');
             let fine = parseFloat($(this).find('.fine-amount').data('fine')) || 0;
 
-            // Hitung keterlambatan (APPROVED + overdue)
             if (isLate) {
                 lateCount++;
             }
 
-            // Hitung total denda (semua status)
             totalFine += fine;
         });
 

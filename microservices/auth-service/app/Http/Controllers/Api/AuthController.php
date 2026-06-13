@@ -14,59 +14,57 @@ class AuthController extends Controller
     /**
      * LOGIN
      */
-public function login(Request $request): JsonResponse
-{
-    $validator = Validator::make($request->all(), [
-        'npm' => 'required|string',
-        'password' => 'required|string',
-    ]);
+    public function login(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'npm' => 'required|string',
+            'password' => 'required|string',
+        ]);
 
-    if ($validator->fails()) {
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $user = User::where('npm', $request->npm)
+                    ->where('active', true)
+                    ->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'NPM atau password salah'
+            ], 401);
+        }
+
+        $token = $user->createToken('auth-token')->plainTextToken;
+
         return response()->json([
-            'success' => false,
-            'message' => 'Validasi gagal',
-            'errors' => $validator->errors()
-        ], 422);
-    }
-
-    $user = User::where('npm', $request->npm)
-                ->where('active', true)
-                ->first();
-
-    if (!$user || !Hash::check($request->password, $user->password)) {
-        return response()->json([
-            'success' => false,
-            'message' => 'NPM atau password salah'
-        ], 401);
-    }
-
-    // ✅ TIDAK ADA PENGECEKAN VERIFIKASI EMAIL LAGI
-
-    $token = $user->createToken('auth-token')->plainTextToken;
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Login berhasil',
-        'data' => [
-            'user' => [
-                'id' => $user->id,
-                'role_id' => $user->role_id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'npm' => $user->npm,
-                'nidn' => $user->nidn,
-                'role' => [
-                    'id' => $user->role_id,
-                    'name' => $user->role?->name
+            'success' => true,
+            'message' => 'Login berhasil',
+            'data' => [
+                'user' => [
+                    'id' => $user->id,
+                    'role_id' => $user->role_id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'npm' => $user->npm,
+                    'nidn' => $user->nidn,
+                    'role' => [
+                        'id' => $user->role_id,
+                        'name' => $user->role?->name
+                    ],
+                    'is_admin' => $user->isAdmin(),
+                    'email_verified' => $user->hasVerifiedEmail()
                 ],
-                'is_admin' => $user->isAdmin(),
-                'email_verified' => $user->hasVerifiedEmail()
-            ],
-            'token' => $token,
-            'token_type' => 'Bearer'
-        ]
-    ], 200);
-}
+                'token' => $token,
+                'token_type' => 'Bearer'
+            ]
+        ], 200);
+    }
 
     /**
      * LOGOUT
@@ -216,5 +214,72 @@ public function login(Request $request): JsonResponse
         ]);
 
         return response()->json(['success' => true, 'user_id' => $user->id], 201);
+    }
+
+    /**
+     * UPDATE PROFILE (nama, dsb.)
+     */
+    public function updateProfile(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $user = $request->user();
+        $user->name = $request->name;
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profil berhasil diperbarui',
+            'data' => ['name' => $user->name]
+        ]);
+    }
+
+    /**
+     * UPDATE PASSWORD
+     */
+    public function updatePassword(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required|string',
+            'new_password' => 'required|string|min:8|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $user = $request->user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Password saat ini salah',
+            ], 403);
+        }
+
+        $user->password = $request->new_password; // hashing via mutator di model
+        $user->save();
+
+        // Opsional: hapus token agar user login ulang
+        // $user->tokens()->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password berhasil diubah',
+        ]);
     }
 }

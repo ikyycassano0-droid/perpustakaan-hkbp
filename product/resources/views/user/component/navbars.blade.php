@@ -104,6 +104,7 @@
                             <i class="fas fa-sign-out-alt"></i> Logout
                         </a>
                     </li>
+                    <li><a href="{{ route('profile.menu') }}"><i class="fas fa-user-cog"></i> Pengaturan Profil</a></li>
                 </ul>
             </div>
         @else
