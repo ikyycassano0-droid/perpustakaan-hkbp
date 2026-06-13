@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Dashboard Admin') - Perpustakaan HKBP Balige</title>
 
@@ -27,10 +27,66 @@
             background: #f8fafc;
         }
 
-        /* Sidebar - Soft Navy */
+        /* Sidebar - Soft Navy (Desktop) */
         .sidebar-dark {
             background: #0a0f1c;
             border-right: 1px solid #1e2a3a;
+        }
+
+        /* Mobile sidebar sebagai off-canvas */
+        @media (max-width: 1023px) {
+            .sidebar-mobile {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 280px;
+                height: 100vh;
+                z-index: 1050;
+                transition: left 0.3s ease-in-out;
+                overflow-y: auto;
+                box-shadow: 2rem 0 2rem -1rem rgba(0,0,0,0.3);
+            }
+            .sidebar-mobile.open {
+                left: 0;
+            }
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 1040;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease, visibility 0.3s;
+            }
+            .sidebar-overlay.open {
+                opacity: 1;
+                visibility: visible;
+            }
+            /* Sembunyikan sidebar desktop pada mobile */
+            .sidebar-desktop {
+                display: none;
+            }
+            /* Main content penuh */
+            .main-content-full {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+        }
+
+        /* Tampilkan sidebar desktop pada layar >= 1024px */
+        @media (min-width: 1024px) {
+            .sidebar-mobile, .sidebar-overlay {
+                display: none;
+            }
+            .sidebar-desktop {
+                display: block;
+                width: 288px; /* w-72 = 18rem = 288px */
+                flex-shrink: 0;
+            }
+            .main-content-with-sidebar {
+                flex: 1;
+                overflow: hidden;
+            }
         }
 
         /* Navbar Clean */
@@ -204,16 +260,13 @@
             object-fit: contain;
             object-position: center;
             border-radius: 12px;
-            /* Meningkatkan kualitas rendering gambar */
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
             image-rendering: pixelated;
-            /* Mencegah anti-aliasing berlebihan */
             transform: translateZ(0);
             backface-visibility: hidden;
         }
 
-        /* Style untuk container logo dengan background */
         .logo-container {
             background: rgba(59, 130, 246, 0.1);
             border-radius: 14px;
@@ -223,7 +276,6 @@
             justify-content: center;
         }
 
-        /* Style untuk teks logo alternatif (jika gambar tidak muncul) */
         .logo-text-fallback {
             width: 48px;
             height: 48px;
@@ -237,22 +289,36 @@
             font-size: 20px;
             box-shadow: 0 4px 10px rgba(59,130,246,0.3);
         }
+
+        /* Tambahan untuk responsive input search */
+        @media (max-width: 640px) {
+            .navbar-clean .hidden.md\:block {
+                display: none !important;
+            }
+            .px-8 {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            .p-8 {
+                padding: 1rem;
+            }
+        }
     </style>
 
     @stack('styles')
 </head>
 <body class="overflow-hidden bg-[#f7f9fc]">
 
-    <div class="flex h-screen">
-        <!-- SIDEBAR - NAVY ELEGANT -->
-        <aside class="w-72 sidebar-dark flex-shrink-0 overflow-y-auto">
+    <div class="flex h-screen relative">
+        <!-- OVERLAY MOBILE (untuk menutup sidebar saat terbuka) -->
+        <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
+
+        <!-- SIDEBAR VERSI MOBILE (off-canvas) -->
+        <aside id="mobileSidebar" class="sidebar-mobile sidebar-dark flex-shrink-0 overflow-y-auto">
             <div class="p-6 border-b border-white/5">
                 <div class="flex items-center gap-3">
-                    <!-- LOGO GAMBAR - DENGAN UKURAN YANG OPTIMAL -->
                     @php
-                        // Cek apakah file logo ada di storage
                         $logoPath = public_path('assets/img/logo akper.png');
-                        $defaultLogo = 'data:image/svg+xml,' . urlencode('<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><text x="8" y="16" font-size="10" fill="#3b82f6" font-weight="bold">H</text></svg>');
                     @endphp
 
                     @if(file_exists($logoPath))
@@ -261,7 +327,6 @@
                              class="logo-image"
                              loading="eager">
                     @else
-                        <!-- Fallback jika logo tidak ditemukan - lebih jelas -->
                         <div class="w-[42px] h-[42px] rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm">
                             <i class="fas fa-graduation-cap text-white text-lg"></i>
                         </div>
@@ -275,7 +340,6 @@
             </div>
 
             <div class="px-4 py-6">
-                <!-- NAVIGASI UTAMA -->
                 <p class="text-slate-500 text-[10px] uppercase tracking-wider font-bold mb-3 px-3">Menu Utama</p>
                 <nav class="space-y-1.5">
                     <!-- Dashboard -->
@@ -360,13 +424,109 @@
             </div>
         </aside>
 
+        <!-- SIDEBAR VERSI DESKTOP (selalu tampil) -->
+        <aside class="sidebar-desktop sidebar-dark flex-shrink-0 overflow-y-auto">
+            <div class="p-6 border-b border-white/5">
+                <div class="flex items-center gap-3">
+                    @if(file_exists($logoPath))
+                        <img src="{{ asset('assets/img/logo akper.png') }}"
+                             alt="Logo Perpustakaan HKBP"
+                             class="logo-image"
+                             loading="eager">
+                    @else
+                        <div class="w-[42px] h-[42px] rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm">
+                            <i class="fas fa-graduation-cap text-white text-lg"></i>
+                        </div>
+                    @endif
+
+                    <div>
+                        <h1 class="text-white text-xl font-bold tracking-tight">Perpustakaan HKBP</h1>
+                        <p class="text-slate-400 text-[11px] font-medium">Akademik Keperawatan</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-4 py-6">
+                <p class="text-slate-500 text-[10px] uppercase tracking-wider font-bold mb-3 px-3">Menu Utama</p>
+                <nav class="space-y-1.5">
+                    <!-- Sama seperti di atas, duplikasi untuk desktop (atau bisa pakai include jika blade) -->
+                    <a href="{{ route('admin.home') }}" class="menu-item-minimal {{ request()->routeIs('admin.home') ? 'active' : '' }} flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-th-large w-4 text-base"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="{{ route('admin.members.index') }}" class="menu-item-minimal {{ request()->routeIs('admin.members.*') ? 'active' : '' }} flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-users w-4 text-base"></i>
+                        <span>Manajemen Anggota</span>
+                    </a>
+                    <a href="{{ route('admin.profile.index') }}" class="menu-item-minimal {{ request()->routeIs('admin.profile.*') ? 'active' : '' }} flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-globe w-4 text-base"></i>
+                        <span>Profil Website</span>
+                    </a>
+                    <a href="{{ route('admin.berita.index') }}" class="menu-item-minimal {{ request()->routeIs('admin.berita.*') ? 'active' : '' }} flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-newspaper w-4 text-base"></i>
+                        <span>Kelola Berita</span>
+                    </a>
+
+                    <div x-data="{ open: {{ request()->routeIs('admin.collections.*') || request()->routeIs('admin.koleksi_elektronik.*') ? 'true' : 'false' }} }" class="w-full">
+                        <div @click="open = !open" class="menu-item-minimal flex items-center justify-between px-4 py-2.5 text-sm font-medium cursor-pointer {{ (request()->routeIs('admin.collections.*') || request()->routeIs('admin.koleksi_elektronik.*')) ? 'active' : '' }}">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-book w-4 text-base"></i>
+                                <span>Koleksi Perpustakaan</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-xs transition-transform duration-200" :class="open ? 'rotate-90' : ''"></i>
+                        </div>
+                        <div x-show="open" x-transition class="submenu mt-1 space-y-1">
+                            <a href="{{ route('admin.collections.index') }}" class="submenu-item flex items-center gap-3 px-4 py-2 text-sm font-medium {{ request()->routeIs('admin.collections.*') ? 'active' : '' }}">
+                                <i class="fas fa-book-open w-3 text-xs"></i>
+                                <span>Koleksi Tercetak</span>
+                            </a>
+                            <a href="{{ route('admin.koleksi_elektronik.index') }}" class="submenu-item flex items-center gap-3 px-4 py-2 text-sm font-medium {{ request()->routeIs('admin.koleksi_elektronik.*') ? 'active' : '' }}">
+                                <i class="fas fa-laptop w-3 text-xs"></i>
+                                <span>Koleksi Elektronik</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <a href="{{ route('admin.orders.index') }}" class="menu-item-minimal {{ request()->is('admin/orders*') ? 'active' : '' }} flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-hand-holding-heart w-4 text-base"></i>
+                        <span>Peminjaman</span>
+                    </a>
+                    <a href="{{ route('admin.panduan.index') }}" class="menu-item-minimal flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-folder w-4 text-base"></i>
+                        <span>Panduan</span>
+                    </a>
+                    <a href="{{ route('admin.waktu_layanan.index') }}" class="menu-item-minimal flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-clock w-4 text-base"></i>
+                        <span>Jam Layanan</span>
+                    </a>
+                    <a href="{{ route('admin.kti.index') }}" class="menu-item-minimal flex items-center gap-3 px-4 py-2.5 text-sm font-medium">
+                        <i class="fas fa-file-alt w-4 text-base"></i>
+                        <span>KTI / Skripsi</span>
+                    </a>
+
+                    <div class="pt-4 mt-2 border-t border-white/5">
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="menu-item-minimal flex items-center gap-3 px-4 py-2.5 text-sm font-medium w-full text-left">
+                                <i class="fas fa-sign-out-alt w-4 text-base"></i>
+                                <span>Keluar</span>
+                            </button>
+                        </form>
+                    </div>
+                </nav>
+            </div>
+        </aside>
+
         <!-- MAIN CONTENT -->
-        <div class="flex-1 flex flex-col overflow-hidden bg-[#f7f9fc]">
-            <!-- NAVBAR CLEAN - Lebih premium -->
-            <header class="navbar-clean px-8 py-4 flex justify-between items-center bg-white/80 backdrop-blur-sm sticky top-0 z-10">
+        <div class="flex-1 flex flex-col overflow-hidden bg-[#f7f9fc] main-content-with-sidebar">
+            <!-- NAVBAR CLEAN - dengan tombol toggle mobile -->
+            <header class="navbar-clean px-8 py-4 flex justify-between items-center bg-white/80 backdrop-blur-sm sticky top-0 z-20">
                 <div class="flex items-center gap-4">
+                    <!-- Tombol Hamburger untuk mobile -->
                     <div class="lg:hidden">
-                        <i class="fas fa-bars text-slate-500 text-xl cursor-pointer hover:text-indigo-600 transition"></i>
+                        <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="text-slate-500 text-xl hover:text-indigo-600 transition focus:outline-none">
+                            <i class="fas fa-bars"></i>
+                        </button>
                     </div>
                     <div class="relative hidden md:block">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
@@ -388,8 +548,8 @@
                 </div>
             </header>
 
-            <!-- PAGE CONTENT dengan padding lebih lega -->
-            <main class="flex-1 overflow-y-auto p-8 lg:p-10">
+            <!-- PAGE CONTENT dengan padding responsif -->
+            <main class="flex-1 overflow-y-auto p-5 md:p-8 lg:p-10">
                 <div class="animate-fadeIn max-w-[1600px] mx-auto">
                     @yield('content')
                 </div>
@@ -399,6 +559,35 @@
 
     <!-- Alpine.js untuk dropdown interaktif -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Script untuk toggle mobile sidebar -->
+    <script>
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('mobileSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+            // Cegah scroll body saat sidebar terbuka
+            if (sidebar.classList.contains('open')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Tutup sidebar jika layar di-resize ke ukuran desktop
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 1024) {
+                const sidebar = document.getElementById('mobileSidebar');
+                const overlay = document.getElementById('sidebarOverlay');
+                if (sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('open');
+                    document.body.style.overflow = '';
+                }
+            }
+        });
+    </script>
 
     @stack('scripts')
 </body>
