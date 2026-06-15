@@ -50,7 +50,7 @@ class MemberController extends Controller
 
         try {
             Http::timeout(5)
-                ->post(env('AUTH_SERVICE_URL', 'http://localhost:8001/api/v1') . '/auth/register', [
+                ->post(env('AUTH_SERVICE_URL', 'http://localhost:8003/api/v1') . '/auth/register', [
                     'role_id' => $request->role_id,
                     'name' => $request->name,
                     'email' => $request->email,
@@ -121,7 +121,7 @@ class MemberController extends Controller
             }
 
             Http::timeout(5)->post(
-                env('AUTH_SERVICE_URL', 'http://localhost:8001/api/v1') . '/auth/admin-update',
+                env('AUTH_SERVICE_URL', 'http://localhost:8003/api/v1') . '/auth/admin-update',
                 $data
             );
         } catch (\Exception $e) {

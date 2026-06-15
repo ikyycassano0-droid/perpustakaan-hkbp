@@ -13,7 +13,7 @@ class ProfileMenuController extends Controller
     public function __construct()
     {
         // pastikan environment AUTH_SERVICE_URL = http://auth-service:80/api/v1
-        $this->authServiceUrl = rtrim(env('AUTH_SERVICE_URL', 'http://localhost:8001/api/v1'), '/');
+        $this->authServiceUrl = rtrim(env('AUTH_SERVICE_URL', 'http://localhost:8003/api/v1'), '/');
     }
 
     public function index()
