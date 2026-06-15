@@ -282,4 +282,45 @@ class AuthController extends Controller
             'message' => 'Password berhasil diubah',
         ]);
     }
+
+    public function updateByAdmin(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email',
+            'name' => 'nullable|string|max:255',
+            'email_baru' => 'nullable|email|unique:users,email',
+            'npm' => 'nullable|string',
+            'password' => 'nullable|string|min:8',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $user = User::where('email', $request->email)->first();
+
+        if ($request->filled('name')) {
+            $user->name = $request->name;
+        }
+        if ($request->filled('email_baru')) {
+            $user->email = $request->email_baru;
+        }
+        if ($request->filled('npm')) {
+            $user->npm = $request->npm;
+        }
+        if ($request->filled('password')) {
+            $user->password = $request->password;
+        }
+
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data user berhasil diupdate oleh admin'
+        ]);
+    }
 }

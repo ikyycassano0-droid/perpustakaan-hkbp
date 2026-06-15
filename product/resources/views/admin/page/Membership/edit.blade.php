@@ -163,7 +163,7 @@
                         </label>
                         <div class="relative">
                             <input type="password" name="password" id="password"
-                                   class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700 pr-10">
+                                   class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700 pr-10" >
                             <button type="button" onclick="togglePassword('password')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-500 transition">
                                 <i class="far fa-eye-slash text-sm"></i>
                             </button>
@@ -178,7 +178,7 @@
                         </label>
                         <div class="relative">
                             <input type="password" name="password_confirmation" id="password_confirmation"
-                                   class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700 pr-10">
+                                   class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700 pr-10" >
                             <button type="button" onclick="togglePassword('password_confirmation')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-500 transition">
                                 <i class="far fa-eye-slash text-sm"></i>
                             </button>
@@ -201,19 +201,22 @@
 </div>
 
 <script>
-    function togglePassword(fieldId) {
-        const field = document.getElementById(fieldId);
-        const icon = field.nextElementSibling.querySelector('i');
-        if (field.type === 'password') {
-            field.type = 'text';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        } else {
-            field.type = 'password';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
+document.querySelector('form').addEventListener('submit', function(e) {
+    var password = document.getElementById('password').value;
+    var confirmation = document.getElementById('password_confirmation').value;
+    
+    if (password.length > 0) {
+        if (password.length < 8) {
+            e.preventDefault();
+            alert('Password minimal 8 karakter!');
+            return false;
+        }
+        if (password !== confirmation) {
+            e.preventDefault();
+            alert('Password dan konfirmasi tidak sama!');
+            return false;
         }
     }
+});
 </script>
-
 @endsection

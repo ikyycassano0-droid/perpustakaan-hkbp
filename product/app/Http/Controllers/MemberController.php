@@ -15,13 +15,13 @@ class MemberController extends Controller
     public function index()
     {
         $members = User::whereIn('role_id', [2, 3])->get();
-        return view('admin.page.membership.index', compact('members'));
+        return view('admin.page.Membership.index', compact('members'));
     }
 
     public function create()
     {
         $roles = Role::where('name', '!=', 'Admin')->get();
-        return view('admin.page.membership.create', compact('roles'));
+        return view('admin.page.Membership.create', compact('roles'));
     }
 
     public function store(Request $request)
@@ -74,39 +74,58 @@ class MemberController extends Controller
         $member = User::findOrFail($id);
         $roles = Role::where('name', '!=', 'Admin')->get();
 
-        return view('admin.page.membership.edit', compact('member', 'roles'));
+        return view('admin.page.Membership.edit', compact('member', 'roles'));
     }
 
     public function update(Request $request, $id)
     {
         $member = User::findOrFail($id);
+        $emailLama = $member->email; // Simpan email lama
 
         $request->validate([
             'name' => 'required',
+            'email' => 'required|email|unique:users,email,' . $id,
             'npm' => 'required|unique:users,npm,' . $id,
             'role_id' => 'required|exists:roles,id',
             'phone' => 'nullable|regex:/^[0-9]+$/|min:10|max:15',
         ]);
 
-        $member->update([
-            'role_id' => $request->role_id,
-            'name' => $request->name,
-            'npm' => $request->npm,
-            'nidn' => $request->nidn,
-            'birth_date' => $request->birth_date,
-            'gender' => $request->gender,
-            'membership_type' => $request->membership_type,
-            'phone' => $request->phone,
-        ]);
+        $member->role_id = $request->role_id;
+        $member->name = $request->name;
+        $member->email = $request->email;
+        $member->npm = $request->npm;
+        $member->nidn = $request->nidn;
+        $member->birth_date = $request->birth_date;
+        $member->gender = $request->gender;
+        $member->membership_type = $request->membership_type;
+        $member->phone = $request->phone;
 
-        // password optional update (biarkan model yang handle hash)
         if ($request->filled('password')) {
-            $request->validate([
-                'password' => 'min:6|confirmed',
-            ]);
-
+            $request->validate(['password' => 'min:8|confirmed']);
             $member->password = $request->password;
-            $member->save();
+        }
+
+        $member->save();
+
+        // Sinkron ke Auth Service
+        try {
+            $data = ['email' => $emailLama];
+            $data['name'] = $request->name;
+            $data['npm'] = $request->npm;
+            
+            if ($request->email !== $emailLama) {
+                $data['email_baru'] = $request->email;
+            }
+            if ($request->filled('password')) {
+                $data['password'] = $request->password;
+            }
+
+            Http::timeout(5)->post(
+                env('AUTH_SERVICE_URL', 'http://localhost:8001/api/v1') . '/auth/admin-update',
+                $data
+            );
+        } catch (\Exception $e) {
+            \Log::error('Gagal sinkron ke Auth Service: ' . $e->getMessage());
         }
 
         return redirect()

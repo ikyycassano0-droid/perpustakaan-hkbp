@@ -112,7 +112,7 @@
                         </label>
                         <div class="relative">
                             <input type="password" name="password" id="password"
-                                   class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700 pr-10" required>
+                                   class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700 pr-10" required minlength="6">
                             <button type="button" onclick="togglePassword('password')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-500 transition">
                                 <i class="far fa-eye-slash text-sm"></i>
                             </button>
@@ -127,7 +127,7 @@
                         </label>
                         <div class="relative">
                             <input type="password" name="password_confirmation" id="password_confirmation"
-                                   class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700 pr-10" required>
+                                   class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-sm text-slate-700 pr-10" required minlength="6">
                             <button type="button" onclick="togglePassword('password_confirmation')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-500 transition">
                                 <i class="far fa-eye-slash text-sm"></i>
                             </button>

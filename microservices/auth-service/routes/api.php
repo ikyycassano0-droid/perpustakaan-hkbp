@@ -14,6 +14,7 @@ Route::prefix('v1/auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/resend-verification', [AuthController::class, 'resendVerification']);
+     Route::post('/admin-update', [AuthController::class, 'updateByAdmin']);
 
     // Protected routes (perlu token Sanctum)
     Route::middleware('auth:sanctum')->group(function () {
