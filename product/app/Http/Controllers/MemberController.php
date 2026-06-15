@@ -108,22 +108,26 @@ class MemberController extends Controller
         $member->save();
 
         // Sinkron ke Auth Service
-        try {
-            $data = ['email' => $emailLama];
-            $data['name'] = $request->name;
-            $data['npm'] = $request->npm;
-            
-            if ($request->email !== $emailLama) {
-                $data['email_baru'] = $request->email;
-            }
-            if ($request->filled('password')) {
-                $data['password'] = $request->password;
-            }
+        // Sinkron ke Auth Service
+    try {
+        $data = [
+            'email' => $emailLama,
+            'npm_lama' => $member->getOriginal('npm'),
+            'name' => $request->name,
+            'npm' => $request->npm,
+        ];
+        
+        if ($request->email !== $emailLama) {
+            $data['email_baru'] = $request->email;
+        }
+        if ($request->filled('password')) {
+            $data['password'] = $request->password;
+        }
 
-            Http::timeout(5)->post(
-                env('AUTH_SERVICE_URL', 'http://localhost:8003/api/v1') . '/auth/admin-update',
-                $data
-            );
+        Http::timeout(5)->post(
+            env('AUTH_SERVICE_URL', 'http://localhost:8003/api/v1') . '/auth/admin-update',
+            $data
+        );
         } catch (\Exception $e) {
             \Log::error('Gagal sinkron ke Auth Service: ' . $e->getMessage());
         }

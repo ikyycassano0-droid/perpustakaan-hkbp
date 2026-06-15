@@ -40,7 +40,9 @@ class AuthController extends Controller
                 ]);
 
                 // Sinkron: cari user lokal by email, update data, simpan ID lokal
-                $localUser = \App\Models\User::where('email', $data['data']['user']['email'])->first();
+                $localUser = \App\Models\User::where('npm', $data['data']['user']['npm'])
+                ->orWhere('email', $data['data']['user']['email'])
+                ->first();
                 
                 if ($localUser) {
                     // Update data lokal sesuai Auth Service
