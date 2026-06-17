@@ -1,137 +1,12 @@
 @extends('user.component.master')
 
-@section('title', 'Detail Berita - Perpustakaan AKPER HKBP')
-
-@section('hero')
-    <div class="page-header">
-        <div class="breadcrumb">
-            <a href="{{ route('user.dashboard') }}">Home</a> /
-            <a href="{{ route('user.berita') }}">Berita</a> /
-            <span>{{ $news->title ?? 'Detail Artikel' }}</span>
-        </div>
-        <h1 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; letter-spacing: 2px;">NEWS UPDATE</h1>
-    </div>
-@endsection
-
-@section('content')
-    <div class="main-container">
-        <!-- ISI BERITA -->
-        <main>
-            <article class="news-detail">
-                {{-- Kategori dari Database --}}
-                <span class="news-category">{{ strtoupper($news->category ?? 'UMUM') }}</span>
-                
-                {{-- Judul dari Database --}}
-                <h2>{{ $news->title ?? 'Judul Berita' }}</h2>
-
-                {{-- Meta Informasi dari Database --}}
-                <div class="news-meta-detail">
-                    <span><i class="far fa-calendar-alt"></i> {{ $news->created_at ? $news->created_at->format('d M Y') : date('d M Y') }}</span>
-                    <span><i class="far fa-user"></i> {{ $news->createdBy->name ?? $news->author ?? 'Admin Perpustakaan' }}</span>
-                    @if(isset($news->is_featured) && $news->is_featured)
-                        <span><i class="fas fa-star" style="color: #f1c40f;"></i> Berita Utama</span>
-                    @endif
-                </div>
-
-                {{-- Gambar Utama dari Database --}}
-                @if(isset($news->image) && $news->image)
-                    <div class="featured-image-container">
-                        <img src="{{ asset('storage/'.$news->image) }}" alt="{{ $news->title ?? 'Gambar Berita' }}" class="featured-image">
-                    </div>
-                @endif
-
-                {{-- Konten Berita dari Database --}}
-                <div class="news-content">
-                    @if(isset($news->excerpt) && $news->excerpt)
-                        <p><strong>{{ $news->excerpt }}</strong></p>
-                        <hr>
-                    @endif
-                    {!! $news->content ?? '<p>Konten berita tidak tersedia.</p>' !!}
-                </div>
-
-                {{-- Tombol Bagikan --}}
-                <div class="share-section">
-                    <span style="font-weight: bold; color: var(--primary-color);">Bagikan:</span>
-                    <button onclick="shareArticle('facebook')" class="btn-share fb"><i class="fab fa-facebook-f"></i></button>
-                    <button onclick="shareArticle('whatsapp')" class="btn-share wa"><i class="fab fa-whatsapp"></i></button>
-                    <button onclick="shareArticle('twitter')" class="btn-share tw"><i class="fab fa-twitter"></i></button>
-                    <button onclick="copyLink()" class="btn-share copy"><i class="fas fa-link"></i></button>
-                </div>
-
-                {{-- Tombol Kembali --}}
-                <div style="text-align: center; margin-top: 30px;">
-                    <a href="{{ route('user.berita') }}" class="btn-back">
-                        <i class="fas fa-arrow-left"></i> Kembali ke Daftar Berita
-                    </a>
-                </div>
-            </article>
-        </main>
-
-        <!-- SIDEBAR -->
-        <aside>
-            {{-- Berita Terkait dari Database --}}
-            <div class="sidebar-card">
-                <h4><i class="fas fa-newspaper"></i> Berita Terkait</h4>
-                @if(isset($related) && $related->count() > 0)
-                    @foreach($related as $item)
-                        <div class="recent-post-item">
-                            @if($item->image)
-                                <img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->title }}" class="recent-post-img">
-                            @else
-                                <div style="width:70px; height:60px; background:#e0e8e3; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#999; font-size:1.5rem;">
-                                    <i class="fas fa-newspaper"></i>
-                                </div>
-                            @endif
-                            <div class="recent-post-info">
-                                <a href="{{ route('user.berita.show', $item->id) }}">
-                                    <h5>{{ $item->title }}</h5>
-                                </a>
-                                <span><i class="far fa-calendar-alt"></i> {{ $item->created_at->format('d M Y') }}</span>
-                            </div>
-                        </div>
-                    @endforeach
-                @else
-                    <p style="color: var(--text-muted); text-align: center; padding: 10px 0;">
-                        <i class="fas fa-info-circle"></i> Tidak ada berita terkait.
-                    </p>
-                @endif
-            </div>
-
-            {{-- Kategori dari Database --}}
-            <div class="sidebar-card">
-                <h4><i class="fas fa-tags"></i> Kategori</h4>
-                @php
-                    $categories = App\Models\News::select('category')
-                        ->where('status', 'publish')
-                        ->whereNotNull('category')
-                        ->groupBy('category')
-                        ->get();
-                @endphp
-                @if($categories->count() > 0)
-                    <ul>
-                        @foreach($categories as $cat)
-                            <li>
-                                <a href="{{ route('user.berita', ['kategori' => $cat->category]) }}">
-                                    <i class="fas fa-folder"></i> {{ ucfirst($cat->category) }}
-                                </a>
-                                <span class="badge" style="background: var(--primary-color); color: white; padding: 2px 10px; border-radius: 50px; font-size: 0.7rem;">
-                                    {{ App\Models\News::where('category', $cat->category)->where('status', 'publish')->count() }}
-                                </span>
-                            </li>
-                        @endforeach
-                    </ul>
-                @else
-                    <p style="color: var(--text-muted); text-align: center; padding: 10px 0;">
-                        Belum ada kategori.
-                    </p>
-                @endif
-            </div>
-        </aside>
-    </div>
-@endsection
+@section('title', 'Detail Berita - AKPER HKBP Balige')
 
 @push('styles')
     <style>
+        /* ============================================
+           OVERRIDE TEMA MASTER → TEMA HIJAU + AKSEN KUNING
+        ============================================ */
         :root {
             --primary-color: #1a6b47;
             --deep-green: #0f4a31;
@@ -144,6 +19,13 @@
             --border-color: #d4e5d9;
         }
 
+        body {
+            background-color: var(--light-bg) !important;
+            color: var(--text-dark);
+            font-family: 'DM Sans', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.8;
+        }
+
         .page-header {
             background: linear-gradient(rgba(15, 74, 49, 0.85), rgba(26, 107, 71, 0.85)),
                         url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1200&q=80');
@@ -152,22 +34,14 @@
             padding: 60px 5%;
             color: white;
             text-align: center;
+            margin-top: -30px;
         }
 
-        .breadcrumb {
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            font-weight: 300;
-            opacity: 0.85;
-        }
-
-        .breadcrumb a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-        }
-
-        .breadcrumb a:hover {
-            color: var(--accent-yellow);
+        .page-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            font-weight: 900;
         }
 
         .main-container {
@@ -256,6 +130,14 @@
             margin: 20px 0;
         }
 
+        .news-content h1,
+        .news-content h2,
+        .news-content h3 {
+            color: var(--primary-color);
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
         blockquote {
             background: #f9fbf9;
             border-left: 5px solid var(--accent-yellow);
@@ -295,10 +177,18 @@
             transform: translateY(-3px);
         }
 
-        .btn-share.fb { background: #3b5998; }
-        .btn-share.wa { background: #25d366; }
-        .btn-share.tw { background: #1da1f2; }
-        .btn-share.copy { background: #6c757d; }
+        .btn-share.fb {
+            background: #3b5998;
+        }
+        .btn-share.wa {
+            background: #25d366;
+        }
+        .btn-share.tw {
+            background: #1da1f2;
+        }
+        .btn-share.copy {
+            background: #6c757d;
+        }
 
         .btn-back {
             display: inline-block;
@@ -311,6 +201,7 @@
             font-size: 0.9rem;
             text-decoration: none;
             transition: all 0.3s ease;
+            margin-top: 20px;
         }
 
         .btn-back:hover {
@@ -324,6 +215,7 @@
             margin-right: 6px;
         }
 
+        /* Sidebar */
         .sidebar-card {
             background: var(--card-bg);
             padding: 25px;
@@ -394,7 +286,7 @@
         }
 
         .sidebar-card ul li a {
-            color: var(--text-dark);
+            color: var(--primary-color);
             text-decoration: none;
         }
 
@@ -407,6 +299,7 @@
             bottom: 30px;
             right: 30px;
             padding: 12px 24px;
+            background: var(--primary-color);
             color: white;
             border-radius: 12px;
             z-index: 1000;
@@ -419,18 +312,9 @@
             transform: translateX(0);
         }
 
-        .notification.success {
-            background: #1a6b47;
-        }
-
-        .notification.error {
-            background: #dc3545;
-        }
-
         @media (max-width: 1024px) {
             .main-container {
                 grid-template-columns: 1fr;
-                margin-top: 20px;
             }
         }
 
@@ -442,20 +326,150 @@
     </style>
 @endpush
 
+@section('content')
+    <div>
+        {{-- HERO HEADER --}}
+        <div class="page-header">
+            <h1>NEWS UPDATE</h1>
+        </div>
+
+        <div class="main-container">
+            {{-- ARTIKEL UTAMA --}}
+            <main>
+                <article class="news-detail">
+                    {{-- Kategori --}}
+                    <span class="news-category">{{ strtoupper($news->category ?? 'UMUM') }}</span>
+
+                    {{-- Judul --}}
+                    <h2>{{ $news->title ?? 'Judul Berita' }}</h2>
+
+                    {{-- Meta Informasi --}}
+                    <div class="news-meta-detail">
+                        <span><i class="far fa-calendar-alt"></i> {{ $news->created_at ? $news->created_at->format('d M Y') : date('d M Y') }}</span>
+                        <span><i class="far fa-user"></i> {{ $news->createdBy->name ?? $news->author ?? 'Admin' }}</span>
+                        @if (isset($news->is_featured) && $news->is_featured)
+                            <span><i class="fas fa-star" style="color: #f1c40f;"></i> Berita Utama</span>
+                        @endif
+                    </div>
+
+                    {{-- Gambar Utama --}}
+                    @if (isset($news->image) && $news->image)
+                        <div class="featured-image-container">
+                            <img src="{{ asset('storage/' . $news->image) }}" alt="{{ $news->title ?? 'Gambar Berita' }}" class="featured-image">
+                        </div>
+                    @endif
+
+                    {{-- Konten Berita --}}
+                    <div class="news-content">
+                        @if (isset($news->excerpt) && $news->excerpt)
+                            <p><strong>{{ $news->excerpt }}</strong></p>
+                            <hr>
+                        @endif
+                        {!! $news->content ?? '<p>Konten berita tidak tersedia.</p>' !!}
+                    </div>
+
+                    {{-- Tombol Bagikan --}}
+                    <div class="share-section">
+                        <span style="font-weight: bold; color: var(--primary-color);">Bagikan:</span>
+                        <button onclick="shareArticle('facebook')" class="btn-share fb"><i class="fab fa-facebook-f"></i></button>
+                        <button onclick="shareArticle('whatsapp')" class="btn-share wa"><i class="fab fa-whatsapp"></i></button>
+                        <button onclick="shareArticle('twitter')" class="btn-share tw"><i class="fab fa-twitter"></i></button>
+                        <button onclick="copyLink()" class="btn-share copy"><i class="fas fa-link"></i></button>
+                    </div>
+
+                    {{-- Tombol Kembali --}}
+                    <div style="text-align: center; margin-top: 30px;">
+                        <a href="{{ route('user.berita') }}" class="btn-back">
+                            <i class="fas fa-arrow-left"></i> Kembali ke Daftar Berita
+                        </a>
+                    </div>
+                </article>
+            </main>
+
+            {{-- SIDEBAR --}}
+            <aside>
+                {{-- Berita Terkait --}}
+                <div class="sidebar-card">
+                    <h4><i class="fas fa-newspaper"></i> Berita Terkait</h4>
+                    @if (isset($related) && $related->count() > 0)
+                        @foreach ($related as $item)
+                            <div class="recent-post-item">
+                                @if ($item->image)
+                                    <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->title }}" class="recent-post-img">
+                                @else
+                                    <div style="width:70px; height:60px; background:#e0e8e3; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#999; font-size:1.5rem;">
+                                        <i class="fas fa-newspaper"></i>
+                                    </div>
+                                @endif
+                                <div class="recent-post-info">
+                                    <a href="{{ route('user.berita.show', $item->id ?? $item->slug) }}">
+                                        <h5>{{ $item->title }}</h5>
+                                    </a>
+                                    <span><i class="far fa-calendar-alt"></i> {{ $item->created_at->format('d M Y') }}</span>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <p style="color: var(--text-muted); text-align: center; padding: 20px 0;">
+                            <i class="fas fa-info-circle"></i> Tidak ada berita terkait.
+                        </p>
+                    @endif
+                </div>
+
+                {{-- Kategori dari Database --}}
+                <div class="sidebar-card">
+                    <h4><i class="fas fa-tags"></i> Kategori</h4>
+                    @php
+                        $categories = App\Models\News::select('category')
+                            ->where('status', 'publish')
+                            ->whereNotNull('category')
+                            ->groupBy('category')
+                            ->get();
+                    @endphp
+                    @if ($categories->count() > 0)
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            @foreach ($categories as $cat)
+                                <li style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-color); transition: 0.2s;"
+                                    onmouseover="this.style.transform='translateX(5px)'; this.style.color='var(--primary-color)';"
+                                    onmouseout="this.style.transform='translateX(0)'; this.style.color='inherit';">
+                                    <a href="{{ route('user.berita', ['category' => $cat->category]) }}"
+                                       style="color: var(--text-dark); text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 8px;">
+                                        <i class="fas fa-book" style="color: var(--accent-yellow); width: 20px; text-align: center;"></i>
+                                        {{ ucfirst($cat->category) }}
+                                    </a>
+                                    <span class="badge" style="background: var(--accent-yellow); color: #0d2137; padding: 2px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: 700;">
+                                        {{ App\Models\News::where('category', $cat->category)->where('status', 'publish')->count() }}
+                                    </span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p style="color: var(--text-muted); text-align: center; padding: 20px 0;">
+                            <i class="fas fa-info-circle"></i> Belum ada kategori.
+                        </p>
+                    @endif
+                </div>
+            </aside>
+        </div>
+    </div>
+@endsection
+
 @push('scripts')
     <script>
+        // Data berita saat ini
         const currentNews = {
-            id: {{ $news->id ?? 0 }},
+            id: @json($news->id ?? 0),
             title: @json($news->title ?? 'Berita'),
             url: window.location.href
         };
 
+        // Fungsi Share
         function shareArticle(platform) {
             const url = encodeURIComponent(currentNews.url);
             const title = encodeURIComponent(currentNews.title);
             let shareUrl = '';
 
-            switch(platform) {
+            switch (platform) {
                 case 'facebook':
                     shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
                     break;
@@ -473,28 +487,33 @@
             }
         }
 
+        // Fungsi Copy Link
         function copyLink() {
-            navigator.clipboard.writeText(currentNews.url).then(() => {
-                showNotification('Link berita telah disalin ke clipboard!', 'success');
-            }).catch(() => {
-                const textarea = document.createElement('textarea');
-                textarea.value = currentNews.url;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                showNotification('Link berita telah disalin!', 'success');
-            });
+            navigator.clipboard.writeText(currentNews.url)
+                .then(() => {
+                    showNotification('Link berita telah disalin ke clipboard!', 'success');
+                })
+                .catch(() => {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = currentNews.url;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    showNotification('Link berita telah disalin!', 'success');
+                });
         }
 
+        // Notifikasi
         function showNotification(message, type = 'success') {
             const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
+            notification.className = 'notification';
             notification.innerHTML = `
                 <span>${type === 'success' ? '✅' : '❌'} ${message}</span>
             `;
+            notification.style.background = type === 'success' ? '#1a6b47' : '#dc3545';
             document.body.appendChild(notification);
-            
+
             setTimeout(() => notification.classList.add('show'), 10);
             setTimeout(() => {
                 notification.classList.remove('show');
