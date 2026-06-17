@@ -11,21 +11,25 @@
     /* ========================================
        PENTING: SEMUA MODAL TERSEMBUNYI SAAT LOAD
        ======================================== */
-    #modalFormKoleksi, #modalAddClassification, #modalAddCategory {
+    #modalFormKoleksi,
+    #modalAddClassification,
+    #modalAddCategory {
         display: none !important;
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.5);
+        background: rgba(0, 0, 0, 0.5);
         z-index: 9999;
         justify-content: center;
         align-items: center;
         backdrop-filter: blur(4px);
     }
 
-    #modalFormKoleksi.active, #modalAddClassification.active, #modalAddCategory.active {
+    #modalFormKoleksi.active,
+    #modalAddClassification.active,
+    #modalAddCategory.active {
         display: flex !important;
     }
 
@@ -36,7 +40,7 @@
         width: 95%;
         max-height: 90vh;
         overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         animation: modalSlideIn 0.3s ease;
     }
 
@@ -101,7 +105,7 @@
     .card-modern {
         background: white;
         border-radius: 16px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 </style>
 
@@ -122,6 +126,16 @@
     <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-3">
         <i class="fas fa-check-circle text-emerald-500"></i>
         <p class="text-emerald-700 text-sm">{{ session('success') }}</p>
+    </div>
+    @endif
+
+    @if ($errors->any())
+    <div class="p-4 mb-4 bg-rose-50 border border-rose-200 rounded-xl">
+        <ul class="text-rose-700 text-sm">
+            @foreach ($errors->all() as $error)
+            <li><i class="fas fa-exclamation-circle mr-2"></i>{{ $error }}</li>
+            @endforeach
+        </ul>
     </div>
     @endif
 
@@ -213,19 +227,19 @@
                             <div class="flex items-center justify-center gap-2">
                                 {{-- Edit Button --}}
                                 <button type="button" class="btn-edit-koleksi w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition flex items-center justify-center"
-                                        data-id="{{ $item->id }}"
-                                        data-title="{{ $item->title }}"
-                                        data-abstract="{{ $item->abstract }}"
-                                        data-isbn="{{ $item->isbn }}"
-                                        data-year="{{ $item->year }}"
-                                        data-keywords="{{ is_array($item->keywords) ? implode(', ', $item->keywords) : $item->keywords }}"
-                                        data-category="{{ $item->category_final_project_id }}"
-                                        data-file="{{ $item->file_url }}"
-                                        data-file-ext="{{ pathinfo($item->file_url, PATHINFO_EXTENSION) }}"
-                                        data-cover="{{ $item->cover_image }}"
-                                        data-classifications="{{ $item->classifications->pluck('id')->toJson() }}"
-                                        data-categories-many="{{ $item->categoriesMany->pluck('id')->toJson() }}"
-                                        title="Edit">
+                                    data-id="{{ $item->id }}"
+                                    data-title="{{ $item->title }}"
+                                    data-abstract="{{ $item->abstract }}"
+                                    data-isbn="{{ $item->isbn }}"
+                                    data-year="{{ $item->year }}"
+                                    data-keywords="{{ is_array($item->keywords) ? implode(', ', $item->keywords) : $item->keywords }}"
+                                    data-category="{{ $item->category_final_project_id }}"
+                                    data-file="{{ $item->file_url }}"
+                                    data-file-ext="{{ pathinfo($item->file_url, PATHINFO_EXTENSION) }}"
+                                    data-cover="{{ $item->cover_image }}"
+                                    data-classifications="{{ $item->classifications->pluck('id')->toJson() }}"
+                                    data-categories-many="{{ $item->categoriesMany->pluck('id')->toJson() }}"
+                                    title="Edit">
                                     <i class="fas fa-edit text-sm"></i>
                                 </button>
 
@@ -335,7 +349,7 @@
                     </div>
                     <select name="classification_id[]" id="classificationDropdown" class="w-full select2-multi" multiple>
                         @foreach($classifications as $c)
-                            <option value="{{ $c->id }}">{{ $c->name }}</option>
+                        <option value="{{ $c->id }}">{{ $c->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -350,7 +364,7 @@
                     </div>
                     <select name="category_collection_id[]" id="categoryDropdown" class="w-full select2-multi" multiple>
                         @foreach($categoriesCollection as $c)
-                            <option value="{{ $c->id }}">{{ $c->name }}</option>
+                        <option value="{{ $c->id }}">{{ $c->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -494,7 +508,9 @@
             allowClear: true,
             templateSelection: function(data) {
                 if (!data.id) return data.text;
-                return $('<span>' + data.text + ' <i class="fas fa-trash-alt select2-choice-delete" onclick="event.stopPropagation(); deleteClassification(' + data.id + ', \'' + data.text.replace(/'/g, "\\'") + '\')"></i></span>');
+                return $('<span>' + data.text +
+                    ' <i class="fas fa-trash-alt select2-choice-delete" onclick="event.stopPropagation(); deleteClassification(' +
+                    data.id + ', \'' + data.text.replace(/'/g, "\\'") + '\')"></i></span>');
             }
         });
 
@@ -506,7 +522,9 @@
             allowClear: true,
             templateSelection: function(data) {
                 if (!data.id) return data.text;
-                return $('<span>' + data.text + ' <i class="fas fa-trash-alt select2-choice-delete" onclick="event.stopPropagation(); deleteCategory(' + data.id + ', \'' + data.text.replace(/'/g, "\\'") + '\')"></i></span>');
+                return $('<span>' + data.text +
+                    ' <i class="fas fa-trash-alt select2-choice-delete" onclick="event.stopPropagation(); deleteCategory(' +
+                    data.id + ', \'' + data.text.replace(/'/g, "\\'") + '\')"></i></span>');
             }
         });
 
@@ -600,11 +618,13 @@
                 } else if (fileExt === 'pdf') {
                     previewHtml = `<iframe src="${assetUrl}" width="100%" height="250" class="rounded-xl"></iframe>`;
                 } else if (fileExt === 'docx' || fileExt === 'doc') {
-                    previewHtml = `<a href="${assetUrl}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition">
+                    previewHtml =
+                        `<a href="${assetUrl}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition">
                                         <i class="fas fa-file-word"></i> Lihat File DOCX
                                     </a>`;
                 } else {
-                    previewHtml = `<a href="${assetUrl}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition">
+                    previewHtml =
+                        `<a href="${assetUrl}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition">
                                         <i class="fas fa-download"></i> Lihat File (${fileExt.toUpperCase()})
                                     </a>`;
                 }
@@ -738,6 +758,15 @@
             }
         });
     }
+
+    $('#formCollection').on('submit', function(e) {
+        var stock = parseInt($('#stock').val(), 10);
+        if (isNaN(stock) || stock < 0) {
+            alert('Stok tidak boleh negatif!');
+            e.preventDefault();
+            return false;
+        }
+    });
 </script>
 
 @endsection

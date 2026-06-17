@@ -11,21 +11,27 @@
     /* ========================================
        PENTING: SEMUA MODAL TERSEMBUNYI SAAT LOAD
        ======================================== */
-    #modalFormKoleksi, #modalAddClassification, #modalAddCategory, #modalAddLocation {
+    #modalFormKoleksi,
+    #modalAddClassification,
+    #modalAddCategory,
+    #modalAddLocation {
         display: none !important;
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.5);
+        background: rgba(0, 0, 0, 0.5);
         z-index: 9999;
         justify-content: center;
         align-items: center;
         backdrop-filter: blur(4px);
     }
 
-    #modalFormKoleksi.active, #modalAddClassification.active, #modalAddCategory.active, #modalAddLocation.active {
+    #modalFormKoleksi.active,
+    #modalAddClassification.active,
+    #modalAddCategory.active,
+    #modalAddLocation.active {
         display: flex !important;
     }
 
@@ -36,7 +42,7 @@
         width: 95%;
         max-height: 90vh;
         overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         animation: modalSlideIn 0.3s ease;
     }
 
@@ -111,7 +117,7 @@
     .card-modern {
         background: white;
         border-radius: 16px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 </style>
 
@@ -136,14 +142,14 @@
     @endif
 
     @if ($errors->any())
-<div class="p-4 mb-4 bg-rose-50 border border-rose-200 rounded-xl">
-    <ul class="text-rose-700 text-sm">
-        @foreach ($errors->all() as $error)
+    <div class="p-4 mb-4 bg-rose-50 border border-rose-200 rounded-xl">
+        <ul class="text-rose-700 text-sm">
+            @foreach ($errors->all() as $error)
             <li><i class="fas fa-exclamation-circle mr-2"></i>{{ $error }}</li>
-        @endforeach
-    </ul>
-</div>
-@endif
+            @endforeach
+        </ul>
+    </div>
+    @endif
 
     {{-- TABLE DATA --}}
     <div class="card-modern overflow-hidden">
@@ -175,7 +181,7 @@
                         <td class="px-4 py-3 text-center text-sm text-slate-600">{{ $i+1 }}</td>
                         <td class="px-4 py-3 text-center">
                             <img src="{{ $item->cover_image ? asset('storage/'.$item->cover_image) : 'https://via.placeholder.com/60x80?text=No+Cover' }}"
-                                 class="w-12 h-16 object-cover rounded-lg shadow-sm cover-preview" alt="Cover">
+                                class="w-12 h-16 object-cover rounded-lg shadow-sm cover-preview" alt="Cover">
                         </td>
                         <td class="px-4 py-3">
                             <div class="font-semibold text-slate-800 text-sm">{{ $item->title }}</div>
@@ -204,25 +210,25 @@
                         </td>
                         <td class="px-4 py-3 text-center">
                             @if($item->active)
-                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
-                                    <i class="fas fa-check-circle text-[10px] mr-1"></i> Aktif
-                                </span>
+                            <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <i class="fas fa-check-circle text-[10px] mr-1"></i> Aktif
+                            </span>
                             @else
-                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500">
-                                    <i class="fas fa-circle text-[8px] mr-1"></i> Nonaktif
-                                </span>
+                            <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500">
+                                <i class="fas fa-circle text-[8px] mr-1"></i> Nonaktif
+                            </span>
                             @endif
                         </td>
                         <td class="px-4 py-3">
                             <div class="flex items-center justify-center gap-2">
                                 <button type="button" class="btn-edit-koleksi w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition flex items-center justify-center"
-                                        data-id="{{ $item->id }}"
-                                        data-title="{{ $item->title }}"
-                                        data-isbn="{{ $item->isbn }}"
-                                        data-author="{{ implode(',', $item->author ?? []) }}"
-                                        data-stock="{{ $item->stock }}"
-                                        data-menu="{{ $item->menu_type }}"
-                                        title="Edit">
+                                    data-id="{{ $item->id }}"
+                                    data-title="{{ $item->title }}"
+                                    data-isbn="{{ $item->isbn }}"
+                                    data-author="{{ implode(',', $item->author ?? []) }}"
+                                    data-stock="{{ $item->stock }}"
+                                    data-menu="{{ $item->menu_type }}"
+                                    title="Edit">
                                     <i class="fas fa-edit text-sm"></i>
                                 </button>
                                 <form action="{{ route('admin.collections.destroy', $item->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus koleksi ini?')">
@@ -327,11 +333,11 @@
                         <input type="text" name="format" id="format" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 transition text-sm text-slate-700">
                     </div>
                     <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-2">Stock</label>
-                    <input type="number" name="stock" id="stock" min="0" step="1"
-                        oninput="if (this.value < 0) this.value = 0;"
-                        class="w-full px-4 py-2.5 rounded-xl ...">
-                </div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Stock</label>
+                        <input type="number" name="stock" id="stock" min="0" step="1"
+                            oninput="if (this.value < 0) this.value = 0;"
+                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 transition text-sm text-slate-700">
+                    </div>
                 </div>
 
                 {{-- AUTHOR --}}
@@ -366,7 +372,7 @@
                     </div>
                     <select name="classification_id[]" id="classificationDropdown" class="w-full select2-multi" multiple>
                         @foreach($classifications as $c)
-                            <option value="{{ $c->id }}">{{ $c->name }}</option>
+                        <option value="{{ $c->id }}">{{ $c->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -381,7 +387,7 @@
                     </div>
                     <select name="category_collection_id[]" id="categoryDropdown" class="w-full select2-multi" multiple>
                         @foreach($categories as $c)
-                            <option value="{{ $c->id }}">{{ $c->name }}</option>
+                        <option value="{{ $c->id }}">{{ $c->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -397,7 +403,7 @@
                     <select name="location_id" id="locationDropdown" class="w-full select2-single">
                         <option value="">-- Pilih Lokasi --</option>
                         @foreach($locations as $l)
-                            <option value="{{ $l->id }}">{{ $l->name }}</option>
+                        <option value="{{ $l->id }}">{{ $l->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -527,7 +533,9 @@
             allowClear: true,
             templateSelection: function(data) {
                 if (!data.id) return data.text;
-                return $('<span>' + data.text + ' <i class="fas fa-trash-alt select2-choice-delete" onclick="event.stopPropagation(); deleteClassification(' + data.id + ', \'' + data.text.replace(/'/g, "\\'") + '\')"></i></span>');
+                return $('<span>' + data.text +
+                    ' <i class="fas fa-trash-alt select2-choice-delete" onclick="event.stopPropagation(); deleteClassification(' +
+                    data.id + ', \'' + data.text.replace(/'/g, "\\'") + '\')"></i></span>');
             }
         });
 
@@ -539,7 +547,9 @@
             allowClear: true,
             templateSelection: function(data) {
                 if (!data.id) return data.text;
-                return $('<span>' + data.text + ' <i class="fas fa-trash-alt select2-choice-delete" onclick="event.stopPropagation(); deleteCategory(' + data.id + ', \'' + data.text.replace(/'/g, "\\'") + '\')"></i></span>');
+                return $('<span>' + data.text +
+                    ' <i class="fas fa-trash-alt select2-choice-delete" onclick="event.stopPropagation(); deleteCategory(' +
+                    data.id + ', \'' + data.text.replace(/'/g, "\\'") + '\')"></i></span>');
             }
         });
 
@@ -550,7 +560,9 @@
             allowClear: true,
             templateSelection: function(data) {
                 if (!data.id) return data.text;
-                return $('<span>' + data.text + ' <i class="fas fa-trash-alt select2-choice-delete" onclick="event.stopPropagation(); deleteLocation(' + data.id + ', \'' + data.text.replace(/'/g, "\\'") + '\')"></i></span>');
+                return $('<span>' + data.text +
+                    ' <i class="fas fa-trash-alt select2-choice-delete" onclick="event.stopPropagation(); deleteLocation(' +
+                    data.id + ', \'' + data.text.replace(/'/g, "\\'") + '\')"></i></span>');
             }
         });
 
@@ -826,13 +838,13 @@
     }
 
     $('#formCollection').on('submit', function(e) {
-    var stock = parseInt($('#stock').val(), 10);
-    if (isNaN(stock) || stock < 0) {
-        alert('Stok tidak boleh negatif!');
-        e.preventDefault();
-        return false;
-    }
-});
+        var stock = parseInt($('#stock').val(), 10);
+        if (isNaN(stock) || stock < 0) {
+            alert('Stok tidak boleh negatif!');
+            e.preventDefault();
+            return false;
+        }
+    });
 </script>
 
 @endsection

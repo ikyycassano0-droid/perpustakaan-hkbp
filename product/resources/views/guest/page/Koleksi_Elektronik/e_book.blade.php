@@ -198,7 +198,7 @@
         }
 
         .book-thumb {
-            height: 300px;
+            height: 200px;
             position: relative;
             background: #f0f7f3;
             overflow: hidden;

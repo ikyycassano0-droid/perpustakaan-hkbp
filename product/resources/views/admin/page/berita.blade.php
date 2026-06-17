@@ -139,99 +139,98 @@
             <p class="text-slate-300 text-xs mt-0.5">Total: {{ $berita->count() }} berita</p>
         </div>
 
-        {{-- Hapus overflow-x-auto agar tidak perlu scroll --}}
-        <div>
+        <div class="overflow-x-auto">
             <table class="w-full table-auto text-sm">
                 <thead>
                     <tr class="bg-slate-50/80 border-b border-slate-100">
-                        <th class="text-left px-3 py-2 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Judul</th>
-                        <th class="text-left px-3 py-2 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Kategori</th>
-                        <th class="text-left px-3 py-2 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Excerpt</th>
-                        <th class="text-center px-3 py-2 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Status</th>
-                        <th class="text-center px-3 py-2 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Featured</th>
-                        <th class="text-center px-3 py-2 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Gambar</th>
-                        <th class="text-center px-3 py-2 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Aksi</th>
+                        <th class="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Judul</th>
+                        <th class="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Kategori</th>
+                        <th class="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Excerpt</th>
+                        <th class="text-center px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                        <th class="text-center px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Featured</th>
+                        <th class="text-center px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Gambar</th>
+                        <th class="text-center px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider w-28">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($berita as $item)
                     <tr class="border-b border-slate-50 hover:bg-slate-50/30 transition">
-                        <form action="{{ route('admin.berita.update', $item->id) }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            @method('PUT')
+                        {{-- JUDUL --}}
+                        <td class="px-4 py-3">
+                            <div class="font-medium text-slate-800 text-sm">{{ $item->title }}</div>
+                        </td>
 
-                            {{-- JUDUL --}}
-                            <td class="px-3 py-2">
-                                <input type="text" name="title" value="{{ $item->title }}"
-                                    class="w-36 px-2 py-1.5 rounded-lg border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-xs text-slate-700">
-                            </td>
+                        {{-- KATEGORI --}}
+                        <td class="px-4 py-3">
+                            <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700">
+                                {{ ucfirst($item->category) }}
+                            </span>
+                        </td>
 
-                            {{-- KATEGORI --}}
-                            <td class="px-3 py-2">
-                                <select name="category"
-                                    class="w-28 px-2 py-1.5 rounded-lg border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-xs text-slate-700">
-                                    @foreach(['akademik','pengumuman','kegiatan','riset','fasilitas','sosial'] as $cat)
-                                    <option value="{{ $cat }}" {{ $item->category == $cat ? 'selected' : '' }}>
-                                        {{ ucfirst($cat) }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </td>
+                        {{-- EXCERPT --}}
+                        <td class="px-4 py-3 text-sm text-slate-600">
+                            {{ $item->excerpt ?? '-' }}
+                        </td>
 
-                            {{-- EXCERPT --}}
-                            <td class="px-3 py-2">
-                                <input type="text" name="excerpt" value="{{ $item->excerpt }}"
-                                    class="w-36 px-2 py-1.5 rounded-lg border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-xs text-slate-700">
-                            </td>
+                        {{-- STATUS --}}
+                        <td class="px-4 py-3 text-center">
+                            @if($item->status == 'publish')
+                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+                                    <i class="fas fa-check-circle text-[10px] mr-1"></i> Publish
+                                </span>
+                            @else
+                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+                                    <i class="fas fa-pen text-[10px] mr-1"></i> Draft
+                                </span>
+                            @endif
+                        </td>
 
-                            {{-- STATUS --}}
-                            <td class="px-3 py-2 text-center">
-                                <select name="status"
-                                    class="px-2 py-1.5 rounded-lg border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-xs text-slate-700 w-20">
-                                    <option value="draft" {{ $item->status == 'draft' ? 'selected' : '' }}>Draft</option>
-                                    <option value="publish" {{ $item->status == 'publish' ? 'selected' : '' }}>Publish</option>
-                                </select>
-                            </td>
+                        {{-- FEATURED --}}
+                        <td class="px-4 py-3 text-center">
+                            @if($item->is_featured)
+                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
+                                    <i class="fas fa-star text-[10px] mr-1"></i> Ya
+                                </span>
+                            @else
+                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500">
+                                    <i class="fas fa-circle text-[8px] mr-1"></i> Tidak
+                                </span>
+                            @endif
+                        </td>
 
-                            {{-- FEATURED --}}
-                            <td class="px-3 py-2 text-center">
-                                <select name="is_featured"
-                                    class="px-2 py-1.5 rounded-lg border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 focus:ring-1 focus:ring-indigo-200 transition text-xs text-slate-700 w-20">
-                                    <option value="0" {{ $item->is_featured == 0 ? 'selected' : '' }}>Tidak</option>
-                                    <option value="1" {{ $item->is_featured == 1 ? 'selected' : '' }}>Ya</option>
-                                </select>
-                            </td>
+                        {{-- GAMBAR --}}
+                        <td class="px-4 py-3 text-center">
+                            @if($item->image)
+                                <img src="{{ asset('storage/' . $item->image) }}" alt="Gambar" class="w-12 h-12 object-cover rounded-lg mx-auto shadow-sm cover-preview">
+                            @else
+                                <span class="text-slate-400 text-xs">-</span>
+                            @endif
+                        </td>
 
-                            {{-- GAMBAR --}}
-                            <td class="px-3 py-2 text-center">
-                                <input type="file" name="image" class="text-xs w-28">
-                                @if($item->image)
-                                <div class="text-[10px] text-slate-400 mt-0.5">Current: Ada</div>
-                                @endif
-                             </td>
+                        {{-- AKSI --}}
+                        <td class="px-4 py-3">
+                            <div class="flex items-center justify-center gap-2">
+                                {{-- EDIT BUTTON --}}
+                                <button type="button" onclick="openEditModal({{ $item->id }})"
+                                    class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition flex items-center justify-center"
+                                    title="Edit">
+                                    <i class="fas fa-edit text-sm"></i>
+                                </button>
 
-                            {{-- ACTION BUTTONS --}}
-                            <td class="px-3 py-2">
-                                <div class="flex items-center justify-center gap-1.5">
-                                    <button type="button" onclick="openEditModal({{ $item->id }})" class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition flex items-center justify-center" title="Edit">
-                                        <i class="fas fa-edit text-sm"></i>
+                                {{-- DELETE FORM --}}
+                                <form action="{{ route('admin.berita.destroy', $item->id) }}" method="POST"
+                                    onsubmit="return confirm('Yakin ingin menghapus berita ini?')"
+                                    class="inline-block">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                        class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 transition flex items-center justify-center"
+                                        title="Hapus">
+                                        <i class="fas fa-trash text-sm"></i>
                                     </button>
-                        </form>
-
-                                    {{-- DELETE FORM --}}
-                                    <form action="{{ route('admin.berita.destroy', $item->id) }}" method="POST"
-                                        onsubmit="return confirm('Yakin ingin menghapus berita ini?')"
-                                        class="inline-block">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 transition flex items-center justify-center"
-                                            title="Hapus">
-                                            <i class="fas fa-trash text-xs"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                             </td>
+                                </form>
+                            </div>
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>
