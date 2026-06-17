@@ -195,6 +195,7 @@
             align-items: center;
             justify-content: center;
             gap: 12px;
+            text-decoration: none;
         }
 
         .btn-read {
@@ -206,6 +207,7 @@
         .btn-read:hover {
             background: var(--accent-green);
             transform: translateY(-3px);
+            color: white;
         }
 
         .btn-download {
@@ -588,12 +590,32 @@
             </div>
 
             <div class="ebook-actions">
-                <button class="btn-ebook btn-read" onclick="openReader()">
-                    <i class="fas fa-book-reader"></i> BACA SEKARANG (ONLINE)
-                </button>
-                <button class="btn-ebook btn-download" onclick="downloadFile('{{ route('final_project.download', $item->id) }}')">
-                    <i class="fas fa-file-download"></i> UNDUH PDF (OFFLINE)
-                </button>
+                {{-- Tombol Baca Online --}}
+                @if($item->file_url)
+                    @php
+                        $fileUrl  = Storage::url($item->file_url);
+                        $fullFileUrl = asset('storage/' . $item->file_url);
+                        $ext      = strtolower(pathinfo($item->file_url, PATHINFO_EXTENSION));
+                        $isWord   = in_array($ext, ['doc', 'docx']);
+                        $bacaUrl  = $isWord
+                            ? 'https://docs.google.com/viewer?url=' . urlencode($fullFileUrl)
+                            : $fullFileUrl;
+                    @endphp
+                    <a href="{{ $bacaUrl }}" target="_blank" class="btn-ebook btn-read">
+                        <i class="fas fa-book-reader"></i> BACA SEKARANG (ONLINE)
+                    </a>
+                    {{-- Tombol Download Langsung (Tanpa Login) --}}
+                    <a href="{{ $fullFileUrl }}" download class="btn-ebook btn-download">
+                        <i class="fas fa-file-download"></i> UNDUH {{ strtoupper($ext) }} (OFFLINE)
+                    </a>
+                @else
+                    <button class="btn-ebook btn-read" disabled style="opacity: 0.5; cursor: not-allowed;">
+                        <i class="fas fa-book-reader"></i> FILE TIDAK TERSEDIA
+                    </button>
+                    <button class="btn-ebook btn-download" disabled style="opacity: 0.5; cursor: not-allowed;">
+                        <i class="fas fa-file-download"></i> FILE TIDAK TERSEDIA
+                    </button>
+                @endif
             </div>
         </div>
 
@@ -606,7 +628,9 @@
                 </span>
                 <h1>{{ $item->title }}</h1>
                 <p class="author-text">
-                    @if($item->user)
+                    @if($item->student_name)
+                        Oleh <a href="#">{{ $item->student_name }}</a>
+                    @elseif($item->user)
                         Oleh <a href="#">{{ $item->user->name ?? 'Admin Perpustakaan' }}</a>
                     @else
                         Oleh <a href="#">Admin Perpustakaan</a>
@@ -638,7 +662,11 @@
                             <td>
                                 <div class="status-badge">
                                     <div class="pulse-dot"></div>
-                                    Tersedia (Open Access)
+                                    @if($item->status == 'Approved')
+                                        Tersedia (Open Access)
+                                    @else
+                                        {{ $item->status ?? 'Pending' }}
+                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -752,7 +780,7 @@
         </div>
     </div>
 
-    <!-- READER OVERLAY -->
+    <!-- READER OVERLAY (Optional - bisa dihapus jika tidak diperlukan) -->
     <div id="reader-overlay">
         <div class="reader-nav-top">
             <div>
@@ -771,11 +799,23 @@
         <div class="reader-main">
             <div class="reader-page" id="reader-text-content">
                 <div id="pdf-viewer-container" style="width:100%;">
-                    <iframe id="pdf-frame" src="" style="width:100%; height:800px; border:none;"></iframe>
-                </div>
-                <div id="preview-content" style="display:none;">
-                    <h2 style="color: var(--primary-color);">Pratinjau Konten</h2>
-                    <p>{{ Str::limit($item->abstract ?? 'Konten lengkap dapat diakses melalui tombol baca online atau unduh PDF.', 500) }}</p>
+                    @if($item->file_url)
+                        @php
+                            $fileUrl  = asset('storage/' . $item->file_url);
+                            $ext      = strtolower(pathinfo($item->file_url, PATHINFO_EXTENSION));
+                            $isWord   = in_array($ext, ['doc', 'docx']);
+                            $viewUrl  = $isWord
+                                ? 'https://docs.google.com/viewer?url=' . urlencode($fileUrl)
+                                : $fileUrl;
+                        @endphp
+                        <iframe id="pdf-frame" src="{{ $viewUrl }}" style="width:100%; height:800px; border:none;"></iframe>
+                    @else
+                        <div class="text-center" style="padding: 50px;">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #e74c3c;"></i>
+                            <p style="margin-top: 20px;">File tidak tersedia untuk dibaca online.</p>
+                            <p>Silakan unduh file untuk membaca.</p>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -789,100 +829,16 @@
     <script>
         AOS.init({ duration: 700, once: true });
 
-        let currentPage = 1;
-        let totalPages = 1;
-        let pdfDoc = null;
-        let currentPDFUrl = null;
-
         function openReader() {
             const overlay = document.getElementById('reader-overlay');
             overlay.classList.add('reader-active');
             document.body.style.overflow = 'hidden';
-
-            // Load PDF jika ada file URL
-            loadPDFContent();
         }
 
         function closeReader() {
             document.getElementById('reader-overlay').classList.remove('reader-active');
             document.body.style.overflow = 'auto';
             resetSearch();
-
-            // Cleanup PDF
-            if (pdfDoc) {
-                pdfDoc = null;
-            }
-        }
-
-        function loadPDFContent() {
-            const fileUrl = '{{ $item->file_url ? Storage::url($item->file_url) : "" }}';
-
-            if (!fileUrl) {
-                document.getElementById('reader-text-content').innerHTML = `
-                    <div class="text-center" style="padding: 50px;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #e74c3c;"></i>
-                        <p style="margin-top: 20px;">File tidak tersedia untuk dibaca online.</p>
-                        <p>Silakan unduh file untuk membaca.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            // Gunakan PDF.js jika tersedia, atau fallback ke iframe
-            if (typeof pdfjsLib !== 'undefined') {
-                loadPDFWithPDFJS(fileUrl);
-            } else {
-                // Fallback: tampilkan iframe
-                document.getElementById('reader-text-content').innerHTML = `
-                    <iframe src="${fileUrl}" style="width: 100%; height: 800px; border: none;"></iframe>
-                `;
-            }
-        }
-
-        function loadPDFWithPDFJS(url) {
-            const loadingTask = pdfjsLib.getDocument(url);
-            loadingTask.promise.then(function(pdf) {
-                pdfDoc = pdf;
-                totalPages = pdf.numPages;
-                document.getElementById('total-pages').textContent = totalPages;
-                renderPage(currentPage);
-            }).catch(function(error) {
-                console.error('Error loading PDF:', error);
-                document.getElementById('reader-text-content').innerHTML = `
-                    <div class="text-center" style="padding: 50px;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #e74c3c;"></i>
-                        <p style="margin-top: 20px;">Gagal memuat PDF.</p>
-                        <p>Silakan unduh file untuk membaca.</p>
-                    </div>
-                `;
-            });
-        }
-
-        function renderPage(pageNum) {
-            if (!pdfDoc) return;
-
-            pdfDoc.getPage(pageNum).then(function(page) {
-                const scale = 1.5;
-                const viewport = page.getViewport({ scale: scale });
-
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                const renderContext = {
-                    canvasContext: context,
-                    viewport: viewport
-                };
-
-                page.render(renderContext).promise.then(function() {
-                    const contentDiv = document.getElementById('reader-text-content');
-                    contentDiv.innerHTML = '';
-                    contentDiv.appendChild(canvas);
-                    canvas.style.width = '100%';
-                    canvas.style.height = 'auto';
-                });
-            });
         }
 
         function toggleDarkMode() {
@@ -939,48 +895,14 @@
             if (searchInput) searchInput.value = "";
         }
 
-        function downloadFile(url) {
-            if (url && url !== '#') {
-                window.location.href = url;
-            } else {
-                alert("File tidak tersedia untuk diunduh.");
-            }
-        }
-
-        function previousPage() {
-            if (pdfDoc && currentPage > 1) {
-                currentPage--;
-                document.getElementById('current-page').textContent = currentPage;
-                renderPage(currentPage);
-            }
-        }
-
-        function nextPage() {
-            if (pdfDoc && currentPage < totalPages) {
-                currentPage++;
-                document.getElementById('current-page').textContent = currentPage;
-                renderPage(currentPage);
-            }
-        }
-
         // Keyboard navigation for reader
         document.addEventListener('keydown', function(e) {
             const reader = document.getElementById('reader-overlay');
             if (reader.classList.contains('reader-active')) {
-                if (e.key === 'ArrowLeft') {
-                    previousPage();
-                } else if (e.key === 'ArrowRight') {
-                    nextPage();
-                } else if (e.key === 'Escape') {
+                if (e.key === 'Escape') {
                     closeReader();
                 }
             }
         });
-    </script>
-
-    {{-- Optional: Load PDF.js for better PDF rendering --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-    <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
     </script>
 @endpush

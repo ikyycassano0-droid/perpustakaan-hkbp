@@ -18,8 +18,7 @@
   <style>
     /* ============================================
        GAYA KHUSUS UNTUK HALAMAN HOME (GUEST)
-       Semua aturan dipertahankan, hanya ditambahkan
-       untuk konsistensi ukuran card & gambar.
+       SAMA PERSIS DENGAN USER
     ============================================ */
 
     /* ---------- HERO SECTION ---------- */
@@ -370,7 +369,7 @@
     }
 
     /* ============================================================
-       PERBAIKAN UTAMA: KOLEKSI UNGGULAN - UKURAN CARD TETAP
+       KOLEKSI UNGGULAN - SAMA PERSIS DENGAN USER
     ============================================================ */
     .koleksi-unggulan-section {
       padding: 40px 7%;
@@ -444,15 +443,14 @@
       border-radius: 28px;
       overflow: hidden;
       position: relative;
-      min-height: 600px;  /* tinggi minimum agar tidak berubah */
-      max-height: 720px;  /* batasi tinggi maksimal */
+      min-height: 600px;
+      max-height: 720px;
       cursor: pointer;
       background: var(--deep-green);
     }
 
-    /* CONTAINER GAMBAR - UKURAN TETAP */
     .koleksi-hero-card .card-cover {
-    padding: 1px;
+      padding: 1px;
       width: 100%;
       height: 100%;
       min-height: 600px;
@@ -466,7 +464,7 @@
     .koleksi-hero-card .card-cover img {
       width: 100%;
       height: 100%;
-      object-fit: contain;   /* gambar akan memenuhi area tanpa merusak proporsi */
+      object-fit: contain;
       object-position: center;
       display: block;
       background-color: #f0f4f2;
@@ -486,7 +484,7 @@
       flex-direction: column;
       justify-content: flex-end;
       padding: 30px;
-      pointer-events: none; /* agar tombol tetap bisa diklik */
+      pointer-events: none;
     }
     .koleksi-hero-overlay a {
       pointer-events: auto;
@@ -554,7 +552,7 @@
       background: white;
       transition: box-shadow 0.3s, transform 0.3s;
       cursor: pointer;
-      min-height: 210px; /* konsisten */
+      min-height: 210px;
     }
 
     .koleksi-riset-card:hover {
@@ -563,12 +561,11 @@
       border-color: var(--accent-green);
     }
 
-    /* COVER BUKU DI CARD RISET - UKURAN TETAP */
     .koleksi-riset-book-cover {
       min-width: 110px;
       width: 110px;
       height: 155px;
-      flex-shrink: 0;  /* JANGAN MENYUSUT */
+      flex-shrink: 0;
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 8px 20px rgba(15, 74, 49, 0.15);
@@ -586,7 +583,6 @@
       display: block;
     }
 
-    /* Untuk card yang tidak pakai gambar (illustrated) */
     .koleksi-riset-book-cover.illustrated {
       flex-direction: column;
       padding: 14px 12px;
@@ -672,7 +668,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 180px; /* tinggi tetap */
+      min-height: 180px;
     }
 
     .koleksi-mini-card:hover {
@@ -1215,77 +1211,29 @@
         <i class="fas fa-stethoscope"></i> Layanan Perpustakaan
       </div>
       <div class="grid-layanan-modern">
-        <div class="card-layanan" data-aos="flip-left" data-aos-delay="100">
-          <i class="fas fa-search"></i>
-          <h3>Katalog Online</h3>
-          <p>Katalog online memudahkan pengguna menjelajahi berbagai koleksi perpustakaan secara efisien.</p>
-        </div>
-        <div class="card-layanan" data-aos="flip-left" data-aos-delay="200">
-          <i class="fas fa-book-open"></i>
-          <h3>Repositori</h3>
-          <p>Menyimpan karya ilmiah mahasiswa dan dosen dalam format digital yang mudah diakses kapan saja.</p>
-        </div>
-        <div class="card-layanan" data-aos="flip-left" data-aos-delay="300">
-          <i class="fas fa-archive"></i>
-          <h3>Arsip Dupak Dosen</h3>
-          <p>Layanan pengelolaan arsip angka kredit bagi dosen untuk keperluan administratif dan karir.</p>
-        </div>
-        <div class="card-layanan" data-aos="flip-left" data-aos-delay="400">
-          <i class="fas fa-file-invoice"></i>
-          <h3>Cek Pinjaman</h3>
-          <p>Memantau status peminjaman buku dan masa pengembalian dengan sistem yang terintegrasi.</p>
-        </div>
-        <div class="card-layanan" data-aos="fade-up" data-aos-delay="500">
-          <i class="fas fa-map"></i>
-          <h3>Panduan Sumberdaya</h3>
-          <p>Informasi mendalam mengenai cara menggunakan seluruh fasilitas dan koleksi perpustakaan.</p>
-        </div>
-        <div class="card-layanan" data-aos="fade-up" data-aos-delay="600">
-          <i class="fas fa-binoculars"></i>
-          <h3>EBSCO DISCOVERY</h3>
-          <p>Mesin pencari terpadu untuk mencari artikel jurnal internasional berkualitas secara instan.</p>
-        </div>
+        <div class="card-layanan" data-aos="flip-left" data-aos-delay="100"><i class="fas fa-search"></i><h3>Katalog Online</h3><p>Katalog online memudahkan pengguna menjelajahi berbagai koleksi perpustakaan secara efisien.</p></div>
+        <div class="card-layanan" data-aos="flip-left" data-aos-delay="200"><i class="fas fa-book-open"></i><h3>Repositori</h3><p>Menyimpan karya ilmiah mahasiswa dan dosen dalam format digital yang mudah diakses kapan saja.</p></div>
+        <div class="card-layanan" data-aos="flip-left" data-aos-delay="300"><i class="fas fa-archive"></i><h3>Arsip Dupak Dosen</h3><p>Layanan pengelolaan arsip angka kredit bagi dosen untuk keperluan administratif dan karir.</p></div>
+        <div class="card-layanan" data-aos="flip-left" data-aos-delay="400"><i class="fas fa-file-invoice"></i><h3>Cek Pinjaman</h3><p>Memantau status peminjaman buku dan masa pengembalian dengan sistem yang terintegrasi.</p></div>
+        <div class="card-layanan" data-aos="fade-up" data-aos-delay="500"><i class="fas fa-map"></i><h3>Panduan Sumberdaya</h3><p>Informasi mendalam mengenai cara menggunakan seluruh fasilitas dan koleksi perpustakaan.</p></div>
+        <div class="card-layanan" data-aos="fade-up" data-aos-delay="600"><i class="fas fa-binoculars"></i><h3>EBSCO DISCOVERY</h3><p>Mesin pencari terpadu untuk mencari artikel jurnal internasional berkualitas secara instan.</p></div>
       </div>
     </section>
   </div>
 
   <section class="section-container" style="background: #f4f7f5;">
-    {{-- ================= PERPUSTAKAAN DALAM ANGKA ================= --}}
+    {{-- Perpustakaan Dalam Angka --}}
     <div class="label-header stats-label" data-aos="fade-right">
       <i class="fas fa-chart-pie"></i> Perpustakaan Dalam Angka
     </div>
     <div class="stats-grid">
-      <div class="stat-item" data-aos="zoom-in" data-aos-delay="100">
-        <div class="stat-info">
-          <span>{{ number_format($totalVerifiedUsers ?? 0, 0, ',', '.') }}+</span>
-          <p>Mahasiswa Terverifikasi</p>
-        </div>
-        <i class="fas fa-user-graduate"></i>
-      </div>
-      <div class="stat-item" data-aos="zoom-in" data-aos-delay="200">
-        <div class="stat-info">
-          <span>{{ number_format($totalLoans ?? 0, 0, ',', '.') }}</span>
-          <p>Buku Dipinjam (Aktif)</p>
-        </div>
-        <i class="fas fa-book-reader"></i>
-      </div>
-      <div class="stat-item" data-aos="zoom-in" data-aos-delay="300">
-        <div class="stat-info">
-          <span>{{ number_format($totalUniqueTitles ?? 0, 0, ',', '.') }}+</span>
-          <p>Total Judul Unik</p>
-        </div>
-        <i class="fas fa-notes-medical"></i>
-      </div>
-      <div class="stat-item" data-aos="zoom-in" data-aos-delay="400">
-        <div class="stat-info">
-          <span>{{ number_format($totalPrintedCollections ?? 0, 0, ',', '.') }}</span>
-          <p>Koleksi Tercetak</p>
-        </div>
-        <i class="fas fa-users-cog"></i>
-      </div>
+      <div class="stat-item" data-aos="zoom-in" data-aos-delay="100"><div class="stat-info"><span>{{ number_format($totalVerifiedUsers ?? 0, 0, ',', '.') }}+</span><p>Mahasiswa Terverifikasi</p></div><i class="fas fa-user-graduate"></i></div>
+      <div class="stat-item" data-aos="zoom-in" data-aos-delay="200"><div class="stat-info"><span>{{ number_format($totalLoans ?? 0, 0, ',', '.') }}</span><p>Buku Dipinjam (Aktif)</p></div><i class="fas fa-book-reader"></i></div>
+      <div class="stat-item" data-aos="zoom-in" data-aos-delay="300"><div class="stat-info"><span>{{ number_format($totalUniqueTitles ?? 0, 0, ',', '.') }}+</span><p>Total Judul Unik</p></div><i class="fas fa-notes-medical"></i></div>
+      <div class="stat-item" data-aos="zoom-in" data-aos-delay="400"><div class="stat-info"><span>{{ number_format($totalPrintedCollections ?? 0, 0, ',', '.') }}</span><p>Koleksi Tercetak</p></div><i class="fas fa-users-cog"></i></div>
     </div>
 
-    {{-- ================= KOLEKSI UNGGULAN (1 BUKU TERPOPULER) ================= --}}
+    {{-- Koleksi Unggulan - SAMA PERSIS DENGAN USER --}}
     <section class="koleksi-unggulan-section">
       <div class="koleksi-unggulan-header" data-aos="fade-up">
         <div class="koleksi-unggulan-header-left">
@@ -1303,29 +1251,29 @@
 
       <div class="koleksi-unggulan-grid">
         @if($topBook)
-          <div class="koleksi-hero-card" data-aos="fade-right" data-aos-duration="800">
-            <div class="card-cover">
-              <img src="{{ $topBook->cover_image ? asset('storage/'.$topBook->cover_image) : asset('assets/img/placeholder-book.jpg') }}" alt="{{ $topBook->title }}">
-            </div>
-            <div class="koleksi-hero-overlay">
-              <span class="koleksi-hero-badge">Paling Diminati</span>
-              <h3>{{ $topBook->title }}</h3>
-              <p>{{ \Str::limit($topBook->description ?? 'Koleksi unggulan perpustakaan.', 120) }}</p>
-              <a href="{{ route('login') }}" class="koleksi-hero-btn">Lihat Detail</a>
-            </div>
+        <div class="koleksi-hero-card" data-aos="fade-right" data-aos-duration="800">
+          <div class="card-cover">
+            <img src="{{ $topBook->cover_image ? asset('storage/'.$topBook->cover_image) : asset('assets/img/placeholder-book.jpg') }}" alt="{{ $topBook->title }}">
           </div>
+          <div class="koleksi-hero-overlay">
+            <span class="koleksi-hero-badge">Paling Diminati</span>
+            <h3>{{ $topBook->title }}</h3>
+            <p>{{ \Str::limit($topBook->description ?? 'Koleksi unggulan perpustakaan.', 120) }}</p>
+            <a href="{{ route('login') }}" class="koleksi-hero-btn">Lihat Detail</a>
+          </div>
+        </div>
         @else
-          <div class="koleksi-hero-card" data-aos="fade-right" data-aos-duration="800">
-            <div class="card-cover">
-              <img src="https://images.unsplash.com/photo-1532012197367-2d5970d7b5c3?q=80&w=800&auto=format&fit=crop" alt="Belum ada data">
-            </div>
-            <div class="koleksi-hero-overlay">
-              <span class="koleksi-hero-badge">Segera Hadir</span>
-              <h3>Belum ada peminjaman</h3>
-              <p>Buku terpopuler akan muncul setelah ada aktivitas peminjaman.</p>
-              <a href="{{ route('guest.koleksi_elektronik.ebook') }}" class="koleksi-hero-btn">Lihat Katalog</a>
-            </div>
+        <div class="koleksi-hero-card" data-aos="fade-right" data-aos-duration="800">
+          <div class="card-cover">
+            <img src="https://images.unsplash.com/photo-1532012197367-2d5970d7b5c3?q=80&w=800&auto=format&fit=crop" alt="Belum ada data">
           </div>
+          <div class="koleksi-hero-overlay">
+            <span class="koleksi-hero-badge">Segera Hadir</span>
+            <h3>Belum ada peminjaman</h3>
+            <p>Buku terpopuler akan muncul setelah ada aktivitas peminjaman.</p>
+            <a href="{{ route('guest.koleksi_elektronik.ebook') }}" class="koleksi-hero-btn">Lihat Katalog</a>
+          </div>
+        </div>
         @endif
 
         <div class="koleksi-riset-card" data-aos="fade-left" data-aos-duration="800" data-aos-delay="100">
@@ -1379,44 +1327,40 @@
       </div>
     </section>
 
-    {{-- ================= BERITA TERBARU ================= --}}
+    {{-- Berita --}}
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;" data-aos="fade-up">
       <div class="label-header news-label" style="margin-bottom:0;"><i class="fas fa-bullhorn"></i> Berita & Kegiatan</div>
-      <a href="{{ route('guest.berita.index') }}" class="news-all-link">
-        Semua Berita <i class="fas fa-arrow-right"></i>
-      </a>
+      <a href="{{ route('guest.berita.index') }}" class="news-all-link">Semua Berita <i class="fas fa-arrow-right"></i></a>
     </div>
     <div class="berita-grid">
       @forelse($berita_terbaru as $berita)
-        <div class="news-card tilt-effect" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
-          <div class="news-image-wrapper">
-            <span class="news-badge">{{ $berita->category }}</span>
-            <img src="{{ $berita->image ? asset('storage/'.$berita->image) : 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=500&q=60' }}" alt="{{ $berita->title }}">
+      <div class="news-card tilt-effect" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
+        <div class="news-image-wrapper">
+          <span class="news-badge">{{ $berita->category }}</span>
+          <img src="{{ $berita->image ? asset('storage/'.$berita->image) : 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=500&q=60' }}" alt="{{ $berita->title }}">
+        </div>
+        <div class="news-body">
+          <div class="news-meta">
+            <span><i class="far fa-calendar-alt"></i> {{ $berita->created_at->format('d M Y') }}</span>
+            <span><i class="far fa-user"></i> {{ $berita->created_by ?? 'Admin' }}</span>
           </div>
-          <div class="news-body">
-            <div class="news-meta">
-              <span><i class="far fa-calendar-alt"></i> {{ $berita->created_at->format('d M Y') }}</span>
-              <span><i class="far fa-user"></i> {{ $berita->created_by ?? 'Admin' }}</span>
-            </div>
-            <h4 class="news-title">{{ $berita->title }}</h4>
-            <p class="news-excerpt">{{ $berita->excerpt ?? \Str::limit(strip_tags($berita->content), 100) }}</p>
-            <div class="news-footer">
-              <a href="{{ route('guest.berita.show', $berita->slug) }}" class="read-more-btn">
-                Baca Selengkapnya <i class="fas fa-chevron-right"></i>
-              </a>
-            </div>
+          <h4 class="news-title">{{ $berita->title }}</h4>
+          <p class="news-excerpt">{{ $berita->excerpt ?? \Str::limit(strip_tags($berita->content), 100) }}</p>
+          <div class="news-footer">
+            <a href="{{ route('guest.berita.show', $berita->slug) }}" class="read-more-btn">Baca Selengkapnya <i class="fas fa-chevron-right"></i></a>
           </div>
         </div>
+      </div>
       @empty
-        <div class="col-span-full text-center text-slate-400 py-10">
-          <i class="fas fa-newspaper text-4xl mb-2"></i>
-          <p>Belum ada berita terbaru.</p>
-        </div>
+      <div class="col-span-full text-center text-slate-400 py-10">
+        <i class="fas fa-newspaper text-4xl mb-2"></i>
+        <p>Belum ada berita terbaru.</p>
+      </div>
       @endforelse
     </div>
   </section>
 
-  {{-- ================= REWARD TOP 3 PEMINJAM ================= --}}
+  {{-- Reward --}}
   <section class="reward-wrapper">
     <div class="reward-header" data-aos="fade-up">
       <h2>Peminjam Teraktif</h2>
@@ -1500,7 +1444,6 @@
       });
     }
 
-    /* ── Back to Top Button ── */
     (function () {
       const btn = document.getElementById('backToTop');
       if (!btn) return;

@@ -235,6 +235,68 @@
             text-align: right;
         }
 
+        /* Tombol Putar & Download di Sidebar */
+        .sidebar-actions {
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-play {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px 25px;
+            background: var(--accent-yellow);
+            color: var(--primary-color);
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.3s;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-play:hover {
+            background: #f5d442;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(241, 196, 15, 0.3);
+        }
+
+        .btn-download-sidebar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px 25px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.3s;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-download-sidebar:hover {
+            background: var(--accent-green);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(26, 107, 71, 0.3);
+        }
+
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed !important;
+            pointer-events: none;
+        }
+
         @media (max-width: 1024px) {
             .container {
                 grid-template-columns: 1fr;
@@ -276,6 +338,13 @@
                         <p style="font-size: 1rem;">Pratinjau video tidak tersedia</p>
                         @if($fileUrl)
                             <p style="font-size: 0.8rem; margin-top: 8px;">Format: {{ strtoupper($ext) }}</p>
+                            {{-- Tombol download untuk file non-video --}}
+                            <a href="{{ $fileUrl }}" download 
+                               style="margin-top: 15px; padding: 10px 25px; background: var(--primary-color); color: white; border-radius: 50px; text-decoration: none; font-weight: 700; transition: 0.3s;"
+                               onmouseover="this.style.background='var(--accent-green)';"
+                               onmouseout="this.style.background='var(--primary-color)';">
+                                <i class="fas fa-download"></i> Download File ({{ strtoupper($ext) }})
+                            </a>
                         @endif
                     </div>
                 @endif
@@ -392,13 +461,34 @@
                 @endif
             </div>
 
-            @if($fileUrl)
-                <div style="margin-top: 25px;">
-                    <a href="{{ route('final_project.download', $item->id) }}" class="btn-download" style="width: 100%; justify-content: center;">
-                        <i class="fas fa-download"></i> Unduh Video
+            {{-- Tombol Aksi (Download Langsung Tanpa Login) --}}
+            <div class="sidebar-actions">
+                @if($fileUrl)
+                    {{-- Tombol Putar (untuk file video) --}}
+                    @if(in_array($ext, $videoExts))
+                        <a href="{{ $fileUrl }}" target="_blank" class="btn-play">
+                            <i class="fas fa-play"></i> Putar Video
+                        </a>
+                    @else
+                        <a href="{{ $fileUrl }}" target="_blank" class="btn-play">
+                            <i class="fas fa-external-link-alt"></i> Buka File
+                        </a>
+                    @endif
+
+                    {{-- Tombol Download Langsung (Tanpa Login) --}}
+                    <a href="{{ $fileUrl }}" download class="btn-download-sidebar">
+                        <i class="fas fa-download"></i> Download Video
                     </a>
-                </div>
-            @endif
+                @else
+                    {{-- Tombol disabled jika tidak ada file --}}
+                    <button class="btn-play btn-disabled" disabled>
+                        <i class="fas fa-play"></i> Video Tidak Tersedia
+                    </button>
+                    <button class="btn-download-sidebar btn-disabled" disabled>
+                        <i class="fas fa-download"></i> File Tidak Tersedia
+                    </button>
+                @endif
+            </div>
         </aside>
     </div>
 @endsection

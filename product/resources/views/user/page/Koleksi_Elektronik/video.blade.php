@@ -480,15 +480,23 @@
                                 @php
                                     $featExt = strtolower(pathinfo($featured->file_url, PATHINFO_EXTENSION));
                                     $videoExts = ['mp4', 'webm', 'ogg', 'mov'];
+                                    $featuredFileUrl = asset('storage/' . $featured->file_url);
                                 @endphp
                                 @if(in_array($featExt, $videoExts))
-                                    <a href="{{ asset('storage/' . $featured->file_url) }}" target="_blank"
+                                    <a href="{{ $featuredFileUrl }}" target="_blank"
                                        style="margin-top:0; background: var(--accent-yellow); color: var(--primary-color); padding: 12px 25px; border-radius: 50px; font-weight: 700; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; transition: 0.3s;"
                                        onmouseover="this.style.background='#fff'; this.style.transform='translateY(-2px)';"
                                        onmouseout="this.style.background='var(--accent-yellow)'; this.style.transform='translateY(0)';">
                                         <i class="fas fa-play"></i> Putar
                                     </a>
                                 @endif
+                                {{-- Download button for featured video --}}
+                                <a href="{{ $featuredFileUrl }}" download
+                                   style="margin-top:0; background: var(--primary-color); color: white; padding: 12px 25px; border-radius: 50px; font-weight: 700; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; transition: 0.3s;"
+                                   onmouseover="this.style.background='#0f4a31'; this.style.transform='translateY(-2px)';"
+                                   onmouseout="this.style.background='var(--primary-color)'; this.style.transform='translateY(0)';">
+                                    <i class="fas fa-download"></i> Download
+                                </a>
                             @endif
                         </div>
                     </div>
@@ -502,6 +510,12 @@
                         $tahun = $video->year ?? (isset($video->created_at) ? date('Y', strtotime($video->created_at)) : null);
                         $penulis = $video->student_name ?? ($video->user->name ?? null);
                         $jenisKoleksi = 'Video';
+                        
+                        // File URL
+                        $videoFileUrl = $video->file_url ? asset('storage/' . $video->file_url) : null;
+                        $fileExt = $video->file_url ? strtolower(pathinfo($video->file_url, PATHINFO_EXTENSION)) : null;
+                        $videoExts = ['mp4', 'webm', 'ogg', 'mov'];
+                        $isVideoFile = $fileExt && in_array($fileExt, $videoExts);
                     @endphp
                     <div class="v-card">
                         <div class="v-thumb">
@@ -512,7 +526,7 @@
                             @endif
                             @if($video->file_url)
                                 <span class="v-duration">
-                                    {{ strtoupper(pathinfo($video->file_url, PATHINFO_EXTENSION)) }}
+                                    {{ strtoupper($fileExt) }}
                                 </span>
                             @endif
                         </div>
@@ -540,23 +554,23 @@
                                 <a href="{{ route('final_project.detail', $video->id) }}" class="btn-outline-read">
                                     <i class="fas fa-info-circle"></i> Detail
                                 </a>
-                                {{-- Putar --}}
-                                @if($video->file_url)
-                                    @php
-                                        $fileExt = strtolower(pathinfo($video->file_url, PATHINFO_EXTENSION));
-                                        $videoExts = ['mp4', 'webm', 'ogg', 'mov'];
-                                    @endphp
-                                    @if(in_array($fileExt, $videoExts))
-                                        <a href="{{ asset('storage/' . $video->file_url) }}" target="_blank" class="btn-read">
-                                            <i class="fas fa-play"></i> Putar
-                                        </a>
-                                    @endif
+                                
+                                {{-- Putar Video (Untuk file video) --}}
+                                @if($isVideoFile)
+                                    <a href="{{ $videoFileUrl }}" target="_blank" class="btn-read">
+                                        <i class="fas fa-play"></i> Putar
+                                    </a>
                                 @endif
-                                {{-- Download --}}
-                                @if($video->file_url)
-                                    <a href="{{ route('final_project.download', $video->id) }}" class="btn-outline-read">
+                                
+                                {{-- Download Langsung (Tanpa Login) --}}
+                                @if($videoFileUrl)
+                                    <a href="{{ $videoFileUrl }}" download class="btn-outline-read">
                                         <i class="fas fa-download"></i> Download
                                     </a>
+                                @else
+                                    <span class="btn-outline-read" style="opacity: 0.5; cursor: not-allowed;">
+                                        <i class="fas fa-download"></i> Tidak Tersedia
+                                    </span>
                                 @endif
                             </div>
                         </div>
@@ -586,6 +600,7 @@
 
 @push('scripts')
     <script>
+        // Submit form otomatis saat select berubah (untuk filter & sort)
         document.querySelectorAll('.filter-input select').forEach(select => {
             select.addEventListener('change', function() {
                 this.closest('form').submit();
