@@ -387,14 +387,14 @@
         <main class="news-grid" id="newsGrid">
             @forelse($berita ?? [] as $item)
                 <div class="news-card" data-category="{{ $item->category ?? 'berita' }}">
-                    <a href="{{ route('user.berita.show', $item->slug ?? $item->id) }}"
+                    <a href="{{ route('guest.berita.show', $item->slug ?? $item->id) }}"
                        class="news-img"
                        style="background-image: url('{{ asset('storage/' . $item->image) }}');"></a>
                     <div class="news-info">
                         <span class="news-tag">{{ ucfirst($item->category ?? 'Berita') }}</span>
-                        <h3><a href="{{ route('user.berita.show', $item->slug ?? $item->id) }}">{{ $item->title }}</a></h3>
+                        <h3><a href="{{ route('guest.berita.show', $item->slug ?? $item->id) }}">{{ $item->title }}</a></h3>
                         <p>{{ $item->excerpt }}</p>
-                        <a href="{{ route('user.berita.show', $item->slug ?? $item->id) }}" class="btn-readmore">
+                        <a href="{{ route('guest.berita.show', $item->slug ?? $item->id) }}" class="btn-readmore">
                             Baca Selengkapnya <i class="fas fa-arrow-right"></i>
                         </a>
                         <div class="news-meta">

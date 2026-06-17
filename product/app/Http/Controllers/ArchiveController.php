@@ -188,7 +188,7 @@ class ArchiveController extends Controller
         ArchiveFile::where('archive_id', $id)->delete();
         $archive->delete();
 
-        return redirect()->route('admin.page.panduan')
+        return redirect()->route('admin.panduan.index')
             ->with('success', 'Data berhasil dihapus');
     }
 }

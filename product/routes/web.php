@@ -106,8 +106,9 @@ Route::prefix('admin')->name('admin.')->middleware(['admin'])->group(function ()
     });
 
     // ================= BERITA =================
+    // ================= BERITA =================
     Route::prefix('berita')->name('berita.')->group(function () {
-        Route::get('/', [NewsController::class, 'index_admin'])->name('index');
+        Route::get('/', [NewsController::class, 'indexAdmin'])->name('index');
         Route::post('/store', [NewsController::class, 'store'])->name('store');
         Route::put('/{news}', [NewsController::class, 'update'])->name('update');
         Route::delete('/{news}', [NewsController::class, 'destroy'])->name('destroy');
@@ -384,15 +385,15 @@ Route::middleware(['web'])->group(function () {
         Route::get('/waktu_layanan', [ServiceScheduleController::class, 'indexGuest'])
         ->name('waktu.layanan');
 
-    // ================= BERITA (FIX FINAL) =================
+        // ================= BERITA (FIX FINAL) =================
         Route::prefix('berita')->name('guest.berita.')->group(function () {
 
             // LIST
-            Route::get('/', [NewsController::class, 'index'])
+            Route::get('/', [NewsController::class, 'indexGuest'])
                 ->name('index');
 
             // DETAIL (slug OR id aman)
-            Route::get('/{identifier}', [NewsController::class, 'show'])
+            Route::get('/{identifier}', [NewsController::class, 'showGuest'])
                 ->where('identifier', '[0-9a-zA-Z\-]+')
                 ->name('show');
         });

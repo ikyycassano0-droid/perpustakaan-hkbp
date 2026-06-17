@@ -10,15 +10,47 @@ use Illuminate\Support\Str;
 class NewsController extends Controller
 {
     // ================= GUEST =================
-    public function index(Request $request)
+    public function indexGuest(Request $request)
     {
         return $this->baseListing($request, 'guest.page.berita');
+    }
+
+    public function showGuest($identifier)
+    {
+        $news = News::published()
+            ->where('slug', $identifier)
+            ->orWhere('id', $identifier)
+            ->firstOrFail();
+
+        $related = News::published()
+            ->where('id', '!=', $news->id)
+            ->latest()
+            ->take(3)
+            ->get();
+
+        return view('guest.page.berita_detail', compact('news', 'related'));
     }
 
     // ================= USER =================
     public function indexUser(Request $request)
     {
         return $this->baseListing($request, 'user.page.berita');
+    }
+
+    public function showUser($identifier)
+    {
+        $news = News::published()
+            ->where('slug', $identifier)
+            ->orWhere('id', $identifier)
+            ->firstOrFail();
+
+        $related = News::published()
+            ->where('id', '!=', $news->id)
+            ->latest()
+            ->take(3)
+            ->get();
+
+        return view('user.page.berita_detail', compact('news', 'related'));
     }
 
     // ================= SHARED LISTING =================
@@ -47,48 +79,13 @@ class NewsController extends Controller
             $query->where('category', $category);
         }
 
-        // 🔥 Ambil SEMUA berita (jangan exclude featured)
-        // Nanti di blade, featured dikasih badge khusus
         $berita = $query->paginate(6);
 
         return view($view, compact('berita', 'featured'));
     }
 
-    // ================= DETAIL (FIX FINAL ANTI 404) =================
-    public function show($identifier)
-    {
-        $news = News::published()
-            ->where('slug', $identifier)
-            ->orWhere('id', $identifier)
-            ->firstOrFail();
-
-        $related = News::published()
-            ->where('id', '!=', $news->id)
-            ->latest()
-            ->take(3)
-            ->get();
-
-            return view('guest.page.berita_detail', compact('news', 'related'));
-    }
-
-    public function showUser($identifier)
-    {
-        $news = News::published()
-            ->where('slug', $identifier)
-            ->orWhere('id', $identifier)
-            ->firstOrFail();
-
-        $related = News::published()
-            ->where('id', '!=', $news->id)
-            ->latest()
-            ->take(3)
-            ->get();
-
-        return view('user.page.berita_detail', compact('news', 'related'));
-    }
-
     // ================= ADMIN =================
-    public function index_admin()
+    public function indexAdmin()
     {
         $berita = News::latest()->get();
         return view('admin.page.berita', compact('berita'));
@@ -118,7 +115,6 @@ class NewsController extends Controller
         News::create([
             'title'       => $request->title,
             'slug'        => Str::slug($request->title) . '-' . time(),
-
             'excerpt'     => $request->excerpt,
             'content'     => $request->content,
             'image'       => $imagePath,
@@ -153,7 +149,6 @@ class NewsController extends Controller
             'updated_by'  => session('user_id'),
         ];
 
-        
         if ($request->filled('content')) {
             $data['content'] = $request->content;
         }

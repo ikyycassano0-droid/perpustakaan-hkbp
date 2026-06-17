@@ -5,11 +5,9 @@
 @push('styles')
     <style>
         /* ============================================
-           CSS KHUSUS HALAMAN PANDUAN (GAYA KLASIK HIJAU)
-           Tidak mengganggu master layout
+           CSS KHUSUS HALAMAN PANDUAN
         ============================================ */
 
-        /* Matrix container (canvas background) */
         .matrix-container {
             position: relative;
             background: #ffffff;
@@ -27,64 +25,12 @@
             pointer-events: none;
         }
 
-        /* Content container (guide grid) */
         .content-container {
             max-width: 1300px;
             margin: 0 auto;
             position: relative;
             z-index: 5;
             padding: 80px 20px;
-        }
-
-        /* Search & Filter (gaya klasik) */
-        .search-box {
-            margin-bottom: 30px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 14px 20px;
-            border: 1px solid var(--border-color);
-            border-radius: 50px;
-            font-size: 1rem;
-            background: white;
-            transition: 0.3s;
-            outline: none;
-        }
-
-        .search-input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(26, 107, 71, 0.2);
-        }
-
-        .filter-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 40px;
-        }
-
-        .filter-btn {
-            padding: 8px 20px;
-            background: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-dark);
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .filter-btn.active {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-            color: white;
-        }
-
-        .filter-btn:hover:not(.active) {
-            background: #eef3ef;
-            border-color: var(--accent-green);
         }
 
         .guide-grid {
@@ -159,7 +105,29 @@
             gap: 12px;
         }
 
-        /* Notification (opsional) */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            grid-column: 1 / -1;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 4rem;
+            color: var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: var(--text-dark);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
         .notification {
             position: fixed;
             bottom: 30px;
@@ -179,14 +147,30 @@
             transform: translateX(0);
         }
 
-        /* Responsive */
         @media (max-width: 1024px) {
             .guide-grid {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* === Pagination Styling (tidak mengubah tampilan utama) === */
+        @media (max-width: 640px) {
+            .content-container {
+                padding: 40px 15px;
+            }
+
+            .guide-card {
+                padding: 30px 20px;
+            }
+
+            .empty-state .empty-icon {
+                font-size: 3rem;
+            }
+
+            .empty-state h3 {
+                font-size: 1.2rem;
+            }
+        }
+
         .pagination-wrapper {
             margin-top: 50px;
             display: flex;
@@ -245,78 +229,44 @@
                          data-title="{{ $item->title }}"
                          data-desc="{{ $item->description }}">
                         <div class="icon-circle">
-                            <i class="{{ $item->icon ?: 'fas fa-file-alt' }}"></i>
+                            <i class="{{ $item->icon ?? 'fas fa-file-alt' }}"></i>
                         </div>
                         <h3>{{ $item->title }}</h3>
                         <p>{{ $item->description }}</p>
                         @php
-                            $firstFile = $item->files->first();
+                            $firstFile = $item->activeFiles->first();
                         @endphp
                         @if($firstFile)
-                            <button class="link-action"
-                                    onclick="downloadFile('{{ $firstFile->file_url }}', '{{ $firstFile->file_name }}')">
+                            <button class="link-action" onclick="downloadFile('{{ asset('storage/'.$firstFile->file_url) }}', '{{ $firstFile->file_name }}')">
                                 Unduh PDF <i class="fas fa-download"></i>
                             </button>
                         @else
-                            <button class="link-action"
-                                    onclick="downloadFile('', '{{ $item->title }}.pdf')">
+                            <button class="link-action" onclick="downloadFile('#', '{{ $item->title }}.pdf')">
                                 Download <i class="fas fa-download"></i>
                             </button>
                         @endif
                     </div>
                 @empty
-                    {{-- Data fallback statis --}}
-                    <div class="guide-card" data-category="umum">
-                        <div class="icon-circle"><i class="fas fa-user-plus"></i></div>
-                        <h3>Pendaftaran</h3>
-                        <p>Langkah mudah mendaftar sebagai anggota resmi perpustakaan untuk mahasiswa.</p>
-                        <a href="#" class="link-action">Unduh PDF <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                    <div class="guide-card" data-category="umum">
-                        <div class="icon-circle"><i class="fas fa-exchange-alt"></i></div>
-                        <h3>SOP Pinjaman</h3>
-                        <p>Aturan peminjaman buku, batas waktu, dan prosedur perpanjangan buku fisik.</p>
-                        <a href="#" class="link-action">Lihat Selengkapnya <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                    <div class="guide-card" data-category="umum">
-                        <div class="icon-circle"><i class="fas fa-cloud-upload-alt"></i></div>
-                        <h3>Unggah KTI</h3>
-                        <p>Panduan pengunggahan mandiri Tugas Akhir ke Repositori sebagai syarat lulus.</p>
-                        <a href="#" class="link-action">Buka Tutorial <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                    <div class="guide-card" data-category="umum">
-                        <div class="icon-circle"><i class="fas fa-book-reader"></i></div>
-                        <h3>Koleksi Digital</h3>
-                        <p>Cara mengakses ribuan E-book dan Jurnal internasional secara online.</p>
-                        <a href="#" class="link-action">Mulai Baca <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                    <div class="guide-card" data-category="umum">
-                        <div class="icon-circle"><i class="fas fa-search-plus"></i></div>
-                        <h3>Cek Plagiasi</h3>
-                        <p>Layanan Turnitin untuk memastikan orisinalitas karya tulis ilmiah mahasiswa.</p>
-                        <a href="#" class="link-action">Prosedur Cek <i class="fas fa-chevron-right"></i></a>
-                    </div>
-                    <div class="guide-card" data-category="umum">
-                        <div class="icon-circle"><i class="fas fa-headset"></i></div>
-                        <h3>Bantuan Teknis</h3>
-                        <p>Hubungi admin jika Anda mengalami kendala pada akun atau akses website.</p>
-                        <a href="#" class="link-action">Chat Admin <i class="fas fa-chevron-right"></i></a>
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <h3>Belum Ada Panduan</h3>
+                        <p>Saat ini belum tersedia panduan layanan. Silakan cek kembali nanti.</p>
                     </div>
                 @endforelse
             </div>
 
             {{-- Pagination --}}
-            @if($data->lastPage() > 1)
+            @if(method_exists($data, 'lastPage') && $data->lastPage() > 1)
                 <div class="pagination-wrapper">
                     <nav class="pagination-nav">
-                        {{-- Previous --}}
                         @if($data->onFirstPage())
                             <span class="page-link disabled">&laquo; Prev</span>
                         @else
                             <a href="{{ $data->previousPageUrl() }}" class="page-link">&laquo; Prev</a>
                         @endif
 
-                        {{-- Page Numbers --}}
                         @foreach(range(1, $data->lastPage()) as $page)
                             @if($page == $data->currentPage())
                                 <span class="page-link active">{{ $page }}</span>
@@ -325,7 +275,6 @@
                             @endif
                         @endforeach
 
-                        {{-- Next --}}
                         @if($data->hasMorePages())
                             <a href="{{ $data->nextPageUrl() }}" class="page-link">Next &raquo;</a>
                         @else
@@ -343,7 +292,7 @@
 @push('scripts')
     <script>
         // ============================================
-        // CANVAS PARTIKEL & 3D STRUCTURE (WARNA HIJAU)
+        // CANVAS PARTIKEL
         // ============================================
         (function() {
             const canvas = document.getElementById('matrix-canvas');
@@ -500,10 +449,10 @@
         })();
 
         // ============================================
-        // TILT EFFECT UNTUK KARTU (3D)
+        // TILT EFFECT
         // ============================================
         document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.guide-card');
+            const cards = document.querySelectorAll('.guide-card:not(.empty-state)');
             cards.forEach(card => {
                 card.addEventListener('mousemove', (e) => {
                     const rect = card.getBoundingClientRect();
@@ -518,57 +467,7 @@
         });
 
         // ============================================
-        // SEARCH & FILTER FUNGSIONALITAS
-        // ============================================
-        const searchInput = document.getElementById('searchInput');
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const guideCards = document.querySelectorAll('.guide-card');
-
-        function filterAndSearch() {
-            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
-            const activeFilter = document.querySelector('.filter-btn.active')?.getAttribute('data-filter') || 'all';
-
-            guideCards.forEach(card => {
-                const title = (card.getAttribute('data-title') || card.querySelector('h3')?.innerText || '').toLowerCase();
-                const desc = (card.getAttribute('data-desc') || card.querySelector('p')?.innerText || '').toLowerCase();
-                const category = card.getAttribute('data-category') || 'umum';
-
-                const matchesSearch = searchTerm === '' || title.includes(searchTerm) || desc.includes(searchTerm);
-                const matchesFilter = activeFilter === 'all' || category === activeFilter;
-
-                card.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
-            });
-        }
-
-        if (searchInput) {
-            searchInput.addEventListener('input', filterAndSearch);
-        }
-
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                filterAndSearch();
-            });
-        });
-
-        // Set data attributes jika belum ada (untuk fallback statis)
-        document.querySelectorAll('.guide-card').forEach(card => {
-            if (!card.hasAttribute('data-title')) {
-                const title = card.querySelector('h3')?.innerText || '';
-                card.setAttribute('data-title', title);
-            }
-            if (!card.hasAttribute('data-desc')) {
-                const desc = card.querySelector('p')?.innerText || '';
-                card.setAttribute('data-desc', desc);
-            }
-            if (!card.hasAttribute('data-category')) {
-                card.setAttribute('data-category', 'umum');
-            }
-        });
-
-        // ============================================
-        // FUNGSI DOWNLOAD FILE (jika ada)
+        // DOWNLOAD FILE
         // ============================================
         function downloadFile(url, filename) {
             if (!url || url === '#') {
@@ -588,6 +487,7 @@
             const notif = document.getElementById('notification');
             if (!notif) return;
             notif.innerText = message;
+            notif.style.background = type === 'success' ? '#1a6b47' : '#dc3545';
             notif.classList.add('show');
             setTimeout(() => {
                 notif.classList.remove('show');

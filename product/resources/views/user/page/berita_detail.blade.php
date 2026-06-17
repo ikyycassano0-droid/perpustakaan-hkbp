@@ -3,12 +3,11 @@
 @section('title', 'Detail Berita - Perpustakaan AKPER HKBP')
 
 @section('hero')
-    <!-- Banner Hero khusus halaman berita -->
     <div class="page-header">
         <div class="breadcrumb">
-            <a href="{{ url('user.dashboard') }}">Home</a> /
+            <a href="{{ route('user.dashboard') }}">Home</a> /
             <a href="{{ route('user.berita') }}">Berita</a> /
-            <span>Detail Artikel</span>
+            <span>{{ $news->title ?? 'Detail Artikel' }}</span>
         </div>
         <h1 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; letter-spacing: 2px;">NEWS UPDATE</h1>
     </div>
@@ -19,43 +18,113 @@
         <!-- ISI BERITA -->
         <main>
             <article class="news-detail">
-                <span class="news-category">Workshop</span>
-                <h2>Workshop Literasi Medis: Strategi Akses Jurnal Internasional Scopus</h2>
+                {{-- Kategori dari Database --}}
+                <span class="news-category">{{ strtoupper($news->category ?? 'UMUM') }}</span>
+                
+                {{-- Judul dari Database --}}
+                <h2>{{ $news->title ?? 'Judul Berita' }}</h2>
 
+                {{-- Meta Informasi dari Database --}}
                 <div class="news-meta-detail">
-                    <span><i class="far fa-calendar-alt"></i> 15 Mei 2024</span>
-                    <span><i class="far fa-user"></i> Admin Perpustakaan</span>
-                    <span><i class="far fa-eye"></i> 1,240 Dilihat</span>
+                    <span><i class="far fa-calendar-alt"></i> {{ $news->created_at ? $news->created_at->format('d M Y') : date('d M Y') }}</span>
+                    <span><i class="far fa-user"></i> {{ $news->createdBy->name ?? $news->author ?? 'Admin Perpustakaan' }}</span>
+                    @if(isset($news->is_featured) && $news->is_featured)
+                        <span><i class="fas fa-star" style="color: #f1c40f;"></i> Berita Utama</span>
+                    @endif
                 </div>
 
-                <div class="featured-image-container">
-                    <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1000&q=80" alt="News Image" class="featured-image">
-                </div>
+                {{-- Gambar Utama dari Database --}}
+                @if(isset($news->image) && $news->image)
+                    <div class="featured-image-container">
+                        <img src="{{ asset('storage/'.$news->image) }}" alt="{{ $news->title ?? 'Gambar Berita' }}" class="featured-image">
+                    </div>
+                @endif
 
+                {{-- Konten Berita dari Database --}}
                 <div class="news-content">
-                    <p><strong>Balige, 15 Mei 2024</strong> – Perpustakaan AKPER HKBP kembali mengadakan kegiatan rutin tahunan untuk membekali mahasiswa tingkat akhir dalam penyusunan Karya Tulis Ilmiah (KTI).</p>
-                    <p>Workshop kali ini berfokus pada strategi menembus dan mencari referensi di pangkalan data internasional seperti Scopus, ScienceDirect, dan ProQuest. Hal ini dirasa penting mengingat standar referensi karya ilmiah saat ini yang menuntut pembaruan data dan validitas sumber informasi.</p>
-                    <blockquote>
-                        "Literasi bukan hanya soal membaca buku, tapi bagaimana kita mampu memilah informasi yang valid dari ribuan jurnal yang tersedia di internet demi kredibilitas profesi keperawatan."
-                    </blockquote>
-                    <p>Kepala Perpustakaan menyampaikan bahwa kemampuan literasi digital bagi calon perawat sangatlah krusial. Seorang perawat masa depan harus berbasis bukti (Evidence Based Practice) yang bersumber dari riset-riset terkini.</p>
+                    @if(isset($news->excerpt) && $news->excerpt)
+                        <p><strong>{{ $news->excerpt }}</strong></p>
+                        <hr>
+                    @endif
+                    {!! $news->content ?? '<p>Konten berita tidak tersedia.</p>' !!}
+                </div>
+
+                {{-- Tombol Bagikan --}}
+                <div class="share-section">
+                    <span style="font-weight: bold; color: var(--primary-color);">Bagikan:</span>
+                    <button onclick="shareArticle('facebook')" class="btn-share fb"><i class="fab fa-facebook-f"></i></button>
+                    <button onclick="shareArticle('whatsapp')" class="btn-share wa"><i class="fab fa-whatsapp"></i></button>
+                    <button onclick="shareArticle('twitter')" class="btn-share tw"><i class="fab fa-twitter"></i></button>
+                    <button onclick="copyLink()" class="btn-share copy"><i class="fas fa-link"></i></button>
+                </div>
+
+                {{-- Tombol Kembali --}}
+                <div style="text-align: center; margin-top: 30px;">
+                    <a href="{{ route('user.berita') }}" class="btn-back">
+                        <i class="fas fa-arrow-left"></i> Kembali ke Daftar Berita
+                    </a>
                 </div>
             </article>
         </main>
 
-        <!-- SIDEBAR (hanya kategori dan pencarian) -->
+        <!-- SIDEBAR -->
         <aside>
+            {{-- Berita Terkait dari Database --}}
             <div class="sidebar-card">
-                <h4>Kategori Berita</h4>
-                <ul class="category-list">
-                    <li><a href="{{ route('user.berita') }}">Semua</a></li>
-                    <li><a href="{{ route('user.berita', ['kategori' => 'akademik']) }}">Akademik</a></li>
-                    <li><a href="{{ route('user.berita', ['kategori' => 'pengumuman']) }}">Pengumuman</a></li>
-                    <li><a href="{{ route('user.berita', ['kategori' => 'kegiatan']) }}">Kegiatan</a></li>
-                    <li><a href="{{ route('user.berita', ['kategori' => 'riset']) }}">Riset</a></li>
-                    <li><a href="{{ route('user.berita', ['kategori' => 'fasilitas']) }}">Fasilitas</a></li>
-                    <li><a href="{{ route('user.berita', ['kategori' => 'sosial']) }}">Sosial</a></li>
-                </ul>
+                <h4><i class="fas fa-newspaper"></i> Berita Terkait</h4>
+                @if(isset($related) && $related->count() > 0)
+                    @foreach($related as $item)
+                        <div class="recent-post-item">
+                            @if($item->image)
+                                <img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->title }}" class="recent-post-img">
+                            @else
+                                <div style="width:70px; height:60px; background:#e0e8e3; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#999; font-size:1.5rem;">
+                                    <i class="fas fa-newspaper"></i>
+                                </div>
+                            @endif
+                            <div class="recent-post-info">
+                                <a href="{{ route('user.berita.show', $item->id) }}">
+                                    <h5>{{ $item->title }}</h5>
+                                </a>
+                                <span><i class="far fa-calendar-alt"></i> {{ $item->created_at->format('d M Y') }}</span>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <p style="color: var(--text-muted); text-align: center; padding: 10px 0;">
+                        <i class="fas fa-info-circle"></i> Tidak ada berita terkait.
+                    </p>
+                @endif
+            </div>
+
+            {{-- Kategori dari Database --}}
+            <div class="sidebar-card">
+                <h4><i class="fas fa-tags"></i> Kategori</h4>
+                @php
+                    $categories = App\Models\News::select('category')
+                        ->where('status', 'publish')
+                        ->whereNotNull('category')
+                        ->groupBy('category')
+                        ->get();
+                @endphp
+                @if($categories->count() > 0)
+                    <ul>
+                        @foreach($categories as $cat)
+                            <li>
+                                <a href="{{ route('user.berita', ['kategori' => $cat->category]) }}">
+                                    <i class="fas fa-folder"></i> {{ ucfirst($cat->category) }}
+                                </a>
+                                <span class="badge" style="background: var(--primary-color); color: white; padding: 2px 10px; border-radius: 50px; font-size: 0.7rem;">
+                                    {{ App\Models\News::where('category', $cat->category)->where('status', 'publish')->count() }}
+                                </span>
+                            </li>
+                        @endforeach
+                    </ul>
+                @else
+                    <p style="color: var(--text-muted); text-align: center; padding: 10px 0;">
+                        Belum ada kategori.
+                    </p>
+                @endif
             </div>
         </aside>
     </div>
@@ -63,7 +132,18 @@
 
 @push('styles')
     <style>
-        /* CSS spesifik untuk halaman detail berita (tidak mengganggu master) */
+        :root {
+            --primary-color: #1a6b47;
+            --deep-green: #0f4a31;
+            --accent-green: #2daa6e;
+            --accent-yellow: #f1c40f;
+            --text-dark: #0d2137;
+            --text-muted: #5a7060;
+            --light-bg: #f4f7f5;
+            --card-bg: #ffffff;
+            --border-color: #d4e5d9;
+        }
+
         .page-header {
             background: linear-gradient(rgba(15, 74, 49, 0.85), rgba(26, 107, 71, 0.85)),
                         url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1200&q=80');
@@ -83,6 +163,7 @@
 
         .breadcrumb a {
             color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
         }
 
         .breadcrumb a:hover {
@@ -168,6 +249,13 @@
             margin-bottom: 20px;
         }
 
+        .news-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
         blockquote {
             background: #f9fbf9;
             border-left: 5px solid var(--accent-yellow);
@@ -178,7 +266,64 @@
             border-radius: 0 12px 12px 0;
         }
 
-        /* Sidebar baru */
+        .share-section {
+            margin-top: 40px;
+            padding: 20px 0;
+            border-top: 1px dashed var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-share {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-share:hover {
+            transform: translateY(-3px);
+        }
+
+        .btn-share.fb { background: #3b5998; }
+        .btn-share.wa { background: #25d366; }
+        .btn-share.tw { background: #1da1f2; }
+        .btn-share.copy { background: #6c757d; }
+
+        .btn-back {
+            display: inline-block;
+            background: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 107, 71, 0.2);
+        }
+
+        .btn-back i {
+            margin-right: 6px;
+        }
+
         .sidebar-card {
             background: var(--card-bg);
             padding: 25px;
@@ -196,58 +341,90 @@
             font-weight: 700;
         }
 
-        .search-container {
-            position: relative;
+        .recent-post-item {
             display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+            transition: 0.2s;
         }
 
-        .search-container input {
-            flex: 1;
-            padding: 12px 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 12px 0 0 12px;
-            outline: none;
-            font-size: 0.9rem;
-            background: white;
+        .recent-post-item:hover {
+            transform: translateX(5px);
         }
 
-        .search-container input:focus {
-            border-color: var(--primary-color);
+        .recent-post-img {
+            width: 70px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
         }
 
-        .search-container button {
-            background: var(--primary-color);
-            border: none;
-            padding: 0 18px;
-            border-radius: 0 12px 12px 0;
-            color: white;
-            cursor: pointer;
-            transition: 0.3s;
+        .recent-post-info h5 {
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+            font-weight: 700;
         }
 
-        .search-container button:hover {
-            background: var(--accent-green);
+        .recent-post-info a {
+            text-decoration: none;
+            color: var(--text-dark);
         }
 
-        .category-list {
+        .recent-post-info a:hover {
+            color: var(--primary-color);
+        }
+
+        .recent-post-info span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .sidebar-card ul {
             list-style: none;
             padding: 0;
         }
 
-        .category-list li {
-            padding: 10px 0;
+        .sidebar-card ul li {
+            padding: 8px 0;
             border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
         }
 
-        .category-list li a {
-            display: block;
-            color: var(--text-muted);
-            transition: 0.2s;
+        .sidebar-card ul li a {
+            color: var(--text-dark);
+            text-decoration: none;
         }
 
-        .category-list li a:hover {
+        .sidebar-card ul li a:hover {
             color: var(--primary-color);
-            padding-left: 5px;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 12px 24px;
+            color: white;
+            border-radius: 12px;
+            z-index: 1000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: #1a6b47;
+        }
+
+        .notification.error {
+            background: #dc3545;
         }
 
         @media (max-width: 1024px) {
@@ -267,11 +444,70 @@
 
 @push('scripts')
     <script>
-        // Fungsi logout (jika diperlukan)
-        function logout() {
-            if (confirm("Apakah Anda yakin ingin keluar?")) {
-                window.location.href = "{{ url('guest') }}";
+        const currentNews = {
+            id: {{ $news->id ?? 0 }},
+            title: @json($news->title ?? 'Berita'),
+            url: window.location.href
+        };
+
+        function shareArticle(platform) {
+            const url = encodeURIComponent(currentNews.url);
+            const title = encodeURIComponent(currentNews.title);
+            let shareUrl = '';
+
+            switch(platform) {
+                case 'facebook':
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                    break;
+                case 'whatsapp':
+                    shareUrl = `https://wa.me/?text=${title}%20${url}`;
+                    break;
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?text=${title}&url=${url}`;
+                    break;
+            }
+
+            if (shareUrl) {
+                window.open(shareUrl, '_blank', 'width=600,height=400');
+                showNotification(`Membagikan artikel ke ${platform}`, 'success');
             }
         }
+
+        function copyLink() {
+            navigator.clipboard.writeText(currentNews.url).then(() => {
+                showNotification('Link berita telah disalin ke clipboard!', 'success');
+            }).catch(() => {
+                const textarea = document.createElement('textarea');
+                textarea.value = currentNews.url;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showNotification('Link berita telah disalin!', 'success');
+            });
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <span>${type === 'success' ? '✅' : '❌'} ${message}</span>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 10);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
+        }
+
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.notification')) {
+                const notif = e.target.closest('.notification');
+                notif.classList.remove('show');
+                setTimeout(() => notif.remove(), 300);
+            }
+        });
     </script>
 @endpush

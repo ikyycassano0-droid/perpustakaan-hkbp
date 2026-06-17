@@ -6,7 +6,6 @@
     <style>
         /* ============================================
            OVERRIDE TEMA MASTER → TEMA HIJAU + AKSEN KUNING
-           (Tidak mengubah route / nama variabel)
         ============================================ */
         :root {
             --primary-color: #1a6b47;
@@ -27,7 +26,6 @@
             line-height: 1.8;
         }
 
-        /* --- BREADCRUMB & PAGE HEADER --- */
         .page-header {
             background: linear-gradient(rgba(15, 74, 49, 0.85), rgba(26, 107, 71, 0.85)),
                         url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1200&q=80');
@@ -62,7 +60,6 @@
             font-weight: 900;
         }
 
-        /* --- LAYOUT UTAMA --- */
         .main-container {
             max-width: 1200px;
             margin: 40px auto 60px;
@@ -72,7 +69,6 @@
             padding: 0 3%;
         }
 
-        /* --- ARTIKEL DETAIL --- */
         article.news-detail {
             background: var(--card-bg);
             padding: 40px;
@@ -143,6 +139,19 @@
             margin-bottom: 20px;
         }
 
+        .news-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .news-content h1, .news-content h2, .news-content h3 {
+            color: var(--primary-color);
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
         blockquote {
             background: #f9fbf9;
             border-left: 5px solid var(--accent-yellow);
@@ -153,7 +162,6 @@
             border-radius: 0 12px 12px 0;
         }
 
-        /* --- BAGIKAN --- */
         .share-section {
             margin-top: 40px;
             padding: 20px 0;
@@ -188,7 +196,6 @@
         .btn-share.tw { background: #1da1f2; }
         .btn-share.copy { background: #6c757d; }
 
-        /* --- TOMBOL BACK (KHUSUS) --- */
         .btn-back {
             display: inline-block;
             background: transparent;
@@ -214,144 +221,7 @@
             margin-right: 6px;
         }
 
-        /* --- KOMENTAR --- */
-        .comments-section {
-            margin-top: 50px;
-            border-top: 2px solid var(--border-color);
-            padding-top: 40px;
-        }
-
-        .comments-section h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.4rem;
-            color: var(--primary-color);
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .comment-item {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
-            background: #fafdfb;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-        }
-
-        .comment-avatar {
-            width: 50px;
-            height: 50px;
-            background: #e0e8e3;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-color);
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .comment-content {
-            flex-grow: 1;
-        }
-
-        .comment-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-
-        .comment-name {
-            font-weight: 700;
-            color: var(--text-dark);
-            font-size: 0.95rem;
-        }
-
-        .comment-date {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .comment-text {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
-
-        .comment-form-container {
-            margin-top: 40px;
-            background: #fafdfb;
-            padding: 25px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-        }
-
-        .comment-form-container h4 {
-            margin-bottom: 20px;
-            color: var(--primary-color);
-            font-weight: 700;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            outline: none;
-            font-size: 0.9rem;
-            transition: 0.3s;
-            background: white;
-        }
-
-        .form-input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(26, 107, 71, 0.1);
-        }
-
-        textarea.form-input {
-            height: 120px;
-            resize: none;
-        }
-
-        .btn-submit {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .btn-submit:hover {
-            background: var(--accent-green);
-            transform: translateY(-2px);
-        }
-
-        /* --- SIDEBAR --- */
+        /* Sidebar */
         .sidebar-card {
             background: var(--card-bg);
             padding: 25px;
@@ -395,6 +265,15 @@
             font-weight: 700;
         }
 
+        .recent-post-info a {
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        .recent-post-info a:hover {
+            color: var(--primary-color);
+        }
+
         .recent-post-info span {
             font-size: 0.75rem;
             color: var(--text-muted);
@@ -412,11 +291,15 @@
             justify-content: space-between;
         }
 
+        .sidebar-card ul li a {
+            color: var(--text-dark);
+            text-decoration: none;
+        }
+
         .sidebar-card ul li a:hover {
             color: var(--primary-color);
         }
 
-        /* --- NOTIFICATION --- */
         .notification {
             position: fixed;
             bottom: 30px;
@@ -435,7 +318,6 @@
             transform: translateX(0);
         }
 
-        /* Responsive */
         @media (max-width: 1024px) {
             .main-container {
                 grid-template-columns: 1fr;
@@ -443,10 +325,6 @@
         }
 
         @media (max-width: 640px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
             article.news-detail {
                 padding: 25px;
             }
@@ -459,9 +337,9 @@
         {{-- HERO BREADCRUMB --}}
         <div class="page-header">
             <div class="breadcrumb">
-                <a href="#">Home</a> /
+                <a href="{{ route('home') }}">Home</a> /
                 <a href="{{ route('guest.berita.index') }}">Berita</a> /
-                <span>{{ $news->title }}</span>
+                <span>{{ $news->title ?? 'Detail Berita' }}</span>
             </div>
             <h1>NEWS UPDATE</h1>
         </div>
@@ -470,27 +348,35 @@
             {{-- ARTIKEL UTAMA --}}
             <main>
                 <article class="news-detail">
-                    {{-- Kategori badge --}}
-                    <span class="news-category">{{ strtoupper($news->category) }}</span>
+                    {{-- Kategori --}}
+                    <span class="news-category">{{ strtoupper($news->category ?? 'UMUM') }}</span>
 
-                    <h2>{{ $news->title }}</h2>
+                    {{-- Judul --}}
+                    <h2>{{ $news->title ?? 'Judul Berita' }}</h2>
 
-                    {{-- Meta informasi --}}
+                    {{-- Meta Informasi --}}
                     <div class="news-meta-detail">
-                        <span><i class="far fa-calendar-alt"></i> {{ $news->created_at->format('d M Y') }}</span>
-                        <span><i class="far fa-user"></i> {{ $news->author ?? 'Admin' }}</span>
-                        <span><i class="far fa-eye"></i> {{ $news->views ?? 0 }} Dilihat</span>
-                        <span><i class="far fa-comment"></i> 2 Komentar</span>
+                        <span><i class="far fa-calendar-alt"></i> {{ $news->created_at ? $news->created_at->format('d M Y') : date('d M Y') }}</span>
+                        <span><i class="far fa-user"></i> {{ $news->createdBy->name ?? $news->author ?? 'Admin' }}</span>
+                        @if(isset($news->is_featured) && $news->is_featured)
+                            <span><i class="fas fa-star" style="color: #f1c40f;"></i> Berita Utama</span>
+                        @endif
                     </div>
 
                     {{-- Gambar Utama --}}
-                    <div class="featured-image-container">
-                        <img src="{{ asset('storage/'.$news->image) }}" alt="{{ $news->title }}" class="featured-image">
-                    </div>
+                    @if(isset($news->image) && $news->image)
+                        <div class="featured-image-container">
+                            <img src="{{ asset('storage/'.$news->image) }}" alt="{{ $news->title ?? 'Gambar Berita' }}" class="featured-image">
+                        </div>
+                    @endif
 
-                    {{-- Isi Berita --}}
+                    {{-- Konten Berita --}}
                     <div class="news-content">
-                        {!! $news->content !!}
+                        @if(isset($news->excerpt) && $news->excerpt)
+                            <p><strong>{{ $news->excerpt }}</strong></p>
+                            <hr>
+                        @endif
+                        {!! $news->content ?? '<p>Konten berita tidak tersedia.</p>' !!}
                     </div>
 
                     {{-- Tombol Bagikan --}}
@@ -502,62 +388,12 @@
                         <button onclick="copyLink()" class="btn-share copy"><i class="fas fa-link"></i></button>
                     </div>
 
-                    {{-- TOMBOL BACK KE DAFTAR BERITA --}}
+                    {{-- Tombol Kembali --}}
                     <div style="text-align: center; margin-top: 30px;">
                         <a href="{{ route('guest.berita.index') }}" class="btn-back">
                             <i class="fas fa-arrow-left"></i> Kembali ke Daftar Berita
                         </a>
                     </div>
-
-                    {{-- Komentar --}}
-                    <section class="comments-section">
-                        <h3><i class="fas fa-comments"></i> Komentar (2)</h3>
-
-                        <div class="comment-list">
-                            <div class="comment-item">
-                                <div class="comment-avatar">JS</div>
-                                <div class="comment-content">
-                                    <div class="comment-header">
-                                        <span class="comment-name">Junita Simanjuntak</span>
-                                        <span class="comment-date">16 Mei 2024</span>
-                                    </div>
-                                    <p class="comment-text">Terima kasih atas informasinya! Sangat membantu kami yang sedang menyusun tugas akhir.</p>
-                                </div>
-                            </div>
-                            <div class="comment-item">
-                                <div class="comment-avatar">RP</div>
-                                <div class="comment-content">
-                                    <div class="comment-header">
-                                        <span class="comment-name">Rudi Pasaribu</span>
-                                        <span class="comment-date">17 Mei 2024</span>
-                                    </div>
-                                    <p class="comment-text">Materi workshopnya sangat jelas. Sukses selalu untuk AKPER HKBP!</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- Form Komentar --}}
-                        <div class="comment-form-container">
-                            <h4>Tulis Komentar Anda</h4>
-                            <form id="commentForm" onsubmit="submitComment(event)">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label class="form-label">Nama Lengkap</label>
-                                        <input type="text" class="form-input" placeholder="Masukkan nama Anda..." required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Email</label>
-                                        <input type="email" class="form-input" placeholder="Masukkan email Anda..." required>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Isi Komentar</label>
-                                    <textarea class="form-input" placeholder="Tuliskan pendapat Anda di sini..." required></textarea>
-                                </div>
-                                <button type="submit" class="btn-submit">Kirim Komentar</button>
-                            </form>
-                        </div>
-                    </section>
                 </article>
             </main>
 
@@ -565,28 +401,60 @@
             <aside>
                 {{-- Berita Terkait --}}
                 <div class="sidebar-card">
-                    <h4>Berita Terkait</h4>
-                    @foreach($related as $item)
-                        <div class="recent-post-item">
-                            <img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->title }}" class="recent-post-img">
-                            <div class="recent-post-info">
-                                <a href="{{ route('guest.berita.show', $item->id) }}">
-                                    <h5>{{ $item->title }}</h5>
-                                </a>
-                                <span>{{ $item->created_at->format('d M Y') }}</span>
+                    <h4><i class="fas fa-newspaper"></i> Berita Terkait</h4>
+                    @if(isset($related) && $related->count() > 0)
+                        @foreach($related as $item)
+                            <div class="recent-post-item">
+                                @if($item->image)
+                                    <img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->title }}" class="recent-post-img">
+                                @else
+                                    <div style="width:70px; height:60px; background:#e0e8e3; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#999; font-size:1.5rem;">
+                                        <i class="fas fa-newspaper"></i>
+                                    </div>
+                                @endif
+                                <div class="recent-post-info">
+                                    <a href="{{ route('guest.berita.show', $item->id ?? $item->slug) }}">
+                                        <h5>{{ $item->title }}</h5>
+                                    </a>
+                                    <span><i class="far fa-calendar-alt"></i> {{ $item->created_at->format('d M Y') }}</span>
+                                </div>
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    @else
+                        <p style="color: var(--text-muted); text-align: center; padding: 20px 0;">
+                            <i class="fas fa-info-circle"></i> Tidak ada berita terkait.
+                        </p>
+                    @endif
                 </div>
 
-                {{-- Kategori (statis, bisa dikembangkan) --}}
+                {{-- Kategori dari Database --}}
                 <div class="sidebar-card">
-                    <h4>Kategori</h4>
-                    <ul>
-                        <li><a href="#">Workshop</a> <span>(7)</span></li>
-                        <li><a href="#">Pengumuman</a> <span>(5)</span></li>
-                        <li><a href="#">Kegiatan</a> <span>(12)</span></li>
-                    </ul>
+                    <h4><i class="fas fa-tags"></i> Kategori</h4>
+                    @php
+                        $categories = App\Models\News::select('category')
+                            ->where('status', 'publish')
+                            ->whereNotNull('category')
+                            ->groupBy('category')
+                            ->get();
+                    @endphp
+                    @if($categories->count() > 0)
+                        <ul>
+                            @foreach($categories as $cat)
+                                <li>
+                                    <a href="{{ route('guest.berita.index', ['category' => $cat->category]) }}">
+                                        <i class="fas fa-folder"></i> {{ ucfirst($cat->category) }}
+                                    </a>
+                                    <span class="badge" style="background: var(--primary-color); color: white; padding: 2px 10px; border-radius: 50px; font-size: 0.7rem;">
+                                        {{ App\Models\News::where('category', $cat->category)->where('status', 'publish')->count() }}
+                                    </span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p style="color: var(--text-muted); text-align: center; padding: 10px 0;">
+                            Belum ada kategori.
+                        </p>
+                    @endif
                 </div>
             </aside>
         </div>
@@ -595,12 +463,14 @@
 
 @push('scripts')
     <script>
-        // Data berita saat ini untuk share
+        // Data berita saat ini
         const currentNews = {
-            title: @json($news->title),
+            id: @json($news->id ?? 0),
+            title: @json($news->title ?? 'Berita'),
             url: window.location.href
         };
 
+        // Fungsi Share
         function shareArticle(platform) {
             const url = encodeURIComponent(currentNews.url);
             const title = encodeURIComponent(currentNews.title);
@@ -624,43 +494,44 @@
             }
         }
 
+        // Fungsi Copy Link
         function copyLink() {
             navigator.clipboard.writeText(currentNews.url).then(() => {
                 showNotification('Link berita telah disalin ke clipboard!', 'success');
+            }).catch(() => {
+                const textarea = document.createElement('textarea');
+                textarea.value = currentNews.url;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showNotification('Link berita telah disalin!', 'success');
             });
         }
 
-        // Komentar (simulasi)
-        function submitComment(event) {
-            event.preventDefault();
-            const form = document.getElementById('commentForm');
-            const name = form.querySelector('input[type="text"]').value;
-            const email = form.querySelector('input[type="email"]').value;
-            const message = form.querySelector('textarea').value;
-
-            if (name && email && message) {
-                showNotification('Komentar Anda telah dikirim (simulasi). Terima kasih!', 'success');
-                form.reset();
-            } else {
-                showNotification('Mohon isi semua field.', 'error');
-            }
-        }
-
-        // Notifikasi custom (fallback)
+        // Notifikasi
         function showNotification(message, type = 'success') {
-            if (typeof showNotif === 'function') {
-                showNotif(message, type);
-            } else {
-                const notification = document.createElement('div');
-                notification.className = 'notification';
-                notification.innerHTML = `<span>${type === 'success' ? '✅' : '❌'} ${message}</span>`;
-                document.body.appendChild(notification);
-                setTimeout(() => notification.classList.add('show'), 10);
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                    setTimeout(() => notification.remove(), 300);
-                }, 3000);
-            }
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <span>${type === 'success' ? '✅' : '❌'} ${message}</span>
+            `;
+            notification.style.background = type === 'success' ? '#1a6b47' : '#dc3545';
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 10);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
         }
+
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.notification')) {
+                const notif = e.target.closest('.notification');
+                notif.classList.remove('show');
+                setTimeout(() => notif.remove(), 300);
+            }
+        });
     </script>
 @endpush
