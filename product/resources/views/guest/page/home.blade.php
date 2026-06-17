@@ -7,7 +7,6 @@
     <h2 data-aos="fade-down" data-aos-delay="300">Gerbang Literasi Keperawatan HKBP</h2>
     <p data-aos="fade-up" data-aos-delay="500">Akses menyeluruh ke ribuan koleksi literatur medis, jurnal klinis terakreditasi, dan arsip penelitian eksklusif untuk mendukung keunggulan akademik di Akper HKBP Balige.</p>
 
-    {{-- FORM PENCARIAN diarahkan ke pencarian guest --}}
     <form class="search-container" method="GET" action="{{ route('guest.global_search') }}" data-aos="zoom-in" data-aos-delay="800">
       <input type="text" name="keyword" placeholder="Cari referensi medis, buku, atau artikel ilmiah...">
       <button type="submit" class="search-btn"><i class="fas fa-search"></i> Cari Katalog</button>
@@ -19,7 +18,8 @@
   <style>
     /* ============================================
        GAYA KHUSUS UNTUK HALAMAN HOME (GUEST)
-       Semua aturan dipertahankan, hanya dirapikan.
+       Semua aturan dipertahankan, hanya ditambahkan
+       untuk konsistensi ukuran card & gambar.
     ============================================ */
 
     /* ---------- HERO SECTION ---------- */
@@ -244,9 +244,8 @@
       pointer-events: none;
     }
 
-    /* Atur padding horizontal untuk konten Layanan Perpustakaan */
     .matrix-wrapper-layanan .section-container {
-      padding: 40px 54px;   /* ganti 20px sesuai keinginan, bisa 0px, 10px, 50px dll */
+      padding: 40px 54px;
     }
 
     .section-container {
@@ -318,7 +317,7 @@
       grid-column: span 2;
     }
 
-    /* ---------- PERPUSTAKAAN DALAM ANGKA (STATISTIK) ---------- */
+    /* ---------- PERPUSTAKAAN DALAM ANGKA ---------- */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -328,7 +327,7 @@
     }
 
     .stats-label {
-      margin-left: 60px; /* atau nilai lain */
+      margin-left: 60px;
       margin-bottom: 18px;
       padding: 8px 25px;
     }
@@ -370,7 +369,9 @@
       font-weight: 500;
     }
 
-    /* ---------- KOLEKSI UNGGULAN ---------- */
+    /* ============================================================
+       PERBAIKAN UTAMA: KOLEKSI UNGGULAN - UKURAN CARD TETAP
+    ============================================================ */
     .koleksi-unggulan-section {
       padding: 40px 7%;
       background: var(--card-bg);
@@ -426,6 +427,7 @@
       border-color: var(--deep-green);
     }
 
+    /* GRID UTAMA */
     .koleksi-unggulan-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -435,27 +437,43 @@
       margin: 0 auto;
     }
 
+    /* --- CARD BESAR (HERO) --- */
     .koleksi-hero-card {
       grid-column: 1;
       grid-row: 1 / 3;
       border-radius: 28px;
       overflow: hidden;
       position: relative;
-      min-height: 420px;
+      min-height: 600px;  /* tinggi minimum agar tidak berubah */
+      max-height: 720px;  /* batasi tinggi maksimal */
       cursor: pointer;
       background: var(--deep-green);
     }
 
-    .koleksi-hero-card img {
+    /* CONTAINER GAMBAR - UKURAN TETAP */
+    .koleksi-hero-card .card-cover {
+    padding: 1px;
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      opacity: 0.70;
-      transition: transform 0.6s ease, opacity 0.6s ease;
-      display: block;
+      min-height: 600px;
+      max-height: 720px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .koleksi-hero-card:hover img {
+    .koleksi-hero-card .card-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;   /* gambar akan memenuhi area tanpa merusak proporsi */
+      object-position: center;
+      display: block;
+      background-color: #f0f4f2;
+      transition: transform 0.6s ease, opacity 0.6s ease;
+    }
+
+    .koleksi-hero-card:hover .card-cover img {
       transform: scale(1.05);
       opacity: 0.55;
     }
@@ -467,7 +485,11 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      padding: 40px;
+      padding: 30px;
+      pointer-events: none; /* agar tombol tetap bisa diklik */
+    }
+    .koleksi-hero-overlay a {
+      pointer-events: auto;
     }
 
     .koleksi-hero-badge {
@@ -511,6 +533,7 @@
       border-radius: 50px;
       transition: background 0.3s, transform 0.3s;
       width: fit-content;
+      pointer-events: auto;
     }
 
     .koleksi-hero-btn:hover {
@@ -518,6 +541,7 @@
       transform: translateY(-2px);
     }
 
+    /* --- CARD RISET (KANAN ATAS) --- */
     .koleksi-riset-card {
       grid-column: 2;
       grid-row: 1;
@@ -530,6 +554,7 @@
       background: white;
       transition: box-shadow 0.3s, transform 0.3s;
       cursor: pointer;
+      min-height: 210px; /* konsisten */
     }
 
     .koleksi-riset-card:hover {
@@ -538,30 +563,35 @@
       border-color: var(--accent-green);
     }
 
+    /* COVER BUKU DI CARD RISET - UKURAN TETAP */
     .koleksi-riset-book-cover {
       min-width: 110px;
       width: 110px;
       height: 155px;
+      flex-shrink: 0;  /* JANGAN MENYUSUT */
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 8px 20px rgba(15, 74, 49, 0.15);
-      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary-color);
     }
 
     .koleksi-riset-book-cover img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: center;
+      display: block;
     }
 
+    /* Untuk card yang tidak pakai gambar (illustrated) */
     .koleksi-riset-book-cover.illustrated {
-      background: var(--primary-color);
-      display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
       padding: 14px 12px;
       gap: 8px;
+      background: var(--primary-color);
     }
 
     .koleksi-riset-book-cover.illustrated .book-title-mini {
@@ -621,6 +651,7 @@
       border-color: var(--deep-green);
     }
 
+    /* --- MINI GRID (KANAN BAWAH) --- */
     .koleksi-mini-grid {
       grid-column: 2;
       grid-row: 2;
@@ -637,6 +668,11 @@
       text-align: center;
       cursor: pointer;
       transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 180px; /* tinggi tetap */
     }
 
     .koleksi-mini-card:hover {
@@ -979,7 +1015,7 @@
       opacity: 0.5;
     }
 
-    /* ---------- RESPONSIVE (TAMBAHAN AGAR AMAN) ---------- */
+    /* ---------- RESPONSIVE ---------- */
     @media (max-width: 1100px) {
       .grid-layanan-modern {
         grid-template-columns: repeat(2, 1fr);
@@ -994,7 +1030,12 @@
       .koleksi-hero-card {
         grid-column: 1;
         grid-row: 1;
-        min-height: 400px;
+        min-height: 500px;
+        max-height: 600px;
+      }
+      .koleksi-hero-card .card-cover {
+        min-height: 500px;
+        max-height: 600px;
       }
       .koleksi-riset-card {
         grid-column: 1;
@@ -1050,78 +1091,77 @@
       }
     }
 
-    /* ---------- BACK TO TOP BUTTON ---------- */
-.back-to-top {
-  position: fixed;
-  bottom: 32px;
-  right: 32px;
-  z-index: 9999;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--primary-color);
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 6px 20px rgba(15, 74, 49, 0.35);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(16px);
-  transition: opacity 0.35s ease, transform 0.35s ease,
-              visibility 0.35s ease, background 0.25s ease,
-              box-shadow 0.25s ease;
-}
+    /* ---------- BACK TO TOP ---------- */
+    .back-to-top {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      z-index: 9999;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 20px rgba(15, 74, 49, 0.35);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(16px);
+      transition: opacity 0.35s ease, transform 0.35s ease,
+                  visibility 0.35s ease, background 0.25s ease,
+                  box-shadow 0.25s ease;
+    }
 
-.back-to-top.visible {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
 
-.back-to-top:hover {
-  background: #1a4a34;
-  box-shadow: 0 10px 28px rgba(15, 74, 49, 0.45);
-  transform: translateY(-3px);
-}
+    .back-to-top:hover {
+      background: #1a4a34;
+      box-shadow: 0 10px 28px rgba(15, 74, 49, 0.45);
+      transform: translateY(-3px);
+    }
 
-.back-to-top:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 12px rgba(15, 74, 49, 0.3);
-}
+    .back-to-top:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 12px rgba(15, 74, 49, 0.3);
+    }
 
-.back-to-top i {
-  color: white;
-  font-size: 1.1rem;
-  line-height: 1;
-}
+    .back-to-top i {
+      color: white;
+      font-size: 1.1rem;
+      line-height: 1;
+    }
 
-/* Progress ring di sekeliling tombol */
-.back-to-top::before {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  border-radius: 50%;
-  background: conic-gradient(
-    #1f7d54 var(--scroll-pct, 0%),
-    rgba(93, 93, 93, 0.15) var(--scroll-pct, 0%)
-  );
-  z-index: -1;
-  transition: none;
-}
+    .back-to-top::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      background: conic-gradient(
+        #1f7d54 var(--scroll-pct, 0%),
+        rgba(93, 93, 93, 0.15) var(--scroll-pct, 0%)
+      );
+      z-index: -1;
+      transition: none;
+    }
 
-@media (max-width: 640px) {
-  .back-to-top {
-    bottom: 20px;
-    right: 20px;
-    width: 44px;
-    height: 44px;
-  }
-  .back-to-top i {
-    font-size: 1rem;
-  }
-}
+    @media (max-width: 640px) {
+      .back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
+      }
+      .back-to-top i {
+        font-size: 1rem;
+      }
+    }
   </style>
 @endpush
 
@@ -1264,7 +1304,9 @@
       <div class="koleksi-unggulan-grid">
         @if($topBook)
           <div class="koleksi-hero-card" data-aos="fade-right" data-aos-duration="800">
-            <img src="{{ $topBook->cover_image ? asset('storage/'.$topBook->cover_image) : asset('assets/img/placeholder-book.jpg') }}" alt="{{ $topBook->title }}">
+            <div class="card-cover">
+              <img src="{{ $topBook->cover_image ? asset('storage/'.$topBook->cover_image) : asset('assets/img/placeholder-book.jpg') }}" alt="{{ $topBook->title }}">
+            </div>
             <div class="koleksi-hero-overlay">
               <span class="koleksi-hero-badge">Paling Diminati</span>
               <h3>{{ $topBook->title }}</h3>
@@ -1274,7 +1316,9 @@
           </div>
         @else
           <div class="koleksi-hero-card" data-aos="fade-right" data-aos-duration="800">
-            <img src="https://images.unsplash.com/photo-1532012197367-2d5970d7b5c3?q=80&w=800&auto=format&fit=crop" alt="Belum ada data">
+            <div class="card-cover">
+              <img src="https://images.unsplash.com/photo-1532012197367-2d5970d7b5c3?q=80&w=800&auto=format&fit=crop" alt="Belum ada data">
+            </div>
             <div class="koleksi-hero-overlay">
               <span class="koleksi-hero-badge">Segera Hadir</span>
               <h3>Belum ada peminjaman</h3>
@@ -1409,10 +1453,12 @@
         </div>
       @endforelse
     </div>
-{{-- Back to Top Button --}}
-<button class="back-to-top" id="backToTop" onclick="scrollToTop()" aria-label="Kembali ke atas">
-  <i class="fas fa-chevron-up"></i>
-</button>
+  </section>
+
+  {{-- Back to Top Button --}}
+  <button class="back-to-top" id="backToTop" onclick="scrollToTop()" aria-label="Kembali ke atas">
+    <i class="fas fa-chevron-up"></i>
+  </button>
 @endsection
 
 @push('scripts')
@@ -1455,31 +1501,31 @@
     }
 
     /* ── Back to Top Button ── */
-(function () {
-  const btn = document.getElementById('backToTop');
-  if (!btn) return;
+    (function () {
+      const btn = document.getElementById('backToTop');
+      if (!btn) return;
 
-  const SHOW_AFTER = 300;
+      const SHOW_AFTER = 300;
 
-  function updateProgress() {
-    const scrollTop = window.scrollY;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const pct = docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
-    btn.style.setProperty('--scroll-pct', pct + '%');
+      function updateProgress() {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
+        btn.style.setProperty('--scroll-pct', pct + '%');
 
-    if (scrollTop > SHOW_AFTER) {
-      btn.classList.add('visible');
-    } else {
-      btn.classList.remove('visible');
+        if (scrollTop > SHOW_AFTER) {
+          btn.classList.add('visible');
+        } else {
+          btn.classList.remove('visible');
+        }
+      }
+
+      window.addEventListener('scroll', updateProgress, { passive: true });
+      updateProgress();
+    })();
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }
-
-  window.addEventListener('scroll', updateProgress, { passive: true });
-  updateProgress();
-})();
-
-function scrollToTop() {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
   </script>
 @endpush

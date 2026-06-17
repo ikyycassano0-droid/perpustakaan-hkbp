@@ -198,7 +198,7 @@
         }
 
         .article-thumb {
-            height: 180px;
+            height: 200px;
             position: relative;
             background: #f0f7f3;
             overflow: hidden;

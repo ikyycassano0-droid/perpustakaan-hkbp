@@ -528,16 +528,28 @@
                             <i class="fas fa-bars"></i>
                         </button>
                     </div>
-                    <div class="relative hidden md:block">
-                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <input type="text" placeholder="Cari anggota, buku, atau laporan..." class="pl-9 pr-4 py-2.5 rounded-full border border-slate-200 w-80 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition text-sm bg-slate-50">
+
+                    <!-- ====== MODIFIKASI: Ganti Search dengan Sapaan & Jam ====== -->
+                    <div class="hidden md:flex items-center gap-3 text-sm">
+                        <span class="font-medium text-slate-700">
+                            <i class="fas fa-user-circle text-indigo-500 mr-1.5"></i>
+                            Selamat datang, Pustakawan Utama
+                        </span>
+                        <span class="text-slate-300">|</span>
+                        <span class="text-slate-500 flex items-center gap-1.5">
+                            <i class="far fa-clock text-slate-400"></i>
+                            <span id="currentDateTime"></span>
+                        </span>
                     </div>
+                    <!-- ====== AKHIR MODIFIKASI ====== -->
                 </div>
+
                 <div class="flex items-center gap-6">
-                    <div class="relative">
-                        <i class="far fa-bell text-slate-500 text-xl cursor-pointer hover:text-indigo-600 transition"></i>
-                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-indigo-500 rounded-full text-white text-[9px] flex items-center justify-center font-bold">3</span>
-                    </div>
+                    <!-- ====== MODIFIKASI: Hapus Notifikasi Bell ====== -->
+                    <!-- Dihapus total -->
+                    <!-- ====== AKHIR MODIFIKASI ====== -->
+
+                    <!-- Profil User (tetap) -->
                     <div class="flex items-center gap-3 cursor-pointer group">
                         <div class="text-right hidden sm:block">
                             <p class="text-sm font-bold text-slate-800">Pustakawan Utama</p>
@@ -587,8 +599,26 @@
                 }
             }
         });
-    </script>
 
+        // ====== TAMBAHAN: Jam Digital ======
+        function updateDateTime() {
+            const now = new Date();
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('currentDateTime').textContent = now.toLocaleDateString('id-ID', options);
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+        // ====== AKHIR TAMBAHAN ======
+    </script>
+    
     @stack('scripts')
 </body>
 </html>
