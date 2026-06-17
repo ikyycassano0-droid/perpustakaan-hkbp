@@ -483,6 +483,46 @@
             font-size: 0.9rem;
         }
 
+        /* ========== PAGINATION GAYA HIJAU ========== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.pagination .page-item {
+    list-style: none;
+}
+
+.pagination .page-link {
+    display: inline-block;
+    padding: 8px 14px;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-dark);
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.pagination .page-link:hover {
+    background: #f0f7f3;
+    border-color: var(--primary-color);
+}
+
+.pagination .active .page-link {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.pagination .disabled .page-link {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
         /* === MODAL PEMINJAMAN === */
         .modal-overlay {
             position: fixed;
@@ -795,10 +835,10 @@
             </div>
 
             @if($collections->hasPages())
-                <div class="pagination">
-                    {{ $collections->appends(request()->query())->links() }}
-                </div>
-            @endif
+    <div class="pagination">
+        {{ $collections->appends(request()->query())->links('pagination::bootstrap-4') }}
+    </div>
+@endif
         </main>
     </div>
 

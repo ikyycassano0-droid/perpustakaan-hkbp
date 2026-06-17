@@ -161,7 +161,7 @@
 
 <style>
     /* =============== NAVBAR STYLE (PUTIH) =============== */
-    header {
+        header {
         background-color: rgba(255, 255, 255, 0.96);
         backdrop-filter: blur(8px);
         color: var(--text-dark);
@@ -170,9 +170,14 @@
         justify-content: space-between;
         align-items: center;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        position: sticky;
+
+        /* PAKAI FIXED AGAR PASTI SELALU DI ATAS */
+        position: fixed;
         top: 0;
+        left: 0;
+        width: 100%;
         z-index: 1000;
+
         border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         transition: all 0.3s ease;
     }

@@ -135,6 +135,16 @@
     </div>
     @endif
 
+    @if ($errors->any())
+<div class="p-4 mb-4 bg-rose-50 border border-rose-200 rounded-xl">
+    <ul class="text-rose-700 text-sm">
+        @foreach ($errors->all() as $error)
+            <li><i class="fas fa-exclamation-circle mr-2"></i>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
+
     {{-- TABLE DATA --}}
     <div class="card-modern overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-slate-800 to-slate-700 rounded-t-2xl">
@@ -317,9 +327,11 @@
                         <input type="text" name="format" id="format" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 transition text-sm text-slate-700">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Stock</label>
-                        <input type="number" name="stock" id="stock" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:outline-none focus:border-indigo-300 transition text-sm text-slate-700">
-                    </div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Stock</label>
+                    <input type="number" name="stock" id="stock" min="0" step="1"
+                        oninput="if (this.value < 0) this.value = 0;"
+                        class="w-full px-4 py-2.5 rounded-xl ...">
+                </div>
                 </div>
 
                 {{-- AUTHOR --}}
@@ -812,6 +824,15 @@
             }
         });
     }
+
+    $('#formCollection').on('submit', function(e) {
+    var stock = parseInt($('#stock').val(), 10);
+    if (isNaN(stock) || stock < 0) {
+        alert('Stok tidak boleh negatif!');
+        e.preventDefault();
+        return false;
+    }
+});
 </script>
 
 @endsection

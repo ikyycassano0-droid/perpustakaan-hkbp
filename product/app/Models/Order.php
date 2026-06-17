@@ -16,7 +16,7 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'order_date',
-        'borrow_date', 
+        'borrow_date',
         'due_date',
         'actual_return_date',
         'fine',
@@ -34,6 +34,7 @@ class Order extends Model
         'actual_return_date' => 'date',
         'extended_until' => 'date',
         'original_due_date' => 'date',
+        'extend_days' => 'integer',
     ];
 
     // ================= RELATION =================
@@ -94,7 +95,7 @@ class Order extends Model
         $activeBorrows = self::where('user_id', $userId)
             ->activeBorrow()
             ->count();
-            
+
         return $activeBorrows < self::MAX_BORROW_COUNT;
     }
 
@@ -147,22 +148,22 @@ class Order extends Model
         if ($this->extend_count >= self::MAX_EXTEND_COUNT) {
             return false;
         }
-        
+
         // Status harus APPROVED
         if ($this->status !== 'APPROVED') {
             return false;
         }
-        
+
         // Belum dikembalikan
         if ($this->actual_return_date) {
             return false;
         }
-        
+
         // Belum lewat due date (masih bisa perpanjang sebelum jatuh tempo)
         if (Carbon::now()->gt($this->due_date)) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -177,7 +178,7 @@ class Order extends Model
     {
         $return = $returnDate ? Carbon::parse($returnDate) : Carbon::now();
         $lateDays = Carbon::parse($this->due_date)->diffInDays($return, false);
-        
+
         if ($lateDays <= 0) return 0;
 
         $fine = 0;
@@ -191,11 +192,11 @@ class Order extends Model
     public function doExtend($days = null)
     {
         $extendDays = $days ?? self::EXTEND_DAYS;
-        
+
         if (!$this->canExtend()) {
             return false;
         }
-        
+
         $oldDueDate = Carbon::parse($this->due_date);
         $newDueDate = $oldDueDate->copy()->addDays($extendDays);
 
@@ -210,7 +211,7 @@ class Order extends Model
             'extended_until' => $newDueDate,
             'extend_days'    => $this->extend_days + $extendDays,
         ]);
-        
+
         return true;
     }
 
@@ -219,18 +220,18 @@ class Order extends Model
     {
         $return = $returnDate ? Carbon::parse($returnDate) : Carbon::now();
         $fine = $this->calculateFine($return);
-        
+
         $this->update([
             'actual_return_date' => $return,
             'fine' => $fine,
             'status' => 'RETURNED'
         ]);
-        
+
         // Update stok buku
         foreach ($this->details as $detail) {
             $detail->collection->increment('available_stock', $detail->qty);
         }
-        
+
         return $fine;
     }
 
@@ -243,13 +244,13 @@ class Order extends Model
                 throw new \Exception('Stok tidak cukup');
             }
         }
-        
+
         foreach ($this->details as $detail) {
             $detail->collection->decrement('available_stock', $detail->qty);
         }
-        
+
         $this->update(['status' => 'APPROVED']);
-        
+
         return true;
     }
 

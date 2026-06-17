@@ -217,7 +217,7 @@ class OrderController extends Controller
         }
 
         DB::transaction(function () use ($order, $request) {
-            $extendDays = $request->extend_days;
+            $extendDays = (int) $request->extend_days;
             $oldDueDate = Carbon::parse($order->due_date);
             $newDueDate = $oldDueDate->copy()->addDays($extendDays);
 
