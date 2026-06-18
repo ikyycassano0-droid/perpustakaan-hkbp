@@ -211,35 +211,109 @@
             text-align: right;
         }
 
+        /* ========== ACTION BUTTONS - STYLE SEPERTI DETAIL REGULER ========== */
         .sidebar-actions {
             margin-top: 25px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
-        .btn-play {
-            display: inline-flex;
+        .btn-action {
+            display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             width: 100%;
-            padding: 12px 25px;
-            background: #f1c40f;
-            color: #1a6b47;
-            border-radius: 50px;
+            padding: 14px 20px;
+            border-radius: 12px;
             font-weight: 700;
-            text-decoration: none;
-            transition: 0.3s;
-            font-size: 0.9rem;
             border: none;
             cursor: pointer;
+            transition: all 0.25s ease;
+            font-size: 0.9rem;
+            text-decoration: none;
+            letter-spacing: 0.3px;
+        }
+
+        /* Tombol Putar/Akses - Hijau solid */
+        .btn-play {
+            background: #1a6b47;
+            color: white;
+            box-shadow: 0 4px 12px rgba(26, 107, 71, 0.3);
         }
 
         .btn-play:hover {
-            background: #f5d442;
+            background: #0f4a31;
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(241, 196, 15, 0.3);
+            box-shadow: 0 6px 16px rgba(26, 107, 71, 0.4);
+            color: white;
+        }
+
+        .btn-play i {
+            font-size: 1.1rem;
+        }
+
+        .btn-play .badge-label {
+            font-size: 0.7rem;
+            font-weight: 400;
+            opacity: 0.8;
+            background: rgba(255,255,255,0.15);
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        /* Tombol Download - Outline Hijau (guest = disabled/locked) */
+        .btn-download {
+            background: transparent;
+            color: #1a6b47;
+            border: 2px solid #1a6b47;
+            box-shadow: 0 2px 8px rgba(26, 107, 71, 0.08);
+        }
+
+        .btn-download:hover {
+            background: #1a6b47;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(26, 107, 71, 0.25);
+        }
+
+        .btn-download i {
+            font-size: 1.1rem;
+        }
+
+        .btn-download .badge-label {
+            font-size: 0.7rem;
+            font-weight: 400;
+            opacity: 0.7;
+            background: rgba(26, 107, 71, 0.1);
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        .btn-download:hover .badge-label {
+            background: rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Tombol Download dalam keadaan terkunci (guest) */
+        .btn-download-locked {
+            background: #f5f5f0;
+            color: #999;
+            border: 2px solid #ddd;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn-download-locked:hover {
+            transform: none !important;
+            box-shadow: none !important;
+            background: #f5f5f0;
+            color: #999;
+        }
+
+        .btn-download-locked .lock-icon {
+            color: #f1c40f;
         }
 
         .btn-disabled {
@@ -250,42 +324,24 @@
             color: #a0aec0 !important;
         }
 
-        .login-alert {
-            padding: 15px;
-            background: linear-gradient(135deg, #fff9e6, #fff3cd);
-            border: 2px solid #ffc107;
-            border-radius: 12px;
+        /* Login hint kecil di bawah tombol download */
+        .login-hint {
             text-align: center;
+            padding: 6px 0 2px 0;
+            font-size: 0.75rem;
+            color: #999;
         }
 
-        .login-alert i {
-            color: #f59e0b;
-            font-size: 1.2rem;
-            margin-bottom: 8px;
-        }
-
-        .login-alert p {
-            font-size: 0.8rem;
-            color: #78350f;
-            margin: 8px 0;
-        }
-
-        .btn-login {
-            display: inline-block;
-            padding: 8px 20px;
-            background: #1a6b47;
-            color: white;
-            border-radius: 25px;
-            text-decoration: none;
+        .login-hint a {
+            color: #1a6b47;
             font-weight: 600;
-            font-size: 0.8rem;
-            transition: 0.3s;
+            text-decoration: none;
+            border-bottom: 1px dashed #1a6b47;
         }
 
-        .btn-login:hover {
-            background: #0f4a31;
-            transform: translateY(-2px);
-            color: white;
+        .login-hint a:hover {
+            color: #0f4a31;
+            border-bottom: 1px solid #0f4a31;
         }
 
         @media (max-width: 1024px) {
@@ -300,6 +356,31 @@
 
             .specs-grid {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .description-card {
+                padding: 15px;
+            }
+
+            .specs-grid {
+                gap: 12px;
+                padding: 15px;
+            }
+
+            .btn-action {
+                font-size: 0.8rem;
+                padding: 12px 16px;
+            }
+
+            .btn-action .badge-label {
+                font-size: 0.6rem;
+                padding: 1px 8px;
+            }
+
+            .video-title {
+                font-size: 1.3rem;
             }
         }
     </style>
@@ -434,33 +515,35 @@
                 @endif
             </div>
 
-            {{-- Tombol: HANYA PUTAR, TANPA DOWNLOAD --}}
+            {{-- TOMBOL AKSI - STYLE SEPERTI DETAIL REGULER --}}
             <div class="sidebar-actions">
                 @if($fileUrl)
+                    {{-- Tombol Putar/Akses (setara dengan BACA ONLINE) --}}
                     @if(in_array($ext, $videoExts))
-                        <a href="{{ $fileUrl }}" target="_blank" class="btn-play">
-                            <i class="fas fa-play"></i> Putar Video
+                        <a href="{{ $fileUrl }}" target="_blank" class="btn-action btn-play">
+                            <i class="fas fa-play-circle"></i> PUTAR VIDEO
+                            <span class="badge-label">ONLINE</span>
                         </a>
                     @else
-                        <a href="{{ $fileUrl }}" target="_blank" class="btn-play">
-                            <i class="fas fa-external-link-alt"></i> Buka File
+                        <a href="{{ $fileUrl }}" target="_blank" class="btn-action btn-play">
+                            <i class="fas fa-external-link-alt"></i> BUKA FILE
+                            <span class="badge-label">ONLINE</span>
                         </a>
                     @endif
 
-                    {{-- ALERT LOGIN --}}
-                    <div class="login-alert">
-                        <i class="fas fa-lock"></i>
-                        <p>
-                            <strong>Fitur Download Terbatas</strong><br>
-                            Login untuk mengunduh video ini.
-                        </p>
-                        <a href="{{ route('login') }}" class="btn-login">
-                            <i class="fas fa-sign-in-alt"></i> Login
-                        </a>
+                    {{-- Tombol Download - untuk guest tetap terkunci (setara dengan UNDUH PDF) --}}
+                    <button class="btn-action btn-download btn-download-locked" disabled>
+                        <i class="fas fa-lock lock-icon"></i> UNDUH VIDEO
+                        <span class="badge-label">OFFLINE</span>
+                    </button>
+                    <div class="login-hint">
+                        <i class="fas fa-info-circle" style="color: #ccc;"></i>
+                        Login untuk mengunduh file &nbsp;
+                        <a href="{{ route('login') }}">Login Sekarang →</a>
                     </div>
                 @else
-                    <button class="btn-play btn-disabled" disabled>
-                        <i class="fas fa-play"></i> Video Tidak Tersedia
+                    <button class="btn-action btn-play btn-disabled" disabled>
+                        <i class="fas fa-play"></i> VIDEO TIDAK TERSEDIA
                     </button>
                 @endif
             </div>

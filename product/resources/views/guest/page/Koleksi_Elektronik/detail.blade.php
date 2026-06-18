@@ -6,13 +6,14 @@
 @push('styles')
     <style>
         .main-wrapper {
-            max-width: 1300px;
+            max-width: 1220px;
             margin: 40px auto;
-            padding: 0 30px;
+            padding: 0 15px;
             display: grid;
             grid-template-columns: 350px 1fr;
             gap: 50px;
             align-items: start;
+            justify-items: start;
         }
 
         /* ========== 3D BOOK SECTION ========== */
@@ -173,128 +174,178 @@
             border-radius: 10px;
         }
 
-        /* Action Buttons */
+        /* ========== ACTION BUTTONS ========== */
         .ebook-actions {
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .btn-ebook {
             width: 100%;
-            padding: 12px 18px;
-            border-radius: 50px;
+            padding: 14px 20px;
+            border-radius: 12px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.25s ease;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
             text-decoration: none;
+            letter-spacing: 0.3px;
         }
 
-        .btn-read {
+        .btn-read-online {
             background: #1a6b47;
             color: white;
-            box-shadow: 0 4px 10px rgba(26, 107, 71, 0.25);
+            box-shadow: 0 4px 12px rgba(26, 107, 71, 0.3);
         }
 
-        .btn-read:hover {
-            background: #0f4a31;
-            transform: translateY(-3px);
-            color: white;
-        }
-
-        /* LOGIN ALERT */
-        .login-alert {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #fff9e6, #fff3cd);
-            border: 2px solid #ffc107;
-            border-radius: 16px;
-            text-align: center;
-            margin-top: 5px;
-        }
-
-        .login-alert i {
-            font-size: 1.5rem;
-            color: #f59e0b;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .login-alert strong {
-            color: #92400e;
-            font-size: 0.9rem;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .login-alert p {
-            color: #78350f;
-            font-size: 0.8rem;
-            margin: 0 0 12px 0;
-        }
-
-        .btn-login-now {
-            display: inline-block;
-            background: #1a6b47;
-            color: white;
-            padding: 8px 24px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.85rem;
-            transition: 0.3s;
-        }
-
-        .btn-login-now:hover {
+        .btn-read-online:hover {
             background: #0f4a31;
             transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(26, 107, 71, 0.4);
             color: white;
         }
 
-        /* ========== DETAIL BOX (CSS DARI HTML REFERENSI BARU) ========== */
+        .btn-read-online i {
+            font-size: 1.1rem;
+        }
+
+        .btn-read-online .badge-label {
+            font-size: 0.7rem;
+            font-weight: 400;
+            opacity: 0.8;
+            background: rgba(255,255,255,0.15);
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        .btn-download {
+            background: transparent;
+            color: #1a6b47;
+            border: 2px solid #1a6b47;
+            box-shadow: 0 2px 8px rgba(26, 107, 71, 0.08);
+        }
+
+        .btn-download:hover {
+            background: #1a6b47;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(26, 107, 71, 0.25);
+        }
+
+        .btn-download i {
+            font-size: 1.1rem;
+        }
+
+        .btn-download .badge-label {
+            font-size: 0.7rem;
+            font-weight: 400;
+            opacity: 0.7;
+            background: rgba(26, 107, 71, 0.1);
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        .btn-download:hover .badge-label {
+            background: rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.8);
+        }
+
+        .btn-download-locked {
+            background: #f5f5f0;
+            color: #999;
+            border: 2px solid #ddd;
+            cursor: not-allowed;
+            opacity: 0.7;
+            position: relative;
+        }
+
+        .btn-download-locked:hover {
+            transform: none !important;
+            box-shadow: none !important;
+            background: #f5f5f0;
+            color: #999;
+        }
+
+        .btn-download-locked .lock-icon {
+            color: #f1c40f;
+        }
+
+        .login-hint {
+            text-align: center;
+            padding: 6px 0 2px 0;
+            font-size: 0.75rem;
+            color: #999;
+        }
+
+        .login-hint a {
+            color: #1a6b47;
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 1px dashed #1a6b47;
+        }
+
+        .login-hint a:hover {
+            color: #0f4a31;
+            border-bottom: 1px solid #0f4a31;
+        }
+
+        /* ========== DETAIL BOX - DIPERBAIKI ========== */
         .detail-box {
             background: white;
-            border-radius: 25px;
-            padding: 45px;
+            border-radius: 20px;
+            padding: 40px 45px;
             box-shadow: 0 8px 24px rgba(15, 74, 49, 0.08);
             border: 1px solid #d4e5d9;
             border-top: 4px solid #f1c40f;
         }
 
-        .title-area h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.4rem;
+        .category-tag {
+            display: inline-block;
             color: #1a6b47;
-            margin-bottom: 10px;
+            font-weight: 800;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .detail-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: #1a6b47;
+            margin-bottom: 8px;
             line-height: 1.2;
+            font-weight: 700;
         }
 
-        .author-text {
+        .detail-author {
             color: #5a7060;
-            margin-bottom: 35px;
-            font-size: 1rem;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
         }
 
-        .author-text a {
+        .detail-author a {
             color: #1a6b47;
             font-weight: 600;
+            text-decoration: none;
         }
 
+        /* ===== STATUS TABLE ===== */
         .section-header {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: #0d2137;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .section-header span {
@@ -305,10 +356,9 @@
         .availability-card {
             background: #fff;
             border: 1px solid #d4e5d9;
-            border-radius: 16px;
+            border-radius: 12px;
             overflow: hidden;
-            margin-bottom: 40px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+            margin-bottom: 35px;
         }
 
         .avail-table {
@@ -321,16 +371,22 @@
             color: #1a6b47;
             font-weight: 700;
             text-align: left;
-            padding: 16px 24px;
-            font-size: 0.9rem;
+            padding: 12px 20px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             border-bottom: 2px solid #d4e5d9;
         }
 
         .avail-table td {
-            padding: 20px 24px;
+            padding: 14px 20px;
             color: #0d2137;
-            font-size: 0.95rem;
-            border-bottom: 1px solid #d4e5d9;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #f0f2f0;
+        }
+
+        .avail-table tr:last-child td {
+            border-bottom: none;
         }
 
         .status-badge {
@@ -339,7 +395,7 @@
             gap: 8px;
             color: #2daa6e;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .pulse-dot {
@@ -371,59 +427,66 @@
             }
         }
 
+        /* ===== INFO DETAIL ===== */
         .info-heading {
-            font-size: 1.2rem;
-            font-weight: 800;
+            font-size: 1.1rem;
+            font-weight: 700;
             color: #0d2137;
-            margin: 45px 0 25px;
+            margin: 35px 0 20px;
             display: flex;
             align-items: center;
-            border-left: 5px solid #f1c40f;
-            padding-left: 15px;
+            border-left: 4px solid #f1c40f;
+            padding-left: 12px;
         }
 
-        .info-row {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            padding: 15px 0;
-            border-bottom: 1px solid #d4e5d9;
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .label {
+        .info-table tr {
+            border-bottom: 1px solid #f0f2f0;
+        }
+
+        .info-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .info-table td {
+            padding: 10px 0;
+            font-size: 0.9rem;
+            vertical-align: top;
+        }
+
+        .info-table .label-col {
+            width: 160px;
             color: #5a7060;
-            font-size: 0.95rem;
             font-weight: 600;
+            padding-right: 20px;
+            white-space: nowrap;
         }
 
-        .value {
+        .info-table .value-col {
             color: #0d2137;
             font-weight: 400;
-            font-size: 0.95rem;
         }
 
-        .keywords {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 5px;
-        }
-
-        .keyword-tag {
-            background: #eef4f0;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            color: #1a6b47;
-        }
-
-        .category-badge {
+        .info-table .value-col .category-badge {
             display: inline-block;
             background: #1a6b47;
             color: white;
-            padding: 4px 12px;
+            padding: 2px 12px;
             border-radius: 20px;
             font-size: 0.7rem;
-            margin: 2px;
+            margin: 2px 3px 2px 0;
+        }
+
+        .abstract-content {
+            margin-top: 10px;
+            line-height: 1.8;
+            text-align: justify;
+            color: #2d3748;
+            font-size: 0.95rem;
         }
 
         .btn-back {
@@ -439,12 +502,29 @@
             transition: all 0.2s ease;
             border: none;
             cursor: pointer;
+            font-size: 0.9rem;
         }
 
         .btn-back:hover {
             background: #0f4a31;
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            color: white;
+        }
+
+        .keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 3px;
+        }
+
+        .keyword-tag {
+            background: #eef4f0;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: #1a6b47;
         }
 
         @media (max-width: 1024px) {
@@ -461,9 +541,8 @@
         }
 
         @media (max-width: 640px) {
-            .info-row {
-                grid-template-columns: 1fr;
-                gap: 6px;
+            .detail-box {
+                padding: 20px;
             }
 
             .real-book {
@@ -471,8 +550,34 @@
                 height: 370px;
             }
 
-            .detail-box {
-                padding: 20px;
+            .btn-ebook {
+                font-size: 0.8rem;
+                padding: 12px 16px;
+            }
+
+            .btn-ebook .badge-label {
+                font-size: 0.6rem;
+                padding: 1px 8px;
+            }
+
+            .detail-title {
+                font-size: 1.6rem;
+            }
+
+            .info-table .label-col {
+                width: 100px;
+                font-size: 0.8rem;
+            }
+
+            .info-table td {
+                font-size: 0.8rem;
+                padding: 8px 0;
+            }
+
+            .avail-table th,
+            .avail-table td {
+                padding: 10px 14px;
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -522,9 +627,8 @@
                 </div>
             </div>
 
-            <!-- TOMBOL AKSI UNTUK GUEST -->
+            <!-- TOMBOL AKSI -->
             <div class="ebook-actions">
-                {{-- Tombol Baca Online --}}
                 @if($item->file_url)
                     @php
                         $fullFileUrl = asset('storage/' . $item->file_url);
@@ -534,49 +638,56 @@
                             ? 'https://docs.google.com/viewer?url=' . urlencode($fullFileUrl)
                             : $fullFileUrl;
                     @endphp
-                    <a href="{{ $bacaUrl }}" target="_blank" class="btn-ebook btn-read">
-                        <i class="fas fa-book-reader"></i> BACA ONLINE
+                    <a href="{{ $bacaUrl }}" target="_blank" class="btn-ebook btn-read-online">
+                        <i class="fas fa-book-open"></i> BACA SEKARANG
+                        <span class="badge-label">ONLINE</span>
                     </a>
                 @else
-                    <button class="btn-ebook btn-read" disabled style="opacity: 0.5; cursor: not-allowed;">
-                        <i class="fas fa-book-reader"></i> FILE TIDAK TERSEDIA
+                    <button class="btn-ebook btn-read-online" disabled style="opacity: 0.5; cursor: not-allowed;">
+                        <i class="fas fa-book-open"></i> FILE TIDAK TERSEDIA
                     </button>
                 @endif
 
-                {{-- ALERT LOGIN UNTUK DOWNLOAD --}}
-                <div class="login-alert">
-                    <i class="fas fa-lock"></i>
-                    <strong>Fitur Download Terbatas</strong>
-                    <p>Untuk mengunduh file ini, silakan login terlebih dahulu.</p>
-                    <a href="{{ route('login') }}" class="btn-login-now">
-                        <i class="fas fa-sign-in-alt"></i> Login Sekarang
-                    </a>
-                </div>
+                @if($item->file_url)
+                    <button class="btn-ebook btn-download btn-download-locked" disabled>
+                        <i class="fas fa-lock lock-icon"></i> UNDUH PDF
+                        <span class="badge-label">OFFLINE</span>
+                    </button>
+                    <div class="login-hint">
+                        <i class="fas fa-info-circle" style="color: #ccc;"></i>
+                        Login untuk mengunduh file &nbsp;
+                        <a href="{{ route('login') }}">Login Sekarang →</a>
+                    </div>
+                @else
+                    <button class="btn-ebook btn-download" disabled style="opacity: 0.5; cursor: not-allowed;">
+                        <i class="fas fa-file-pdf"></i> FILE TIDAK TERSEDIA
+                    </button>
+                @endif
             </div>
         </div>
 
-        <!-- DETAIL CARD -->
+        <!-- DETAIL CARD - DIPERBAIKI DENGAN TABEL -->
         <div class="detail-box">
-            <div class="title-area">
-                <span class="top-tag">
-                    <i class="fas {{ $item->category->slug == 'ebook' ? 'fa-book-open' : ($item->category->slug == 'video' ? 'fa-video' : 'fa-file-alt') }}"></i>
-                    {{ strtoupper($item->category->name ?? 'KOLEKSI ELEKTRONIK') }}
-                </span>
-                <h1>{{ $item->title }}</h1>
-                <p class="author-text">
-                    @if($item->student_name)
-                        Oleh <a href="#">{{ $item->student_name }}</a>
-                    @elseif($item->user)
-                        Oleh <a href="#">{{ $item->user->name ?? 'Admin Perpustakaan' }}</a>
-                    @else
-                        Oleh <a href="#">Admin Perpustakaan</a>
-                    @endif
-                    @if($item->year)
-                        | Tahun {{ $item->year }}
-                    @endif
-                </p>
+            <!-- Title Area -->
+            <div class="category-tag">
+                <i class="fas {{ $item->category->slug == 'ebook' ? 'fa-book-open' : ($item->category->slug == 'video' ? 'fa-video' : 'fa-file-alt') }}"></i>
+                {{ strtoupper($item->category->name ?? 'KOLEKSI ELEKTRONIK') }}
             </div>
+            <h1 class="detail-title">{{ $item->title }}</h1>
+            <p class="detail-author">
+                @if($item->student_name)
+                    Oleh <a href="#">{{ $item->student_name }}</a>
+                @elseif($item->user)
+                    Oleh <a href="#">{{ $item->user->name ?? 'Admin Perpustakaan' }}</a>
+                @else
+                    Oleh <a href="#">Admin Perpustakaan</a>
+                @endif
+                @if($item->year)
+                    | Tahun {{ $item->year }}
+                @endif
+            </p>
 
+            <!-- Status Table -->
             <div class="section-header">
                 <i class="fas fa-cloud-upload-alt" style="color: #0f4a31;"></i>
                 Status Akses Digital <span>— Repositori AKPER</span>
@@ -610,67 +721,68 @@
                 </table>
             </div>
 
+            <!-- Info Detail - Menggunakan Tabel -->
             <div class="info-heading">
                 <i class="fas fa-info-circle"></i> Informasi Detail
             </div>
 
-            <div class="info-list">
+            <table class="info-table">
                 @if($item->isbn)
-                    <div class="info-row">
-                        <div class="label">ISBN/ISSN</div>
-                        <div class="value">{{ $item->isbn }}</div>
-                    </div>
+                    <tr>
+                        <td class="label-col">ISBN/ISSN</td>
+                        <td class="value-col">{{ $item->isbn }}</td>
+                    </tr>
                 @endif
 
-                <div class="info-row">
-                    <div class="label">Penerbit</div>
-                    <div class="value">{{ $item->publisher ?? 'Akper HKBP Press' }}</div>
-                </div>
+                <tr>
+                    <td class="label-col">Penerbit</td>
+                    <td class="value-col">{{ $item->publisher ?? 'Akper HKBP Press' }}</td>
+                </tr>
 
                 @if($item->year)
-                    <div class="info-row">
-                        <div class="label">Tahun Terbit</div>
-                        <div class="value">{{ $item->year }}</div>
-                    </div>
+                    <tr>
+                        <td class="label-col">Tahun Terbit</td>
+                        <td class="value-col">{{ $item->year }}</td>
+                    </tr>
                 @endif
 
-                <div class="info-row">
-                    <div class="label">Bahasa</div>
-                    <div class="value">{{ $item->language ?? 'Indonesia' }}</div>
-                </div>
+                <tr>
+                    <td class="label-col">Bahasa</td>
+                    <td class="value-col">{{ $item->language ?? 'Indonesia' }}</td>
+                </tr>
 
                 @if($item->edition)
-                    <div class="info-row">
-                        <div class="label">Edisi</div>
-                        <div class="value">{{ $item->edition }}</div>
-                    </div>
+                    <tr>
+                        <td class="label-col">Edisi</td>
+                        <td class="value-col">{{ $item->edition }}</td>
+                    </tr>
                 @endif
 
                 @if($item->classifications && $item->classifications->count())
-                    <div class="info-row">
-                        <div class="label">Klasifikasi</div>
-                        <div class="value">
+                    <tr>
+                        <td class="label-col">Klasifikasi</td>
+                        <td class="value-col">
                             @foreach($item->classifications as $classification)
                                 <span class="category-badge">{{ $classification->code ?? $classification->name }}</span>
                             @endforeach
-                        </div>
-                    </div>
+                        </td>
+                    </tr>
                 @endif
 
                 @if($item->categoriesMany && $item->categoriesMany->count())
-                    <div class="info-row">
-                        <div class="label">Kategori</div>
-                        <div class="value">
+                    <tr>
+                        <td class="label-col">Kategori</td>
+                        <td class="value-col">
                             @foreach($item->categoriesMany as $category)
                                 <span class="category-badge">{{ $category->name }}</span>
                             @endforeach
-                        </div>
-                    </div>
+                        </td>
+                    </tr>
                 @endif
 
-                <div class="info-row">
-                    <div class="label">Tipe Isi / Media</div>
-                    <div class="value">
+                <tr>
+                    <td class="label-col">Tipe Isi / Media</td>
+                    <td class="value-col">
                         Text (Digital) /
                         @if($item->file_url)
                             @php
@@ -680,32 +792,33 @@
                         @else
                             Computer File
                         @endif
-                    </div>
-                </div>
+                    </td>
+                </tr>
 
-                <div class="info-row">
-                    <div class="label">Lokasi</div>
-                    <div class="value">E-Library Server - Koleksi Elektronik</div>
-                </div>
+                <tr>
+                    <td class="label-col">Lokasi</td>
+                    <td class="value-col">E-Library Server - Koleksi Elektronik</td>
+                </tr>
 
                 @if($item->created_at)
-                    <div class="info-row">
-                        <div class="label">Tanggal Unggah</div>
-                        <div class="value">{{ $item->created_at->format('d F Y') }}</div>
-                    </div>
+                    <tr>
+                        <td class="label-col">Tanggal Unggah</td>
+                        <td class="value-col">{{ $item->created_at->format('d F Y') }}</td>
+                    </tr>
                 @endif
-            </div>
+            </table>
 
+            <!-- Abstract -->
             @if($item->abstract)
-                <div class="info-heading" style="margin-top: 25px;">
+                <div class="info-heading" style="margin-top: 30px;">
                     <i class="fas fa-align-left"></i> Abstrak
                 </div>
-                <div class="abstract-content" style="margin-top: 10px; line-height: 1.8; text-align: justify;">
+                <div class="abstract-content">
                     {{ $item->abstract }}
                 </div>
             @endif
 
-            {{-- Tombol Kembali --}}
+            <!-- Tombol Kembali -->
             <div style="margin-top: 40px; text-align: center;">
                 <a href="{{ url()->previous() !== url()->current() ? url()->previous() : route('guest.koleksi_elektronik.ebook') }}"
                    class="btn-back">

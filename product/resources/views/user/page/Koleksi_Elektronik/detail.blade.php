@@ -7,7 +7,7 @@
     <style>
         /* Additional styles specific to ebook detail page */
         .main-wrapper {
-            max-width: 1300px;
+            max-width: 1220px;
             margin: 40px auto 40px 13%;
             padding: 0 30px;
             display: grid;

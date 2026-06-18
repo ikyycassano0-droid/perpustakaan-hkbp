@@ -58,32 +58,109 @@
             color: #0f4a31;
         }
 
+        /* ========== ACTION BUTTONS - STYLE SEPERTI DETAIL REGULER ========== */
+        .cd-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
         .btn-action {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
             width: 100%;
-            padding: 15px;
-            margin-bottom: 12px;
+            padding: 14px 20px;
             border-radius: 12px;
             font-weight: 700;
             border: none;
             cursor: pointer;
-            transition: 0.3s;
-            font-size: 0.95rem;
+            transition: all 0.25s ease;
+            font-size: 0.9rem;
             text-decoration: none;
+            letter-spacing: 0.3px;
         }
 
+        /* Tombol Play/Akses - Hijau solid */
         .btn-play {
             background: #1a6b47;
             color: white;
+            box-shadow: 0 4px 12px rgba(26, 107, 71, 0.3);
         }
 
         .btn-play:hover {
             background: #0f4a31;
             transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(26, 107, 71, 0.4);
             color: white;
+        }
+
+        .btn-play i {
+            font-size: 1.1rem;
+        }
+
+        .btn-play .badge-label {
+            font-size: 0.7rem;
+            font-weight: 400;
+            opacity: 0.8;
+            background: rgba(255,255,255,0.15);
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        /* Tombol Download - Outline Hijau (guest = disabled/locked) */
+        .btn-download {
+            background: transparent;
+            color: #1a6b47;
+            border: 2px solid #1a6b47;
+            box-shadow: 0 2px 8px rgba(26, 107, 71, 0.08);
+        }
+
+        .btn-download:hover {
+            background: #1a6b47;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(26, 107, 71, 0.25);
+        }
+
+        .btn-download i {
+            font-size: 1.1rem;
+        }
+
+        .btn-download .badge-label {
+            font-size: 0.7rem;
+            font-weight: 400;
+            opacity: 0.7;
+            background: rgba(26, 107, 71, 0.1);
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        .btn-download:hover .badge-label {
+            background: rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Tombol Download dalam keadaan terkunci (guest) */
+        .btn-download-locked {
+            background: #f5f5f0;
+            color: #999;
+            border: 2px solid #ddd;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn-download-locked:hover {
+            transform: none !important;
+            box-shadow: none !important;
+            background: #f5f5f0;
+            color: #999;
+        }
+
+        .btn-download-locked .lock-icon {
+            color: #f1c40f;
         }
 
         .btn-disabled {
@@ -92,6 +169,26 @@
             pointer-events: none;
             background: #e2e8f0 !important;
             color: #a0aec0 !important;
+        }
+
+        /* Login hint kecil di bawah tombol download */
+        .login-hint {
+            text-align: center;
+            padding: 6px 0 2px 0;
+            font-size: 0.75rem;
+            color: #999;
+        }
+
+        .login-hint a {
+            color: #1a6b47;
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 1px dashed #1a6b47;
+        }
+
+        .login-hint a:hover {
+            color: #0f4a31;
+            border-bottom: 1px solid #0f4a31;
         }
 
         .btn-back {
@@ -221,46 +318,6 @@
             color: #718096;
         }
 
-        .login-alert {
-            padding: 15px;
-            background: linear-gradient(135deg, #fff9e6, #fff3cd);
-            border: 2px solid #ffc107;
-            border-radius: 12px;
-            text-align: center;
-            margin-top: 10px;
-        }
-
-        .login-alert i {
-            color: #f59e0b;
-            font-size: 1.2rem;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .login-alert p {
-            font-size: 0.8rem;
-            color: #78350f;
-            margin: 8px 0;
-        }
-
-        .btn-login {
-            display: inline-block;
-            padding: 8px 20px;
-            background: #1a6b47;
-            color: white;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.8rem;
-            transition: 0.3s;
-        }
-
-        .btn-login:hover {
-            background: #0f4a31;
-            transform: translateY(-2px);
-            color: white;
-        }
-
         @media (max-width: 1024px) {
             .container {
                 grid-template-columns: 1fr;
@@ -269,6 +326,32 @@
             .cd-visual-card {
                 position: relative;
                 top: 0;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .cd-info-content {
+                padding: 20px;
+            }
+
+            .specs-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                padding: 15px;
+            }
+
+            .btn-action {
+                font-size: 0.8rem;
+                padding: 12px 16px;
+            }
+
+            .btn-action .badge-label {
+                font-size: 0.6rem;
+                padding: 1px 8px;
+            }
+
+            .cd-title {
+                font-size: 1.6rem;
             }
         }
     </style>
@@ -290,30 +373,39 @@
                 <i class="fas fa-check-circle"></i> {{ $item->status == 'Approved' ? 'TERSEDIA' : strtoupper($item->status) }}
             </div>
 
-            {{-- Tombol Akses --}}
-            @if($item->file_url)
-                <a href="{{ asset('storage/' . $item->file_url) }}" target="_blank" class="btn-action btn-play">
-                    <i class="fas fa-play-circle"></i> DENGARKAN / AKSES
-                </a>
-            @else
-                <button class="btn-action btn-disabled" disabled>
-                    <i class="fas fa-play-circle"></i> TIDAK TERSEDIA
-                </button>
-            @endif
-            
-            {{-- ALERT LOGIN (TANPA DOWNLOAD) --}}
-            <div class="login-alert">
-                <i class="fas fa-lock"></i>
-                <p>
-                    <strong>Fitur Download Terbatas</strong><br>
-                    Login untuk mengunduh file ini.
-                </p>
-                <a href="{{ route('login') }}" class="btn-login">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </a>
+            <!-- TOMBOL AKSI - STYLE SEPERTI DETAIL REGULER -->
+            <div class="cd-actions">
+                {{-- Tombol Play/Akses (setara dengan BACA ONLINE) --}}
+                @if($item->file_url)
+                    <a href="{{ asset('storage/' . $item->file_url) }}" target="_blank" class="btn-action btn-play">
+                        <i class="fas fa-play-circle"></i> PUTAR / AKSES
+                        <span class="badge-label">ONLINE</span>
+                    </a>
+                @else
+                    <button class="btn-action btn-disabled" disabled>
+                        <i class="fas fa-play-circle"></i> TIDAK TERSEDIA
+                    </button>
+                @endif
+
+                {{-- Tombol Download - untuk guest tetap terkunci (setara dengan UNDUH PDF) --}}
+                @if($item->file_url)
+                    <button class="btn-action btn-download btn-download-locked" disabled>
+                        <i class="fas fa-lock lock-icon"></i> UNDUH FILE
+                        <span class="badge-label">OFFLINE</span>
+                    </button>
+                    <div class="login-hint">
+                        <i class="fas fa-info-circle" style="color: #ccc;"></i>
+                        Login untuk mengunduh file &nbsp;
+                        <a href="{{ route('login') }}">Login Sekarang →</a>
+                    </div>
+                @else
+                    <button class="btn-action btn-download" disabled style="opacity: 0.5; cursor: not-allowed;">
+                        <i class="fas fa-file"></i> FILE TIDAK TERSEDIA
+                    </button>
+                @endif
             </div>
-            
-            <p style="font-size: 0.7rem; color: #718096; margin-top: 10px;">*Klik untuk mengakses file media</p>
+
+            <p style="font-size: 0.7rem; color: #718096; margin-top: 15px;">*Klik untuk mengakses file media</p>
         </aside>
 
         <!-- MAIN CONTENT -->
@@ -363,7 +455,7 @@
 
             <div class="info-note">
                 <h4><i class="fas fa-info-circle"></i> Cara Memutar</h4>
-                <p>Anda dapat mengakses file media melalui tombol "Dengarkan" di samping. Untuk mengunduh file, silakan login terlebih dahulu.</p>
+                <p>Anda dapat mengakses file media melalui tombol "Putar / Akses" di samping. Untuk mengunduh file, silakan login terlebih dahulu.</p>
             </div>
 
             {{-- Tombol Kembali --}}

@@ -395,21 +395,6 @@
                     <p class="text-gray-500 col-span-full text-center py-10">Belum ada data mitra.</p>
                 @endforelse
             </div>
-
-            <!-- Banner Global Placement (bisa dinamis dari variabel $globalKerjasama) -->
-            <section class="global-section" data-aos="fade-up" data-aos-delay="100">
-                <div class="global-info">
-                    <h4>{{ $globalKerjasama->subtitle ?? 'International Track' }}</h4>
-                    <h2>{{ $globalKerjasama->title ?? 'Program Penempatan Kerja Global' }}</h2>
-                    <p>{{ $globalKerjasama->description ?? 'Akper HKBP Balige kini bekerjasama dengan institusi kesehatan di Jepang dan Jerman untuk penyaluran lulusan profesional.' }}</p>
-                    <a href="{{ $globalKerjasama->link ?? '#' }}" class="btn-global">
-                        {{ $globalKerjasama->button_text ?? 'Pelajari Kerjasama Global' }} <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
-                <div class="global-img">
-                    <img src="{{ $globalKerjasama->image ?? 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=500&q=80' }}" alt="Global Program">
-                </div>
-            </section>
         </main>
 
         <!-- Sidebar -->
