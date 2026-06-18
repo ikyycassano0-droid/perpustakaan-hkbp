@@ -19,77 +19,88 @@ use Illuminate\Support\Facades\DB;
 class HomeController extends Controller
 {
 
-    private function getSharedHomeData()
-    {
-        // 1. Top 3 peminjam (reward) - dihitung dari total item yang pernah dipinjam (APPROVED & RETURNED)
-        $topBorrowers = User::with('role:id,name')
-            ->select(
-                'users.id',
-                'users.name',
-                // Langsung generate avatar dari nama, tanpa kolom avatar
-                DB::raw("CONCAT('https://ui-avatars.com/api/?name=', REPLACE(users.name, ' ', '+'), '&background=1e293b&color=fff&size=80') as avatar")
-            )
-            ->join('orders', 'users.id', '=', 'orders.user_id')
-            ->join('order_details', 'orders.id', '=', 'order_details.order_id')
-            ->whereIn('orders.status', ['APPROVED', 'RETURNED'])   // pastikan pakai array
-            ->groupBy('users.id', 'users.name')   // tidak perlu group by avatar karena bukan kolom
-            ->selectRaw('SUM(order_details.qty) as total_borrowed')
-            ->selectRaw('MIN(orders.created_at) as first_order')
-            ->orderByDesc('total_borrowed')
-            ->orderBy('first_order', 'asc')
-            ->limit(3)
-            ->get();
+private function getSharedHomeData()
+{
+    // ============================================================
+    // 1. TOP 3 PEMINJAM TAHUN INI (RESET TIAP TAHUN)
+    // ============================================================
+    $topBorrowers = User::with('role:id,name')
+        ->select(
+            'users.id',
+            'users.name',
+            DB::raw("CONCAT('https://ui-avatars.com/api/?name=', REPLACE(users.name, ' ', '+'), '&background=1e293b&color=fff&size=80') as avatar")
+        )
+        ->join('orders', 'users.id', '=', 'orders.user_id')
+        ->join('order_details', 'orders.id', '=', 'order_details.order_id')
+        ->whereIn('orders.status', ['APPROVED', 'RETURNED'])
+        // 🔥 FILTER TAHUN INI SAJA 🔥
+        ->whereYear('orders.created_at', now()->year)
+        ->groupBy('users.id', 'users.name')
+        ->selectRaw('SUM(order_details.qty) as total_borrowed')
+        ->selectRaw('MIN(orders.created_at) as first_order')
+        ->orderByDesc('total_borrowed')
+        ->orderBy('first_order', 'asc')
+        ->limit(3)
+        ->get();
 
-        // Tambahkan jumlah judul buku unik yang pernah dipinjam masing-masing user
-        $topBorrowers->transform(function ($user) {
-            $distinctTitles = DB::table('order_details')
-                ->join('orders', 'order_details.order_id', '=', 'orders.id')
-                ->where('orders.user_id', $user->id)
-                ->whereIn('orders.status', ['APPROVED', 'RETURNED'])
-                ->distinct('collection_id')
-                ->count('collection_id');
-            $user->distinct_titles = $distinctTitles;
-            return $user;
-        });
-
-        // 2. Top 4 buku (koleksi unggulan) - paling sering dipinjam
-        $topBooks = Collection::select(
-                'collections.id',
-                'collections.title',
-                'collections.cover_image',
-                'collections.description'
-            )
-            ->join('order_details', 'collections.id', '=', 'order_details.collection_id')
+    // Tambahkan jumlah judul buku unik (juga filter tahun ini)
+    $topBorrowers->transform(function ($user) {
+        $distinctTitles = DB::table('order_details')
             ->join('orders', 'order_details.order_id', '=', 'orders.id')
+            ->where('orders.user_id', $user->id)
             ->whereIn('orders.status', ['APPROVED', 'RETURNED'])
-            ->groupBy('collections.id', 'collections.title', 'collections.cover_image', 'collections.description')
-            ->selectRaw('SUM(order_details.qty) as total_borrowed')
-            ->selectRaw('MIN(orders.created_at) as first_borrowed')
-            ->orderByDesc('total_borrowed')
-            ->orderBy('first_borrowed', 'asc')
-            ->limit(4)
-            ->get();
+            // 🔥 FILTER TAHUN INI 🔥
+            ->whereYear('orders.created_at', now()->year)
+            ->distinct('collection_id')
+            ->count('collection_id');
+        $user->distinct_titles = $distinctTitles;
+        return $user;
+    });
 
-        // 3. Statistik
-        $totalVerifiedUsers = User::whereNotNull('email_verified_at')->count();
-        $totalPrintedCollections = Collection::where('active', 1)->count();
-        $totalLoans = Order::where('status', 'APPROVED')->count();
+    // ============================================================
+    // 2. TOP 4 BUKU (KOLEKSI UNGGULAN) TAHUN INI
+    // ============================================================
+    $topBooks = Collection::select(
+            'collections.id',
+            'collections.title',
+            'collections.cover_image',
+            'collections.description'
+        )
+        ->join('order_details', 'collections.id', '=', 'order_details.collection_id')
+        ->join('orders', 'order_details.order_id', '=', 'orders.id')
+        ->whereIn('orders.status', ['APPROVED', 'RETURNED'])
+        // 🔥 FILTER TAHUN INI SAJA 🔥
+        ->whereYear('orders.created_at', now()->year)
+        ->groupBy('collections.id', 'collections.title', 'collections.cover_image', 'collections.description')
+        ->selectRaw('SUM(order_details.qty) as total_borrowed')
+        ->selectRaw('MIN(orders.created_at) as first_borrowed')
+        ->orderByDesc('total_borrowed')
+        ->orderBy('first_borrowed', 'asc')
+        ->limit(4)
+        ->get();
 
-        $printedTitles = Collection::where('active', 1)->pluck('title')
-            ->map(fn($t) => strtolower(trim($t)))->toArray();
-        $electronicTitles = FinalProject::where('status', 'Approved')->pluck('title')
-            ->map(fn($t) => strtolower(trim($t)))->toArray();
-        $totalUniqueTitles = count(array_unique(array_merge($printedTitles, $electronicTitles)));
+    // ============================================================
+    // 3. STATISTIK (tetap akumulatif / sepanjang masa)
+    // ============================================================
+    $totalVerifiedUsers = User::whereNotNull('email_verified_at')->count();
+    $totalPrintedCollections = Collection::where('active', 1)->count();
+    $totalLoans = Order::where('status', 'APPROVED')->count();
 
-        return compact(
-            'topBorrowers',
-            'topBooks',
-            'totalVerifiedUsers',
-            'totalPrintedCollections',
-            'totalLoans',
-            'totalUniqueTitles'
-        );
-    }
+    $printedTitles = Collection::where('active', 1)->pluck('title')
+        ->map(fn($t) => strtolower(trim($t)))->toArray();
+    $electronicTitles = FinalProject::where('status', 'Approved')->pluck('title')
+        ->map(fn($t) => strtolower(trim($t)))->toArray();
+    $totalUniqueTitles = count(array_unique(array_merge($printedTitles, $electronicTitles)));
+
+    return compact(
+        'topBorrowers',
+        'topBooks',
+        'totalVerifiedUsers',
+        'totalPrintedCollections',
+        'totalLoans',
+        'totalUniqueTitles'
+    );
+}
     // ==================== USER SIDE ====================
     public function index()
     {
