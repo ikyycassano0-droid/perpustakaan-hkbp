@@ -591,12 +591,14 @@
                                 @endif
                             </div>
                             <div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
-                                <a href="{{ route('final_project.detail', $featured->id) }}"
+                                {{-- Detail --}}
+                                <a href="{{ route('guest.koleksi_elektronik.detail', $featured->id) }}"
                                    style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: var(--primary-color); color: white; border-radius: 50px; font-weight: 700; text-decoration: none; transition: 0.3s;"
                                    onmouseover="this.style.background='var(--accent-green)'; this.style.transform='translateY(-2px)';"
                                    onmouseout="this.style.background='var(--primary-color)'; this.style.transform='translateY(0)';">
                                     <i class="fas fa-info-circle"></i> Detail
                                 </a>
+                                {{-- Akses --}}
                                 @if($featured->file_url)
                                     <a href="{{ asset('storage/' . $featured->file_url) }}" target="_blank"
                                        style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: var(--accent-yellow); color: var(--primary-color); border-radius: 50px; font-weight: 700; text-decoration: none; transition: 0.3s;"
@@ -663,20 +665,16 @@
                                 <div class="cd-author"><i class="far fa-user"></i> Penulis tidak diketahui</div>
                             @endif
 
-                            <!-- Tombol Aksi (Detail + Akses + Download) -->
+                            <!-- Tombol Aksi (HANYA Detail + Akses, TANPA Download) -->
                             <div class="cd-footer">
                                 {{-- Detail --}}
-                                <a href="{{ route('final_project.detail', $item->id) }}" class="btn-outline-read">
+                                <a href="{{ route('guest.koleksi_elektronik.detail', $item->id) }}" class="btn-outline-read">
                                     <i class="fas fa-info-circle"></i> Detail
                                 </a>
-                                {{-- Akses (Baca) --}}
+                                {{-- Akses --}}
                                 @if($item->file_url)
                                     <a href="{{ asset('storage/' . $item->file_url) }}" target="_blank" class="btn-read">
                                         <i class="fas fa-play-circle"></i> Akses
-                                    </a>
-                                    {{-- Download --}}
-                                    <a href="{{ route('final_project.download', $item->id) }}" class="btn-outline-read">
-                                        <i class="fas fa-download"></i> Download
                                     </a>
                                 @else
                                     <span class="btn-read" style="opacity:0.5;">Tidak tersedia</span>

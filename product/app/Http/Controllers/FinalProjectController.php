@@ -679,28 +679,58 @@ public function store(Request $request)
         return view('user.page.Koleksi_Elektronik.create_kti', compact('supervisors', 'categories'));
     }
 
-    public function detail($id)
+    public function detailUser($id)
     {
         $item = FinalProject::with([
             'category',
             'classifications',
-            'categoriesMany'
+            'categoriesMany',
+            'user'
         ])->findOrFail($id);
 
         if ($item->status !== 'Approved') {
             abort(403);
         }
 
-
         $slug = $item->category->slug ?? 'ebook';
+        
+        // View untuk user
         $viewMap = [
             'ebook' => 'user.page.Koleksi_Elektronik.detail',
-            'e-article' => 'user.page.Koleksi_Elektronik.detail',
+            'e-article' => 'user.page.Koleksi_Elektronik.detail', // EBOOK & E-ARTICLE PAKAI VIEW SAMA
             'cd' => 'user.page.Koleksi_Elektronik.detail_cd',
             'video' => 'user.page.Koleksi_Elektronik.detail_video',
         ];
 
         $view = $viewMap[$slug] ?? 'user.page.Koleksi_Elektronik.detail';
+
+        return view($view, compact('item'));
+    }
+
+        public function detailGuest($id)
+    {
+        $item = FinalProject::with([
+            'category',
+            'classifications',
+            'categoriesMany',
+            'user'
+        ])->findOrFail($id);
+
+        if ($item->status !== 'Approved') {
+            abort(403);
+        }
+
+        $slug = $item->category->slug ?? 'ebook';
+        
+        // View untuk guest
+        $viewMap = [
+            'ebook' => 'guest.page.Koleksi_Elektronik.detail',
+            'e-article' => 'guest.page.Koleksi_Elektronik.detail', // EBOOK & E-ARTICLE PAKAI VIEW SAMA
+            'cd' => 'guest.page.Koleksi_Elektronik.detail_cd',
+            'video' => 'guest.page.Koleksi_Elektronik.detail_video',
+        ];
+
+        $view = $viewMap[$slug] ?? 'guest.page.Koleksi_Elektronik.detail';
 
         return view($view, compact('item'));
     }

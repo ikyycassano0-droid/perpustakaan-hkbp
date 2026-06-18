@@ -480,9 +480,11 @@
                         <h3>{{ $featured->title }}</h3>
                         <p>{{ Str::limit($featured->abstract ?? 'Tidak ada deskripsi', 100) }}</p>
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <a href="{{ route('final_project.detail', $featured->id) }}" class="btn-play-now" style="margin-top:0;">
+                            {{-- Detail --}}
+                            <a href="{{ route('guest.koleksi_elektronik.detail', $featured->id) }}" class="btn-play-now" style="margin-top:0;">
                                 <i class="fas fa-info-circle"></i> Detail
                             </a>
+                            {{-- Putar --}}
                             @if($featured->file_url)
                                 @php
                                     $featExt = strtolower(pathinfo($featured->file_url, PATHINFO_EXTENSION));
@@ -490,9 +492,9 @@
                                 @endphp
                                 @if(in_array($featExt, $videoExts))
                                     <a href="{{ asset('storage/' . $featured->file_url) }}" target="_blank"
-                                       style="margin-top:0; background: var(--accent-yellow); color: var(--primary-color); padding: 12px 25px; border-radius: 50px; font-weight: 700; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; transition: 0.3s;"
+                                       style="margin-top:0; background: #f1c40f; color: #1a6b47; padding: 12px 25px; border-radius: 50px; font-weight: 700; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; transition: 0.3s;"
                                        onmouseover="this.style.background='#fff'; this.style.transform='translateY(-2px)';"
-                                       onmouseout="this.style.background='var(--accent-yellow)'; this.style.transform='translateY(0)';">
+                                       onmouseout="this.style.background='#f1c40f'; this.style.transform='translateY(0)';">
                                         <i class="fas fa-play"></i> Putar
                                     </a>
                                 @endif
@@ -541,10 +543,10 @@
                                 <div class="v-author"><i class="far fa-user"></i> Penulis tidak diketahui</div>
                             @endif
 
-                            <!-- Tombol Aksi -->
+                            <!-- Tombol Aksi (HANYA Detail + Putar, TANPA Download) -->
                             <div class="v-footer">
                                 {{-- Detail --}}
-                                <a href="{{ route('final_project.detail', $video->id) }}" class="btn-outline-read">
+                                <a href="{{ route('guest.koleksi_elektronik.detail', $video->id) }}" class="btn-outline-read">
                                     <i class="fas fa-info-circle"></i> Detail
                                 </a>
                                 {{-- Putar --}}
@@ -558,12 +560,6 @@
                                             <i class="fas fa-play"></i> Putar
                                         </a>
                                     @endif
-                                @endif
-                                {{-- Download --}}
-                                @if($video->file_url)
-                                    <a href="{{ route('final_project.download', $video->id) }}" class="btn-outline-read">
-                                        <i class="fas fa-download"></i> Download
-                                    </a>
                                 @endif
                             </div>
                         </div>

@@ -1,4 +1,4 @@
-{{-- resources/views/guest/page/koleksi/e-article.blade.php --}}
+{{-- resources/views/guest/page/koleksi/e_article.blade.php --}}
 @extends('guest.component.master')
 
 @section('title', 'E-Article & Jurnal - Perpustakaan Sekolah Keperawatan HKBP')
@@ -484,11 +484,11 @@
                                 <p class="article-author"><i class="far fa-user"></i> Penulis tidak diketahui</p>
                             @endif
 
-                            <!-- Tombol Aksi (Detail + Baca + Download) -->
+                            <!-- Tombol Aksi (HANYA Detail + Baca, TANPA Download) -->
                             <div class="article-footer">
                                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                                     {{-- Tombol Detail --}}
-                                    <a href="{{ route('final_project.detail', $article->id) }}" class="btn-outline-read">
+                                    <a href="{{ route('guest.koleksi_elektronik.detail', $article->id) }}" class="btn-outline-read">
                                         <i class="fas fa-info-circle"></i> Detail
                                     </a>
                                     {{-- Tombol Baca --}}
@@ -503,10 +503,6 @@
                                         @endphp
                                         <a href="{{ $bacaUrl }}" target="_blank" class="btn-read">
                                             <i class="fas fa-book"></i> Baca
-                                        </a>
-                                        {{-- Tombol Download --}}
-                                        <a href="{{ route('final_project.download', $article->id) }}" class="btn-outline-read">
-                                            <i class="fas fa-download"></i> Download
                                         </a>
                                     @else
                                         <span class="btn-read" style="opacity:0.5;">Tidak tersedia</span>

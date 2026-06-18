@@ -491,11 +491,11 @@
                             <!-- Tombol Aksi -->
                             <div class="book-footer">
                                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                                    {{-- Detail (outline) --}}
-                                    <a href="{{ route('final_project.detail', $book->id) }}" class="btn-outline-read">
+                                    {{-- Detail --}}
+                                    <a href="{{ route('guest.koleksi_elektronik.detail', $book->id) }}" class="btn-outline-read">
                                         <i class="fas fa-info-circle"></i> Detail
                                     </a>
-                                    {{-- Baca (solid) --}}
+                                    {{-- Baca --}}
                                     @if($book->file_url)
                                         @php
                                             $fileUrl  = asset('storage/' . $book->file_url);
@@ -507,10 +507,6 @@
                                         @endphp
                                         <a href="{{ $bacaUrl }}" target="_blank" class="btn-read">
                                             <i class="fas fa-book"></i> Baca
-                                        </a>
-                                        {{-- Download (outline) --}}
-                                        <a href="{{ route('final_project.download', $book->id) }}" class="btn-outline-read">
-                                            <i class="fas fa-download"></i> Download
                                         </a>
                                     @else
                                         <span class="btn-read" style="opacity:0.5;">Tidak tersedia</span>

@@ -332,7 +332,7 @@ Route::prefix('user')->group(function () {
     Route::get('/koleksi/{category}', [FinalProjectController::class,'index'])
         ->name('koleksi')
         ->where('category','ebook|e-article|cd|video');
-    Route::get('/koleksi-elektronik/detail/{id}', [FinalProjectController::class, 'detail'])
+    Route::get('/koleksi-elektronik/detail/{id}', [FinalProjectController::class, 'detailUser'])
     ->name('detail');
 
     Route::get('/download/{id}', [FinalProjectController::class, 'download'])->name('download')->middleware('auth');
@@ -380,6 +380,9 @@ Route::middleware(['web'])->group(function () {
             Route::get('/video', [FinalProjectController::class, 'showAdminUploadGuest'])
                 ->defaults('category', 'video')
                 ->name('video');
+
+            Route::get('/detail/{id}', [FinalProjectController::class, 'detailGuest'])
+            ->name('detail');
         });
     // ================= Waktu Layanan =================
         Route::get('/waktu_layanan', [ServiceScheduleController::class, 'indexGuest'])
