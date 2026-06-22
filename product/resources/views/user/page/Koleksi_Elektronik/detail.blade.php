@@ -1,22 +1,65 @@
-{{-- detail.blade.php untuk Ebook, E-article, dan jenis lainnya --}}
+{{-- resources/views/user/page/Koleksi_Elektronik/detail.blade.php --}}
 @extends('user.component.master')
 
 @section('title', $item->title . ' - Perpustakaan Sekolah Keperawatan HKBP')
 
 @push('styles')
     <style>
-        /* Additional styles specific to ebook detail page */
-        .main-wrapper {
-            max-width: 1220px;
-            margin: 40px auto 40px 13%;
-            padding: 0 30px;
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 50px;
-            align-items: start;
+        /* ============================================================
+               RESET & VARIABEL
+            ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        /* ========== 3D BOOK SECTION ========== */
+        body {
+            background-color: #f4f7f5;
+            color: #0d2137;
+            line-height: 1.5;
+            font-family: 'DM Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        :root {
+            --primary-color: #1a6b47;
+            --deep-green: #0f4a31;
+            --accent-green: #2daa6e;
+            --accent-yellow: #f1c40f;
+            --text-dark: #0d2137;
+            --text-muted: #5a7060;
+            --light-bg: #f4f7f5;
+            --card-bg: #ffffff;
+            --border-color: #d4e5d9;
+            --danger: #e74c3c;
+            --paper: #fffcf0;
+            --reader-bg: #1a1a1a;
+        }
+
+        /* ============================================================
+               MAIN LAYOUT
+            ============================================================ */
+        .main-wrapper {
+            max-width: 1430px;
+            margin: 100px 0 40px auto;
+            padding: 0 30px;
+            display: flex;
+            gap: 50px;
+            align-items: flex-start;
+            justify-content: flex-end;
+            overflow: visible;
+            min-height: 100vh;
+        }
+
+        /* ============================================================
+               3D BOOK SECTION
+            ============================================================ */
         .book-wrap {
             perspective: 1600px;
             position: sticky;
@@ -24,6 +67,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            overflow: visible;
+            flex: 0 0 350px;
+            height: fit-content;
+            align-self: flex-start;
         }
 
         .real-book {
@@ -36,12 +83,18 @@
             cursor: pointer;
             margin-bottom: 30px;
             will-change: transform;
+            overflow: visible;
         }
 
         .real-book:hover {
-            transform: rotateY(-5deg) rotateX(1deg) translateX(50px);
+            transform: rotateY(-5deg) rotateX(1deg) translateX(30px);
         }
 
+        .real-book:hover .book-cover {
+            transform: rotateY(-180deg);
+        }
+
+        /* --- Cover belakang --- */
         .book-back {
             position: absolute;
             width: 100%;
@@ -51,15 +104,17 @@
             box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.2);
             z-index: 1;
             backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
 
+        /* --- Halaman dalam buku (isi) --- */
         .book-pages {
             position: absolute;
             width: 96%;
             height: 96%;
             top: 2%;
             left: 2%;
-            background: #fffdfd;
+            background: #f1f1ee;
             border-radius: 2px 8px 8px 2px;
             box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05), 2px 3px 10px rgba(0, 0, 0, 0.1);
             z-index: 5;
@@ -68,6 +123,22 @@
             flex-direction: column;
             overflow-y: auto;
             font-family: 'Playfair Display', serif;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .book-pages::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .book-pages::-webkit-scrollbar-track {
+            background: #ece3cf;
+            border-radius: 10px;
+        }
+
+        .book-pages::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 10px;
         }
 
         .book-pages h3 {
@@ -109,6 +180,7 @@
             font-family: 'DM Sans', sans-serif;
         }
 
+        /* --- Cover depan --- */
         .book-cover {
             position: absolute;
             width: 100%;
@@ -129,10 +201,7 @@
             display: block;
         }
 
-        .real-book:hover .book-cover {
-            transform: rotateY(-180deg);
-        }
-
+        /* --- Punggung buku --- */
         .book-spine {
             position: absolute;
             width: 24px;
@@ -145,8 +214,11 @@
             border-radius: 3px 2px 2px 3px;
             box-shadow: -3px 0 10px rgba(0, 0, 0, 0.3);
             z-index: 25;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
 
+        /* --- Efek samping halaman --- */
         .book-edges {
             position: absolute;
             width: 97%;
@@ -158,23 +230,12 @@
             transform: translateZ(-5px);
             border-radius: 2px 5px 5px 2px;
             pointer-events: none;
+            backface-visibility: hidden;
         }
 
-        .book-pages::-webkit-scrollbar {
-            width: 3px;
-        }
-
-        .book-pages::-webkit-scrollbar-track {
-            background: #ece3cf;
-            border-radius: 10px;
-        }
-
-        .book-pages::-webkit-scrollbar-thumb {
-            background: var(--accent-green);
-            border-radius: 10px;
-        }
-
-        /* Action Buttons */
+        /* ============================================================
+               ACTION BUTTONS
+            ============================================================ */
         .ebook-actions {
             width: 100%;
             display: flex;
@@ -198,16 +259,25 @@
             text-decoration: none;
         }
 
-        .btn-read {
+        .btn-read-online {
             background: var(--primary-color);
             color: white;
             box-shadow: 0 4px 10px rgba(26, 107, 71, 0.25);
         }
 
-        .btn-read:hover {
+        .btn-read-online:hover {
             background: var(--accent-green);
             transform: translateY(-3px);
             color: white;
+        }
+
+        .btn-read-online .badge-label {
+            font-size: 0.65rem;
+            font-weight: 400;
+            opacity: 0.8;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 12px;
+            border-radius: 20px;
         }
 
         .btn-download {
@@ -222,8 +292,65 @@
             transform: translateY(-2px);
         }
 
-        /* Detail Box */
+        .btn-download .badge-label {
+            font-size: 0.65rem;
+            font-weight: 400;
+            opacity: 0.7;
+            background: rgba(26, 107, 71, 0.1);
+            padding: 2px 12px;
+            border-radius: 20px;
+        }
+
+        .btn-download:hover .badge-label {
+            background: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .btn-download-locked {
+            background: #f5f5f0;
+            color: #999;
+            border: 1.8px solid #ddd;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn-download-locked:hover {
+            transform: none !important;
+            box-shadow: none !important;
+            background: #f5f5f0;
+            color: #999;
+        }
+
+        .btn-download-locked .lock-icon {
+            color: var(--accent-yellow);
+        }
+
+        .login-hint {
+            text-align: center;
+            padding: 4px 0 2px 0;
+            font-size: 0.75rem;
+            color: #999;
+        }
+
+        .login-hint a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 1px dashed var(--primary-color);
+        }
+
+        .login-hint a:hover {
+            color: var(--deep-green);
+            border-bottom: 1px solid var(--deep-green);
+        }
+
+        /* ============================================================
+               DETAIL BOX
+            ============================================================ */
         .detail-box {
+            flex: 1;
+            max-width: 820px;
+            margin-left: 0;
             background: white;
             border-radius: 28px;
             padding: 32px 36px;
@@ -251,6 +378,10 @@
             border-radius: 30px;
         }
 
+        .title-area span.top-tag i {
+            margin-right: 6px;
+        }
+
         .author-text {
             color: var(--text-muted);
             margin-bottom: 26px;
@@ -262,10 +393,7 @@
         .author-text a {
             color: var(--primary-color);
             font-weight: 600;
-        }
-
-        .author-text a:hover {
-            text-decoration: underline;
+            text-decoration: none;
         }
 
         .section-header {
@@ -275,6 +403,11 @@
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+
+        .section-header span {
+            color: var(--text-muted);
+            font-weight: 400;
         }
 
         .availability-card {
@@ -302,6 +435,10 @@
             padding: 12px 20px;
             font-size: 0.85rem;
             border-bottom: 1px solid var(--border-color);
+        }
+
+        .avail-table tr:last-child td {
+            border-bottom: none;
         }
 
         .status-badge {
@@ -364,6 +501,10 @@
             font-size: 0.85rem;
         }
 
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
         .label {
             color: var(--text-muted);
             font-weight: 600;
@@ -374,39 +515,57 @@
             font-weight: 500;
         }
 
-        .keywords {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 5px;
-        }
-
-        .keyword-tag {
-            background: #eef4f0;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            color: var(--primary-color);
-        }
-
-        .category-badge {
+        .value .category-badge {
             display: inline-block;
             background: var(--primary-color);
             color: white;
-            padding: 4px 12px;
+            padding: 2px 12px;
             border-radius: 20px;
             font-size: 0.7rem;
-            margin: 2px;
+            margin: 2px 3px 2px 0;
         }
 
-        /* Reader Overlay */
+        .abstract-content {
+            margin-top: 10px;
+            line-height: 1.8;
+            text-align: justify;
+            color: #2d3748;
+            font-size: 0.95rem;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--primary-color);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-back:hover {
+            background: var(--deep-green);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            color: white;
+        }
+
+        /* ============================================================
+               READER OVERLAY
+            ============================================================ */
         #reader-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--reader-bg, #1a1a1a);
+            background: var(--reader-bg);
             z-index: 2000;
             display: none;
             flex-direction: column;
@@ -489,53 +648,35 @@
             color: white;
         }
 
-        .btn-nav-reader:hover {
-            background: var(--accent-green);
-        }
-
-        /* Tombol Kembali */
-        .btn-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--primary-color, #1a6b47);
-            color: white;
-            padding: 10px 24px;
-            border-radius: 40px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-back:hover {
-            background: var(--accent-green, #0f4a31);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-        }
-
+        /* ============================================================
+               RESPONSIVE
+            ============================================================ */
         @media (max-width: 1024px) {
             .main-wrapper {
-                grid-template-columns: 1fr;
-                margin: 30px 20px;
+                flex-direction: column;
+                margin: 100px 20px 30px 20px;
                 gap: 35px;
+                align-items: center;
             }
 
             .book-wrap {
                 position: relative;
                 top: 0;
+                margin-left: 0;
+                flex: none;
+                width: 100%;
+                max-width: 350px;
+            }
+
+            .detail-box {
+                max-width: 100%;
+                margin-left: 0;
             }
         }
 
         @media (max-width: 640px) {
-            .info-row {
-                grid-template-columns: 1fr;
-                gap: 6px;
-            }
-
-            .reader-page {
-                padding: 30px 25px;
+            .detail-box {
+                padding: 20px;
             }
 
             .real-book {
@@ -543,8 +684,61 @@
                 height: 370px;
             }
 
+            .info-row {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+
+            .title-area h1 {
+                font-size: 1.5rem;
+            }
+
+            .btn-ebook {
+                font-size: 0.8rem;
+                padding: 10px 14px;
+            }
+
+            .avail-table th,
+            .avail-table td {
+                padding: 10px 14px;
+                font-size: 0.75rem;
+            }
+
+            .reader-page {
+                padding: 30px 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-wrapper {
+                margin: 90px 10px 15px 10px;
+                padding: 0;
+            }
+
+            .real-book {
+                width: 200px;
+                height: 300px;
+            }
+
             .detail-box {
-                padding: 20px;
+                padding: 16px;
+                border-radius: 16px;
+            }
+
+            .book-pages {
+                padding: 16px 12px;
+            }
+
+            .book-pages h3 {
+                font-size: 0.8rem;
+            }
+
+            .book-pages p {
+                font-size: 0.6rem;
+            }
+
+            .pages-meta {
+                font-size: 0.5rem;
             }
         }
     </style>
@@ -552,7 +746,7 @@
 
 @section('content')
     <div class="main-wrapper">
-        <!-- 3D BOOK SECTION -->
+        <!-- ===== 3D BOOK SECTION ===== -->
         <div class="book-wrap" data-aos="zoom-in-right">
             <div class="real-book">
                 <div class="book-spine"></div>
@@ -563,25 +757,33 @@
                     <h3><i class="fas fa-feather-alt"></i> Abstrak</h3>
                     <p>{{ Str::limit($item->abstract ?? 'Tidak ada abstrak untuk koleksi ini.', 350) }}</p>
 
-                    @if($item->keywords)
+                    @if ($item->keywords)
                         <div class="book-preview">
                             <i class="fas fa-tags"></i> <strong>Kata Kunci:</strong><br>
-                            <div class="keywords" style="margin-top: 5px;">
-                                @foreach(is_array($item->keywords) ? $item->keywords : json_decode($item->keywords, true) ?? [] as $keyword)
-                                    <span class="keyword-tag">#{{ $keyword }}</span>
-                                @endforeach
+                            <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px;">
+                                @php
+                                    $keywords = is_array($item->keywords) ? $item->keywords : json_decode($item->keywords, true);
+                                @endphp
+                                @if ($keywords)
+                                    @foreach ($keywords as $keyword)
+                                        <span style="background: #eef4f0; padding: 1px 10px; border-radius: 12px; font-size: 0.6rem; color: var(--primary-color);">#{{ $keyword }}</span>
+                                    @endforeach
+                                @endif
                             </div>
                         </div>
                     @endif
 
                     <div class="pages-meta">
                         <span><i class="fas fa-lock-open"></i> Open Access</span>
+                        @if ($item->file_url)
+                            <span><i class="fas fa-file-pdf"></i> PDF</span>
+                        @endif
                     </div>
                 </div>
 
-                <!-- Cover depan dengan gambar -->
+                <!-- Cover depan -->
                 <div class="book-cover">
-                    @if($item->cover_image && Storage::disk('public')->exists($item->cover_image))
+                    @if ($item->cover_image && Storage::disk('public')->exists($item->cover_image))
                         <img src="{{ Storage::url($item->cover_image) }}" alt="{{ $item->title }}">
                     @else
                         <img src="{{ asset('assets/default-cover.jpg') }}" alt="Default Cover">
@@ -589,58 +791,69 @@
                 </div>
             </div>
 
+            <!-- ===== TOMBOL AKSI ===== -->
             <div class="ebook-actions">
-                {{-- Tombol Baca Online --}}
-                @if($item->file_url)
+                @if ($item->file_url)
                     @php
-                        $fileUrl  = Storage::url($item->file_url);
                         $fullFileUrl = asset('storage/' . $item->file_url);
-                        $ext      = strtolower(pathinfo($item->file_url, PATHINFO_EXTENSION));
-                        $isWord   = in_array($ext, ['doc', 'docx']);
-                        $bacaUrl  = $isWord
+                        $ext = strtolower(pathinfo($item->file_url, PATHINFO_EXTENSION));
+                        $isWord = in_array($ext, ['doc', 'docx']);
+                        $bacaUrl = $isWord
                             ? 'https://docs.google.com/viewer?url=' . urlencode($fullFileUrl)
                             : $fullFileUrl;
                     @endphp
-                    <a href="{{ $bacaUrl }}" target="_blank" class="btn-ebook btn-read">
-                        <i class="fas fa-book-reader"></i> BACA SEKARANG (ONLINE)
-                    </a>
-                    {{-- Tombol Download Langsung (Tanpa Login) --}}
-                    <a href="{{ $fullFileUrl }}" download class="btn-ebook btn-download">
-                        <i class="fas fa-file-download"></i> UNDUH {{ strtoupper($ext) }} (OFFLINE)
+                    <a href="{{ $bacaUrl }}" target="_blank" class="btn-ebook btn-read-online">
+                        <i class="fas fa-book-open"></i> BACA SEKARANG
+                        <span class="badge-label">ONLINE</span>
                     </a>
                 @else
-                    <button class="btn-ebook btn-read" disabled style="opacity: 0.5; cursor: not-allowed;">
-                        <i class="fas fa-book-reader"></i> FILE TIDAK TERSEDIA
+                    <button class="btn-ebook btn-read-online" disabled style="opacity: 0.5; cursor: not-allowed;">
+                        <i class="fas fa-book-open"></i> FILE TIDAK TERSEDIA
                     </button>
+                @endif
+
+                @if ($item->file_url)
+                    <button class="btn-ebook btn-download btn-download-locked" disabled>
+                        <i class="fas fa-lock lock-icon"></i> UNDUH PDF
+                        <span class="badge-label">OFFLINE</span>
+                    </button>
+                    <div class="login-hint">
+                        <i class="fas fa-info-circle" style="color: #ccc;"></i>
+                        Login untuk mengunduh file &nbsp;
+                        <a href="{{ route('login') }}">Login Sekarang →</a>
+                    </div>
+                @else
                     <button class="btn-ebook btn-download" disabled style="opacity: 0.5; cursor: not-allowed;">
-                        <i class="fas fa-file-download"></i> FILE TIDAK TERSEDIA
+                        <i class="fas fa-file-pdf"></i> FILE TIDAK TERSEDIA
                     </button>
                 @endif
             </div>
         </div>
 
-        <!-- DETAIL CARD -->
+        <!-- ===== DETAIL CARD ===== -->
         <div class="detail-box" data-aos="fade-left">
             <div class="title-area">
                 <span class="top-tag">
                     <i class="fas {{ $item->category->slug == 'ebook' ? 'fa-book-open' : ($item->category->slug == 'video' ? 'fa-video' : 'fa-file-alt') }}"></i>
-                    {{ strtoupper($item->category->name ?? 'KOLEKSI ELEKTRONIK') }}
+                    {{ strtoupper($item->category->name ?? 'KOLEKSI ELEKTRONIK') }} (E-{{ strtoupper($item->category->slug ?? 'BOOK') }})
                 </span>
                 <h1>{{ $item->title }}</h1>
                 <p class="author-text">
-                    @if($item->student_name)
-                        Oleh <a href="#">{{ $item->student_name }}</a>
-                    @elseif($item->user)
-                        Oleh <a href="#">{{ $item->user->name ?? 'Admin Perpustakaan' }}</a>
+                    Oleh
+                    @if ($item->student_name)
+                        <a href="#">{{ $item->student_name }}</a>
+                    @elseif ($item->user)
+                        <a href="#">{{ $item->user->name ?? 'Admin Perpustakaan' }}</a>
                     @else
-                        Oleh <a href="#">Admin Perpustakaan</a>
+                        <a href="#">Admin Perpustakaan</a>
                     @endif
-                    @if($item->year)
+                    @if ($item->year)
                         | Tahun {{ $item->year }}
                     @endif
                 </p>
             </div>
 
+            <!-- ===== STATUS TABLE ===== -->
             <div class="section-header">
                 <i class="fas fa-cloud-upload-alt" style="color: var(--accent-green);"></i>
                 Status Akses Digital <span>— Repositori AKPER</span>
@@ -662,7 +875,7 @@
                             <td>
                                 <div class="status-badge">
                                     <div class="pulse-dot"></div>
-                                    @if($item->status == 'Approved')
+                                    @if ($item->status == 'Approved')
                                         Tersedia (Open Access)
                                     @else
                                         {{ $item->status ?? 'Pending' }}
@@ -674,27 +887,28 @@
                 </table>
             </div>
 
+            <!-- ===== INFO DETAIL ===== -->
             <div class="info-heading">
                 <i class="fas fa-info-circle"></i> Informasi Detail
             </div>
 
             <div class="info-list">
-                @if($item->isbn)
+                @if ($item->series)
                     <div class="info-row">
-                        <div class="label">ISBN/ISSN</div>
-                        <div class="value">{{ $item->isbn }}</div>
+                        <div class="label">Series Title</div>
+                        <div class="value">{{ $item->series }}</div>
                     </div>
                 @endif
 
                 <div class="info-row">
                     <div class="label">Penerbit</div>
-                    <div class="value">{{ $item->publisher ?? 'Akper HKBP Press' }}</div>
+                    <div class="value">{{ $item->publisher ?? 'Akper HKBP Press : Tarutung, 2023' }}</div>
                 </div>
 
-                @if($item->year)
+                @if ($item->isbn)
                     <div class="info-row">
-                        <div class="label">Tahun Terbit</div>
-                        <div class="value">{{ $item->year }}</div>
+                        <div class="label">ISBN</div>
+                        <div class="value">{{ $item->isbn }} (Digital)</div>
                     </div>
                 @endif
 
@@ -703,29 +917,36 @@
                     <div class="value">{{ $item->language ?? 'Indonesia' }}</div>
                 </div>
 
-                @if($item->edition)
+                @if ($item->edition)
                     <div class="info-row">
                         <div class="label">Edisi</div>
                         <div class="value">{{ $item->edition }}</div>
                     </div>
                 @endif
 
-                @if($item->classifications && $item->classifications->count())
+                @if ($item->subjects)
+                    <div class="info-row">
+                        <div class="label">Subjek</div>
+                        <div class="value">{{ $item->subjects }}</div>
+                    </div>
+                @endif
+
+                @if ($item->classifications && $item->classifications->count())
                     <div class="info-row">
                         <div class="label">Klasifikasi</div>
                         <div class="value">
-                            @foreach($item->classifications as $classification)
+                            @foreach ($item->classifications as $classification)
                                 <span class="category-badge">{{ $classification->code ?? $classification->name }}</span>
                             @endforeach
                         </div>
                     </div>
                 @endif
 
-                @if($item->categoriesMany && $item->categoriesMany->count())
+                @if ($item->categoriesMany && $item->categoriesMany->count())
                     <div class="info-row">
                         <div class="label">Kategori</div>
                         <div class="value">
-                            @foreach($item->categoriesMany as $category)
+                            @foreach ($item->categoriesMany as $category)
                                 <span class="category-badge">{{ $category->name }}</span>
                             @endforeach
                         </div>
@@ -736,7 +957,7 @@
                     <div class="label">Tipe Isi / Media</div>
                     <div class="value">
                         Text (Digital) /
-                        @if($item->file_url)
+                        @if ($item->file_url)
                             @php
                                 $extension = pathinfo($item->file_url, PATHINFO_EXTENSION);
                             @endphp
@@ -752,157 +973,32 @@
                     <div class="value">E-Library Server - Koleksi Elektronik</div>
                 </div>
 
-                @if($item->created_at)
+                @if ($item->created_at)
                     <div class="info-row">
                         <div class="label">Tanggal Unggah</div>
-                        <div class="value">{{ $item->created_at->format('d F Y') }}</div>
+                        <div class="value">{{ $item->created_at->translatedFormat('d F Y') }}</div>
                     </div>
                 @endif
             </div>
 
-            @if($item->abstract)
-                <div class="info-heading" style="margin-top: 25px;">
+            <!-- ===== ABSTRACT ===== -->
+            @if ($item->abstract)
+                <div class="info-heading" style="margin-top: 30px;">
                     <i class="fas fa-align-left"></i> Abstrak
                 </div>
-                <div class="abstract-content" style="margin-top: 10px; line-height: 1.8; text-align: justify;">
+                <div class="abstract-content">
                     {{ $item->abstract }}
                 </div>
             @endif
 
-            {{-- Tombol Kembali ke Koleksi (dalam card detail, ditengah) --}}
+            <!-- ===== TOMBOL KEMBALI ===== -->
             <div style="margin-top: 40px; text-align: center;">
-                <a href="{{ url()->previous() !== url()->current() ? url()->previous() : route('guest.koleksi_elektronik.index') }}"
-                   class="btn-back">
+                <a href="{{ url()->previous() !== url()->current() ? url()->previous() : route('user.koleksi_elektronik.ebook') }}"
+                    class="btn-back">
                     <i class="fas fa-arrow-left"></i>
-                    Kembali ke Koleksi {{ ucfirst($item->category->name ?? 'Elektronik') }}
+                    Kembali ke Koleksi
                 </a>
             </div>
         </div>
     </div>
-
-    <!-- READER OVERLAY (Optional - bisa dihapus jika tidak diperlukan) -->
-    <div id="reader-overlay">
-        <div class="reader-nav-top">
-            <div>
-                <i class="fas fa-book-open" style="color: var(--accent-yellow);"></i>
-                <span style="margin-left: 10px;">E-READER: {{ $item->title }}</span>
-            </div>
-            <div>
-                <div class="search-box-reader" id="search-container">
-                    <input type="text" id="reader-search-input" placeholder="Cari kata..." onkeyup="doSearch(event)">
-                </div>
-                <i class="fas fa-search" onclick="toggleSearch()" style="cursor: pointer;"></i>
-                <i class="fas fa-moon" id="darkmode-btn" onclick="toggleDarkMode()" style="cursor: pointer; margin-left: 20px;"></i>
-                <i class="fas fa-times-circle" onclick="closeReader()" style="cursor: pointer; margin-left: 20px; color: #e74c3c;"></i>
-            </div>
-        </div>
-        <div class="reader-main">
-            <div class="reader-page" id="reader-text-content">
-                <div id="pdf-viewer-container" style="width:100%;">
-                    @if($item->file_url)
-                        @php
-                            $fileUrl  = asset('storage/' . $item->file_url);
-                            $ext      = strtolower(pathinfo($item->file_url, PATHINFO_EXTENSION));
-                            $isWord   = in_array($ext, ['doc', 'docx']);
-                            $viewUrl  = $isWord
-                                ? 'https://docs.google.com/viewer?url=' . urlencode($fileUrl)
-                                : $fileUrl;
-                        @endphp
-                        <iframe id="pdf-frame" src="{{ $viewUrl }}" style="width:100%; height:800px; border:none;"></iframe>
-                    @else
-                        <div class="text-center" style="padding: 50px;">
-                            <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #e74c3c;"></i>
-                            <p style="margin-top: 20px;">File tidak tersedia untuk dibaca online.</p>
-                            <p>Silakan unduh file untuk membaca.</p>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-        <div class="reader-footer">
-            <button class="btn-nav-reader" onclick="closeReader()">Tutup</button>
-        </div>
-    </div>
 @endsection
-
-@push('scripts')
-    <script>
-        AOS.init({ duration: 700, once: true });
-
-        function openReader() {
-            const overlay = document.getElementById('reader-overlay');
-            overlay.classList.add('reader-active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeReader() {
-            document.getElementById('reader-overlay').classList.remove('reader-active');
-            document.body.style.overflow = 'auto';
-            resetSearch();
-        }
-
-        function toggleDarkMode() {
-            const overlay = document.getElementById('reader-overlay');
-            const btn = document.getElementById('darkmode-btn');
-            overlay.classList.toggle('reader-dark-mode');
-            if (overlay.classList.contains('reader-dark-mode')) {
-                btn.classList.remove('fa-moon');
-                btn.classList.add('fa-sun');
-            } else {
-                btn.classList.remove('fa-sun');
-                btn.classList.add('fa-moon');
-            }
-        }
-
-        function toggleSearch() {
-            const box = document.getElementById('search-container');
-            if (box.style.display === 'flex') {
-                box.style.display = 'none';
-                resetSearch();
-            } else {
-                box.style.display = 'flex';
-                document.getElementById('reader-search-input').focus();
-            }
-        }
-
-        function doSearch(e) {
-            const keyword = e.target.value.toLowerCase();
-            const content = document.getElementById('reader-text-content');
-
-            if (!content.dataset.original && content.innerHTML) {
-                content.dataset.original = content.innerHTML;
-            }
-
-            if (keyword.length < 3) {
-                if (content.dataset.original) {
-                    content.innerHTML = content.dataset.original;
-                }
-                return;
-            }
-
-            const regex = new RegExp(`(${keyword})`, 'gi');
-            if (content.dataset.original) {
-                content.innerHTML = content.dataset.original.replace(regex, '<mark style="background: #f1c40f; color: #000; padding: 2px 4px; border-radius: 3px;">$1</mark>');
-            }
-        }
-
-        function resetSearch() {
-            const content = document.getElementById('reader-text-content');
-            if (content.dataset.original) {
-                content.innerHTML = content.dataset.original;
-            }
-            const searchInput = document.getElementById('reader-search-input');
-            if (searchInput) searchInput.value = "";
-        }
-
-        // Keyboard navigation for reader
-        document.addEventListener('keydown', function(e) {
-            const reader = document.getElementById('reader-overlay');
-            if (reader.classList.contains('reader-active')) {
-                if (e.key === 'Escape') {
-                    closeReader();
-                }
-            }
-        });
-    </script>
-@endpush

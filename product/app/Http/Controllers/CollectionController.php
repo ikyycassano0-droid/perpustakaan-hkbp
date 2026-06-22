@@ -408,151 +408,146 @@ class CollectionController extends Controller
         };
     }
 
-    // ================= GLOBAL SEARCH =================
     public function globalSearch(Request $request)
-    {
-        $request->validate([
-            'keyword' => 'required|string|max:255',
-            'type' => 'nullable|string',
-            'classification' => 'nullable|string',
-            'category' => 'nullable|string',
-            'year' => 'nullable|string',
-        ]);
+{
+    $request->validate([
+        'keyword' => 'required|string|max:255',
+        'type' => 'nullable|string',
+        'classification' => 'nullable|string',
+        'category' => 'nullable|string',
+        'year' => 'nullable|string',
+    ]);
 
-        $keyword = strtolower($request->keyword);
+    $keyword = strtolower($request->keyword);
 
-        // Query Collections
-        $collections = Collection::with(['categories', 'classifications'])
-            ->where('active', true)
-            ->where(function ($query) use ($keyword) {
-                $query->where('title', 'LIKE', "%$keyword%")
-                    ->orWhere('description', 'LIKE', "%$keyword%")
-                    ->orWhere('publisher', 'LIKE', "%$keyword%")
-                    ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(author, '$')) LIKE ?", ["%$keyword%"]);
-            })
-            // Filter classification
-            ->when($request->classification, function ($q) use ($request) {
-                $q->whereHas('classifications', function ($q2) use ($request) {
-                    $q2->where('name', $request->classification);
-                });
-            })
-            // Filter category
-            ->when($request->category, function ($q) use ($request) {
-                $q->whereHas('categories', function ($q2) use ($request) {
-                    $q2->where('name', $request->category);
-                });
-            })
-            // Filter tahun
-            ->when($request->year, function ($q) use ($request) {
-                $q->where('publication_year', $request->year);
-            })
-            ->get()
-            ->map(function ($item) use ($keyword) {
-                $score = 0;
-                if (str_contains(strtolower($item->title), $keyword)) $score += 5;
-                foreach ($item->author ?? [] as $author) {
-                    if (str_contains(strtolower($author), $keyword)) $score += 4;
-                }
-                if ($item->description && str_contains(strtolower($item->description), $keyword)) $score += 2;
-                $item->score = $score;
-                $item->type = 'collection';
-                $item->is_restricted = $item->is_restricted ?? false;
-                return $item;
+    // ============ QUERY COLLECTIONS ============
+    $collections = Collection::with(['categories', 'classifications'])
+        ->where('active', true)
+        ->where(function ($query) use ($keyword) {
+            $query->where('title', 'LIKE', "%$keyword%")
+                ->orWhere('description', 'LIKE', "%$keyword%")
+                ->orWhere('publisher', 'LIKE', "%$keyword%")
+                // ✅ Cari di JSON string (tanpa tanda kutip)
+                ->orWhereRaw('LOWER(author) LIKE ?', ['%' . $keyword . '%']);
+        })
+        // Filter classification
+        ->when($request->classification, function ($q) use ($request) {
+            $q->whereHas('classifications', function ($q2) use ($request) {
+                $q2->where('name', $request->classification);
             });
-
-        // Query Final Projects
-        $finalProjects = FinalProject::with(['category'])
-            ->where('status', 'Approved')
-            ->where(function ($query) use ($keyword) {
-                $query->where('title', 'LIKE', "%$keyword%")
-                    ->orWhere('abstract', 'LIKE', "%$keyword%")
-                    ->orWhere('student_name', 'LIKE', "%$keyword%");
-            })
-            ->when($request->year, function ($q) use ($request) {
-                $q->whereYear('created_at', $request->year);
-            })
-            ->get()
-            ->map(function ($item) use ($keyword) {
-                $score = 0;
-                if (str_contains(strtolower($item->title), $keyword)) $score += 5;
-                $item->score = $score;
-                $item->type = 'final_project';
-                return $item;
+        })
+        // Filter category
+        ->when($request->category, function ($q) use ($request) {
+            $q->whereHas('categories', function ($q2) use ($request) {
+                $q2->where('name', $request->category);
             });
+        })
+        // Filter tahun
+        ->when($request->year, function ($q) use ($request) {
+            $q->where('publication_year', $request->year);
+        })
+        ->get()
+        ->map(function ($item) use ($keyword) {
+            $score = 0;
+            if (str_contains(strtolower($item->title), $keyword)) $score += 5;
 
-        $results = $collections
-            ->merge($finalProjects)
-            ->sortByDesc('score')
-            ->values();
+            // ✅ Cek author (sekarang string)
+            if ($item->author && str_contains(strtolower($item->author), $keyword)) {
+                $score += 4;
+            }
 
-        // Data untuk filter dropdown
-        $classifications = Classification::orderBy('name')->get();
-        $categories = CategoryCollection::orderBy('name')->get();
-        $years = Collection::whereNotNull('publication_year')
-            ->distinct()
-            ->orderBy('publication_year', 'desc')
-            ->pluck('publication_year');
+            if ($item->description && str_contains(strtolower($item->description), $keyword)) $score += 2;
+            $item->score = $score;
+            $item->type = 'collection';
+            $item->is_restricted = $item->is_restricted ?? false;
+            return $item;
+        });
 
-        return view('user.page.search_results', compact(
-            'results', 'keyword', 'classifications', 'categories', 'years'
-        ));
+    // ============ QUERY FINAL PROJECTS ============
+    $finalProjects = FinalProject::with(['category'])
+        ->where('status', 'Approved')
+        ->where(function ($query) use ($keyword) {
+            $query->where('title', 'LIKE', "%$keyword%")
+                ->orWhere('abstract', 'LIKE', "%$keyword%")
+                ->orWhere('student_name', 'LIKE', "%$keyword%");
+        })
+        ->when($request->year, function ($q) use ($request) {
+            $q->whereYear('created_at', $request->year);
+        })
+        ->get()
+        ->map(function ($item) use ($keyword) {
+            $score = 0;
+            if (str_contains(strtolower($item->title), $keyword)) $score += 5;
+            if (str_contains(strtolower($item->student_name ?? ''), $keyword)) $score += 4;
+            $item->score = $score;
+            $item->type = 'final_project';
+            return $item;
+        });
+
+    $results = $collections
+        ->merge($finalProjects)
+        ->sortByDesc('score')
+        ->values();
+
+    // Data untuk filter dropdown
+    $classifications = Classification::orderBy('name')->get();
+    $categories = CategoryCollection::orderBy('name')->get();
+    $years = Collection::whereNotNull('publication_year')
+        ->distinct()
+        ->orderBy('publication_year', 'desc')
+        ->pluck('publication_year');
+
+    return view('user.page.search_results', compact(
+        'results', 'keyword', 'classifications', 'categories', 'years'
+    ));
+}
+
+public function liveSearch(Request $request)
+{
+    $keyword = $request->keyword;
+
+    if (!$keyword) {
+        return response()->json([]);
     }
 
-    // ================= LIVE SEARCH =================
-    public function liveSearch(Request $request)
-    {
-        $keyword = $request->keyword;
+    $collections = Collection::where('active', true)
+        ->where(function ($query) use ($keyword) {
+            $query->where('title', 'LIKE', "%$keyword%")
+                ->orWhere('description', 'LIKE', "%$keyword%")
+                ->orWhere('publisher', 'LIKE', "%$keyword%")
+                // ✅ Cari di JSON string
+                ->orWhereRaw('LOWER(author) LIKE ?', ['%' . $keyword . '%']);
+        })
+        ->limit(50)
+        ->get()
+        ->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'title' => $item->title,
+                'type' => 'collection',
+                'file_url' => null,
+                'is_restricted' => $item->is_restricted ?? false
+            ];
+        });
 
-        if (!$keyword) {
-            return response()->json([]);
-        }
+    $finalProjects = FinalProject::where('status', 'Approved')
+        ->where(function ($query) use ($keyword) {
+            $query->where('title', 'LIKE', "%$keyword%")
+                ->orWhere('abstract', 'LIKE', "%$keyword%")
+                ->orWhere('student_name', 'LIKE', "%$keyword%");
+        })
+        ->limit(5)
+        ->get()
+        ->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'title' => $item->title,
+                'type' => 'final_project',
+                'file_url' => null,
+                'is_restricted' => false
+            ];
+        });
 
-        $collections = Collection::where('active', true) // ✅ FIX
-            ->where(function ($query) use ($keyword) {
-                $query->where('title', 'LIKE', "%$keyword%")
-                    ->orWhere('description', 'LIKE', "%$keyword%")
-                    ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(author, '$')) LIKE ?", ["%$keyword%"]);
-            })
-            ->limit(50)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'title' => $item->title,
-                    'type' => 'collection',
-                    'file_url' => null,
-                    'is_restricted' => $item->is_restricted ?? false
-                ];
-            });
-
-        $finalProjects = FinalProject::where('status', 'Approved') // 🔥 WAJIB
-                ->where(function ($query) use ($keyword) {
-                $query->where('title', 'LIKE', "%$keyword%")
-                    ->orWhere('abstract', 'LIKE', "%$keyword%")
-                    ->orWhere('student_name', 'LIKE', "%$keyword%");
-            })
-            ->limit(5)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'title' => $item->title,
-                    'type' => 'final_project', // ✅ FIX
-                    'file_url' => null,
-                    'is_restricted' => false
-                ];
-            });
-
-        return response()->json(
-            $collections->merge($finalProjects)
-        );
-        return view(
-            $viewMap[$menu_type] ?? $viewMap['buku_referensi'],
-            [
-                'collections' => $collections,
-                'menuType' => $menu_type,
-                'pendingCollectionIds' => $pendingCollectionIds, // ✅ FIX UTAMA
-            ]
-        );
-    }
+    return response()->json($collections->merge($finalProjects));
+}
 }

@@ -5,11 +5,26 @@
 
 @push('styles')
     <style>
-        /* ============================================
-           CSS KHUSUS HALAMAN E-BOOK GUEST (GAYA KLASIK HIJAU)
-           + Penambahan metadata & perapian card seperti versi User
-        ============================================ */
+        /* ============================================================
+               RESET & VARIABEL
+            ============================================================ */
+        :root {
+            --primary-color: #1a6b47;
+            --deep-green: #0f4a31;
+            --accent-green: #2daa6e;
+            --accent-yellow: #f1c40f;
+            --text-dark: #0d2137;
+            --text-muted: #5a7060;
+            --light-bg: #f4f7f5;
+            --card-bg: #ffffff;
+            --border-color: #d4e5d9;
+            --success: #2daa6e;
+            --danger: #e74c3c;
+        }
 
+        /* ============================================================
+               MAIN LAYOUT
+            ============================================================ */
         .main-container {
             display: flex;
             max-width: 1400px;
@@ -19,6 +34,9 @@
             align-items: flex-start;
         }
 
+        /* ============================================================
+               SIDEBAR
+            ============================================================ */
         .sidebar {
             width: 250px;
             flex-shrink: 0;
@@ -43,6 +61,8 @@
 
         .side-menu {
             list-style: none;
+            padding: 0;
+            margin: 0;
         }
 
         .side-menu li a {
@@ -70,6 +90,9 @@
             border-left: 4px solid var(--primary-color);
         }
 
+        /* ============================================================
+               CONTENT SECTION
+            ============================================================ */
         .content-section {
             flex-grow: 1;
         }
@@ -101,6 +124,9 @@
             font-size: 0.95rem;
         }
 
+        /* ============================================================
+               FILTER ROW
+            ============================================================ */
         .filter-row {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
@@ -140,40 +166,9 @@
             background: transparent;
         }
 
-        .filter-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-        }
-
-        .chip {
-            padding: 8px 18px;
-            background: var(--card-bg);
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            transition: 0.3s;
-            border: 1px solid var(--border-color);
-            white-space: nowrap;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .chip.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        .chip:hover:not(.active) {
-            background: #f0f7f3;
-            border-color: var(--accent-green);
-            color: var(--primary-color);
-        }
-
+        /* ============================================================
+               BOOK GRID
+            ============================================================ */
         .book-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
@@ -189,7 +184,7 @@
             display: flex;
             flex-direction: column;
             border: 1px solid var(--border-color);
-            border-top: 4px solid #f1c40f;
+            border-top: 4px solid var(--accent-yellow);
         }
 
         .book-card:hover {
@@ -210,12 +205,13 @@
             object-fit: cover;
         }
 
+        /* ============================================================
+               BADGE STATUS
+            ============================================================ */
         .badge-status {
             position: absolute;
             top: 12px;
             left: 12px;
-            background: var(--success);
-            color: white;
             padding: 4px 10px;
             border-radius: 50px;
             font-size: 0.65rem;
@@ -224,7 +220,7 @@
         }
 
         .badge-available {
-            background-color: #2daa6e;
+            background-color: var(--success);
             color: white;
         }
 
@@ -233,6 +229,9 @@
             color: #92400e;
         }
 
+        /* ============================================================
+               BOOK INFO
+            ============================================================ */
         .book-info {
             padding: 15px;
             flex-grow: 1;
@@ -240,7 +239,6 @@
             flex-direction: column;
         }
 
-        /* Metadata tambahan (tahun, jenis) - SAMA DENGAN VERSI USER */
         .book-meta {
             display: flex;
             flex-wrap: wrap;
@@ -300,6 +298,9 @@
             width: 16px;
         }
 
+        /* ============================================================
+               BOOK FOOTER & BUTTONS
+            ============================================================ */
         .book-footer {
             margin-top: auto;
             padding-top: 12px;
@@ -310,56 +311,6 @@
             gap: 10px;
         }
 
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 30px;
-            flex-wrap: wrap;
-        }
-
-        .pagination .page-item {
-            list-style: none;
-        }
-
-        .pagination .page-link {
-            display: inline-block;
-            padding: 8px 14px;
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-dark);
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-        .pagination .page-link:hover {
-            background: #f0f7f3;
-            border-color: var(--primary-color);
-        }
-
-        .pagination .active .page-link {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-            color: white;
-        }
-
-        .pagination .disabled .page-link {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        @media (max-width: 1024px) {
-            .sidebar {
-                display: none;
-            }
-
-            .filter-row {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* === TOMBOL SERAGAM === */
         .btn-read {
             background: var(--primary-color);
             color: white;
@@ -400,24 +351,118 @@
             color: white;
             transform: translateY(-2px);
         }
+
+        /* ============================================================
+               PAGINATION
+            ============================================================ */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .pagination .page-item {
+            list-style: none;
+        }
+
+        .pagination .page-link {
+            display: inline-block;
+            padding: 8px 14px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .pagination .page-link:hover {
+            background: #f0f7f3;
+            border-color: var(--primary-color);
+        }
+
+        .pagination .active .page-link {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .pagination .disabled .page-link {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ============================================================
+               RESPONSIVE
+            ============================================================ */
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none;
+            }
+
+            .filter-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .book-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .book-thumb {
+                height: 180px;
+            }
+
+            .page-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .book-footer {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .book-footer .btn-read,
+            .book-footer .btn-outline-read {
+                justify-content: center;
+            }
+        }
     </style>
 @endpush
 
 @section('content')
     <div class="main-container">
-
-        <!-- Sidebar -->
+        <!-- ===== SIDEBAR ===== -->
         <aside class="sidebar">
             <h3 class="sidebar-title">Katalog Digital</h3>
             <ul class="side-menu">
-                <li><a href="{{ route('guest.koleksi_elektronik.ebook') }}" class="active"><i class="fas fa-book"></i> E-book</a></li>
-                <li><a href="{{ route('guest.koleksi_elektronik.earticle') }}"><i class="fas fa-file-alt"></i> E-Article</a></li>
-                <li><a href="{{ route('guest.koleksi_elektronik.cd') }}"><i class="fas fa-compact-disc"></i> CD</a></li>
-                <li><a href="{{ route('guest.koleksi_elektronik.video') }}"><i class="fas fa-video"></i> Video</a></li>
+                <li>
+                    <a href="{{ route('guest.koleksi_elektronik.ebook') }}" class="active">
+                        <i class="fas fa-book"></i> E-book
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('guest.koleksi_elektronik.earticle') }}">
+                        <i class="fas fa-file-alt"></i> E-Article
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('guest.koleksi_elektronik.cd') }}">
+                        <i class="fas fa-compact-disc"></i> CD
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('guest.koleksi_elektronik.video') }}">
+                        <i class="fas fa-video"></i> Video
+                    </a>
+                </li>
             </ul>
         </aside>
 
-        <!-- Main Content -->
+        <!-- ===== MAIN CONTENT ===== -->
         <main class="content-section">
             <div class="page-header">
                 <span>Koleksi Elektronik</span>
@@ -425,7 +470,7 @@
                 <p>Akses berbagai referensi medis dan keperawatan digital berkualitas tinggi.</p>
             </div>
 
-            <!-- Form Search & Filter (server-side) -->
+            <!-- ===== FILTER ROW ===== -->
             <form method="GET" action="{{ route('guest.koleksi_elektronik.ebook') }}" class="filter-row">
                 <div class="filter-item">
                     <i class="fas fa-search"></i>
@@ -434,8 +479,10 @@
                 <div class="filter-item">
                     <select name="category">
                         <option value="">Semua Kategori</option>
-                        @foreach($filterCategories as $cat)
-                            <option value="{{ $cat->name }}" {{ request('category') == $cat->name ? 'selected' : '' }}>{{ $cat->name }}</option>
+                        @foreach ($filterCategories as $cat)
+                            <option value="{{ $cat->name }}" {{ request('category') == $cat->name ? 'selected' : '' }}>
+                                {{ $cat->name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -448,32 +495,31 @@
                 </div>
             </form>
 
-            <!-- Book Grid -->
+            <!-- ===== BOOK GRID ===== -->
             <div class="book-grid">
-                @forelse($ebooks as $book)
+                @forelse ($ebooks as $book)
                     @php
-                        // Tentukan tahun (prioritas year, fallback ke created_at)
                         $tahun = $book->year ?? (isset($book->created_at) ? date('Y', strtotime($book->created_at)) : null);
-                        // Nama penulis
                         $penulis = $book->student_name ?? ($book->user->name ?? null);
-                        // Jenis koleksi
                         $jenisKoleksi = 'Ebook';
                     @endphp
+
                     <div class="book-card">
                         <div class="book-thumb">
                             <span class="badge-status {{ $book->status == 'Approved' ? 'badge-available' : 'badge-pending' }}">
                                 {{ $book->status == 'Approved' ? 'TERSEDIA' : strtoupper($book->status) }}
                             </span>
-                            @if($book->cover_image && file_exists(public_path('storage/' . $book->cover_image)))
+                            @if ($book->cover_image && file_exists(public_path('storage/' . $book->cover_image)))
                                 <img src="{{ asset('storage/' . $book->cover_image) }}" alt="{{ $book->title }}">
                             @else
                                 <img src="https://via.placeholder.com/300x400?text=No+Cover" alt="Cover">
                             @endif
                         </div>
+
                         <div class="book-info">
-                            <!-- Metadata: Tahun & Jenis Koleksi -->
+                            <!-- Metadata -->
                             <div class="book-meta">
-                                @if($tahun)
+                                @if ($tahun)
                                     <span><i class="far fa-calendar-alt"></i> {{ $tahun }}</span>
                                 @endif
                                 <span><i class="fas fa-tag"></i> {{ $jenisKoleksi }}</span>
@@ -482,7 +528,7 @@
                             <span class="book-cat">{{ $book->category->name ?? 'Umum' }}</span>
                             <h4 class="book-title">{{ $book->title }}</h4>
 
-                            @if($penulis)
+                            @if ($penulis)
                                 <p class="book-author"><i class="far fa-user"></i> {{ $penulis }}</p>
                             @else
                                 <p class="book-author"><i class="far fa-user"></i> Penulis tidak diketahui</p>
@@ -491,17 +537,15 @@
                             <!-- Tombol Aksi -->
                             <div class="book-footer">
                                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                                    {{-- Detail --}}
                                     <a href="{{ route('guest.koleksi_elektronik.detail', $book->id) }}" class="btn-outline-read">
                                         <i class="fas fa-info-circle"></i> Detail
                                     </a>
-                                    {{-- Baca --}}
-                                    @if($book->file_url)
+                                    @if ($book->file_url)
                                         @php
-                                            $fileUrl  = asset('storage/' . $book->file_url);
-                                            $ext      = strtolower(pathinfo($book->file_url, PATHINFO_EXTENSION));
-                                            $isWord   = in_array($ext, ['doc', 'docx']);
-                                            $bacaUrl  = $isWord
+                                            $fileUrl = asset('storage/' . $book->file_url);
+                                            $ext = strtolower(pathinfo($book->file_url, PATHINFO_EXTENSION));
+                                            $isWord = in_array($ext, ['doc', 'docx']);
+                                            $bacaUrl = $isWord
                                                 ? 'https://docs.google.com/viewer?url=' . urlencode($fileUrl)
                                                 : $fileUrl;
                                         @endphp
@@ -509,27 +553,29 @@
                                             <i class="fas fa-book"></i> Baca
                                         </a>
                                     @else
-                                        <span class="btn-read" style="opacity:0.5;">Tidak tersedia</span>
+                                        <span class="btn-read" style="opacity: 0.5; cursor: not-allowed;">
+                                            Tidak tersedia
+                                        </span>
                                     @endif
                                 </div>
                             </div>
                         </div>
                     </div>
                 @empty
-                    <div class="col-span-full text-center py-10 text-gray-500">
-                        @if(isset($noCategoryMessage) && $noCategoryMessage)
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; color: var(--text-muted);">
+                        @if (isset($noCategoryMessage) && $noCategoryMessage)
                             {!! $noCategoryMessage !!}
-                        @elseif(request('search'))
+                        @elseif (request('search'))
                             Tidak ada hasil untuk pencarian "{{ request('search') }}"
                         @else
-                            Tidak ada koleksi E‑Book yang ditemukan
+                            Tidak ada koleksi E-Book yang ditemukan
                         @endif
                     </div>
                 @endforelse
             </div>
 
-            <!-- Pagination -->
-            @if(method_exists($ebooks, 'links'))
+            <!-- ===== PAGINATION ===== -->
+            @if (method_exists($ebooks, 'links'))
                 <div class="pagination">
                     {{ $ebooks->appends(request()->query())->links('pagination::bootstrap-4') }}
                 </div>
@@ -541,7 +587,7 @@
 @push('scripts')
     <script>
         // Submit form otomatis saat select berubah (untuk filter & sort)
-        document.querySelectorAll('.filter-item select').forEach(select => {
+        document.querySelectorAll('.filter-item select').forEach(function(select) {
             select.addEventListener('change', function() {
                 this.closest('form').submit();
             });

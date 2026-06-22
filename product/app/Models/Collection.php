@@ -56,7 +56,7 @@ class Collection extends Model
 
     // ================= CAST =================
     protected $casts = [
-        'author' => 'array',
+        //'author' => 'array',
         'responsibility_statement' => 'array',
         'content_type' => 'array',
         'media_type' => 'array',

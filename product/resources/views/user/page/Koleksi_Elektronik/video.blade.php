@@ -4,11 +4,26 @@
 
 @push('styles')
     <style>
-        /* ============================================
-           CSS KHUSUS HALAMAN VIDEO (GAYA KLASIK HIJAU)
-           + Penambahan metadata & perapian card seperti versi lain
-        ============================================ */
+        /* ============================================================
+               RESET & VARIABEL
+            ============================================================ */
+        :root {
+            --primary-color: #1a6b47;
+            --deep-green: #0f4a31;
+            --accent-green: #2daa6e;
+            --accent-yellow: #f1c40f;
+            --text-dark: #0d2137;
+            --text-muted: #5a7060;
+            --light-bg: #f4f7f5;
+            --card-bg: #ffffff;
+            --border-color: #d4e5d9;
+            --success: #2daa6e;
+            --danger: #e74c3c;
+        }
 
+        /* ============================================================
+               MAIN LAYOUT
+            ============================================================ */
         .main-container {
             display: flex;
             max-width: 1400px;
@@ -18,6 +33,9 @@
             align-items: flex-start;
         }
 
+        /* ============================================================
+               SIDEBAR
+            ============================================================ */
         .sidebar {
             width: 250px;
             flex-shrink: 0;
@@ -42,6 +60,8 @@
 
         .side-menu {
             list-style: none;
+            padding: 0;
+            margin: 0;
         }
 
         .side-menu li a {
@@ -69,51 +89,51 @@
             border-left: 4px solid var(--primary-color);
         }
 
-        .content-area {
+        /* ============================================================
+               CONTENT SECTION
+            ============================================================ */
+        .content-section {
             flex-grow: 1;
         }
 
-        .portal-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+        .page-header {
             margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 15px;
         }
 
-        .portal-title h2 {
+        .page-header span {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            background: #e0f0e8;
+            padding: 4px 12px;
+            border-radius: 50px;
+        }
+
+        .page-header h2 {
             font-family: 'Playfair Display', serif;
-            font-size: 2.2rem;
-            font-weight: 800;
+            font-size: 2rem;
             color: var(--text-dark);
+            margin-top: 10px;
+            font-weight: 800;
         }
 
-        .portal-title p {
+        .page-header p {
             color: var(--text-muted);
             font-size: 0.95rem;
         }
 
-        .badge-akreditasi {
-            background: #e0f0e8;
-            color: var(--primary-color);
-            padding: 6px 15px;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
+        /* ============================================================
+               FILTER ROW
+            ============================================================ */
         .filter-row {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
             gap: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
-        .filter-input {
+        .filter-item {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
@@ -123,37 +143,40 @@
             transition: 0.3s;
         }
 
-        .filter-input:focus-within {
+        .filter-item:focus-within {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(26, 107, 71, 0.1);
         }
 
-        .filter-input i {
+        .filter-item i {
             color: var(--text-muted);
             margin-right: 10px;
+            font-size: 0.9rem;
         }
 
-        .filter-input input,
-        .filter-input select {
+        .filter-item input,
+        .filter-item select {
             border: none;
-            padding: 12px 0;
             outline: none;
+            padding: 12px 0;
             width: 100%;
             font-size: 0.9rem;
-            background: transparent;
             color: var(--text-dark);
+            background: transparent;
         }
 
-        /* Featured Video */
+        /* ============================================================
+               FEATURED VIDEO
+            ============================================================ */
         .featured-video {
             position: relative;
-            border-radius: 24px;
+            border-radius: 20px;
             overflow: hidden;
             background: #000;
-            height: 400px;
+            height: 380px;
             margin-bottom: 40px;
             border: 1px solid var(--border-color);
-            border-top: 4px solid #f1c40f;
+            border-top: 4px solid var(--accent-yellow);
         }
 
         .featured-video img {
@@ -170,84 +193,125 @@
             padding: 35px;
             color: white;
             width: 100%;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
         }
 
-        .btn-play-now {
-            background: #2daa6e;
-            color: white;
-            padding: 12px 25px;
+        .featured-video-info .featured-tag {
+            background: var(--accent-yellow);
+            color: var(--primary-color);
+            padding: 4px 12px;
             border-radius: 50px;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 15px;
-            transition: 0.3s;
-            text-decoration: none;
+            font-size: 0.7rem;
+            font-weight: 800;
+            display: inline-block;
+            margin-bottom: 10px;
         }
 
-        .btn-play-now:hover {
-            background: var(--primary-color);
-            transform: translateY(-2px);
+        .featured-video-info h3 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 8px;
         }
 
-        /* Video Grid */
+        .featured-video-info p {
+            font-size: 0.9rem;
+            opacity: 0.85;
+            margin-bottom: 15px;
+            max-width: 600px;
+        }
+
+        .featured-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* ============================================================
+               VIDEO GRID
+            ============================================================ */
         .video-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 25px;
         }
 
-        .v-card {
+        .video-card {
             background: var(--card-bg);
-            border-radius: 18px;
+            border-radius: 16px;
             overflow: hidden;
-            border: 1px solid var(--border-color);
-            border-top: 4px solid #f1c40f;
+            box-shadow: 0 4px 12px rgba(15, 74, 49, 0.05);
             transition: 0.3s;
             display: flex;
             flex-direction: column;
+            border: 1px solid var(--border-color);
+            border-top: 4px solid var(--accent-yellow);
         }
 
-        .v-card:hover {
-            transform: translateY(-5px);
+        .video-card:hover {
+            transform: translateY(-8px);
             box-shadow: 0 12px 25px rgba(15, 74, 49, 0.12);
         }
 
-        .v-thumb {
+        .video-thumb {
             height: 180px;
             position: relative;
             background: #f0f7f3;
             overflow: hidden;
         }
 
-        .v-thumb img {
+        .video-thumb img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .v-duration {
+        .video-duration {
             position: absolute;
             bottom: 8px;
             right: 8px;
             background: rgba(0, 0, 0, 0.8);
             color: white;
-            padding: 2px 6px;
+            padding: 2px 10px;
             border-radius: 4px;
             font-size: 0.7rem;
+            font-weight: 600;
         }
 
-        .v-info {
+        /* ============================================================
+               BADGE STATUS
+            ============================================================ */
+        .badge-status {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            z-index: 2;
+        }
+
+        .badge-available {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .badge-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        /* ============================================================
+               VIDEO INFO
+            ============================================================ */
+        .video-info {
             padding: 15px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
 
-        /* Metadata tambahan (tahun, jenis) */
-        .v-meta {
+        .video-meta {
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
@@ -257,7 +321,7 @@
             color: var(--text-muted);
         }
 
-        .v-meta span {
+        .video-meta span {
             display: inline-flex;
             align-items: center;
             gap: 5px;
@@ -266,21 +330,22 @@
             border-radius: 40px;
         }
 
-        .v-meta i {
+        .video-meta i {
             font-size: 0.65rem;
             color: var(--primary-color);
         }
 
-        .v-cat {
+        .video-cat {
             font-size: 0.75rem;
             color: var(--primary-color);
             font-weight: 700;
+            margin-bottom: 5px;
             text-transform: uppercase;
-            margin-bottom: 8px;
+            letter-spacing: 0.5px;
         }
 
-        .v-title {
-            font-size: 1rem;
+        .video-title {
+            font-size: 0.95rem;
             font-weight: 700;
             color: var(--text-dark);
             margin-bottom: 8px;
@@ -292,22 +357,25 @@
             -webkit-box-orient: vertical;
         }
 
-        .v-author {
-            font-size: 0.75rem;
+        .video-author {
+            font-size: 0.8rem;
             color: var(--text-muted);
             margin-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
-        .v-author i {
+        .video-author i {
             color: var(--primary-color);
-            width: 14px;
+            width: 16px;
         }
 
-        .v-footer {
+        /* ============================================================
+               VIDEO FOOTER & BUTTONS
+            ============================================================ */
+        .video-footer {
             margin-top: auto;
             padding-top: 12px;
             border-top: 1px solid var(--border-color);
@@ -317,19 +385,18 @@
             flex-wrap: wrap;
         }
 
-        /* Tombol seragam */
         .btn-read {
             background: var(--primary-color);
             color: white;
             padding: 8px 16px;
             border-radius: 50px;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 700;
+            transition: 0.3s;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            transition: 0.3s;
         }
 
         .btn-read:hover {
@@ -344,13 +411,13 @@
             border: 1px solid var(--primary-color);
             padding: 8px 16px;
             border-radius: 50px;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 600;
+            transition: 0.3s;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            transition: 0.3s;
         }
 
         .btn-outline-read:hover {
@@ -359,6 +426,35 @@
             transform: translateY(-2px);
         }
 
+        .btn-play-now {
+            background: var(--accent-yellow);
+            color: var(--primary-color);
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-play-now:hover {
+            background: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .btn-actions-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* ============================================================
+               PAGINATION
+            ============================================================ */
         .pagination {
             display: flex;
             justify-content: center;
@@ -398,14 +494,91 @@
             cursor: not-allowed;
         }
 
+        /* ============================================================
+               RESPONSIVE
+            ============================================================ */
         @media (max-width: 1024px) {
-            .sidebar,
-            .featured-video {
+            .sidebar {
                 display: none;
             }
 
             .filter-row {
                 grid-template-columns: 1fr;
+            }
+
+            .featured-video {
+                height: 280px;
+            }
+
+            .featured-video-info h3 {
+                font-size: 1.2rem;
+            }
+
+            .featured-video-info p {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .video-thumb {
+                height: 180px;
+            }
+
+            .page-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .featured-video {
+                height: 220px;
+            }
+
+            .featured-video-info {
+                padding: 20px;
+            }
+
+            .featured-video-info h3 {
+                font-size: 1rem;
+            }
+
+            .video-footer {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .video-footer .btn-read,
+            .video-footer .btn-outline-read {
+                justify-content: center;
+            }
+
+            .btn-actions-group {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .featured-video {
+                height: 180px;
+            }
+
+            .featured-video-info {
+                padding: 15px;
+            }
+
+            .featured-video-info h3 {
+                font-size: 0.9rem;
+            }
+
+            .featured-video-info p {
+                display: none;
+            }
+
+            .featured-actions .btn-play-now {
+                padding: 8px 16px;
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -413,44 +586,63 @@
 
 @section('content')
     <div class="main-container">
-
-        <!-- Sidebar -->
+        <!-- ===== SIDEBAR ===== -->
         <aside class="sidebar">
             <h3 class="sidebar-title">Katalog Digital</h3>
             <ul class="side-menu">
-                <li><a href="{{ route('final_project.koleksi', 'ebook') }}" {{ request()->route('category') == 'ebook' ? 'class=active' : '' }}><i class="fas fa-book"></i> E-book</a></li>
-                <li><a href="{{ route('final_project.koleksi', 'e-article') }}" {{ request()->route('category') == 'e-article' ? 'class=active' : '' }}><i class="fas fa-file-alt"></i> E-Article</a></li>
-                <li><a href="{{ route('final_project.koleksi', 'cd') }}" {{ request()->route('category') == 'cd' ? 'class=active' : '' }}><i class="fas fa-compact-disc"></i> CD</a></li>
-                <li><a href="{{ route('final_project.koleksi', 'video') }}" {{ request()->route('category') == 'video' ? 'class=active' : '' }}><i class="fas fa-video"></i> Video</a></li>
-                <li><a href="{{ route('final_project.kti') }}" {{ request()->route('category') == 'kti' ? 'class=active' : '' }}><i class="fas fa-chart-line"></i> KTI</a></li>
+                <li>
+                    <a href="{{ route('final_project.koleksi', 'ebook') }}" {{ request()->route('category') == 'ebook' ? 'class=active' : '' }}>
+                        <i class="fas fa-book"></i> E-book
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('final_project.koleksi', 'e-article') }}" {{ request()->route('category') == 'e-article' ? 'class=active' : '' }}>
+                        <i class="fas fa-file-alt"></i> E-Article
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('final_project.koleksi', 'cd') }}" {{ request()->route('category') == 'cd' ? 'class=active' : '' }}>
+                        <i class="fas fa-compact-disc"></i> CD
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('final_project.koleksi', 'video') }}" {{ request()->route('category') == 'video' ? 'class=active' : '' }}>
+                        <i class="fas fa-video"></i> Video
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('final_project.kti') }}" {{ request()->route('category') == 'kti' ? 'class=active' : '' }}>
+                        <i class="fas fa-chart-line"></i> KTI
+                    </a>
+                </li>
             </ul>
         </aside>
 
-        <!-- Main Content -->
-        <main class="content-area">
-            <div class="portal-top">
-                <div class="portal-title">
-                    <h2>Tutorial & Simulasi Klinis</h2>
-                    <p>Pusat pembelajaran visual untuk penguasaan prosedur keperawatan berstandar medis.</p>
-                </div>
-                <div class="badge-akreditasi"><i class="fas fa-check-circle"></i> AKREDITASI UNGGUL</div>
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="content-section">
+            <div class="page-header">
+                <span>Tutorial & Simulasi Klinis</span>
+                <h2>Tutorial & Simulasi Klinis</h2>
+                <p>Pusat pembelajaran visual untuk penguasaan prosedur keperawatan berstandar medis.</p>
             </div>
 
-            <!-- Search & Filter Form -->
+            <!-- ===== FILTER ROW ===== -->
             <form method="GET" action="{{ route('final_project.koleksi', 'video') }}" class="filter-row">
-                <div class="filter-input">
+                <div class="filter-item">
                     <i class="fas fa-search"></i>
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari prosedur atau topik simulasi...">
                 </div>
-                <div class="filter-input">
+                <div class="filter-item">
                     <select name="category">
                         <option value="">Semua Kategori</option>
-                        @foreach($filterCategories as $cat)
-                            <option value="{{ $cat->name }}" {{ request('category') == $cat->name ? 'selected' : '' }}>{{ $cat->name }}</option>
+                        @foreach ($filterCategories as $cat)
+                            <option value="{{ $cat->name }}" {{ request('category') == $cat->name ? 'selected' : '' }}>
+                                {{ $cat->name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
-                <div class="filter-input">
+                <div class="filter-item">
                     <select name="sort">
                         <option value="default" {{ request('sort') == 'default' ? 'selected' : '' }}>Terbaru</option>
                         <option value="title_asc" {{ request('sort') == 'title_asc' ? 'selected' : '' }}>Judul (A-Z)</option>
@@ -459,42 +651,35 @@
                 </div>
             </form>
 
-            <!-- Featured Video (item pertama) -->
-            @if(isset($videos) && $videos->count() > 0)
+            <!-- ===== FEATURED VIDEO ===== -->
+            @if (isset($videos) && $videos->count() > 0)
                 @php $featured = $videos->first(); @endphp
                 <div class="featured-video">
-                    @if($featured->cover_image && file_exists(public_path('storage/' . $featured->cover_image)))
+                    @if ($featured->cover_image && file_exists(public_path('storage/' . $featured->cover_image)))
                         <img src="{{ asset('storage/' . $featured->cover_image) }}" alt="{{ $featured->title }}">
                     @else
-                        <img src="https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=1200&q=80" alt="Featured">
+                        <img src="https://via.placeholder.com/1200x400/1a6b47/ffffff?text=Video+Featured" alt="Featured">
                     @endif
                     <div class="featured-video-info">
-                        <span style="background: #f1c40f; color: var(--primary-color); padding:4px 12px; border-radius:50px; font-size:0.7rem; font-weight:800;">VIDEO TERBARU</span>
+                        <span class="featured-tag">VIDEO TERBARU</span>
                         <h3>{{ $featured->title }}</h3>
-                        <p>{{ Str::limit($featured->abstract ?? 'Tidak ada deskripsi', 100) }}</p>
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <a href="{{ route('final_project.detail', $featured->id) }}" class="btn-play-now" style="margin-top:0;">
+                        <p>{{ Str::limit($featured->abstract ?? 'Deskripsi tidak tersedia.', 120) }}</p>
+                        <div class="featured-actions">
+                            <a href="{{ route('final_project.detail', $featured->id) }}" class="btn-outline-read" style="background: rgba(255,255,255,0.15); color: white; border-color: rgba(255,255,255,0.3);">
                                 <i class="fas fa-info-circle"></i> Detail
                             </a>
-                            @if($featured->file_url)
+                            @if ($featured->file_url)
                                 @php
                                     $featExt = strtolower(pathinfo($featured->file_url, PATHINFO_EXTENSION));
-                                    $videoExts = ['mp4', 'webm', 'ogg', 'mov'];
+                                    $videoExts = ['mp4', 'webm', 'ogg', 'mov', 'mkv'];
                                     $featuredFileUrl = asset('storage/' . $featured->file_url);
                                 @endphp
-                                @if(in_array($featExt, $videoExts))
-                                    <a href="{{ $featuredFileUrl }}" target="_blank"
-                                       style="margin-top:0; background: var(--accent-yellow); color: var(--primary-color); padding: 12px 25px; border-radius: 50px; font-weight: 700; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; transition: 0.3s;"
-                                       onmouseover="this.style.background='#fff'; this.style.transform='translateY(-2px)';"
-                                       onmouseout="this.style.background='var(--accent-yellow)'; this.style.transform='translateY(0)';">
+                                @if (in_array($featExt, $videoExts))
+                                    <a href="{{ $featuredFileUrl }}" target="_blank" class="btn-play-now">
                                         <i class="fas fa-play"></i> Putar
                                     </a>
                                 @endif
-                                {{-- Download button for featured video --}}
-                                <a href="{{ $featuredFileUrl }}" download
-                                   style="margin-top:0; background: var(--primary-color); color: white; padding: 12px 25px; border-radius: 50px; font-weight: 700; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; transition: 0.3s;"
-                                   onmouseover="this.style.background='#0f4a31'; this.style.transform='translateY(-2px)';"
-                                   onmouseout="this.style.background='var(--primary-color)'; this.style.transform='translateY(0)';">
+                                <a href="{{ $featuredFileUrl }}" download class="btn-read" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4);">
                                     <i class="fas fa-download"></i> Download
                                 </a>
                             @endif
@@ -503,83 +688,81 @@
                 </div>
             @endif
 
-            <!-- Video Grid -->
+            <!-- ===== VIDEO GRID ===== -->
             <div class="video-grid">
-                @forelse($videos as $video)
+                @forelse ($videos as $video)
                     @php
                         $tahun = $video->year ?? (isset($video->created_at) ? date('Y', strtotime($video->created_at)) : null);
                         $penulis = $video->student_name ?? ($video->user->name ?? null);
                         $jenisKoleksi = 'Video';
-                        
-                        // File URL
                         $videoFileUrl = $video->file_url ? asset('storage/' . $video->file_url) : null;
                         $fileExt = $video->file_url ? strtolower(pathinfo($video->file_url, PATHINFO_EXTENSION)) : null;
-                        $videoExts = ['mp4', 'webm', 'ogg', 'mov'];
+                        $videoExts = ['mp4', 'webm', 'ogg', 'mov', 'mkv'];
                         $isVideoFile = $fileExt && in_array($fileExt, $videoExts);
                     @endphp
-                    <div class="v-card">
-                        <div class="v-thumb">
-                            @if($video->cover_image && file_exists(public_path('storage/' . $video->cover_image)))
+
+                    <div class="video-card">
+                        <div class="video-thumb">
+                            <span class="badge-status {{ $video->status == 'Approved' ? 'badge-available' : 'badge-pending' }}">
+                                {{ $video->status == 'Approved' ? 'TERSEDIA' : strtoupper($video->status) }}
+                            </span>
+                            @if ($video->cover_image && file_exists(public_path('storage/' . $video->cover_image)))
                                 <img src="{{ asset('storage/' . $video->cover_image) }}" alt="{{ $video->title }}">
                             @else
-                                <img src="https://via.placeholder.com/300x200?text=Video+Thumb" alt="Thumb">
+                                <img src="https://via.placeholder.com/300x180/0f4a31/ffffff?text=Video" alt="Thumb">
                             @endif
-                            @if($video->file_url)
-                                <span class="v-duration">
-                                    {{ strtoupper($fileExt) }}
-                                </span>
+                            @if ($video->file_url)
+                                <span class="video-duration">{{ strtoupper($fileExt) }}</span>
                             @endif
                         </div>
-                        <div class="v-info">
-                            <!-- Metadata: Tahun & Jenis -->
-                            <div class="v-meta">
-                                @if($tahun)
+
+                        <div class="video-info">
+                            <!-- Metadata -->
+                            <div class="video-meta">
+                                @if ($tahun)
                                     <span><i class="far fa-calendar-alt"></i> {{ $tahun }}</span>
                                 @endif
                                 <span><i class="fas fa-tag"></i> {{ $jenisKoleksi }}</span>
                             </div>
 
-                            <span class="v-cat">{{ $video->category->name ?? 'Keperawatan' }}</span>
-                            <h4 class="v-title">{{ Str::limit($video->title, 50) }}</h4>
+                            <div class="video-cat">{{ $video->category->name ?? 'Keperawatan' }}</div>
+                            <h4 class="video-title">{{ $video->title }}</h4>
 
-                            @if($penulis)
-                                <div class="v-author"><i class="far fa-user"></i> {{ $penulis }}</div>
+                            @if ($penulis)
+                                <div class="video-author"><i class="far fa-user"></i> {{ $penulis }}</div>
                             @else
-                                <div class="v-author"><i class="far fa-user"></i> Penulis tidak diketahui</div>
+                                <div class="video-author"><i class="far fa-user"></i> Penulis tidak diketahui</div>
                             @endif
 
                             <!-- Tombol Aksi -->
-                            <div class="v-footer">
-                                {{-- Detail --}}
-                                <a href="{{ route('final_project.detail', $video->id) }}" class="btn-outline-read">
-                                    <i class="fas fa-info-circle"></i> Detail
-                                </a>
-                                
-                                {{-- Putar Video (Untuk file video) --}}
-                                @if($isVideoFile)
-                                    <a href="{{ $videoFileUrl }}" target="_blank" class="btn-read">
-                                        <i class="fas fa-play"></i> Putar
+                            <div class="video-footer">
+                                <div class="btn-actions-group">
+                                    <a href="{{ route('final_project.detail', $video->id) }}" class="btn-outline-read">
+                                        <i class="fas fa-info-circle"></i> Detail
                                     </a>
-                                @endif
-                                
-                                {{-- Download Langsung (Tanpa Login) --}}
-                                @if($videoFileUrl)
-                                    <a href="{{ $videoFileUrl }}" download class="btn-outline-read">
-                                        <i class="fas fa-download"></i> Download
-                                    </a>
-                                @else
-                                    <span class="btn-outline-read" style="opacity: 0.5; cursor: not-allowed;">
-                                        <i class="fas fa-download"></i> Tidak Tersedia
-                                    </span>
-                                @endif
+                                    @if ($isVideoFile)
+                                        <a href="{{ $videoFileUrl }}" target="_blank" class="btn-read">
+                                            <i class="fas fa-play"></i> Putar
+                                        </a>
+                                    @endif
+                                    @if ($videoFileUrl)
+                                        <a href="{{ $videoFileUrl }}" download class="btn-outline-read">
+                                            <i class="fas fa-download"></i> Download
+                                        </a>
+                                    @else
+                                        <span class="btn-outline-read" style="opacity: 0.5; cursor: not-allowed;">
+                                            <i class="fas fa-download"></i> Tidak Tersedia
+                                        </span>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
                 @empty
-                    <div class="col-span-full text-center py-10 text-gray-500">
-                        @if(isset($noCategoryMessage) && $noCategoryMessage)
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; color: var(--text-muted);">
+                        @if (isset($noCategoryMessage) && $noCategoryMessage)
                             {!! $noCategoryMessage !!}
-                        @elseif(request('search'))
+                        @elseif (request('search'))
                             Tidak ada hasil untuk pencarian "{{ request('search') }}"
                         @else
                             Tidak ada koleksi Video yang ditemukan
@@ -588,8 +771,8 @@
                 @endforelse
             </div>
 
-            <!-- Pagination -->
-            @if(method_exists($videos, 'links') && $videos->hasPages())
+            <!-- ===== PAGINATION ===== -->
+            @if (method_exists($videos, 'links') && $videos->hasPages())
                 <div class="pagination">
                     {{ $videos->appends(request()->query())->links('pagination::bootstrap-4') }}
                 </div>
@@ -601,7 +784,7 @@
 @push('scripts')
     <script>
         // Submit form otomatis saat select berubah (untuk filter & sort)
-        document.querySelectorAll('.filter-input select').forEach(select => {
+        document.querySelectorAll('.filter-item select').forEach(function(select) {
             select.addEventListener('change', function() {
                 this.closest('form').submit();
             });

@@ -4,21 +4,34 @@
 
 @push('styles')
     <style>
-        /* ============================================
-           LAYOUT KHUSUS HALAMAN PENCARIAN
-           (CSS manual tanpa Tailwind) - VERSI DIPERINDAH
-        ============================================ */
+        /* ============================================================
+               RESET & VARIABEL
+            ============================================================ */
+        :root {
+            --primary-color: #1a6b47;
+            --deep-green: #0f4a31;
+            --accent-green: #2daa6e;
+            --accent-yellow: #f1c40f;
+            --text-dark: #0d2137;
+            --text-muted: #5a7060;
+            --light-bg: #f4f7f5;
+            --card-bg: #ffffff;
+            --border-color: #d4e5d9;
+            --success: #2daa6e;
+            --danger: #e74c3c;
+        }
 
-        /* Global reset tambahan untuk konsistensi */
-        .main-content * {
+        * {
             box-sizing: border-box;
         }
 
-        /* ===== HERO SECTION ===== */
+        /* ============================================================
+               HERO SECTION
+            ============================================================ */
         .search-hero {
             background: linear-gradient(135deg, rgba(26, 107, 71, 0.05), rgba(45, 170, 110, 0.02));
             border-bottom: 1px solid rgba(26, 107, 71, 0.12);
-            padding: 3rem 5% 2rem;
+            padding: 100px 5% 2rem;
             position: relative;
             overflow: hidden;
         }
@@ -35,6 +48,36 @@
             border-radius: 50%;
         }
 
+        .search-hero .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1.5rem;
+            border-radius: 60px;
+            border: 1px solid rgba(26, 107, 71, 0.25);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .search-hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            font-family: 'Playfair Display', serif;
+        }
+
         .result-stats {
             display: inline-flex;
             align-items: center;
@@ -48,16 +91,22 @@
             font-size: 0.9rem;
         }
 
+        .result-stats strong {
+            color: var(--primary-color);
+        }
+
         .keyword-chip {
             background: rgba(26, 107, 71, 0.12);
             padding: 0.2rem 0.9rem;
             border-radius: 40px;
             font-weight: 700;
-            color: #1a6b47;
+            color: var(--primary-color);
             letter-spacing: -0.2px;
         }
 
-        /* ===== LAYOUT UTAMA GRID ===== */
+        /* ============================================================
+               MAIN LAYOUT
+            ============================================================ */
         .main-container {
             display: flex;
             max-width: 1400px;
@@ -67,30 +116,32 @@
             align-items: flex-start;
         }
 
-        /* ===== SIDEBAR (GAYA KATALOG DIGITAL) ===== */
+        /* ============================================================
+               SIDEBAR
+            ============================================================ */
         .sidebar {
             width: 280px;
             flex-shrink: 0;
-            background: #ffffff;
+            background: var(--card-bg);
             padding: 1.5rem 1.2rem;
-            border-radius: 28px;
-            box-shadow: 0 12px 30px rgba(15, 74, 49, 0.08);
-            border: 1px solid #e2f0e8;
+            border-radius: 24px;
+            box-shadow: 0 12px 28px rgba(15, 74, 49, 0.06);
+            border: 1px solid var(--border-color);
+            border-top: 5px solid var(--accent-yellow);
             position: sticky;
-            top: 100px;
+            top: 110px;
             z-index: 10;
-            transition: all 0.2s;
         }
 
         .sidebar-title {
-            font-size: 0.7rem;
-            color: #5a7060;
+            font-size: 0.75rem;
+            color: var(--text-muted);
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             margin-bottom: 1.2rem;
             padding-left: 0.5rem;
-            border-left: 3px solid #1a6b47;
+            border-left: 3px solid var(--primary-color);
         }
 
         .filter-group-item {
@@ -103,13 +154,13 @@
             gap: 10px;
             font-size: 0.85rem;
             font-weight: 700;
-            color: #0d2137;
+            color: var(--text-dark);
             margin-bottom: 12px;
             padding-left: 6px;
         }
 
         .filter-label i {
-            color: #1a6b47;
+            color: var(--primary-color);
             width: 20px;
             font-size: 0.9rem;
         }
@@ -119,11 +170,11 @@
         .year-input {
             width: 100%;
             padding: 10px 14px;
-            border: 1.5px solid #e0ece4;
-            border-radius: 18px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
             background: #fcfefd;
             font-size: 0.85rem;
-            color: #0d2137;
+            color: var(--text-dark);
             margin-bottom: 14px;
             transition: all 0.2s;
             font-weight: 500;
@@ -132,9 +183,9 @@
         .filter-select:focus,
         .sort-select:focus,
         .year-input:focus {
-            border-color: #1a6b47;
+            border-color: var(--primary-color);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(26, 107, 71, 0.1);
+            box-shadow: 0 0 0 4px rgba(26, 107, 71, 0.08);
             background: white;
         }
 
@@ -149,7 +200,7 @@
             gap: 12px;
             margin-top: 20px;
             padding-top: 12px;
-            border-top: 1px solid #e0ece4;
+            border-top: 1px solid var(--border-color);
         }
 
         .btn-filter-apply,
@@ -165,21 +216,22 @@
         }
 
         .btn-filter-apply {
-            background: #1a6b47;
+            background: var(--primary-color);
             color: white;
             box-shadow: 0 2px 6px rgba(26, 107, 71, 0.2);
         }
 
         .btn-filter-apply:hover {
-            background: #0f4a31;
+            background: var(--deep-green);
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(15, 74, 49, 0.15);
+            color: white;
         }
 
         .btn-filter-reset {
             background: #f4f8f6;
             color: #2c5a47;
-            border: 1px solid #d4e5d9;
+            border: 1px solid var(--border-color);
         }
 
         .btn-filter-reset:hover {
@@ -187,7 +239,9 @@
             transform: translateY(-1px);
         }
 
-        /* ===== HASIL GRID (KARTU) ===== */
+        /* ============================================================
+               RESULTS GRID - 3 KOLOM x 3 BARIS = 9 ITEMS
+            ============================================================ */
         .content-section {
             flex-grow: 1;
             min-width: 0;
@@ -195,16 +249,17 @@
 
         .search-results-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 1.8rem;
             margin-bottom: 2rem;
         }
 
         .search-card {
-            background: #ffffff;
+            background: var(--card-bg);
             border-radius: 1.5rem;
-            border: 1px solid #e0ece4;
-            transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: 1px solid var(--border-color);
+            border-top: 4px solid var(--accent-yellow);
+            transition: all 0.35s ease;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -214,11 +269,10 @@
 
         .search-card:hover {
             transform: translateY(-6px);
-            border-color: #2daa6e;
+            border-color: var(--accent-green);
             box-shadow: 0 20px 30px -12px rgba(26, 107, 71, 0.2);
         }
 
-        /* Thumbnail gambar */
         .card-thumb {
             height: 170px;
             background-size: cover;
@@ -244,7 +298,6 @@
             font-size: 0.7rem;
             font-weight: 800;
             backdrop-filter: blur(6px);
-            background: rgba(0, 0, 0, 0.65);
             color: white;
             letter-spacing: 0.3px;
         }
@@ -276,15 +329,14 @@
 
         .highlight {
             background: rgba(241, 196, 15, 0.25);
-            color: #1a6b47;
+            color: var(--primary-color);
             padding: 0 2px;
             border-radius: 5px;
             font-weight: 700;
         }
 
-        /* Content card */
         .card-content {
-            padding: 1.2rem 1.2rem 1.2rem;
+            padding: 1.2rem;
             display: flex;
             flex-direction: column;
             flex: 1;
@@ -295,7 +347,7 @@
             font-size: 1rem;
             margin-bottom: 0.5rem;
             line-height: 1.4;
-            color: #0d2137;
+            color: var(--text-dark);
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
@@ -304,7 +356,7 @@
 
         .card-desc {
             font-size: 0.85rem;
-            color: #5a7060;
+            color: var(--text-muted);
             margin-bottom: 1rem;
             line-height: 1.45;
             display: -webkit-box;
@@ -344,9 +396,11 @@
             gap: 0.8rem;
         }
 
-        /* Tombol seragam */
+        /* ============================================================
+               BUTTONS
+            ============================================================ */
         .btn-detail {
-            background: #1a6b47;
+            background: var(--primary-color);
             padding: 0.5rem 1.2rem;
             border-radius: 40px;
             font-size: 0.75rem;
@@ -362,72 +416,110 @@
         }
 
         .btn-detail:hover {
-            background: #0f4a31;
+            background: var(--deep-green);
             transform: scale(1.02);
             box-shadow: 0 4px 10px rgba(26, 107, 71, 0.3);
             color: white;
         }
 
         .bg-accent {
-            background-color: #2daa6e;
+            background-color: var(--accent-green);
         }
 
         .bg-accent:hover {
             background-color: #1f8b56;
         }
 
-        /* Empty state */
+        /* ============================================================
+               EMPTY STATE
+            ============================================================ */
         .empty-state {
             text-align: center;
             padding: 3rem 2rem;
-            background: #ffffff;
+            background: var(--card-bg);
             border-radius: 2rem;
-            border: 1px solid #e0ece4;
+            border: 1px solid var(--border-color);
+            border-top: 5px solid var(--accent-yellow);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02);
         }
 
-        /* Pagination */
-        .pagination-custom {
+        .empty-state .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.6;
+        }
+
+        .empty-state h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .empty-state .empty-actions {
             display: flex;
             justify-content: center;
-            gap: 0.6rem;
-            margin-top: 2rem;
+            gap: 1rem;
+            margin-top: 1.8rem;
             flex-wrap: wrap;
         }
 
-        .pagination-custom .page-item {
+        /* ============================================================
+               PAGINATION
+            ============================================================ */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .pagination .page-item {
             list-style: none;
         }
 
-        .pagination-custom .page-link {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 42px;
-            height: 42px;
+        .pagination .page-link {
+            display: inline-block;
+            padding: 8px 14px;
             background: white;
-            border: 1px solid #deeae3;
-            border-radius: 14px;
-            color: #2c5a47;
-            transition: 0.2s;
-            font-weight: 600;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-dark);
             text-decoration: none;
+            transition: 0.3s;
+            font-weight: 600;
+            font-size: 0.85rem;
+            min-width: 38px;
+            text-align: center;
         }
 
-        .pagination-custom .page-link:hover {
-            background: #eef5f1;
-            border-color: #1a6b47;
-            transform: translateY(-2px);
+        .pagination .page-link:hover {
+            background: #f0f7f3;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
         }
 
-        .pagination-custom .active .page-link {
-            background: #1a6b47;
-            border-color: #1a6b47;
+        .pagination .active .page-link {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
             color: white;
             box-shadow: 0 4px 10px rgba(26, 107, 71, 0.2);
         }
 
-        /* Animasi fade-up */
+        .pagination .disabled .page-link {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* ============================================================
+               ANIMATION
+            ============================================================ */
         .fade-up {
             opacity: 0;
             transform: translateY(18px);
@@ -439,7 +531,9 @@
             transform: translateY(0);
         }
 
-        /* Loading skeleton (diperhalus) */
+        /* ============================================================
+               LOADING SKELETON
+            ============================================================ */
         @keyframes shimmer {
             0% {
                 background-position: -200% 0;
@@ -453,7 +547,7 @@
             background: #fafefb;
             border-radius: 1.5rem;
             overflow: hidden;
-            border: 1px solid #e2ece6;
+            border: 1px solid var(--border-color);
         }
 
         .skeleton-thumb {
@@ -477,20 +571,26 @@
             height: 10px;
         }
 
-        /* Responsif */
+        /* ============================================================
+               RESPONSIVE
+            ============================================================ */
         @media (max-width: 1024px) {
             .sidebar {
                 display: none;
             }
 
             .search-results-grid {
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
-        @media (max-width: 640px) {
-            .search-results-grid {
-                grid-template-columns: 1fr;
+        @media (max-width: 768px) {
+            .search-hero {
+                padding: 90px 5% 1.5rem;
+            }
+
+            .search-hero h1 {
+                font-size: 2rem;
             }
 
             .result-stats {
@@ -499,9 +599,34 @@
                 flex-wrap: wrap;
                 justify-content: center;
             }
+        }
+
+        @media (max-width: 640px) {
+            .search-results-grid {
+                grid-template-columns: 1fr;
+            }
 
             .search-hero h1 {
                 font-size: 1.8rem;
+            }
+
+            .empty-state .empty-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .card-footer {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .card-footer .btn-detail {
+                text-align: center;
+            }
+
+            .pagination .page-link {
+                padding: 6px 12px;
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -509,21 +634,16 @@
 
 @section('content')
     <div class="main-content">
-
-        <!-- HERO SECTION PENCARIAN -->
+        <!-- ===== HERO SECTION ===== -->
         <section class="search-hero">
-            <div class="max-w-7xl mx-auto" style="max-width:1200px; margin:0 auto; text-align:center;">
-                <div class="inline-block bg-white/70 backdrop-blur-sm px-5 py-2 rounded-full mb-4 shadow-sm border border-[#d4e5d9]">
-                    <span style="color:var(--primary-color, #1a6b47); font-size:0.85rem; font-weight:600;">🔍 PENCARIAN DIGITAL</span>
+            <div class="hero-container">
+                <div class="hero-badge">
+                    <i class="fas fa-search"></i> PENCARIAN DIGITAL
                 </div>
-                <h1 style="font-size:2.5rem; font-weight:700; color:#0d2137; margin-bottom:0.5rem;">
-                    Hasil Pencarian
-                </h1>
+                <h1>Hasil Pencarian</h1>
                 <div class="result-stats">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" style="color:#1a6b47;"></path>
-                    </svg>
-                    <span>Menampilkan <strong style="color:#1a6b47;">
+                    <i class="fas fa-search" style="color: var(--primary-color);"></i>
+                    <span>Menampilkan <strong>
                         {{ method_exists($results, 'total') ? number_format($results->total()) : number_format($results->count()) }}
                     </strong> hasil untuk</span>
                     <span class="keyword-chip">“{{ $keyword }}”</span>
@@ -531,10 +651,9 @@
             </div>
         </section>
 
-        <!-- KONTEN UTAMA: FILTER + HASIL -->
+        <!-- ===== KONTEN UTAMA ===== -->
         <div class="main-container">
-
-            <!-- SIDEBAR (GAYA KATALOG DIGITAL + FILTER) -->
+            <!-- ===== SIDEBAR ===== -->
             <aside class="sidebar fade-up">
                 <h3 class="sidebar-title">FILTER PENCARIAN</h3>
 
@@ -542,7 +661,7 @@
                     <div class="filter-label"><i class="fas fa-tag"></i> Klasifikasi</div>
                     <select id="filterClassification" class="filter-select">
                         <option value="">🏷️ Semua Klasifikasi</option>
-                        @foreach($classifications ?? [] as $c)
+                        @foreach ($classifications ?? [] as $c)
                             <option value="{{ $c->name }}" {{ request('classification') == $c->name ? 'selected' : '' }}>
                                 {{ $c->name }}
                             </option>
@@ -552,7 +671,7 @@
                     <div class="filter-label"><i class="fas fa-folder"></i> Kategori</div>
                     <select id="filterCategory" class="filter-select">
                         <option value="">📁 Semua Kategori</option>
-                        @foreach($categories ?? [] as $cat)
+                        @foreach ($categories ?? [] as $cat)
                             <option value="{{ $cat->name }}" {{ request('category') == $cat->name ? 'selected' : '' }}>
                                 {{ $cat->name }}
                             </option>
@@ -573,20 +692,29 @@
 
                     <div class="sidebar-actions">
                         <button id="applyFilterBtn" class="btn-filter-apply">
-                            🔍 Terapkan
+                            <i class="fas fa-filter"></i> Terapkan
                         </button>
                         <button id="resetFilterBtn" class="btn-filter-reset">
-                            🔄 Reset
+                            <i class="fas fa-undo"></i> Reset
                         </button>
                     </div>
                 </div>
             </aside>
 
-            <!-- HASIL PENCARIAN -->
+            <!-- ===== HASIL PENCARIAN ===== -->
             <div class="content-section">
+                @php
+                    $perPage = 9;
+                    $currentPage = request('page', 1);
+                    $offset = ($currentPage - 1) * $perPage;
+                    $paginatedItems = $results->slice($offset, $perPage);
+                    $totalItems = $results->count();
+                    $totalPages = ceil($totalItems / $perPage);
+                @endphp
+
                 <!-- Loading Skeleton -->
                 <div id="loadingSkeleton" class="search-results-grid" style="display:none;">
-                    @for($i = 0; $i < 6; $i++)
+                    @for ($i = 0; $i < 9; $i++)
                         <div class="loading-skeleton-card">
                             <div class="skeleton-thumb"></div>
                             <div class="skeleton-line"></div>
@@ -598,19 +726,23 @@
 
                 <!-- Hasil konten -->
                 <div id="resultsContainer">
-                    @if($results->count() == 0)
+                    @if ($totalItems == 0)
                         <div class="empty-state fade-up">
-                            <div style="font-size:4rem; margin-bottom:1rem; opacity:0.6;">🔍</div>
-                            <h3 style="font-size:1.3rem; font-weight:700; color:#0d2137;">Tidak ditemukan hasil</h3>
-                            <p style="color:#5a7060; margin-top:0.5rem;">Coba kata kunci lain atau gunakan filter yang berbeda.</p>
-                            <div style="display:flex; justify-content:center; gap:1rem; margin-top:1.8rem;">
-                                <a href="{{ url('/') }}" class="btn-detail">Kembali ke Beranda</a>
-                                <button onclick="resetFilters()" style="background:#f1f5f2; color:#0d2137; border:1px solid #d4e5d9; padding:0.5rem 1.5rem; border-radius:40px; cursor:pointer;">Reset Filter</button>
+                            <div class="empty-icon">🔍</div>
+                            <h3>Tidak ditemukan hasil</h3>
+                            <p>Coba kata kunci lain atau gunakan filter yang berbeda.</p>
+                            <div class="empty-actions">
+                                <a href="{{ url('/') }}" class="btn-detail">
+                                    <i class="fas fa-home"></i> Kembali ke Beranda
+                                </a>
+                                <button onclick="resetFilters()" style="background:#f1f5f2; color:var(--text-dark); border:1px solid var(--border-color); padding:0.5rem 1.5rem; border-radius:40px; cursor:pointer; font-weight:600;">
+                                    <i class="fas fa-undo"></i> Reset Filter
+                                </button>
                             </div>
                         </div>
                     @else
                         <div class="search-results-grid" id="searchResultsGrid">
-                            @foreach($results as $item)
+                            @foreach ($paginatedItems as $item)
                                 @php
                                     $title = $item->title ?? '';
                                     $highlightedTitle = preg_replace('/(' . preg_quote($keyword, '/') . ')/i', '<span class="highlight">$1</span>', e($title));
@@ -619,57 +751,66 @@
                                     $highlightedDesc = preg_replace('/(' . preg_quote($keyword, '/') . ')/i', '<span class="highlight">$1</span>', Str::limit($descClean, 120));
                                     $itemType = $item->type ?? 'collection';
                                     $year = $item->year ?? ($item->created_at ? date('Y', strtotime($item->created_at)) : null);
+                                    $coverImage = $item->cover ?? $item->cover_image ?? $item->thumbnail ?? null;
+                                    $coverUrl = $coverImage ? asset('storage/' . $coverImage) : 'https://via.placeholder.com/400x170/0f4a31/ffffff?text=No+Image';
                                 @endphp
                                 <div class="search-card fade-up" data-type="{{ $itemType }}">
-                                    @if($itemType == 'collection')
-                                        <div class="card-thumb" style="background-image: url('{{ ($item->cover ?? false) ? asset('storage/'.$item->cover) : 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=170&fit=crop' }}')">
+                                    @if ($itemType == 'collection')
+                                        <div class="card-thumb" style="background-image: url('{{ $coverUrl }}')">
                                             <span class="card-badge badge-collection">
-                                                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                                Koleksi
+                                                <i class="fas fa-book"></i> Koleksi
                                             </span>
-                                            @if(!empty($item->is_restricted))
+                                            @if (!empty($item->is_restricted))
                                                 <span class="restricted-badge">
-                                                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                                                    Terbatas
+                                                    <i class="fas fa-lock"></i> Terbatas
                                                 </span>
                                             @endif
                                         </div>
                                         <div class="card-content">
                                             <h3 class="card-title">{!! $highlightedTitle !!}</h3>
                                             <div class="card-meta">
-                                                @if($year)<span><i class="far fa-calendar-alt"></i> {{ $year }}</span>@endif
+                                                @if ($year)
+                                                    <span><i class="far fa-calendar-alt"></i> {{ $year }}</span>
+                                                @endif
                                                 <span><i class="fas fa-layer-group"></i> Koleksi</span>
                                             </div>
                                             <p class="card-desc">{!! $highlightedDesc !!}</p>
                                             <div class="card-footer">
-                                                <span class="meta" style="font-size:0.7rem;">📚 Perpustakaan</span>
-                                                <a href="{{ url('/collections/'.$item->id) }}" class="btn-detail">Lihat Detail →</a>
+                                                <span style="font-size:0.7rem; color:var(--text-muted);">
+                                                    <i class="fas fa-library"></i> Perpustakaan
+                                                </span>
+                                                <a href="{{ url('/collections/' . $item->id) }}" class="btn-detail">
+                                                    Lihat Detail <i class="fas fa-arrow-right"></i>
+                                                </a>
                                             </div>
                                         </div>
                                     @else
-                                        <div class="card-thumb" style="background-image: url('{{ ($item->cover_image ?? $item->thumbnail ?? false) ? asset('storage/'.($item->cover_image ?? $item->thumbnail)) : 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=170&fit=crop' }}')">
+                                        <div class="card-thumb" style="background-image: url('{{ $coverUrl }}')">
                                             <span class="card-badge badge-final">
-                                                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                                KTI
+                                                <i class="fas fa-file-alt"></i> KTI
                                             </span>
                                         </div>
                                         <div class="card-content">
                                             <h3 class="card-title">{!! $highlightedTitle !!}</h3>
                                             <div class="card-meta">
-                                                @if($year)<span><i class="far fa-calendar-alt"></i> {{ $year }}</span>@endif
+                                                @if ($year)
+                                                    <span><i class="far fa-calendar-alt"></i> {{ $year }}</span>
+                                                @endif
                                                 <span><i class="fas fa-graduation-cap"></i> Tugas Akhir</span>
                                             </div>
                                             <p class="card-desc">{!! $highlightedDesc !!}</p>
-                                            <div style="display:flex; gap:0.6rem; margin-top:0.5rem;">
-                                                @if($item->file_url)
-                                                    <a href="{{ asset('storage/'.$item->file_url) }}" class="btn-detail" style="flex:1; text-align:center;" target="_blank">
+                                            <div style="display:flex; gap:0.6rem; margin-top:0.5rem; flex-wrap:wrap;">
+                                                @if ($item->file_url)
+                                                    <a href="{{ asset('storage/' . $item->file_url) }}" class="btn-detail" style="flex:1; text-align:center;" target="_blank">
                                                         <i class="fas fa-book-open"></i> Baca
                                                     </a>
-                                                    <a href="{{ asset('storage/'.$item->file_url) }}" download class="btn-detail bg-accent" style="flex:1; text-align:center;">
+                                                    <a href="{{ asset('storage/' . $item->file_url) }}" download class="btn-detail bg-accent" style="flex:1; text-align:center;">
                                                         <i class="fas fa-download"></i> Download
                                                     </a>
                                                 @else
-                                                    <span style="color:#6c8b7c; font-size:0.75rem; width:100%; text-align:center;">File tidak tersedia</span>
+                                                    <span style="color:var(--text-muted); font-size:0.75rem; width:100%; text-align:center;">
+                                                        <i class="fas fa-file"></i> File tidak tersedia
+                                                    </span>
                                                 @endif
                                             </div>
                                         </div>
@@ -678,15 +819,34 @@
                             @endforeach
                         </div>
 
-                        <!-- Pagination -->
-                        @if(method_exists($results, 'links') && $results->hasPages())
-                            <div class="pagination-custom">
-                                {{ $results->appends(request()->except('page'))->links('pagination::tailwind') }}
-                            </div>
-                        @elseif(method_exists($results, 'links'))
-                            <div class="pagination-custom">
-                                {{ $results->links('pagination::tailwind') }}
-                            </div>
+                        <!-- ===== PAGINATION ===== -->
+                        @if ($totalPages > 1)
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+                                    {{-- Previous --}}
+                                    <li class="page-item {{ $currentPage <= 1 ? 'disabled' : '' }}">
+                                        <a class="page-link" href="{{ $currentPage > 1 ? request()->fullUrlWithQuery(['page' => $currentPage - 1]) : '#' }}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+
+                                    {{-- Nomor Halaman --}}
+                                    @for ($i = 1; $i <= $totalPages; $i++)
+                                        <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
+                                            <a class="page-link" href="{{ request()->fullUrlWithQuery(['page' => $i]) }}">
+                                                {{ $i }}
+                                            </a>
+                                        </li>
+                                    @endfor
+
+                                    {{-- Next --}}
+                                    <li class="page-item {{ $currentPage >= $totalPages ? 'disabled' : '' }}">
+                                        <a class="page-link" href="{{ $currentPage < $totalPages ? request()->fullUrlWithQuery(['page' => $currentPage + 1]) : '#' }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
                         @endif
                     @endif
                 </div>
@@ -697,114 +857,144 @@
 
 @push('scripts')
     <script>
-        // Elemen DOM
-        const applyFilterBtn = document.getElementById('applyFilterBtn');
-        const resetFilterBtn = document.getElementById('resetFilterBtn');
-        const sortSelect = document.getElementById('sortBy');
-        const filterCollection = document.getElementById('filterCollection');
-        const filterFinal = document.getElementById('filterFinal');
-        const loadingSkeleton = document.getElementById('loadingSkeleton');
-        const resultsContainer = document.getElementById('resultsContainer');
+        // ============================================================
+        // DOM ELEMENTS
+        // ============================================================
+        var applyFilterBtn = document.getElementById('applyFilterBtn');
+        var resetFilterBtn = document.getElementById('resetFilterBtn');
+        var sortSelect = document.getElementById('sortBy');
+        var loadingSkeleton = document.getElementById('loadingSkeleton');
+        var resultsContainer = document.getElementById('resultsContainer');
 
-        // Fungsi untuk menerapkan filter via URL parameter
+        // ============================================================
+        // APPLY FILTERS
+        // ============================================================
         function applyFilters() {
-            let params = new URLSearchParams(window.location.search);
+            var params = new URLSearchParams(window.location.search);
 
-            // Tipe konten
-            let selectedTypes = [];
-            if (document.getElementById('filterCollection')?.checked) selectedTypes.push('collection');
-            if (document.getElementById('filterFinal')?.checked) selectedTypes.push('final');
-            if (selectedTypes.length > 0) params.set('type', selectedTypes.join(','));
-            else params.delete('type');
+            var classification = document.getElementById('filterClassification')?.value;
+            if (classification) {
+                params.set('classification', classification);
+            } else {
+                params.delete('classification');
+            }
 
-            // Classification
-            let classification = document.getElementById('filterClassification')?.value;
-            if (classification) params.set('classification', classification);
-            else params.delete('classification');
+            var category = document.getElementById('filterCategory')?.value;
+            if (category) {
+                params.set('category', category);
+            } else {
+                params.delete('category');
+            }
 
-            // Category
-            let category = document.getElementById('filterCategory')?.value;
-            if (category) params.set('category', category);
-            else params.delete('category');
-
-            // Tahun (Input Manual)
-            let yearInput = document.getElementById('filterYear')?.value.trim();
+            var yearInput = document.getElementById('filterYear')?.value.trim();
             if (yearInput) {
                 params.set('year', yearInput);
             } else {
                 params.delete('year');
             }
 
-            // Sort
-            let sort = document.getElementById('sortBy')?.value;
-            if (sort && sort !== 'relevance') params.set('sort', sort);
-            else params.delete('sort');
+            var sort = document.getElementById('sortBy')?.value;
+            if (sort && sort !== 'relevance') {
+                params.set('sort', sort);
+            } else {
+                params.delete('sort');
+            }
 
             params.delete('page');
             window.location.search = params.toString();
         }
 
-        // Reset filter
+        // ============================================================
+        // RESET FILTERS
+        // ============================================================
         function resetFilters() {
-            let params = new URLSearchParams(window.location.search);
-            params.delete('type');
+            var params = new URLSearchParams(window.location.search);
+            params.delete('classification');
+            params.delete('category');
+            params.delete('year');
             params.delete('sort');
             params.delete('page');
             window.location.search = params.toString();
         }
 
-        // Inisialisasi nilai filter dari URL saat halaman dimuat
+        // ============================================================
+        // INIT FILTERS FROM URL
+        // ============================================================
         function initFiltersFromURL() {
-            let urlParams = new URLSearchParams(window.location.search);
-            let typeParam = urlParams.get('type');
-            let sortParam = urlParams.get('sort');
-            let yearParam = urlParams.get('year');
-
-            if (typeParam) {
-                let types = typeParam.split(',');
-                if (filterCollection) filterCollection.checked = types.includes('collection');
-                if (filterFinal) filterFinal.checked = types.includes('final');
-            }
+            var urlParams = new URLSearchParams(window.location.search);
+            var sortParam = urlParams.get('sort');
+            var yearParam = urlParams.get('year');
+            var classificationParam = urlParams.get('classification');
+            var categoryParam = urlParams.get('category');
 
             if (sortParam && sortSelect) {
                 sortSelect.value = sortParam;
-            } else if (sortSelect) {
-                sortSelect.value = 'relevance';
             }
 
-            let yearInput = document.getElementById('filterYear');
+            var yearInput = document.getElementById('filterYear');
             if (yearParam && yearInput) {
                 yearInput.value = yearParam;
             }
+
+            var classSelect = document.getElementById('filterClassification');
+            if (classificationParam && classSelect) {
+                classSelect.value = classificationParam;
+            }
+
+            var catSelect = document.getElementById('filterCategory');
+            if (categoryParam && catSelect) {
+                catSelect.value = categoryParam;
+            }
         }
 
-        // Event listeners
-        if (applyFilterBtn) applyFilterBtn.addEventListener('click', applyFilters);
-        if (resetFilterBtn) resetFilterBtn.addEventListener('click', resetFilters);
+        // ============================================================
+        // EVENT LISTENERS
+        // ============================================================
+        if (applyFilterBtn) {
+            applyFilterBtn.addEventListener('click', applyFilters);
+        }
 
-        // Sembunyikan loading setelah halaman selesai dimuat
+        if (resetFilterBtn) {
+            resetFilterBtn.addEventListener('click', resetFilters);
+        }
+
+        // ============================================================
+        // HIDE LOADING AFTER PAGE LOAD
+        // ============================================================
         window.addEventListener('load', function() {
-            if (loadingSkeleton) loadingSkeleton.style.display = 'none';
-            if (resultsContainer) resultsContainer.style.display = 'block';
+            if (loadingSkeleton) {
+                loadingSkeleton.style.display = 'none';
+            }
+            if (resultsContainer) {
+                resultsContainer.style.display = 'block';
+            }
         });
 
-        // Inisialisasi
-        initFiltersFromURL();
-
-        // ============================================
-        // ANIMASI FADE-UP
-        // ============================================
+        // ============================================================
+        // FADE-UP ANIMATION
+        // ============================================================
         document.addEventListener('DOMContentLoaded', function() {
-            const fadeElements = document.querySelectorAll('.fade-up');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
+            var fadeElements = document.querySelectorAll('.fade-up');
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('show');
                         observer.unobserve(entry.target);
                     }
                 });
             }, { threshold: 0.1 });
-            fadeElements.forEach(el => observer.observe(el));
+
+            fadeElements.forEach(function(el) {
+                observer.observe(el);
+            });
         });
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        initFiltersFromURL();
+
+        // Expose resetFilters globally
+        window.resetFilters = resetFilters;
     </script>
 @endpush
