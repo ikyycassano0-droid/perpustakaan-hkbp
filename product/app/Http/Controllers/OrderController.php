@@ -138,35 +138,52 @@ class OrderController extends Controller
     }
 
     // ================= ADMIN APPROVE =================
-    public function approve($id)
-    {
-        $order = Order::findOrFail($id);
+public function approve($id)
+{
+    $order = Order::with('details.collection')->findOrFail($id);
+    
+    // Cek status order
+    if ($order->status !== 'PENDING') {
+        return back()->with('error', 'Peminjaman sudah diproses sebelumnya!');
+    }
 
-        // Isi tanggal pinjam dan jatuh tempo jika masih NULL
-        if (!$order->borrow_date) {
-            $order->borrow_date = now();
+    // Isi tanggal pinjam dan jatuh tempo jika masih NULL
+    if (!$order->borrow_date) {
+        $order->borrow_date = now();
+    }
+
+    if (!$order->due_date) {
+        $order->due_date = $order->borrow_date->copy()->addDays(14);
+    }
+
+    // ===== VALIDASI STOK SEBELUM APPROVE =====
+    DB::beginTransaction();
+    try {
+        foreach ($order->details as $detail) {
+            $collection = $detail->collection;
+            
+            // Kunci baris untuk mencegah race condition
+            $collection = Collection::where('id', $collection->id)
+                ->lockForUpdate()
+                ->first();
+            
+            // Cek stok tersedia
+            if ($collection->available_stock < $detail->qty) {
+                DB::rollBack();
+                return back()->with('error', 'Stok buku "' . $collection->title . '" tidak mencukupi! Tersedia: ' . $collection->available_stock);
+            }
+            
+            // Kurangi stok
+            $collection->decrement('available_stock', $detail->qty);
         }
 
-        if (!$order->due_date) {
-            // Set jatuh tempo 14 hari dari tanggal pinjam (untuk mahasiswa) atau 5 tahun untuk dosen?
-            // Karena di store kita sudah set due_date, seharusnya tidak null.
-            // Tetap beri default 14 hari jika kosong (fallback).
-            $order->due_date = $order->borrow_date->copy()->addDays(14);
-        }
-
+        // Update status order
         $order->status = 'APPROVED';
         $order->save();
 
-        foreach ($order->details as $detail) {
-            $collection = $detail->collection;
-            if ($collection->available_stock >= $detail->qty) {
-                $collection->available_stock -= $detail->qty;
-                $collection->save();
-            } else {
-                return back()->with('error', 'Stok buku tidak mencukupi untuk ' . $collection->title);
-            }
-        }
+        DB::commit();
 
+        // Kirim notifikasi
         $judul = $order->details->first()->collection->title ?? 'buku';
         $this->sendNotif(
             $order->user_id,
@@ -175,8 +192,13 @@ class OrderController extends Controller
         );
 
         return redirect()->back()->with('success', 'Peminjaman berhasil disetujui');
+        
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error('Error saat approve order: ' . $e->getMessage());
+        return back()->with('error', 'Terjadi kesalahan saat memproses peminjaman!');
     }
-
+}
     // ================= ADMIN REJECT =================
     public function reject($id)
     {

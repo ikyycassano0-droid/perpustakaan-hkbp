@@ -9,6 +9,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use App\Jobs\SendVerificationEmailJob;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage; 
 
 class MemberController extends Controller
 {
@@ -164,5 +165,18 @@ class MemberController extends Controller
             ->delay(now()->addSeconds(2));
 
         return back()->with('success', 'Link verifikasi sedang dikirim (queue).');
+    }
+
+    public function takedownPhoto($id)
+    {
+        $member = User::findOrFail($id);
+
+        if ($member->photo) {
+            Storage::disk('public')->delete($member->photo);
+            $member->photo = null;
+            $member->save();
+        }
+
+        return back()->with('success', 'Foto profil user berhasil di-takedown!');
     }
 }

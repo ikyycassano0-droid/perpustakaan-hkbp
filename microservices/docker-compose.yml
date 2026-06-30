@@ -55,13 +55,13 @@ services:
       APP_URL: http://localhost:8003
       
       DB_CONNECTION: mysql
-      DB_HOST: mysql
+      DB_HOST: perpus-mysql
       DB_PORT: 3306
       DB_DATABASE: auth_service_db
       DB_USERNAME: root
       DB_PASSWORD: root
       
-      REDIS_HOST: redis
+      REDIS_HOST: perpus-redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: null
       

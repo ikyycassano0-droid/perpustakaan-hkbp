@@ -69,6 +69,9 @@ Route::prefix('admin')->name('admin.')->middleware(['admin'])->group(function ()
             Route::post('/{id}/resend', [MemberController::class, 'resendVerification'])
                 ->name('resend');
 
+            Route::delete('/{id}/takedown-photo', [MemberController::class, 'takedownPhoto'])
+            ->name('takedownPhoto');
+
         });
 
     // ================= Panduan =================
@@ -284,6 +287,7 @@ Route::prefix('user')->group(function () {
                 ->name('struktur');
 
             Route::get('/kerjasama', [ProfileController::class, 'showKerjasamaMahasiswa'])->name('kerjasama');
+            
 
         });
 
@@ -304,6 +308,8 @@ Route::prefix('user')->group(function () {
 
         // Update password
         Route::put('/profile/password', [ProfileMenuController::class, 'updatePassword'])->name('profile.password.update');
+        Route::put('/photo', [ProfileMenuController::class, 'updatePhoto'])->name('photo.update');
+        Route::delete('/photo', [ProfileMenuController::class, 'deletePhoto'])->name('photo.delete');
 });
 
 

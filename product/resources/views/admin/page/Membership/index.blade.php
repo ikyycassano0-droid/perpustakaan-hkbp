@@ -20,7 +20,7 @@
         <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white/50">
             <div>
                 <h3 class="font-semibold text-slate-800">Daftar Anggota</h3>
-                <p class="text-slate-400 text-xs mt-1">Total: anggota</p>
+                <p class="text-slate-400 text-xs mt-1">Total: {{ $members->count() }} anggota</p>
             </div>
             <div class="relative">
                 <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
@@ -32,24 +32,35 @@
             <table class="w-full">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-200">
+                        <th class="text-center px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider w-14">Foto</th>
                         <th class="text-left px-6 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Nama</th>
                         <th class="text-left px-6 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Role</th>
                         <th class="text-left px-6 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">NPM / NIDN</th>
                         <th class="text-left px-6 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">No HP</th>
                         <th class="text-left px-6 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Status Akun</th>
                         <th class="text-left px-6 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Status Email</th>
-                        <th class="text-center px-6 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider" width="120">Aksi</th>
+                        <th class="text-center px-6 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider" width="140">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($members as $member)
                     <tr class="border-b border-slate-100 hover:bg-slate-50/50 transition-colors duration-150">
+                        <!-- ✅ FOTO PROFIL -->
+                        <td class="px-4 py-3 text-center">
+                            @if($member->photo)
+                                <img src="{{ asset('storage/' . $member->photo) }}" 
+                                     alt="Foto {{ $member->name }}" 
+                                     class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm">
+                            @else
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center mx-auto border-2 border-white shadow-sm">
+                                    <i class="fas fa-user text-slate-400 text-xs"></i>
+                                </div>
+                            @endif
+                        </td>
+
                         <!-- NAMA -->
                         <td class="px-6 py-3">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-100 to-indigo-50 flex items-center justify-center">
-                                    <i class="fas fa-user text-indigo-500 text-xs"></i>
-                                </div>
                                 <span class="font-semibold text-slate-700 text-sm">{{ $member->name }}</span>
                             </div>
                         </td>
@@ -102,15 +113,31 @@
                             @endif
                         </td>
 
-                        <!-- ACTION -->
+                        <!-- ✅ ACTION + TAKEDOWN PHOTO -->
                         <td class="px-6 py-3">
-                            <div class="flex items-center justify-center gap-2">
+                            <div class="flex items-center justify-center gap-1.5">
                                 <!-- EDIT -->
                                 <a href="{{ route('admin.members.edit', $member->id) }}"
                                    class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 hover:text-amber-700 transition-all duration-200 flex items-center justify-center hover:scale-105"
                                    title="Edit Anggota">
                                     <i class="fas fa-edit text-sm"></i>
                                 </a>
+
+                                <!-- ✅ TAKEDOWN FOTO -->
+                                @if($member->photo)
+                                <form action="{{ route('admin.members.takedownPhoto', $member->id) }}"
+                                    method="POST"
+                                    class="inline-block"
+                                    onsubmit="return confirm('Yakin ingin menghapus foto profil anggota ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            class="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 hover:text-orange-700 transition-all duration-200 flex items-center justify-center cursor-pointer hover:scale-105"
+                                            title="Takedown Foto">
+                                        <i class="fas fa-times-circle text-sm"></i>
+                                    </button>
+                                </form>
+                                @endif
 
                                 <!-- DELETE -->
                                 <form action="{{ route('admin.members.destroy', $member->id) }}"
@@ -130,7 +157,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-12 text-center">
+                        <td colspan="8" class="px-6 py-12 text-center">
                             <div class="flex flex-col items-center justify-center gap-4">
                                 <div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center">
                                     <i class="fas fa-users text-slate-400 text-3xl"></i>
